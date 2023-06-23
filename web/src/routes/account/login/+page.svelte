@@ -8,7 +8,7 @@
   import { _ } from 'svelte-i18n'
   import { z } from 'zod'
   import { validator } from '@felte/validator-zod'
-  import {createForm} from 'felte'
+  import { createForm } from 'felte'
 
   let schema = z.object({
     account: z
@@ -28,7 +28,7 @@
       .min(1, { message: $_('account.captchaIsRequired') }),
   })
 
-  const {form, errors} = createForm({
+  const { form, errors } = createForm({
     extend: validator({ schema }),
   })
 </script>

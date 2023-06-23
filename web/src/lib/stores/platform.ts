@@ -27,7 +27,7 @@ class PlatformStore {
         return
       }
     }
-    this.name = 'Ret2Shell'
+    this.name = 'Ret 2 Shell'
     this.subjectInfo = 'Fighting for all the beauty in the world'
     this.subjectUrl = 'https://www.woooo.tech'
     this.footerInfo = 'Wootec Inc.'

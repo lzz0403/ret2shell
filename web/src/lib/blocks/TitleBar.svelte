@@ -18,7 +18,7 @@
     </ul>
   </RxPopup>
   <RxLink ghost href="/" exactlyMatched>
-    <img class="hidden xl:block" width="42" height="42" src={logo} alt="RX" />
+    <img class="hidden xl:block" width="28" height="28" src={logo} alt="RX" />
     <span>{$platform.name}</span>
   </RxLink>
   <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type {FormAction} from '@felte/core'
+  import type { FormAction } from '@felte/core'
 
   let clazz = ''
   export { clazz as class }
