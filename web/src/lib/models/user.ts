@@ -1,4 +1,4 @@
-import { _ } from 'svelte-i18n'
+import { i18n } from '$lib/i18n'
 import { get } from 'svelte/store'
 
 export interface User {
@@ -17,14 +17,14 @@ export interface User {
 export function getUserRole(level: number): string {
   switch (level) {
     case 0:
-      return get(_)('account.unverified')
+      return get(i18n).t('account.unverified')
     case 1:
-      return get(_)('account.player')
+      return get(i18n).t('account.player')
     case 2:
-      return get(_)('account.domainAdmin')
+      return get(i18n).t('account.domainAdmin')
     case 3:
-      return get(_)('account.superAdmin')
+      return get(i18n).t('account.superAdmin')
     default:
-      return get(_)('account.unknown')
+      return get(i18n).t('account.unknown')
   }
 }

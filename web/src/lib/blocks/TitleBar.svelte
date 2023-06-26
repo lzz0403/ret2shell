@@ -4,7 +4,7 @@
   import { user } from '$lib/stores/user'
   import GlobalMenu from '$lib/blocks/GlobalMenu.svelte'
   import CustomizeBox from './CustomizeBox.svelte'
-  import { _ } from 'svelte-i18n'
+  import { i18n } from '$lib/i18n'
   import RxLink from '$lib/components/RxLink.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
   import RxPopup from '$lib/components/RxPopup.svelte'
@@ -18,7 +18,7 @@
     </ul>
   </RxPopup>
   <RxLink ghost href="/" exactlyMatched>
-    <img class="hidden xl:block" width="28" height="28" src={logo} alt="RX" />
+    <img class="hidden xl:block" width="28" height="28" src={logo} alt="logo" />
     <span>{$platform.name}</span>
   </RxLink>
   <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">
@@ -37,7 +37,7 @@
   {:else}
     <RxLink href="/account/login" exactlyMatched>
       <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
-      <span>{$_('account.login')}</span>
+      <span>{$i18n.t('account.login')}</span>
     </RxLink>
   {/if}
 </div>

@@ -7,7 +7,6 @@
   import Background from '$lib/blocks/Background.svelte'
   import { theme } from '$lib/stores/theme'
   import { onDestroy } from 'svelte'
-  import { waitLocale } from 'svelte-i18n'
   import { onMount } from 'svelte'
   import { fade } from 'svelte/transition'
   import { platform } from '$lib/stores/platform'
@@ -32,9 +31,6 @@
       }, 50)
     }, 1000)
   })
-  export async function preload() {
-    return waitLocale()
-  }
 
   const themeUnsubscribe = theme.subscribe((value) => {
     document.documentElement.setAttribute('data-theme', value.colorScheme)
