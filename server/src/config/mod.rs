@@ -25,3 +25,79 @@
 //! For convinience, we move some configurations into the database, so that you can still
 //! change them through the web interface.
 //!
+use std::path::Path;
+use serde::{Deserialize, Serialize};
+
+pub mod audit;
+pub mod bucket;
+pub mod cache;
+pub mod database;
+pub mod logging;
+pub mod media;
+pub mod queue;
+pub mod server;
+
+/// Represents the configuration for the whole application.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GlobalConfig {
+    /// The configuration for the audit module.
+    pub audit: Option<audit::AuditConfig>,
+    /// The configuration for the bucket module.
+    pub bucket: bucket::BucketConfig,
+    /// The configuration for the cache module.
+    pub cache: cache::CacheConfig,
+    /// The configuration for the database module.
+    pub database: database::DatabaseConfig,
+    /// The configuration for the logging module.
+    pub logging: logging::LoggingConfig,
+    /// The configuration for the media module.
+    pub media: media::MediaConfig,
+    /// The configuration for the message queue.
+    pub queue: queue::QueueConfig,
+    /// The configuration for the server.
+    pub server: server::ServerConfig,
+
+    /// The file path of the configuration file, not serialized or deserialized.
+    #[serde(skip_serializing)]
+    #[serde(skip_deserializing)]
+    pub file: Option<String>,
+}
+
+// Predefined paths for the configuration file.
+const CONFIG_PREDEFINED_PATH: [&str; 3] = ["/etc/ret2shell/", "~/.config/ret2shell/", "./config/"];
+
+// Predefined file name for the configuration file.
+const CONFIG_PREDEFINED_FILE_NAME: &str = "config.toml";
+
+impl GlobalConfig {
+    /// Load the GlobalConfig from a configuration file.
+    /// It searches for the configuration file in predefined paths and returns the loaded configuration.
+    pub fn load() -> anyhow::Result<Self> {
+        // load config str from predefined paths
+        let mut config_str = String::new();
+        let mut file_path = String::new();
+        for path in CONFIG_PREDEFINED_PATH.iter() {
+            let path = match Path::new(path).canonicalize() {
+                Ok(p) => p,
+                Err(_) => continue,
+            };
+            // println!("config file path is: {path:?}");
+            let path = path.display();
+            file_path = format!("{path}/{CONFIG_PREDEFINED_FILE_NAME}");
+            match std::fs::read_to_string(&file_path) {
+                Ok(s) => {
+                    config_str = s;
+                    break;
+                }
+                Err(_) => continue,
+            }
+        }
+        if file_path.is_empty() {
+            return Err(anyhow::anyhow!("No config file found"));
+        }
+        // load config from config str
+        let mut config: GlobalConfig = toml::from_str(&config_str)?;
+        config.file = Some(file_path);
+        Ok(config)
+    }
+}

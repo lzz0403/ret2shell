@@ -18,3 +18,5 @@ pnpm-lock.yaml
 **/*.rs.bk
 data/*
 !data/.gitkeep
+
+config/config.toml
