@@ -17,7 +17,7 @@ pub async fn initialize(config: &GlobalConfig) -> Result<(WorkerGuard, WorkerGua
     tokio::fs::create_dir_all(&config.logging.directory).await?;
     let file_appender = rolling::daily(
         Path::new(&config.logging.directory).canonicalize()?,
-        "ret2shell",
+        "ret2shell.log",
     );
     // println!("log config: {:?}", config.logging);
 

@@ -76,6 +76,6 @@ pub async fn down(config: &GlobalConfig) -> anyhow::Result<()> {
         .sqlx_logging_level(LevelFilter::Debug);
 
     let db: DatabaseConnection = Database::connect(connect_options).await?;
-    let _ = Migrator::down(&db, None).await;
+    Migrator::down(&db, None).await?;
     Ok(())
 }
