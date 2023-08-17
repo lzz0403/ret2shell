@@ -47,7 +47,7 @@ pub trait PooledConnectionLike {
 
     /// Get the value of a key.
     ///
-    /// If the key does not exist, you can retrive it with `Option<T>` or simply `T`.
+    /// If the key does not exist, you can retrieve it with `Option<T>` or simply `T`.
     /// A conversion error will be raised if the value is not the same type as `T`.
     async fn get<K: ToRedisArgs + Send, T: FromRedisValue>(&mut self, key: K) -> RedisResult<T> {
         let mut cmd = redis::cmd(if key.is_single_arg() { "GET" } else { "MGET" });

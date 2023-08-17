@@ -14,7 +14,7 @@
 //!
 //! # Management
 //!
-//! In previous Cyber Terminal implementions, the config file could be modified on-the-fly
+//! In previous Cyber Terminal implementations, the config file could be modified on-the-fly
 //! and the server will reload the configuration automatically. This affects the ability to
 //! implement cluster deployment and load balancing on the server, so we removed this
 //! feature on `ret2shell`. The configuration file will be readonly after the server started.
@@ -22,7 +22,7 @@
 //! If you want to change the configuration, you should manually edit it through DevOps tools
 //! then restart the server.
 //!
-//! For convinience, we move some configurations into the database, so that you can still
+//! For convenience, we move some configurations into the database, so that you can still
 //! change them through the web interface.
 //!
 use serde::{Deserialize, Serialize};

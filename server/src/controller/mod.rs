@@ -37,6 +37,7 @@ pub struct GlobalState {
     pub db: DatabaseConnection,
     pub cache: RedisPool,
     pub auditor: Auditor,
+    pub queue: async_nats::Client,
 }
 
 pub async fn initialize(config: &GlobalConfig, state: GlobalState) -> anyhow::Result<Router> {

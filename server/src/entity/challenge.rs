@@ -13,11 +13,11 @@ pub struct Model {
     pub tag_id: i64,
     pub initial_score: i32,
     pub current_score: i32,
-    pub updated_at: DateTimeWithTimeZone,
     pub minimum_score: i32,
+    pub updated_at: DateTimeWithTimeZone,
     pub decay: i32,
-    pub bucket: String,
-    pub checker: String,
+    pub bucket: Option<String>,
+    pub checker: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

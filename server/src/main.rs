@@ -1,7 +1,7 @@
 //! # Intro
 //!
-//! `ret2shell`: a feature-riched CTF challenge platform. This website contains the
-//! implemention details of `ret2shell`, not the user manual.
+//! `ret2shell`: a feature-riches CTF challenge platform. This website contains the
+//! implementation details of `ret2shell`, not the user manual.
 //!
 //! This documentation is generated from the source code of `ret2shell`.
 //! If you want to contribute to this project, refer this.
@@ -126,13 +126,15 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
 
     warn!(">> Server initialization started <<");
 
-    info!("Loading Module: < Audit >");
+    info!("Loading module: < Audit >");
     let auditor = audit::initialize(&config).await?;
-    info!("Loading Module: < Database >");
+    info!("Loading module: < Database >");
     let db = migrator::initialize(&config).await?;
-    info!("Loading Module: < Cache >");
+    info!("Loading module: < Cache >");
     let cache = cache::initialize(&config).await?;
-    let state = GlobalState { auditor, db, cache };
+    info!("Loading module: < Message Queue >");
+    let queue = queue::initialize(&config).await?;
+    let state = GlobalState { auditor, db, cache, queue };
     let router = controller::initialize(&config, state).await?;
     info!("Router constructed.");
 

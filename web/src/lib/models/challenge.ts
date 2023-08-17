@@ -2,7 +2,6 @@ export const availableCheckers = ['attachment', 'container']
 
 export interface Challenge {
   id: number
-  updated_at: number
   name: string
   content: string
   hidden: boolean
@@ -11,6 +10,7 @@ export interface Challenge {
   initial_score: number
   current_score: number
   minimum_score: number
+  updated_at: number
   decay: number
   bucket: string
   checker: string

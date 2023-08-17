@@ -18,7 +18,7 @@ pub struct Model {
     pub frozen: bool,
     pub host_as_game: bool,
     pub team_size_limit: i32,
-    pub cover_path: String,
+    pub cover_path: Option<String>,
     pub enable_team_audit: bool,
     pub can_register_after_started: bool,
     pub institute_id: Option<i64>,

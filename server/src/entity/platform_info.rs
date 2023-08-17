@@ -5,16 +5,16 @@ use sea_orm::entity::prelude::*;
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub platform: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub captcha: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub email: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub media: Option<String>,
-    #[sea_orm(column_type = "Text", nullable)]
-    pub pusher: Option<String>,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub platform: Option<Json>,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub captcha: Option<Json>,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub email: Option<Json>,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub media: Option<Json>,
+    #[sea_orm(column_type = "JsonBinary")]
+    pub pusher: Option<Json>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

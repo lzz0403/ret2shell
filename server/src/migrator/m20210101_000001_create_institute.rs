@@ -13,10 +13,10 @@ pub enum Institute {
     Table,
     Id,
     Name,
-    ViaEmail,
-    EmailDomain,
-    ViaCas,
-    CasIden,
+    Description,
+    Method,
+    Data,
+    Logo,
 }
 
 #[async_trait::async_trait]
@@ -34,18 +34,10 @@ impl MigrationTrait for Migration {
                             .primary_key(),
                     )
                     .col(ColumnDef::new(Institute::Name).string_len(127).not_null())
-                    .col(ColumnDef::new(Institute::ViaEmail).boolean().not_null())
-                    .col(
-                        ColumnDef::new(Institute::EmailDomain)
-                            .string_len(127)
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(Institute::ViaCas).boolean().not_null())
-                    .col(
-                        ColumnDef::new(Institute::CasIden)
-                            .string_len(127)
-                            .not_null(),
-                    )
+                    .col(ColumnDef::new(Institute::Description).text())
+                    .col(ColumnDef::new(Institute::Method).string_len(63).not_null())
+                    .col(ColumnDef::new(Institute::Data).text())
+                    .col(ColumnDef::new(Institute::Logo).string_len(127))
                     .to_owned(),
             )
             .await

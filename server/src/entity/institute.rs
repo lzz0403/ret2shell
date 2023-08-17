@@ -6,10 +6,12 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
     pub name: String,
-    pub via_email: bool,
-    pub email_domain: String,
-    pub via_cas: bool,
-    pub cas_iden: String,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub description: Option<String>,
+    pub method: String,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub data: Option<String>,
+    pub logo: String,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

@@ -1,8 +1,8 @@
 export interface Game {
   id: number
+  updated_at: number
   name: string
   brief: string
-  updated_at: number
   introduction: string
   start_time: number
   end_time: number
@@ -16,12 +16,6 @@ export interface Game {
   enable_team_audit: boolean
   can_register_after_started: boolean
   institute_id: number | null
-}
-
-export enum GameStatus {
-  NotStart = 1,
-  Started = 2,
-  Ended = 3,
 }
 
 export interface Notification {

@@ -8,10 +8,10 @@ pub struct Model {
     #[sea_orm(unique)]
     pub name: String,
     #[sea_orm(unique)]
-    pub addr: String,
+    pub addr: Option<String>,
     #[sea_orm(unique)]
     pub wsrx: String,
-    pub flag: String,
+    pub flag: Option<String>,
     pub renew_count: i32,
     pub started_at: DateTimeWithTimeZone,
     pub user_id: i64,
