@@ -93,30 +93,11 @@ async fn main() {
 
 /// Show greet information.
 fn greet() {
-    println!(
-        "\n                                                       [[ {} ]]\n",
-        "Reverier Powered Series".bold().bright_blue()
-    );
-    println!(
-        "{}",
-        r#"
-#|#|#|                #|            #|#|          #|#|#|  #|                  #|  #|  
-#|    #|    #|#|    #|#|#|#|      #|    #|      #|        #|#|#|      #|#|    #|  #|  
-#|#|#|    #|#|#|#|    #|              #|          #|#|    #|    #|  #|#|#|#|  #|  #|  
-#|    #|  #|          #|            #|                #|  #|    #|  #|        #|  #|  
-#|    #|    #|#|#|      #|#|      #|#|#|#|      #|#|#|    #|    #|    #|#|#|  #|  #|  
-"#
-        .bold()
-    );
-    println!(
-        "\n[[ {} ]]\n",
-        "怀有希望的人和满天的星星一样 是永远都不会孤独的"
-            .bold()
-            .bright_yellow()
-    );
+    println!("[SYNC] {} {}{}", "Ret 2 Shell".bold().bright_blue(), "v".dimmed(), env!("CARGO_PKG_VERSION"));
+    println!("[SYNC] {} : Rust {}{}", "MSRV".bold(), "v".dimmed(), env!("CARGO_PKG_RUST_VERSION"));
     println!(
         "----------------------------- {} -----------------------------",
-        "server log starts here".red()
+        "server log starts here".to_uppercase().red().bold()
     );
 }
 

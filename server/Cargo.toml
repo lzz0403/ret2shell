@@ -2,6 +2,13 @@
 name = "ret2shell"
 version = "0.1.0"
 edition = "2021"
+rust-version = "1.72.0"
+description = "A feature-riches CTF challenge platform."
+authors = ["Reverier-Xu <reverier.xu@woooo.tech>"]
+publish = false
+homepage = "https://r2s.woooo.tech/"
+keywords = ["ctf", "challenge", "platform", "security", "education"]
+resolver = "2"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
@@ -90,3 +97,5 @@ lettre = { version = "0.10", features = [
 ], default-features = false }
 # Message Queue
 async-nats = "0.31"
+# Captcha
+captcha-rs = "0.2"

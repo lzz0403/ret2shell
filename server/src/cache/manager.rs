@@ -4,6 +4,7 @@ use bb8_redis::RedisMultiplexedConnectionManager;
 
 use axum::async_trait;
 use redis::{FromRedisValue, RedisError, RedisResult, ToRedisArgs};
+use thiserror::Error;
 
 /// Unified redis pool for both clustered and non-clustered redis.
 #[derive(Clone, Debug)]
@@ -272,9 +273,12 @@ impl PoolLike for ClusteredRedisPool {
 pub async fn new_redis_pool(
     nodes: &Vec<String>,
     max_connections: u16,
-) -> anyhow::Result<RedisPool> {
+) -> Result<RedisPool, RedisError> {
     if nodes.len() < 1 {
-        anyhow::bail!("No nodes provided for redis pool");
+        return Err(RedisError::from((
+            redis::ErrorKind::InvalidClientConfig,
+            "No redis nodes specified",
+        )));
     } else if nodes.len() == 1 {
         let mgr = RedisMultiplexedConnectionManager::new(nodes[0].clone())?;
         let pool = bb8::Pool::builder()
@@ -287,5 +291,25 @@ pub async fn new_redis_pool(
             .max_size(max_connections.into()).build(mgr).await?;
         let pool = ClusteredRedisPool { pool };
         Ok(RedisPool::Clustered(pool))
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum CacheError<E> {
+    #[error("Redis error: {0}")]
+    Redis(RedisError),
+    #[error("BB8 cluster error: {0}")]
+    Bb8(RunError<E>),
+}
+
+impl From<RedisError> for CacheError<RedisError> {
+    fn from(err: RedisError) -> Self {
+        Self::Redis(err)
+    }
+}
+
+impl<E> From<RunError<E>> for CacheError<E> {
+    fn from(err: RunError<E>) -> Self {
+        Self::Bb8(err)
     }
 }
