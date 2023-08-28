@@ -29,6 +29,10 @@ pub struct Captcha {
 
 #[derive(Debug, Error)]
 pub enum CaptchaError {
+    #[error("Captcha Builder error")]
+    BuilderError,
+    #[error("Cache error")]
+    CacheError(#[from] crate::cache::manager::CacheError<redis::RedisError>),
     #[error("Uknown error")]
     Unknown,
 }

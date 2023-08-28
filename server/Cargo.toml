@@ -98,4 +98,4 @@ lettre = { version = "0.10", features = [
 # Message Queue
 async-nats = "0.31"
 # Captcha
-captcha-rs = "0.2"
+biosvg = "0.1"
