@@ -282,13 +282,17 @@ pub async fn new_redis_pool(
     } else if nodes.len() == 1 {
         let mgr = RedisMultiplexedConnectionManager::new(nodes[0].clone())?;
         let pool = bb8::Pool::builder()
-            .max_size(max_connections.into()).build(mgr).await?;
+            .max_size(max_connections.into())
+            .build(mgr)
+            .await?;
         let pool = NonClusteredRedisPool { pool };
         Ok(RedisPool::NonClustered(pool))
     } else {
         let mgr = RedisClusterConnectionManager::new(nodes)?;
         let pool = bb8::Pool::builder()
-            .max_size(max_connections.into()).build(mgr).await?;
+            .max_size(max_connections.into())
+            .build(mgr)
+            .await?;
         let pool = ClusteredRedisPool { pool };
         Ok(RedisPool::Clustered(pool))
     }

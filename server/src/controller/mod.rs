@@ -19,7 +19,7 @@ use tower_http::{
 };
 use tracing::{info, Span};
 
-use crate::{audit::Auditor, config::GlobalConfig, cache::manager::RedisPool};
+use crate::{audit::Auditor, cache::manager::RedisPool, config::GlobalConfig};
 
 mod account;
 mod announcement;

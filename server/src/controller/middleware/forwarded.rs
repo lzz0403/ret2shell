@@ -257,20 +257,20 @@ impl FromStr for ForwardedHeaderValue {
 }
 
 /// Get the client IP address from the request.
-/// 
+///
 /// This function will try to get the client IP address from the following sources:
-/// 
+///
 /// - `x-forwarded-for` header
 /// - `x-real-ip` header
 /// - `forwarded` header
 /// - `ConnectInfo` extension
-/// 
-/// The order of precedence is as listed above. We put headers first because the 
+///
+/// The order of precedence is as listed above. We put headers first because the
 /// physical IP address from `ConnectInfo` extension is not always correct. Nginx
 /// and other reverse proxies will shadow the real IP with `127.0.0.1`, to solve this
 /// problem, then will set the `x-forwarded-for` header to the client IP address,
 /// so we just use it.
-/// 
+///
 /// In some cases, the `x-forwarded-for` header may not set, the IP record will be
 /// localhost, so please make sure the reverse proxy is configured correctly.
 pub fn get_client_ip<B: Send>(request: &Request<B>) -> Option<IpAddr> {

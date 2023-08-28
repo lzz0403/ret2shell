@@ -2,8 +2,8 @@
 //!
 //!
 
-mod traits;
+mod hcaptcha;
 mod image;
 mod pow;
-mod hcaptcha;
 mod recaptcha;
+mod traits;

@@ -18,7 +18,9 @@ impl RedisClusterConnectionManager {
         nodes: &Vec<T>,
     ) -> Result<RedisClusterConnectionManager, RedisError> {
         Ok(RedisClusterConnectionManager {
-            client: ClusterClientBuilder::new(nodes.clone()).retries(0).build()?,
+            client: ClusterClientBuilder::new(nodes.clone())
+                .retries(0)
+                .build()?,
         })
     }
 }

@@ -1,6 +1,6 @@
 use crate::cache::manager::RedisPool;
-use serde::{Deserialize, Serialize};
 use async_trait::async_trait;
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 /// Validator enum for different types of captcha validation
@@ -10,6 +10,7 @@ pub enum Validator {
     Image,
     Pow,
     RecaptchaV3,
+    HCaptcha,
 }
 
 /// Captcha struct for storing captcha data
@@ -40,7 +41,15 @@ pub enum CaptchaError {
 /// A trait for captcha validators.
 #[async_trait]
 pub trait CaptchaValidator: Send + Sync {
-    async fn generate_captcha(conn: &mut RedisPool) -> Result<Captcha, CaptchaError>;
+    async fn generate_captcha(
+        conn: &mut RedisPool,
+        difficulty: u16,
+    ) -> Result<Captcha, CaptchaError>;
 
-    async fn check_captcha(conn: &mut RedisPool, id: &str, answer: &str) -> Result<bool, CaptchaError>;
+    async fn check_captcha(
+        conn: &mut RedisPool,
+        difficulty: u16,
+        id: &str,
+        answer: &str,
+    ) -> Result<bool, CaptchaError>;
 }

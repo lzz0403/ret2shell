@@ -7,10 +7,13 @@ pub struct ImageValidator;
 
 #[async_trait]
 impl CaptchaValidator for ImageValidator {
-    async fn generate_captcha(conn: &mut RedisPool) -> Result<Captcha, CaptchaError> {
+    async fn generate_captcha(
+        conn: &mut RedisPool,
+        difficulty: u16,
+    ) -> Result<Captcha, CaptchaError> {
         let (answer, challenge) = biosvg::BiosvgBuilder::new()
             .length(4)
-            .difficulty(6)
+            .difficulty(difficulty)
             .colors(vec![
                 "#0078D6".to_string(),
                 "#aa3333".to_string(),
@@ -35,6 +38,7 @@ impl CaptchaValidator for ImageValidator {
 
     async fn check_captcha(
         conn: &mut RedisPool,
+        _difficulty: u16,
         id: &str,
         answer: &str,
     ) -> Result<bool, CaptchaError> {

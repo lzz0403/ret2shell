@@ -33,11 +33,36 @@ impl MigrationTrait for Migration {
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(PlatformInfo::Platform).json_binary().not_null().default("{}"))
-                    .col(ColumnDef::new(PlatformInfo::Captcha).json_binary().not_null().default("{}"))
-                    .col(ColumnDef::new(PlatformInfo::Email).json_binary().not_null().default("{}"))
-                    .col(ColumnDef::new(PlatformInfo::Media).json_binary().not_null().default("{}"))
-                    .col(ColumnDef::new(PlatformInfo::Pusher).json_binary().not_null().default("{}"))
+                    .col(
+                        ColumnDef::new(PlatformInfo::Platform)
+                            .json_binary()
+                            .not_null()
+                            .default("{}"),
+                    )
+                    .col(
+                        ColumnDef::new(PlatformInfo::Captcha)
+                            .json_binary()
+                            .not_null()
+                            .default("{}"),
+                    )
+                    .col(
+                        ColumnDef::new(PlatformInfo::Email)
+                            .json_binary()
+                            .not_null()
+                            .default("{}"),
+                    )
+                    .col(
+                        ColumnDef::new(PlatformInfo::Media)
+                            .json_binary()
+                            .not_null()
+                            .default("{}"),
+                    )
+                    .col(
+                        ColumnDef::new(PlatformInfo::Pusher)
+                            .json_binary()
+                            .not_null()
+                            .default("{}"),
+                    )
                     .to_owned(),
             )
             .await

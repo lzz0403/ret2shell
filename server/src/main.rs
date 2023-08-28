@@ -93,8 +93,18 @@ async fn main() {
 
 /// Show greet information.
 fn greet() {
-    println!("[SYNC] {} {}{}", "Ret 2 Shell".bold().bright_blue(), "v".dimmed(), env!("CARGO_PKG_VERSION"));
-    println!("[SYNC] {} : Rust {}{}", "MSRV".bold(), "v".dimmed(), env!("CARGO_PKG_RUST_VERSION"));
+    println!(
+        "[SYNC] {} {}{}",
+        "Ret 2 Shell".bold().bright_blue(),
+        "v".dimmed(),
+        env!("CARGO_PKG_VERSION")
+    );
+    println!(
+        "[SYNC] {} : Rust {}{}",
+        "MSRV".bold(),
+        "v".dimmed(),
+        env!("CARGO_PKG_RUST_VERSION")
+    );
     println!(
         "----------------------------- {} -----------------------------",
         "server log starts here".to_uppercase().red().bold()
@@ -115,7 +125,12 @@ async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     let cache = cache::initialize(&config).await?;
     info!("Loading module: < Message Queue >");
     let queue = queue::initialize(&config).await?;
-    let state = GlobalState { auditor, db, cache, queue };
+    let state = GlobalState {
+        auditor,
+        db,
+        cache,
+        queue,
+    };
     let router = controller::initialize(&config, state).await?;
     info!("Router constructed.");
 
