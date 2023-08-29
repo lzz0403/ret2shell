@@ -26,6 +26,7 @@ mod account;
 mod announcement;
 mod certificate;
 mod game;
+mod challenge;
 mod media;
 mod middleware;
 mod platform;
@@ -83,6 +84,7 @@ fn construct_router() -> Router<GlobalState> {
         .nest("/announcement", announcement::router())
         .nest("/certificate", certificate::router())
         .nest("/game", game::router())
+        .nest("/challenge", challenge::router())
         .nest("/media", media::router())
         .nest("/platform", platform::router())
         .nest("/user", user::router())
