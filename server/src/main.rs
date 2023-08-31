@@ -38,6 +38,7 @@ mod queue;
 mod service;
 mod traffic;
 mod utility;
+mod workflow;
 
 /// Clap arg definition.
 #[derive(Parser, Debug)]
