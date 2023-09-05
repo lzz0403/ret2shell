@@ -3,38 +3,37 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "user2_ip_address")]
+#[sea_orm(table_name = "wiki")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    pub user_id: i64,
-    pub ip_address_id: i64,
+    pub title: String,
+    pub published_at: DateTimeWithTimeZone,
+    pub updated_at: DateTimeWithTimeZone,
+    pub author_id: i64,
+    #[sea_orm(column_type = "Text")]
+    pub content: String,
+    pub parent: Option<i64>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::ip_address::Entity",
-        from = "Column::IpAddressId",
-        to = "super::ip_address::Column::Id",
-        on_update = "NoAction",
-        on_delete = "NoAction"
-    )]
-    IpAddress,
-    #[sea_orm(
         belongs_to = "super::user::Entity",
-        from = "Column::UserId",
+        from = "Column::AuthorId",
         to = "super::user::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
     User,
-}
-
-impl Related<super::ip_address::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::IpAddress.def()
-    }
+    #[sea_orm(
+        belongs_to = "Entity",
+        from = "Column::Parent",
+        to = "Column::Id",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    SelfRef,
 }
 
 impl Related<super::user::Entity> for Entity {

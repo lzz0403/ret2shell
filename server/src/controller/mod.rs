@@ -25,8 +25,8 @@ use crate::{audit::Auditor, cache::manager::RedisPool, config::GlobalConfig};
 mod account;
 mod announcement;
 mod certificate;
-mod game;
 mod challenge;
+mod game;
 mod media;
 mod middleware;
 mod platform;
@@ -47,7 +47,7 @@ pub async fn initialize(config: &GlobalConfig, state: GlobalState) -> anyhow::Re
     let cors_origins = &config.server.cors_origins;
     let api_router = construct_router();
     let router = Router::new()
-        .nest(&api_base_path, api_router)
+        .nest(api_base_path, api_router)
         .route_layer(from_fn_with_state(
             state.clone(),
             middleware::info::prepare_platform_info,

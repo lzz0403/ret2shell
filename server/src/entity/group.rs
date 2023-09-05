@@ -3,23 +3,24 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "tag")]
+#[sea_orm(table_name = "group")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    #[sea_orm(unique)]
     pub name: String,
+    #[sea_orm(column_type = "Text", nullable)]
+    pub permissions: Option<String>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
-    #[sea_orm(has_many = "super::challenge::Entity")]
-    Challenge,
+    #[sea_orm(has_many = "super::user2_group::Entity")]
+    User2Group,
 }
 
-impl Related<super::challenge::Entity> for Entity {
+impl Related<super::user2_group::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::Challenge.def()
+        Relation::User2Group.def()
     }
 }
 

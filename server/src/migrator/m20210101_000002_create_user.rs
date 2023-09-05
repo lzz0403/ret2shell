@@ -21,8 +21,8 @@ pub enum User {
     CoverPath,
     InstituteId,
     InstituteInfo,
+    // 0: novice, 1: verified user, 2: admin
     Level,
-    // 0: novice, 1: verified user, 2: institute admin, 3: super admin
     Hidden,
     Banned,
 }

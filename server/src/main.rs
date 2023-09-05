@@ -95,13 +95,13 @@ async fn main() {
 /// Show greet information.
 fn greet() {
     println!(
-        "[SYNC] {} {}{}",
+        "[START UP] {} {}{}",
         "Ret 2 Shell".bold().bright_blue(),
         "v".dimmed(),
         env!("CARGO_PKG_VERSION")
     );
     println!(
-        "[SYNC] {} : Rust {}{}",
+        "[START UP] {} : {}{}",
         "MSRV".bold(),
         "v".dimmed(),
         env!("CARGO_PKG_RUST_VERSION")

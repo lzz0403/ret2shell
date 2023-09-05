@@ -3,15 +3,19 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "notification")]
+#[sea_orm(table_name = "ctftime")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    pub title: String,
+    pub name: String,
     #[sea_orm(column_type = "Text")]
-    pub content: String,
-    pub published_at: DateTimeWithTimeZone,
-    pub game_id: i64,
+    pub intro: String,
+    pub link: String,
+    pub start_time: DateTimeWithTimeZone,
+    pub end_time: DateTimeWithTimeZone,
+    pub audited: bool,
+    pub game_id: Option<i64>,
+    pub reporter_id: i64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
@@ -24,11 +28,25 @@ pub enum Relation {
         on_delete = "NoAction"
     )]
     Game,
+    #[sea_orm(
+        belongs_to = "super::user::Entity",
+        from = "Column::ReporterId",
+        to = "super::user::Column::Id",
+        on_update = "NoAction",
+        on_delete = "NoAction"
+    )]
+    User,
 }
 
 impl Related<super::game::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Game.def()
+    }
+}
+
+impl Related<super::user::Entity> for Entity {
+    fn to() -> RelationDef {
+        Relation::User.def()
     }
 }
 

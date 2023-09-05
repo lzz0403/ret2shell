@@ -216,7 +216,7 @@ impl ForwardedHeaderValue {
             .collect::<Result<Vec<_>, _>>()
             .and_then(|v| {
                 (!v.is_empty())
-                    .then(|| v)
+                    .then_some(v)
                     .ok_or(ForwardedHeaderValueParseError::HeaderIsEmpty)
             })
             .map(|v| ForwardedHeaderValue { values: v })

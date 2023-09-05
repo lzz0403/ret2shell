@@ -15,6 +15,7 @@ pub mod token;
 pub use captcha::Captcha;
 pub use token::Token;
 
+/// Init the cache manager.
 pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<RedisPool> {
     let nodes = &config.cache.nodes;
     let max_connections = config.cache.max_connections.unwrap_or(32);

@@ -15,10 +15,10 @@ pub struct RedisClusterConnectionManager {
 impl RedisClusterConnectionManager {
     /// Create a new `RedisClusterConnectionManager` with nodes.
     pub fn new<T: IntoConnectionInfo + Clone>(
-        nodes: &Vec<T>,
+        nodes: &[T],
     ) -> Result<RedisClusterConnectionManager, RedisError> {
         Ok(RedisClusterConnectionManager {
-            client: ClusterClientBuilder::new(nodes.clone())
+            client: ClusterClientBuilder::new(nodes.to_owned())
                 .retries(0)
                 .build()?,
         })

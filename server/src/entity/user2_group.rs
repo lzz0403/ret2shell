@@ -3,24 +3,24 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "user2_ip_address")]
+#[sea_orm(table_name = "user2_group")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
     pub user_id: i64,
-    pub ip_address_id: i64,
+    pub group_id: i64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::ip_address::Entity",
-        from = "Column::IpAddressId",
-        to = "super::ip_address::Column::Id",
+        belongs_to = "super::group::Entity",
+        from = "Column::GroupId",
+        to = "super::group::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
-    IpAddress,
+    Group,
     #[sea_orm(
         belongs_to = "super::user::Entity",
         from = "Column::UserId",
@@ -31,9 +31,9 @@ pub enum Relation {
     User,
 }
 
-impl Related<super::ip_address::Entity> for Entity {
+impl Related<super::group::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::IpAddress.def()
+        Relation::Group.def()
     }
 }
 

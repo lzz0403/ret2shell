@@ -14,8 +14,7 @@ pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<Client> {
                 .queue
                 .token
                 .clone()
-                .unwrap_or("IMPOSSIBLE".to_owned())
-                .into(),
+                .unwrap_or("IMPOSSIBLE".to_owned()),
         );
     } else if config.queue.user.is_some() && config.queue.password.is_some() {
         options = options.user_and_password(

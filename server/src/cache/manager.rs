@@ -274,27 +274,29 @@ pub async fn new_redis_pool(
     nodes: &Vec<String>,
     max_connections: u16,
 ) -> Result<RedisPool, RedisError> {
-    if nodes.len() < 1 {
-        return Err(RedisError::from((
+    match nodes.len() {
+        0 => Err(RedisError::from((
             redis::ErrorKind::InvalidClientConfig,
             "No redis nodes specified",
-        )));
-    } else if nodes.len() == 1 {
-        let mgr = RedisMultiplexedConnectionManager::new(nodes[0].clone())?;
-        let pool = bb8::Pool::builder()
-            .max_size(max_connections.into())
-            .build(mgr)
-            .await?;
-        let pool = NonClusteredRedisPool { pool };
-        Ok(RedisPool::NonClustered(pool))
-    } else {
-        let mgr = RedisClusterConnectionManager::new(nodes)?;
-        let pool = bb8::Pool::builder()
-            .max_size(max_connections.into())
-            .build(mgr)
-            .await?;
-        let pool = ClusteredRedisPool { pool };
-        Ok(RedisPool::Clustered(pool))
+        ))),
+        1 => {
+            let mgr = RedisMultiplexedConnectionManager::new(nodes[0].clone())?;
+            let pool = bb8::Pool::builder()
+                .max_size(max_connections.into())
+                .build(mgr)
+                .await?;
+            let pool = NonClusteredRedisPool { pool };
+            Ok(RedisPool::NonClustered(pool))
+        }
+        _ => {
+            let mgr = RedisClusterConnectionManager::new(nodes)?;
+            let pool = bb8::Pool::builder()
+                .max_size(max_connections.into())
+                .build(mgr)
+                .await?;
+            let pool = ClusteredRedisPool { pool };
+            Ok(RedisPool::Clustered(pool))
+        }
     }
 }
 

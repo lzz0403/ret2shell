@@ -1,3 +1,6 @@
+//! Platform cache functions
+//!
+
 use redis::RedisError;
 use sea_orm::DatabaseConnection;
 

@@ -4,19 +4,16 @@ pub struct Migration;
 
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "m20210101_000001_create_institute"
+        "m20210101_000023_create_group"
     }
 }
 
 #[derive(Iden)]
-pub enum Institute {
+pub enum Group {
     Table,
     Id,
     Name,
-    Description,
-    Validator,
-    Data,
-    Logo,
+    Permissions,
 }
 
 #[async_trait::async_trait]
@@ -25,23 +22,16 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Institute::Table)
+                    .table(Group::Table)
                     .col(
-                        ColumnDef::new(Institute::Id)
+                        ColumnDef::new(Group::Id)
                             .big_integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Institute::Name).string_len(127).not_null())
-                    .col(ColumnDef::new(Institute::Description).text())
-                    .col(
-                        ColumnDef::new(Institute::Validator)
-                            .string_len(63)
-                            .not_null(),
-                    )
-                    .col(ColumnDef::new(Institute::Data).text())
-                    .col(ColumnDef::new(Institute::Logo).string_len(127))
+                    .col(ColumnDef::new(Group::Name).string_len(127).not_null())
+                    .col(ColumnDef::new(Group::Permissions).text())
                     .to_owned(),
             )
             .await
@@ -50,7 +40,7 @@ impl MigrationTrait for Migration {
     // Define how to rollback this migration: Drop the Bakery table.
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Institute::Table).to_owned())
+            .drop_table(Table::drop().table(Group::Table).to_owned())
             .await
     }
 }

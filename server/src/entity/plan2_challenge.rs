@@ -3,43 +3,43 @@
 use sea_orm::entity::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
-#[sea_orm(table_name = "user2_ip_address")]
+#[sea_orm(table_name = "plan2_challenge")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    pub user_id: i64,
-    pub ip_address_id: i64,
+    pub plan_id: i64,
+    pub challenge_id: i64,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
-        belongs_to = "super::ip_address::Entity",
-        from = "Column::IpAddressId",
-        to = "super::ip_address::Column::Id",
+        belongs_to = "super::challenge::Entity",
+        from = "Column::ChallengeId",
+        to = "super::challenge::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
-    IpAddress,
+    Challenge,
     #[sea_orm(
-        belongs_to = "super::user::Entity",
-        from = "Column::UserId",
-        to = "super::user::Column::Id",
+        belongs_to = "super::plan::Entity",
+        from = "Column::PlanId",
+        to = "super::plan::Column::Id",
         on_update = "NoAction",
         on_delete = "NoAction"
     )]
-    User,
+    Plan,
 }
 
-impl Related<super::ip_address::Entity> for Entity {
+impl Related<super::challenge::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::IpAddress.def()
+        Relation::Challenge.def()
     }
 }
 
-impl Related<super::user::Entity> for Entity {
+impl Related<super::plan::Entity> for Entity {
     fn to() -> RelationDef {
-        Relation::User.def()
+        Relation::Plan.def()
     }
 }
 

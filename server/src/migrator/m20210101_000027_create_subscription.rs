@@ -1,22 +1,21 @@
 use sea_orm_migration::prelude::*;
+use sea_query::Keyword::CurrentTimestamp;
 
 pub struct Migration;
 
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "m20210101_000001_create_institute"
+        "m_20210101_000027_create_subscription"
     }
 }
 
 #[derive(Iden)]
-pub enum Institute {
+pub enum Subscription {
     Table,
     Id,
-    Name,
-    Description,
-    Validator,
-    Data,
-    Logo,
+    PlanId,
+    SubscriberId,
+    StartTime,
 }
 
 #[async_trait::async_trait]
@@ -25,23 +24,30 @@ impl MigrationTrait for Migration {
         manager
             .create_table(
                 Table::create()
-                    .table(Institute::Table)
+                    .table(Subscription::Table)
                     .col(
-                        ColumnDef::new(Institute::Id)
+                        ColumnDef::new(Subscription::Id)
                             .big_integer()
                             .not_null()
                             .auto_increment()
                             .primary_key(),
                     )
-                    .col(ColumnDef::new(Institute::Name).string_len(127).not_null())
-                    .col(ColumnDef::new(Institute::Description).text())
                     .col(
-                        ColumnDef::new(Institute::Validator)
-                            .string_len(63)
+                        ColumnDef::new(Subscription::PlanId)
+                            .big_integer()
                             .not_null(),
                     )
-                    .col(ColumnDef::new(Institute::Data).text())
-                    .col(ColumnDef::new(Institute::Logo).string_len(127))
+                    .col(
+                        ColumnDef::new(Subscription::SubscriberId)
+                            .big_integer()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Subscription::StartTime)
+                            .timestamp_with_time_zone()
+                            .not_null()
+                            .default(CurrentTimestamp),
+                    )
                     .to_owned(),
             )
             .await
@@ -50,7 +56,7 @@ impl MigrationTrait for Migration {
     // Define how to rollback this migration: Drop the Bakery table.
     async fn down(&self, manager: &SchemaManager) -> Result<(), DbErr> {
         manager
-            .drop_table(Table::drop().table(Institute::Table).to_owned())
+            .drop_table(Table::drop().table(Subscription::Table).to_owned())
             .await
     }
 }

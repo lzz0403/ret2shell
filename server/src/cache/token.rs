@@ -1,3 +1,6 @@
+//! Token cache functions
+//!
+
 use redis::RedisError;
 
 use crate::entity::user::Model as UserModel;
