@@ -7,6 +7,6 @@ mod submission;
 mod traffic;
 mod workflow;
 
-pub fn router() -> Router<GlobalState> {
+pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
 }

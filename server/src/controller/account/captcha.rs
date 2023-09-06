@@ -1,5 +1,5 @@
 use axum::{
-    extract::State, http::StatusCode, response::IntoResponse, routing::get, Extension, Json, Router,
+    extract::State, http::StatusCode, response::IntoResponse, routing::get, Extension, Json, Router
 };
 
 use crate::{
@@ -7,7 +7,7 @@ use crate::{
     entity::platform_info::PlatformInfoModel,
 };
 
-pub fn router() -> Router<GlobalState> {
+pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new().route("/", get(get_captcha))
 }
 

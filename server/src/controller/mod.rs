@@ -28,11 +28,11 @@ mod certificate;
 mod challenge;
 mod game;
 mod media;
-mod middleware;
+mod layer;
 mod platform;
 mod user;
 
-use middleware::forwarded::get_client_ip;
+use layer::forwarded::get_client_ip;
 
 #[derive(Clone, FromRef)]
 pub struct GlobalState {
@@ -45,12 +45,12 @@ pub struct GlobalState {
 pub async fn initialize(config: &GlobalConfig, state: GlobalState) -> anyhow::Result<Router> {
     let api_base_path = &config.server.api_base_path;
     let cors_origins = &config.server.cors_origins;
-    let api_router = construct_router();
+    let api_router = construct_router(&state);
     let router = Router::new()
         .nest(api_base_path, api_router)
         .route_layer(from_fn_with_state(
             state.clone(),
-            middleware::info::prepare_platform_info,
+            layer::info::prepare_platform_info,
         ))
         .layer(
             CorsLayer::new()
@@ -78,16 +78,16 @@ pub async fn initialize(config: &GlobalConfig, state: GlobalState) -> anyhow::Re
     Ok(router)
 }
 
-fn construct_router() -> Router<GlobalState> {
+fn construct_router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
-        .nest("/account", account::router())
-        .nest("/announcement", announcement::router())
-        .nest("/certificate", certificate::router())
-        .nest("/game", game::router())
-        .nest("/challenge", challenge::router())
-        .nest("/media", media::router())
-        .nest("/platform", platform::router())
-        .nest("/user", user::router())
+        .nest("/account", account::router(state))
+        .nest("/announcement", announcement::router(state))
+        .nest("/certificate", certificate::router(state))
+        .nest("/game", game::router(state))
+        .nest("/challenge", challenge::router(state))
+        .nest("/media", media::router(state))
+        .nest("/platform", platform::router(state))
+        .nest("/user", user::router(state))
         .route("/ping", get(ping))
 }
 

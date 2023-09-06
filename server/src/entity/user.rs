@@ -45,8 +45,6 @@ pub enum Relation {
     Media,
     #[sea_orm(has_many = "super::submission::Entity")]
     Submission,
-    #[sea_orm(has_many = "super::user2_group::Entity")]
-    User2Group,
     #[sea_orm(has_many = "super::user2_ip_address::Entity")]
     User2IpAddress,
     #[sea_orm(has_many = "super::user2_subscription::Entity")]
@@ -98,12 +96,6 @@ impl Related<super::media::Entity> for Entity {
 impl Related<super::submission::Entity> for Entity {
     fn to() -> RelationDef {
         Relation::Submission.def()
-    }
-}
-
-impl Related<super::user2_group::Entity> for Entity {
-    fn to() -> RelationDef {
-        Relation::User2Group.def()
     }
 }
 

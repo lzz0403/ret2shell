@@ -1,12 +1,12 @@
 use sea_orm_migration::prelude::*;
 
-use super::{m20210101_000007_create_challenge::Challenge, m20210101_000024_create_plan::Plan};
+use super::{m20210101_000007_create_challenge::Challenge, m20210101_000023_create_plan::Plan};
 
 pub struct Migration;
 
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "m_20210101_000026_create_plan_challenge_ref"
+        "m_20210101_000024_create_plan_challenge_ref"
     }
 }
 

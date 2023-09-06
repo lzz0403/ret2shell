@@ -1,14 +1,14 @@
 use sea_orm_migration::prelude::*;
 
 use super::{
-    m20210101_000002_create_user::User, m20210101_000027_create_subscription::Subscription,
+    m20210101_000002_create_user::User, m20210101_000025_create_subscription::Subscription,
 };
 
 pub struct Migration;
 
 impl MigrationName for Migration {
     fn name(&self) -> &str {
-        "m_20210101_000028_create_subscription_user_ref"
+        "m_20210101_000026_create_subscription_user_ref"
     }
 }
 
