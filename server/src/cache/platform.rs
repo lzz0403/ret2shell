@@ -14,7 +14,7 @@ impl Platform {
     pub async fn refresh_cache(
         conn: &mut RedisPool,
         db: &DatabaseConnection,
-    ) -> Result<Option<PlatformInfoModel>, CacheError<RedisError>> {
+    ) -> Result<PlatformInfoModel, CacheError<RedisError>> {
         let platform_info = platform_info::get_platform_info(db).await?;
         let mut conn = conn.get().await?;
         conn.set("platform_info", serde_json::to_string(&platform_info)?)
@@ -25,7 +25,7 @@ impl Platform {
     pub async fn get(
         pool: &mut RedisPool,
         db: &DatabaseConnection,
-    ) -> Result<Option<PlatformInfoModel>, CacheError<RedisError>> {
+    ) -> Result<PlatformInfoModel, CacheError<RedisError>> {
         let _pool = pool.clone();
         let mut conn = _pool.get().await?;
         let platform_info: Option<String> = conn.get("platform_info").await?;

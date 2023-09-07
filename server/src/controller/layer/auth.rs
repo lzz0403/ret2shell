@@ -81,10 +81,7 @@ pub async fn extract_user_info<B>(
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let auth_config = platform_info.auth.ok_or((
-        StatusCode::INTERNAL_SERVER_ERROR,
-        "token signing key is not configured",
-    ))?;
+    let auth_config = platform_info.auth;
     let Auth {
         ref signing_key,
         buffer_time,

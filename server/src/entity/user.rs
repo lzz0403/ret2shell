@@ -2,6 +2,7 @@
 
 use num_derive::{FromPrimitive, ToPrimitive};
 use sea_orm::{entity::prelude::*, FromJsonQueryResult};
+use sea_query::Condition;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
@@ -153,3 +154,26 @@ impl Related<super::write_up::Entity> for Entity {
 }
 
 impl ActiveModelBehavior for ActiveModel {}
+
+pub async fn get_user(db: &DatabaseConnection, id: i64) -> Result<Model, DbErr> {
+    let user = Entity::find_by_id(id).one(db).await?;
+    match user {
+        Some(user) => Ok(user),
+        None => Err(DbErr::RecordNotFound("user".to_string())),
+    }
+}
+
+pub async fn get_user_by_account(db: &DatabaseConnection, account: &str) -> Result<Model, DbErr> {
+    let user = Entity::find()
+        .filter(
+            Condition::any()
+                .add(Column::Name.eq(account))
+                .add(Column::Email.eq(account)),
+        )
+        .one(db)
+        .await?;
+    match user {
+        Some(user) => Ok(user),
+        None => Err(DbErr::RecordNotFound("user".to_string())),
+    }
+}

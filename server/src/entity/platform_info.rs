@@ -8,17 +8,17 @@ pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
     #[sea_orm(column_type = "JsonBinary")]
-    pub platform: Option<Platform>,
+    pub platform: Platform,
     #[sea_orm(column_type = "JsonBinary")]
-    pub auth: Option<Auth>,
+    pub auth: Auth,
     #[sea_orm(column_type = "JsonBinary")]
-    pub captcha: Option<Captcha>,
+    pub captcha: Captcha,
     #[sea_orm(column_type = "JsonBinary")]
-    pub email: Option<Email>,
+    pub email: Email,
     #[sea_orm(column_type = "JsonBinary")]
-    pub media: Option<Media>,
+    pub media: Media,
     #[sea_orm(column_type = "JsonBinary")]
-    pub pusher: Option<Pusher>,
+    pub pusher: Pusher,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, FromJsonQueryResult, PartialEq, Eq)]
@@ -35,7 +35,7 @@ pub struct Captcha {
     /// Whether captcha functionality is enabled or not.
     pub enabled: bool,
     /// The captcha difficulty.
-    pub difficulty: Option<u16>,
+    pub difficulty: u16,
     /// The captcha validator to use.
     pub validator: Validator,
 }
@@ -94,11 +94,11 @@ pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
 
-pub async fn get_platform_info(db: &DatabaseConnection) -> Result<Option<Model>, DbErr> {
+pub async fn get_platform_info(db: &DatabaseConnection) -> Result<Model, DbErr> {
     let platform_info = Entity::find().one(db).await?;
     match platform_info {
-        Some(platform_info) => Ok(Some(platform_info)),
-        None => Ok(None),
+        Some(platform_info) => Ok(platform_info),
+        None => Err(DbErr::RecordNotFound("platform_info".to_string())),
     }
 }
 

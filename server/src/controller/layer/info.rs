@@ -14,12 +14,13 @@ pub async fn prepare_platform_info<B>(
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let platform_info = Platform::get(pool, db).await.map_err(|err| {
-        tracing::error!("query platform info from cache failed: {}", err);
-        (StatusCode::INTERNAL_SERVER_ERROR, "encountered cache error")
-    })?;
-    if let Some(platform_info) = platform_info.clone() {
-        req.extensions_mut().insert(platform_info);
-    }
+    match Platform::get(pool, db).await {
+        Ok(platform_info) => {
+            req.extensions_mut().insert(platform_info);
+        }
+        Err(err) => {
+            tracing::error!("failed to get platform info: {}", err);
+        }
+    };
     Ok(next.run(req).await)
 }

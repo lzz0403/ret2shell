@@ -10,13 +10,13 @@ mod traits;
 
 pub use traits::{Captcha, Validator};
 
-use self::traits::{CaptchaError, CaptchaValidator};
+pub use self::traits::{CaptchaError, CaptchaValidator};
 use crate::cache::manager::RedisPool;
 
 pub async fn generate_captcha(
-    validator: Validator,
+    validator: &Validator,
     conn: &mut RedisPool,
-    difficulty: u16,
+    difficulty: &u16,
 ) -> Result<Captcha, CaptchaError> {
     match validator {
         Validator::None => Ok(Captcha {
@@ -25,35 +25,69 @@ pub async fn generate_captcha(
             challenge: "".to_string(),
             answer: "".to_string(),
         }),
-        Validator::Image => Ok(image::ImageValidator::generate_captcha(conn, difficulty).await?),
-        Validator::Pow => Ok(pow::PowValidator::generate_captcha(conn, difficulty).await?),
+        Validator::Image => Ok(image::ImageValidator::generate_captcha(conn, *difficulty).await?),
+        Validator::Pow => Ok(pow::PowValidator::generate_captcha(conn, *difficulty).await?),
         Validator::RecaptchaV3 => {
-            Ok(recaptcha::ReCaptchaV3Validator::generate_captcha(conn, difficulty).await?)
+            Ok(recaptcha::ReCaptchaV3Validator::generate_captcha(conn, *difficulty).await?)
         }
         Validator::HCaptcha => {
-            Ok(hcaptcha::HCaptchaValidator::generate_captcha(conn, difficulty).await?)
+            Ok(hcaptcha::HCaptchaValidator::generate_captcha(conn, *difficulty).await?)
         }
     }
 }
 
 pub async fn check_captcha(
-    validator: Validator,
+    validator: &Validator,
     conn: &mut RedisPool,
-    difficulty: u16,
+    difficulty: &u16,
     id: &str,
     answer: &str,
 ) -> Result<bool, CaptchaError> {
     match validator {
         Validator::None => Ok(true),
         Validator::Image => {
-            image::ImageValidator::check_captcha(conn, difficulty, id, answer).await
+            image::ImageValidator::check_captcha(conn, *difficulty, id, answer).await
         }
-        Validator::Pow => pow::PowValidator::check_captcha(conn, difficulty, id, answer).await,
+        Validator::Pow => pow::PowValidator::check_captcha(conn, *difficulty, id, answer).await,
         Validator::RecaptchaV3 => {
-            recaptcha::ReCaptchaV3Validator::check_captcha(conn, difficulty, id, answer).await
+            recaptcha::ReCaptchaV3Validator::check_captcha(conn, *difficulty, id, answer).await
         }
         Validator::HCaptcha => {
-            hcaptcha::HCaptchaValidator::check_captcha(conn, difficulty, id, answer).await
+            hcaptcha::HCaptchaValidator::check_captcha(conn, *difficulty, id, answer).await
         }
     }
 }
+
+macro_rules! captcha_protected {
+    ($cache_config:expr, $cache:expr, $id:expr, $answer:expr) => {
+        match crate::captcha::check_captcha(&$cache_config.validator, $cache, &$cache_config.difficulty, $id, $answer).await {
+            Ok(true) => {}
+            Ok(false) => {
+                return Err((axum::http::StatusCode::UNAUTHORIZED, "hey robot"));
+            }
+            Err(crate::captcha::CaptchaError::Unknown) => {
+                debug!("captcha check failed with unknown reason");
+                return Err((
+                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    "captcha check failed with unknown reason",
+                ));
+            }
+            Err(crate::captcha::CaptchaError::CacheError(err)) => {
+                debug!("encountered captcha cache error: {:?}", err);
+                return Err((
+                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    "encountered captcha cache error",
+                ));
+            }
+            Err(crate::captcha::CaptchaError::BuilderError) => {
+                debug!("failed to build captcha validator");
+                return Err((
+                    axum::http::StatusCode::INTERNAL_SERVER_ERROR,
+                    "failed to build captcha validator",
+                ));
+            }
+        }
+    };
+}
+
+pub(crate) use captcha_protected;
