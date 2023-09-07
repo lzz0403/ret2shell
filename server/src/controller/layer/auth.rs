@@ -19,7 +19,7 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use serde::{Deserialize, Serialize};
 use std::sync::{atomic::AtomicBool, Arc};
 use tokio::sync::Mutex;
-use tracing::{debug, warn};
+use tracing::{debug, error, warn};
 
 use crate::{
     cache::{self, manager::RedisPool},
@@ -49,7 +49,10 @@ pub async fn decode_token(token: &str, key: &str) -> Token {
         Ok(c) => c,
         Err(err) => {
             debug!("decode token failed: {:?}", err);
-            return Token::default();
+            return Token {
+                id: -1,
+                ..Default::default()
+            };
         }
     };
     token_data.claims
@@ -70,8 +73,8 @@ async fn distribute_token(token: Token, key: &str, expires_time: i64) -> String 
 }
 
 pub async fn extract_user_info<B>(
-    Extension(platform_info): Extension<PlatformInfoModel>,
     State(ref mut cache): State<RedisPool>,
+    Extension(platform_info): Extension<PlatformInfoModel>,
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
@@ -90,20 +93,23 @@ pub async fn extract_user_info<B>(
         .and_then(|header| header.to_str().ok());
 
     let auth_header = if let Some(auth_header) = auth_header {
-        auth_header.strip_prefix("Bearer ").unwrap_or(auth_header)
-    } else {
-        ""
-    };
-
-    let auth_header = match cache::Token::validate(cache, auth_header).await {
-        Ok(()) => String::from(auth_header),
-        Err(err) => {
-            warn!("validate token failed: {}", err);
-            String::from("")
+        match cache::Token::validate(
+            cache,
+            auth_header.strip_prefix("Bearer ").unwrap_or(auth_header),
+        )
+        .await
+        {
+            Ok(()) => String::from(auth_header),
+            Err(err) => {
+                warn!("validate token failed: {}", err);
+                String::from("")
+            }
         }
+    } else {
+        String::new()
     };
 
-    let token = decode_token(&auth_header, &signing_key).await;
+    let token = decode_token(&auth_header, signing_key).await;
 
     let last_time = token.exp - Local::now().timestamp();
 
@@ -113,7 +119,7 @@ pub async fn extract_user_info<B>(
     };
 
     req.extensions_mut().insert(token_tracker.clone());
-    req.extensions_mut().insert(token);
+    req.extensions_mut().insert(token.clone());
 
     let mut resp = next.run(req).await;
 
@@ -122,8 +128,14 @@ pub async fn extract_user_info<B>(
         .load(std::sync::atomic::Ordering::Relaxed)
     {
         cache::Token::revoke(cache, &auth_header).await.ok();
-        let token = token_tracker.token.lock().await.clone();
-        let new_token = distribute_token(token, &signing_key, expires_time).await;
+        let old_token = token_tracker.token.lock().await.clone();
+        let new_token = distribute_token(old_token, signing_key, expires_time).await;
+        cache::Token::store(cache, token.id, &new_token)
+            .await
+            .map_err(|err| {
+                error!("failed to store new token: {:?}", err);
+            })
+            .ok();
         resp.headers_mut().insert(
             "New-Token",
             new_token.parse().expect("failed to parse token"),
@@ -134,9 +146,9 @@ pub async fn extract_user_info<B>(
 }
 
 /// Construct a middleware closure that validate permissions from token.
-/// 
+///
 /// Usage:
-/// 
+///
 /// ```
 /// Router::new()
 ///     .route(...)

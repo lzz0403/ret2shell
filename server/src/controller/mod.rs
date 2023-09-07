@@ -35,6 +35,8 @@ mod user;
 
 use layer::forwarded::get_client_ip;
 
+use self::layer::auth::extract_user_info;
+
 #[derive(Clone, FromRef)]
 pub struct GlobalState {
     pub db: DatabaseConnection,
@@ -91,6 +93,7 @@ fn construct_router(state: &GlobalState) -> Router<GlobalState> {
         .nest("/user", user::router(state))
         .nest("/calendar", calendar::router(state))
         .route("/ping", get(ping))
+        .route_layer(from_fn_with_state(state.clone(), extract_user_info))
 }
 
 async fn ping() -> Result<impl IntoResponse, (StatusCode, &'static str)> {

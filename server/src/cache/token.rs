@@ -3,8 +3,6 @@
 
 use redis::RedisError;
 
-use crate::entity::user::Model as UserModel;
-
 use super::manager::{CacheError, PoolLike, PooledConnectionLike, RedisPool};
 
 pub struct Token;
@@ -12,13 +10,13 @@ pub struct Token;
 impl Token {
     pub async fn store(
         conn: &mut RedisPool,
-        user: &UserModel,
+        user_id: i64,
         token: &str,
     ) -> Result<(), CacheError<RedisError>> {
         let mut conn = conn.get().await?;
-        conn.pset_ex(format!("token:{token}"), user.id, 24 * 60 * 60 * 1000)
+        conn.pset_ex(format!("token:{token}"), user_id, 24 * 60 * 60 * 1000)
             .await?;
-        conn.rpush(format!("token-user:{}", user.id), token).await?;
+        conn.rpush(format!("token-user:{}", user_id), token).await?;
         Ok(())
     }
 
