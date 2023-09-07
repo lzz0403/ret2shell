@@ -2,13 +2,40 @@
 
 use sea_orm::entity::prelude::*;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize, Serializer};
+
+pub fn to_option_ts<S>(
+    time: &Option<DateTime<Utc>>,
+    serializer: S,
+) -> Result<S::Ok, S::Error>
+where
+    S: Serializer,
+{
+    match time {
+        Some(time) => to_ts(time, serializer),
+        None => serializer.serialize_none(),
+    }
+}
+
+pub fn from_option_ts<'de, D>(deserializer: D) -> Result<Option<DateTime<Utc>>, D::Error>
+where
+    D: serde::Deserializer<'de>,
+{
+    let time = Option::<DateTime<Utc>>::deserialize(deserializer)?;
+    Ok(time)
+}
+
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "action")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
-    pub created_at: DateTimeWithTimeZone,
-    pub started_at: Option<DateTimeWithTimeZone>,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub created_at: DateTime<Utc>,
+    #[serde(deserialize_with = "from_option_ts", serialize_with = "to_option_ts")]
+    pub started_at: Option<DateTime<Utc>>,
     pub challenge_id: i64,
     pub status: i16,
     pub commit_id: String,

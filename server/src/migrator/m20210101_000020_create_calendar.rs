@@ -44,13 +44,13 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Calendar::Link).string_len(511).not_null())
                     .col(
                         ColumnDef::new(Calendar::StartTime)
-                            .timestamp_with_time_zone()
+                            .timestamp()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
                     .col(
                         ColumnDef::new(Calendar::EndTime)
-                            .timestamp_with_time_zone()
+                            .timestamp()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

@@ -49,7 +49,7 @@ impl TeamScoreHistoryList {
         }])
     }
 }
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "team")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -62,7 +62,8 @@ pub struct Model {
     pub score: i32,
     #[sea_orm(column_type = "JsonBinary")]
     pub history: TeamScoreHistoryList,
-    pub last_active_at: DateTimeWithTimeZone,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub last_active_at: DateTime<Utc>,
 }
 
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]

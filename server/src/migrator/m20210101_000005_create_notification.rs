@@ -33,7 +33,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Notification::Content).text().not_null())
                     .col(
                         ColumnDef::new(Notification::PublishedAt)
-                            .timestamp_with_time_zone()
+                            .timestamp()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

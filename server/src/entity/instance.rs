@@ -2,7 +2,10 @@
 
 use sea_orm::entity::prelude::*;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "instance")]
 pub struct Model {
     #[sea_orm(primary_key)]
@@ -15,7 +18,8 @@ pub struct Model {
     pub wsrx: String,
     pub flag: String,
     pub renew_count: i32,
-    pub started_at: DateTimeWithTimeZone,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub started_at: DateTime<Utc>,
     pub user_id: Option<i64>,
     pub challenge_id: i64,
 }

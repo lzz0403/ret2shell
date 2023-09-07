@@ -2,14 +2,19 @@
 
 use sea_orm::entity::prelude::*;
 
-#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq)]
+use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
+use chrono::{DateTime, Utc};
+use serde::{Deserialize, Serialize};
+#[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "write_up")]
 pub struct Model {
     #[sea_orm(primary_key)]
     pub id: i64,
     pub title: String,
-    pub published_at: DateTimeWithTimeZone,
-    pub updated_at: DateTimeWithTimeZone,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub published_at: DateTime<Utc>,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub updated_at: DateTime<Utc>,
     pub author_id: Option<i64>,
     pub game_id: i64,
     #[sea_orm(column_type = "Text")]

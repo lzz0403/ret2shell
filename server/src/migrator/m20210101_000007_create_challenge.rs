@@ -76,7 +76,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Challenge::UpdatedAt)
-                            .timestamp_with_time_zone()
+                            .timestamp()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
