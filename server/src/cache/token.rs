@@ -18,7 +18,7 @@ impl Token {
         let mut conn = conn.get().await?;
         conn.pset_ex(format!("token:{token}"), user.id, 24 * 60 * 60 * 1000)
             .await?;
-        conn.rpush(format!("token:{}", user.id), token).await?;
+        conn.rpush(format!("token-user:{}", user.id), token).await?;
         Ok(())
     }
 
@@ -32,7 +32,8 @@ impl Token {
         let mut conn = conn.get().await?;
         let user_id: i64 = conn.get(format!("token:{token}")).await?;
         conn.del(format!("token:{token}")).await?;
-        conn.lrem(format!("token:{}", user_id), 0, token).await?;
+        conn.lrem(format!("token-user:{}", user_id), 0, token)
+            .await?;
         Ok(())
     }
 
@@ -45,7 +46,7 @@ impl Token {
         for token in tokens {
             conn.del(format!("token:{token}")).await?;
         }
-        conn.del(format!("token:{}", user_id)).await?;
+        conn.del(format!("token-user:{}", user_id)).await?;
         Ok(())
     }
 }

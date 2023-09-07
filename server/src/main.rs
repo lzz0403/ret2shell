@@ -108,7 +108,7 @@ fn greet() {
     );
     println!(
         "----------------------------- {} -----------------------------",
-        "server log starts here".to_uppercase().red().bold()
+        "server log starts here".to_uppercase().bold()
     );
 }
 

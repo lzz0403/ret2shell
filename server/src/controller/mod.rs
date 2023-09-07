@@ -24,11 +24,12 @@ use crate::{audit::Auditor, cache::manager::RedisPool, config::GlobalConfig};
 
 mod account;
 mod announcement;
+mod calendar;
 mod certificate;
 mod challenge;
 mod game;
-mod media;
 mod layer;
+mod media;
 mod platform;
 mod user;
 
@@ -88,6 +89,7 @@ fn construct_router(state: &GlobalState) -> Router<GlobalState> {
         .nest("/media", media::router(state))
         .nest("/platform", platform::router(state))
         .nest("/user", user::router(state))
+        .nest("/calendar", calendar::router(state))
         .route("/ping", get(ping))
 }
 
