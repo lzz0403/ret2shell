@@ -94,9 +94,7 @@ pub enum Relation {}
 
 impl ActiveModelBehavior for ActiveModel {}
 
-pub async fn get_platform_info(
-    db: &DatabaseConnection,
-) -> Result<Option<Model>, DbErr> {
+pub async fn get_platform_info(db: &DatabaseConnection) -> Result<Option<Model>, DbErr> {
     let platform_info = Entity::find().one(db).await?;
     match platform_info {
         Some(platform_info) => Ok(Some(platform_info)),

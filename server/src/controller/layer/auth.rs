@@ -23,7 +23,10 @@ use tracing::{debug, error, warn};
 
 use crate::{
     cache::{self, manager::RedisPool},
-    entity::{platform_info::{Auth, Model as PlatformInfoModel}, user::Permissions},
+    entity::{
+        platform_info::{Auth, Model as PlatformInfoModel},
+        user::Permissions,
+    },
 };
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
@@ -161,7 +164,7 @@ macro_rules! permission_required {
             req: axum::http::Request<_>,
             next: axum::middleware::Next<_>,
         | async move {
-            let required_perms = vec![$($perm.to_owned()),*];
+            let required_perms = [$($perm),*];
             match required_perms.iter().any(|perm| token.permissions.0.contains(perm)) {
                 true => Ok(next.run(req).await),
                 false => Err((axum::http::StatusCode::FORBIDDEN, "permission denied"))

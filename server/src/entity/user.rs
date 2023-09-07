@@ -2,11 +2,12 @@
 
 use num_derive::{FromPrimitive, ToPrimitive};
 use sea_orm::{entity::prelude::*, FromJsonQueryResult};
-use serde::{Serialize, Deserialize};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde::{Deserialize, Serialize};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
-
-#[derive(FromPrimitive, ToPrimitive, Clone, Copy, Debug, PartialEq, Serialize_repr, Deserialize_repr, Eq)]
+#[derive(
+    FromPrimitive, ToPrimitive, Clone, Copy, Debug, PartialEq, Serialize_repr, Deserialize_repr, Eq,
+)]
 #[repr(u8)]
 pub enum Permission {
     Basic,
