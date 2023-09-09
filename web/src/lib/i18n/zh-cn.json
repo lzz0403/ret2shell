@@ -120,6 +120,20 @@
     "welcome1": "欢迎选择 Ret 2 Shell 作为您的信息安全一体化训练方案！",
     "welcome2": "接下来我们将通过几个步骤设置平台运行所需要的基本信息。",
     "welcome4": "如果您忘记了初始化凭据，请联系运维人员查看平台配置文件，凭据可以在其中找到。",
-    "welcome3": "首先，请输入初始化凭据，此凭据是部署平台时写在配置文件中的。"
+    "welcome3": "首先，请输入初始化凭据，此凭据是部署平台时写在配置文件中的。",
+    "next": "下一步",
+    "platformName": "平台名称",
+    "platformNamePlaceholder": "请输入平台名称",
+    "footerInfo": "页脚所有权信息",
+    "footerInfoPlaceholder": "请输入页脚所有权信息",
+    "footerUrl": "所有权链接",
+    "footerUrlPlaceholder": "请输入所有权链接",
+    "subjectInfo": "副标题",
+    "subjectInfoPlaceholder": "请输入副标题",
+    "subjectUrl": "副标题指向链接",
+    "subjectUrlPlaceholder": "请输入副标题指向链接",
+    "record": "备案信息",
+    "recordPlaceholder": "请输入网站备案信息，只有中国境内公开网站需要填写此项",
+    "hideMaker": "隐藏页脚中的开发团队信息"
   }
 }

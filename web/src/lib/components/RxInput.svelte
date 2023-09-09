@@ -9,6 +9,7 @@
   export let icon: string | undefined = undefined
   export let id: string | undefined = undefined
   export let name: string | undefined = undefined
+  export let value: string | number = ''
 
   let passwordVisible = false
 
@@ -21,6 +22,12 @@
   $: classes = ['input', 'backdrop-blur', 'bg-base-content/5', 'min-w-0', hasError && 'input-error', clazz]
     .filter(Boolean)
     .join(' ')
+
+  const handleInput = (e: Event & { currentTarget: EventTarget & HTMLInputElement }) => {
+    // in here, you can switch on type and implement
+    // whatever behaviour you need
+    value = type.match(/^(number|range)$/) ? +e.currentTarget.value : e.currentTarget.value
+  }
 </script>
 
 {#if icon || type == 'password'}
@@ -30,7 +37,7 @@
         <div class={`w-5 h-5 ${icon}`} />
       </span>
     {/if}
-    <input {id} {name} class={classes} {disabled} type={computedType} {...$$restProps} />
+    <input {id} {name} class={classes} {disabled} type={computedType} {...$$restProps} value on:input={handleInput} />
     {#if type == 'password'}
       <RxButton on:click={togglePasswordVisible}>
         <!-- icon-[fluent--eye-16-regular] and icon-[fluent--eye-off-16-regular] -->

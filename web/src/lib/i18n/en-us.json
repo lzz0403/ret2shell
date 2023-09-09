@@ -120,6 +120,20 @@
     "invalidUrl": "Wrong link format",
     "subjectInfoRequired": "Please fill in the subtitle",
     "subjectUrlRequired": "Please fill in the link pointed to by the subtitle, which can be the same as the ownership link",
-    "nameTips": "Please give the platform a name."
+    "nameTips": "Please give the platform a name.",
+    "platformNamePlaceholder": "Please enter the platform name",
+    "next": "Next step",
+    "platformName": "Platform name",
+    "footerInfo": "Footer ownership information",
+    "footerInfoPlaceholder": "Please enter footer ownership information",
+    "footerUrl": "Ownership link",
+    "footerUrlPlaceholder": "Please enter ownership link",
+    "subjectInfo": "Subtitle",
+    "subjectInfoPlaceholder": "Please enter subtitle",
+    "subjectUrl": "link points to subtitle",
+    "subjectUrlPlaceholder": "Please enter a link which points to subtitle",
+    "record": "Record information",
+    "recordPlaceholder": "Please enter the website registration information. This is only required for public websites in China.",
+    "hideMaker": "Hide development team information in footer"
   }
 }
