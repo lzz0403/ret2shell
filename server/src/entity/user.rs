@@ -18,7 +18,7 @@ pub enum Permission {
     Organize,
     Devops,
     Statistics,
-    Ctftime,
+    Calendar,
     Certificates,
 }
 
