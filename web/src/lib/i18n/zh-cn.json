@@ -134,6 +134,13 @@
     "subjectUrlPlaceholder": "请输入副标题指向链接",
     "record": "备案信息",
     "recordPlaceholder": "请输入网站备案信息，只有中国境内公开网站需要填写此项",
-    "hideMaker": "隐藏页脚中的开发团队信息"
+    "hideMaker": "隐藏页脚中的开发团队信息",
+    "signingKey": "凭据签发密钥",
+    "signingKeyPlaceholder": "请填写密钥，请使用随机字符串，这一项不需要记忆",
+    "expiresTime": "用户登录过期时间（秒）",
+    "expiresTimePlaceholder": "请填写过期时间",
+    "bufferTime": "凭据更新缓冲时间（秒）",
+    "bufferTimePlaceholder": "请填写缓冲时间",
+    "authWarning": "警告：以下字段会影响用户的凭据签发和验证，如果看不懂这些是什么，请直接点击下一步。"
   }
 }

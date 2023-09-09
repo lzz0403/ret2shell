@@ -134,6 +134,13 @@
     "subjectUrlPlaceholder": "Please enter a link which points to subtitle",
     "record": "Record information",
     "recordPlaceholder": "Please enter the website registration information. This is only required for public websites in China.",
-    "hideMaker": "Hide development team information in footer"
+    "hideMaker": "Hide development team information in footer",
+    "signingKey": "Token signing key",
+    "signingKeyPlaceholder": "Please fill in the key, please use a random string, this item does not need to be remembered",
+    "expiresTime": "User login expiration time (seconds)",
+    "expiresTimePlaceholder": "Please fill in the expiration time",
+    "bufferTime": "Token update buffer time (seconds)",
+    "bufferTimePlaceholder": "Please fill in the buffer time",
+    "authWarning": "Warning: The following fields will affect the issuance and verification of user credentials. If you do not understand what these are, please click next button without modification."
   }
 }

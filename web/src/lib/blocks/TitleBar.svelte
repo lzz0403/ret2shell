@@ -8,22 +8,38 @@
   import RxLink from '$lib/components/RxLink.svelte'
   import RxPopup from '$lib/components/RxPopup.svelte'
   import UserBox from './UserBox.svelte'
+  import { initConfig } from '$lib/stores/init'
+  import RxButton from '$lib/components/RxButton.svelte'
 </script>
 
 <div class="navbar w-auto backdrop-blur shadow bg-neutral/80 transition-shadow z-40 print:hidden px-2 py-0">
-  <RxPopup class="btn-square btn-ghost xl:hidden" name="navPopup" popupWidth={64}>
-    <span slot="button" class="icon-[fluent--navigation-16-regular] w-5 h-5" />
-    <ul class="menu menu-vertical">
+  {#if $initConfig.processing}
+    <RxPopup class="btn-square btn-ghost xl:hidden" name="navPopup" popupWidth={64}>
+      <span slot="button" class="icon-[fluent--navigation-16-regular] w-5 h-5" />
+      <ul class="menu menu-vertical">
+        <GlobalMenu />
+      </ul>
+    </RxPopup>
+  {/if}
+  {#if $initConfig.processing}
+    <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">
+      <li>
+        <RxButton ghost>
+          <span class="icon-[fluent--chevron-double-right-16-regular] opacity-60" />
+          <span>{$i18n.t('init.title')}</span>
+          <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
+        </RxButton>
+      </li>
+    </ul>
+  {:else}
+    <RxLink ghost href="/" exactlyMatched>
+      <img class="hidden xl:block" width="28" height="28" src={logo} alt="logo" />
+      <span>{$platform.name}</span>
+    </RxLink>
+    <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">
       <GlobalMenu />
     </ul>
-  </RxPopup>
-  <RxLink ghost href="/" exactlyMatched>
-    <img class="hidden xl:block" width="28" height="28" src={logo} alt="logo" />
-    <span>{$platform.name}</span>
-  </RxLink>
-  <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">
-    <GlobalMenu />
-  </ul>
+  {/if}
   <div class="flex-1" />
   <RxPopup class="btn-square btn-ghost hidden sm:inline-flex mr-2" name="customizeBoxPopup">
     <span slot="button" class="icon-[fluent--wand-16-regular] w-5 h-5" />

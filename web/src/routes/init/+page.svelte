@@ -36,6 +36,7 @@
       // Do something with the returned value from `onSubmit`.
       initConfig.update((config) => {
         config.token = tokenStored
+        config.processing = true
         return config
       })
       goto('/init/info')

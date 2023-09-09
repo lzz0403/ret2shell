@@ -53,6 +53,7 @@
       <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
     </div>
     <RxForm {form}>
+      <p class="text-base mt-6 text-warning text-center">{$i18n.t('init.authWarning')}</p>
       <RxFormItem
         name="signing_key"
         label={$i18n.t('init.signingKey')}

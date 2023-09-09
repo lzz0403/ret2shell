@@ -45,5 +45,5 @@
     <slot />
   </div>
 {:else}
-  <input {id} class={classes}  use:typeAction {...$$restProps} bind:value />
+  <input {id} {name} class={classes}  use:typeAction {...$$restProps} bind:value />
 {/if}
