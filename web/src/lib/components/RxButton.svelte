@@ -6,8 +6,8 @@
   export let justify: 'start' | 'center' | 'end' = 'center'
   export let uppercase = false
   export let loading = false
-  export let square = false
   export let disabled = false
+  export let square = false
   export let active = false
   export let type: 'button' | 'reset' | 'submit' | null = 'button'
   let clazz = ''

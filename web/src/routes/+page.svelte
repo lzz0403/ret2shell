@@ -2,22 +2,92 @@
   import { platform } from '$lib/stores/platform'
   import { i18n } from '$lib/i18n'
   import RxCalendar from '$lib/components/RxCalendar.svelte'
+  import type { Calendar } from '$lib/models/calendar'
+  import RxButton from '$lib/components/RxButton.svelte'
+  import RxLink from '$lib/components/RxLink.svelte'
+  import Logo from '$lib/assets/logo-gray.svg'
+
+  const calendars: Calendar[] = []
+
+  interface CalendarBtn {
+    data: Calendar
+    active: boolean
+  }
+
+  let selectedCalendar: Calendar | null = null
+  let chosenDate: Date | null = null
+  let gameDates: Date[] = []
+  let selectedDates: Date[] = []
+  let calendarBtns: CalendarBtn[] = []
+  let gameDescription: Promise<string | null> = Promise.resolve(null)
+
+  $: {
+    calendarBtns = calendars.map((c) => ({
+      data: c,
+      active:
+        (chosenDate && chosenDate >= new Date(c.start_time * 1000) && chosenDate <= new Date(c.end_time * 1000)) ||
+        false,
+    }))
+  }
+  $: {
+    // gameDates = ranges in [start_time, end_time]
+    gameDates = calendars
+      .filter((c) => c.audited)
+      .map((c) => {
+        const start = new Date(c.start_time * 1000)
+        const end = new Date(c.end_time * 1000)
+        const dates = []
+        for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+          dates.push(new Date(d))
+        }
+        return dates
+      })
+      .flat()
+    // remove duplicate dates
+    gameDates = Array.from(new Set(gameDates))
+  }
+
+  $: {
+    if (selectedCalendar) {
+      selectedDates = []
+      const start = new Date(selectedCalendar.start_time * 1000)
+      const end = new Date(selectedCalendar.end_time * 1000)
+      for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+        selectedDates.push(new Date(d))
+      }
+      selectedDates = selectedDates
+      gameDescription = render(selectedCalendar.intro)
+    } else {
+      selectedDates = []
+    }
+  }
+
+  const render = async (content: string) => {
+    let { MarkTo } = await import('$lib/markto')
+    let dompurify = await import('isomorphic-dompurify')
+    const markTo = new MarkTo()
+    await markTo.init({ type: 'html' })
+    return dompurify.sanitize((await markTo.render(content)) as string)
+  }
 </script>
 
 <svelte:head><title>{$platform.name}</title></svelte:head>
 
 <div class="flex-1 relative">
   <div class="absolute h-full w-full overflow-scroll snap-mandatory snap-y">
-    <section class="h-full min-h-full snap-center flex flex-col items-center justify-center">
+    <section class="h-full min-h-full snap-center flex flex-col items-center justify-center relative">
       <div class="flex-1" />
       <h1 class="text-3xl font-semibold">
         &nbsp;&nbsp;[&nbsp;{$platform.name}&nbsp;]&nbsp;<span class="text-primary animate-ping">_</span>
       </h1>
       <a class="text-xl text-error mt-8" href={$platform.subjectUrl}>{$platform.subjectInfo}</a>
       <div class="flex-1" />
-      <div class="flex items-center justify-center h-24">
+      <div class="h-24" />
+      <div
+        class="absolute bottom-4 flex flex-col lg:flex-row items-center justify-center h-32 lg:h-16 p-2 space-y-4 lg:space-y-0 lg:space-x-4"
+      >
         <p
-          class="pt-3 pb-3 pr-5 pl-5 mb-3 ml-3 mr-3 backdrop-blur backdrop-brightness-100 rounded-box text-gray-500 shadow-sm border border-base-content/5 inline-flex justify-center items-center flex-wrap"
+          class="pr-3 pl-3 h-full backdrop-blur backdrop-brightness-100 rounded-box text-gray-500 shadow-sm border border-base-content/5 inline-flex justify-center items-center flex-wrap"
         >
           (C) 2022 - {new Date().getFullYear()}&nbsp;
           <a href={$platform.footerUrl} class="link">{$platform.footerInfo}</a>
@@ -35,6 +105,12 @@
             <span class="icon-[fluent--gift-16-regular] w-6 h-6 opacity-80" />
           </a>
         </p>
+        <div
+          class="pr-3 pl-3 h-full backdrop-blur backdrop-brightness-100 rounded-box text-gray-500 shadow-sm border border-base-content/5 inline-flex justify-center items-center flex-wrap space-x-2"
+        >
+          <span class="font-semibold">{$i18n.t('calendar.scrollToView')}</span>
+          <span class="icon-[fluent--chevron-double-down-16-regular] w-6 h-6 opacity-80" />
+        </div>
       </div>
     </section>
     <section class="h-full min-h-full snap-center flex flex-col p-3 md:p-6">
@@ -44,9 +120,100 @@
         <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
       </div>
       <div class="flex flex-1 flex-col lg:flex-row lg:p-24 lg:pt-12 lg:pb-36 space-y-6 lg:space-y-0 lg:space-x-24">
-        <RxCalendar class="flex-1" />
-        <div class="flex-1">
-
+        <div class="flex flex-col justify-start items-center !pt-0">
+          <RxCalendar
+            selectedDays={selectedDates}
+            highlightDays={gameDates}
+            on:select={(event) => {
+              selectedCalendar = null
+              chosenDate = event.detail
+            }}
+          />
+        </div>
+        <div class="flex-1 flex flex-col space-y-2">
+          <div class="flex-1 relative">
+            {#if selectedCalendar}
+              <div
+                class="absolute top-0 left-0 h-full w-full bg-base-content/5 shadow backdrop-blur rounded-box p-6 lg:p-12 space-y-6 overflow-scroll flex flex-col"
+              >
+                <div class="flex flex-row space-x-4 items-center">
+                  <span class="icon-[fluent--flag-24-regular] text-error w-8 h-8" />
+                  <span class="text-3xl font-bold">{selectedCalendar.name}</span>
+                  <div class="flex-1" />
+                  <span class="icon-[fluent--calendar-16-regular] opacity-80" />
+                  <span class="text-base font-bold opacity-80">
+                    {new Date(selectedCalendar.start_time * 1000).toLocaleDateString('default', {
+                      year: 'numeric',
+                      day: '2-digit',
+                      month: '2-digit',
+                    })}
+                    -
+                    {new Date(selectedCalendar.end_time * 1000).toLocaleDateString('default', {
+                      year: 'numeric',
+                      day: '2-digit',
+                      month: '2-digit',
+                    })}
+                  </span>
+                </div>
+                <article class="flex-1 prose !max-w-full">
+                  {#await gameDescription}
+                    <span>please wait</span>
+                  {:then desc}
+                    {@html desc}
+                  {/await}
+                </article>
+                <div class="flex-1" />
+                <div class="flex flex-row space-x-2 justify-end">
+                  <RxLink level="primary" href={selectedCalendar.link}>{$i18n.t('calendar.gotoGame')}</RxLink>
+                  <RxButton
+                    on:click={() => {
+                      selectedCalendar = null
+                    }}>{$i18n.t('calendar.iKnow')}</RxButton
+                  >
+                </div>
+              </div>
+            {:else}
+            {#if calendarBtns.length === 0}
+              <div class="flex flex-col space-y-12 items-center justify-center">
+                <img src={Logo} alt="LOGO" class="w-48 h-48" />
+                <span class="text-2xl font-bold opacity-60">{$i18n.t('calendar.noGame')}</span>
+              </div>
+            {/if}
+              <div class="absolute w-full h-full">
+                <div class="w-full h-full flex flex-col space-y-2 overflow-scroll">
+                  {#each calendarBtns as cal}
+                    <div class="border-b border-b-base-content/5 w-full">
+                      <RxButton
+                        ghost
+                        class="w-full"
+                        justify="start"
+                        on:click={() => {
+                          selectedCalendar = cal.data
+                          chosenDate = null
+                        }}
+                      >
+                        <span class="icon-[fluent--flag-16-regular]" />
+                        <span
+                          class={`icon-[fluent--chevron-double-right-16-regular] text-primary transition-all ${
+                            !cal.active && 'w-0'
+                          }`}
+                        />
+                        <span class={`text-base ${cal.active && 'text-primary'}`}>{cal.data.name}</span>
+                        <div class="flex-1" />
+                        <span class="text-base opacity-60"
+                          >{new Date(cal.data.start_time * 1000).toLocaleDateString('default', {
+                            year: 'numeric',
+                            day: '2-digit',
+                            month: '2-digit',
+                          })}</span
+                        >
+                      </RxButton>
+                    </div>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
         </div>
       </div>
     </section>

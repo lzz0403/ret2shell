@@ -82,6 +82,19 @@
     "title": "Wiki"
   },
   "calendar": {
-    "title": "CTF Calendar"
+    "0": "Sun.",
+    "1": "Mon.",
+    "2": "Tue.",
+    "3": "Wed.",
+    "4": "Thu.",
+    "5": "Fri.",
+    "6": "Sat.",
+    "title": "CTF Calendar",
+    "currentMonthGames": "Games in this month",
+    "scrollToView": "Scroll down to view the game calendar",
+    "gameLink": "Game Link",
+    "iKnow": "I Know",
+    "gotoGame": "Go to this game",
+    "noGame": "No recent games"
   }
 }
