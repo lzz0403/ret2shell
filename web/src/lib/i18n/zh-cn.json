@@ -141,6 +141,15 @@
     "expiresTimePlaceholder": "请填写过期时间",
     "bufferTime": "凭据更新缓冲时间（秒）",
     "bufferTimePlaceholder": "请填写缓冲时间",
-    "authWarning": "警告：以下字段会影响用户的凭据签发和验证，如果看不懂这些是什么，请直接点击下一步。"
+    "authWarning": "警告：以下字段会影响用户的凭据签发和验证，如果看不懂这些是什么，请直接点击下一步。",
+    "captchaDifficultyMinLimit": "最小难度为1",
+    "captchaDifficultyMaxLimit": "最大难度为9",
+    "captchaValidatorLimit": "请选择一个合法的验证器",
+    "captchaEnabled": "启用验证码",
+    "captchaDifficulty": "验证难度",
+    "captchaDifficultyPlaceholder": "请输入验证难度，在0到9之间",
+    "captchaValidator": "验证器",
+    "captchaValidatorImage": "SVG图像验证码",
+    "captchaValidatorPow": "工作量证明"
   }
 }

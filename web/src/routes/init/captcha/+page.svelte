@@ -10,7 +10,6 @@
   import { goto } from '$app/navigation'
   import RxFormItem from '$lib/components/RxFormItem.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
-  import RxButton from '$lib/components/RxButton.svelte'
   import RxCheckBox from '$lib/components/RxCheckBox.svelte'
     import RxRadioGroup from '$lib/components/RxRadioGroup.svelte'
 
@@ -22,8 +21,8 @@
       .max(9, { message: $i18n.t('init.captchaDifficultyMaxLimit') }),
     validator: z
       .number()
-      .min(0, { message: $i18n.t('init.captchaValidatorLimit') })
-      .max(4, { message: $i18n.t('init.captchaValidatorLimit') }),
+      .min(1, { message: $i18n.t('init.captchaValidatorLimit') })
+      .max(2, { message: $i18n.t('init.captchaValidatorLimit') }),
   })
 
   const { form, errors } = createForm({
@@ -83,7 +82,6 @@
         errors={$errors.validator || ''}
       >
         <RxRadioGroup id="validator" name="validator" direction="row" items={[
-          {label: $i18n.t('init.captchaValidatorNone'), value: 0},
           {label: $i18n.t('init.captchaValidatorImage'), value: 1},
           {label: $i18n.t('init.captchaValidatorPow'), value: 2},
         ]} />

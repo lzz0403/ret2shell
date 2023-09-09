@@ -141,6 +141,15 @@
     "expiresTimePlaceholder": "Please fill in the expiration time",
     "bufferTime": "Token update buffer time (seconds)",
     "bufferTimePlaceholder": "Please fill in the buffer time",
-    "authWarning": "Warning: The following fields will affect the issuance and verification of user credentials. If you do not understand what these are, please click next button without modification."
+    "authWarning": "Warning: The following fields will affect the issuance and verification of user credentials. If you do not understand what these are, please click next button without modification.",
+    "captchaDifficultyMinLimit": "Minimum difficulty is 1",
+    "captchaDifficultyMaxLimit": "Maximum difficulty is 9",
+    "captchaDifficulty": "Verification difficulty",
+    "captchaDifficultyPlaceholder": "Please enter the verification difficulty, between 0 and 9",
+    "captchaValidator": "Validator",
+    "captchaValidatorImage": "SVG image verification",
+    "captchaValidatorPow": "Proof of work",
+    "captchaEnabled": "Enable verification code",
+    "captchaValidatorLimit": "Please choose a legitimate validator"
   }
 }
