@@ -99,7 +99,7 @@
     </RxInput>
   {:else if enabled && !loading && !failed && captcha.validator === Validator.Image}
     <RxInput icon="icon-[fluent--beaker-16-regular]" class="w-full" type="text" {hasError} bind:value={captchaAnswer}>
-      <RxButton class="border-none w-24 p-0 overflow-hidden" disabled={fetchingImg} on:click={refreshImg}>
+      <RxButton class="border-none w-24 p-0 overflow-hidden join-item ml-0" disabled={fetchingImg} on:click={refreshImg}>
         <RxImage
           class="w-full object-scale-down"
           loading={fetchingImg}

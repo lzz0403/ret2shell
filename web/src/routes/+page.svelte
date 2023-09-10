@@ -10,7 +10,7 @@
   import { getCalendarList } from '$lib/api/calendar'
   import { showMessage } from '$lib/stores/toast'
 
-  const calendars: Calendar[] = []
+  let calendars: Calendar[] = []
 
   let year = new Date().getFullYear()
   let month = new Date().getMonth() + 1
@@ -31,7 +31,9 @@
     calendarBtns = calendars.map((c) => ({
       data: c,
       active:
-        (chosenDate && chosenDate >= new Date(c.start_time * 1000) && chosenDate <= new Date(c.end_time * 1000)) ||
+        (chosenDate &&
+          chosenDate >= new Date(new Date(c.start_time * 1000).toDateString()) &&
+          chosenDate <= new Date(new Date(c.end_time * 1000).toDateString())) ||
         false,
     }))
   }
@@ -49,6 +51,7 @@
         return dates
       })
       .flat()
+    // console.log(gameDates)
     // remove duplicate dates
     gameDates = Array.from(new Set(gameDates))
   }
@@ -83,11 +86,12 @@
     ).then((response) => {
       if (response.ok && response.status === 200) {
         response.json().then((data) => {
-          calendars.push(...data)
+          // console.log(data)
+          calendars = data
         })
       } else {
         response.text().then((text) => {
-          console.error(text)
+          // console.error(text)
           showMessage('error', `${$i18n.t('calendar.failedToFetch')}: ${text}`, 5000)
         })
       }

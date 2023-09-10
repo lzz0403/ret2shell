@@ -49,10 +49,10 @@
 <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">
   <div class="flex-1 flex flex-col max-w-5xl items-center justify-center">
     <img class="w-1/2" src={LogoFull} alt="Ret 2 Shell" />
-    <p class="text-2xl mt-4 font-bold">{$i18n.t('init.welcome1')}</p>
-    <p class="text-base mt-6 opacity-80">{$i18n.t('init.welcome2')}</p>
-    <p class="text-base mt-2 opacity-80">{$i18n.t('init.welcome3')}</p>
-    <p class="text-base mt-2 opacity-80">{$i18n.t('init.welcome4')}</p>
+    <p class="text-2xl mt-4 font-bold text-center">{$i18n.t('init.welcome1')}</p>
+    <p class="text-base mt-6 opacity-80 text-center">{$i18n.t('init.welcome2')}</p>
+    <p class="text-base mt-2 opacity-80 text-center">{$i18n.t('init.welcome3')}</p>
+    <p class="text-base mt-2 opacity-80 text-center">{$i18n.t('init.welcome4')}</p>
     <RxForm {form} class="w-full max-w-3xl mt-12">
       <RxFormItem name="init_token" label="" hasError={$errors.init_token !== null} errors={$errors.init_token || ''}>
         <RxInput

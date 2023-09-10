@@ -4,7 +4,7 @@ use sea_orm::entity::prelude::*;
 use sea_orm::ActiveValue;
 
 use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
-use chrono::{DateTime, Utc, TimeZone};
+use chrono::{DateTime, TimeZone, Utc};
 use sea_query::Condition;
 use serde::{Deserialize, Serialize};
 
@@ -65,11 +65,27 @@ pub async fn get_calendar_list(
     start_time: i64,
     end_time: i64,
 ) -> Result<Vec<Model>, DbErr> {
+    let start_time = Utc
+        .timestamp_opt(start_time, 0)
+        .single()
+        .ok_or(DbErr::Custom("invalid timestamp of start_time".to_owned()))?;
+    let end_time = Utc
+        .timestamp_opt(end_time, 0)
+        .single()
+        .ok_or(DbErr::Custom("invalid timestamp of end_time".to_owned()))?;
     let models = Entity::find()
         .filter(
             Condition::any()
-                .add(Column::StartTime.gt(Utc.timestamp_opt(start_time, 0).unwrap()))
-                .add(Column::EndTime.lt(Utc.timestamp_opt(end_time, 0).unwrap())),
+                .add(
+                    Condition::all()
+                        .add(Column::StartTime.gt(start_time))
+                        .add(Column::StartTime.lt(end_time)),
+                )
+                .add(
+                    Condition::all()
+                        .add(Column::EndTime.gt(start_time))
+                        .add(Column::EndTime.lt(end_time)),
+                ),
         )
         .all(conn)
         .await?;

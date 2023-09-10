@@ -4,7 +4,7 @@ use axum::response::IntoResponse;
 use axum::routing::{get, patch, post};
 use axum::{middleware, Json, Router};
 use sea_orm::DatabaseConnection;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use tracing::error;
 
 use crate::controller::layer::auth;
@@ -29,17 +29,12 @@ struct ListParams {
     end_time: i64,
 }
 
-#[derive(Serialize, Deserialize)]
-struct CalendarList {
-    calendars: Vec<CalendarModel>,
-}
-
 async fn get_calendar_list(
     State(ref conn): State<DatabaseConnection>,
     Query(params): Query<ListParams>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     match calendar::get_calendar_list(conn, params.start_time, params.end_time).await {
-        Ok(calendars) => Ok(Json(CalendarList { calendars })),
+        Ok(calendars) => Ok(Json(calendars)),
         Err(err) => {
             error!("Failed to get calendar list: {}", err);
             Err((

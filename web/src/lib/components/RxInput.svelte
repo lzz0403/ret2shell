@@ -36,21 +36,21 @@
     { node: (document.getElementById(id as string) as HTMLInputElement | null) || undefined }
   )
 
-  $: classes = ['input', 'backdrop-blur', 'bg-base-content/5', 'min-w-0', hasError && 'input-error', clazz]
+  $: classes = ['input', 'backdrop-blur', 'ml-0', 'bg-base-content/5', 'min-w-0', 'flex-1', hasError && 'input-error', 'join-item', clazz]
     .filter(Boolean)
     .join(' ')
 </script>
 
 {#if icon || type == 'password'}
-  <div class="input-group">
+  <div class="join flex-1">
     {#if icon}
-      <span class="bg-base-content/20">
+      <span class="bg-base-content/20 join-item pl-4 pr-4 flex items-center">
         <div class={`w-5 h-5 ${icon}`} />
       </span>
     {/if}
     <input {id} {name} class={classes} {disabled} use:typeAction {...$$restProps} bind:value />
     {#if type == 'password'}
-      <RxButton on:click={togglePasswordVisible}>
+      <RxButton class="join-item ml-0" on:click={togglePasswordVisible}>
         <!-- icon-[fluent--eye-16-regular] and icon-[fluent--eye-off-16-regular] -->
         <div class={`w-5 h-5 icon-[fluent--${passwordVisible ? 'eye' : 'eye-off'}-16-regular]`} />
       </RxButton>
@@ -58,5 +58,5 @@
     <slot />
   </div>
 {:else}
-  <input {id} {name} class={classes} use:typeAction {...$$restProps} bind:value />
+  <input {id} {name} class={classes.replace('join-item', '')} use:typeAction {...$$restProps} bind:value />
 {/if}

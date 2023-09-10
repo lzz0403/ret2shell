@@ -7,5 +7,5 @@ export interface Calendar {
   end_time: number
   audited: boolean
   game_id: number | null
-  reporter_id: number
+  reporter_id: number | null
 }

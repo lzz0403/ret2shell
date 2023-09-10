@@ -43,6 +43,6 @@ impl CaptchaValidator for ImageValidator {
         answer: &str,
     ) -> Result<bool, CaptchaError> {
         let criteria = cache::Captcha::get(conn, id).await?;
-        Ok(criteria.trim() == answer.trim())
+        Ok(criteria.trim().to_lowercase() == answer.trim().to_lowercase())
     }
 }

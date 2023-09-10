@@ -15,8 +15,5 @@
       <h1 class="text-2xl font-bold">{$i18n.t('announcements.title')}</h1>
       <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
     </div>
-    <div class="divider"></div>
-    <div class="h-16"></div>
-    <div class="divider"></div>
   </div>
 </div>
