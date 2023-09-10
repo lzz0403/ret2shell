@@ -9,7 +9,7 @@
   export let icon: string | undefined = undefined
   export let id: string | undefined = undefined
   export let name: string | undefined = undefined
-  export let value: string | number | unknown = ''
+  export let value: string | number | unknown | undefined = undefined
 
   let passwordVisible = false
 

@@ -12,8 +12,8 @@
 
   export let hasError = false
   export let errors: string | string[] | undefined = undefined
-  export let captchaId: string | unknown = ''
-  export let captchaAnswer: string | unknown = ''
+  export let captchaId: string | unknown | undefined = undefined
+  export let captchaAnswer: string | unknown | undefined = undefined
   let loading = true
   let failed = false
   export let enabled = true
@@ -75,7 +75,7 @@
   })
 </script>
 
-<RxFormItem label={$i18n.t('form.captcha')} name="captchaAnswer" class="" {hasError} {errors}>
+<RxFormItem label={$i18n.t('form.captcha')} name="captcha_answer" class="" {hasError} {errors}>
   {#if loading || failed}
     <RxButton {loading} class="w-full" disabled={loading} on:click={refreshAll}>
       {loading ? $i18n.t('form.loadingCaptcha') : $i18n.t('form.reloadCaptcha')}
