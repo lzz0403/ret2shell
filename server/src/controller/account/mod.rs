@@ -111,7 +111,7 @@ async fn register(
         &body.captcha_answer
     );
 
-    if let Ok(_) = user::get_user_by_account(db, &body.email).await {
+    if user::get_user_by_account(db, &body.email).await.is_ok() {
         return Err((StatusCode::CONFLICT, "account already exists"));
     }
 

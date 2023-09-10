@@ -184,9 +184,8 @@ pub async fn init_token_or_permission_required<B>(
                 Err((StatusCode::FORBIDDEN, "permission denied"))
             }
         }
-        None => {
-            permission_required!(Permission::Devops)(Extension(token), req, next).await
-        }
+        #[allow(clippy::redundant_closure_call)]
+        None => permission_required!(Permission::Devops)(Extension(token), req, next).await,
     }
 }
 
