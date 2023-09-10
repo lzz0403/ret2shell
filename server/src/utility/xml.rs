@@ -3,6 +3,7 @@
 //! This module contains parsers for XML responses from other old servers.
 
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 
 /// Student info in yale.edu schema.
 #[derive(Serialize, Deserialize)]
@@ -13,27 +14,37 @@ pub struct IdsInfo {
     pub uid: String,
 }
 
+#[derive(Debug, Error)]
+pub enum XMLError {
+    #[error("missing attribute: {0}")]
+    MissingAttribute(String),
+    #[error("empty node: {0}")]
+    EmptyNode(String),
+    #[error("parse error")]
+    ParseError(#[from] roxmltree::Error),
+}
+
 /// Parse the XML response from `yale.edu` schema and get the student info.
 #[allow(dead_code)]
 pub fn get_student_info_from_xml_yale_edu(
     xml_response: impl AsRef<str>,
-) -> anyhow::Result<IdsInfo> {
+) -> Result<IdsInfo, XMLError> {
     let doc = roxmltree::Document::parse(xml_response.as_ref())?;
     let name_node = doc
         .descendants()
         .find(|node| node.tag_name().name() == "cn")
-        .ok_or(anyhow::anyhow!("auth xml has no name attribute"))?;
+        .ok_or(XMLError::MissingAttribute(String::from("name")))?;
     let uid_node = doc
         .descendants()
         .find(|node| node.tag_name().name() == "uid")
-        .ok_or(anyhow::anyhow!("auth xml has no uid attribute"))?;
+        .ok_or(XMLError::MissingAttribute(String::from("uid")))?;
     let name = name_node
         .text()
-        .ok_or(anyhow::anyhow!("name node has no text"))?
+        .ok_or(XMLError::EmptyNode(String::from("name")))?
         .to_owned();
     let uid = uid_node
         .text()
-        .ok_or(anyhow::anyhow!("uid node has no text"))?
+        .ok_or(XMLError::EmptyNode(String::from("uid")))?
         .to_owned();
     Ok(IdsInfo { name, uid })
 }

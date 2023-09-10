@@ -5,7 +5,6 @@
 //! the file descriptor until application exit.
 
 use crate::config::GlobalConfig;
-use anyhow::Result;
 use std::path::Path;
 use tracing_appender::non_blocking::WorkerGuard;
 use tracing_appender::{non_blocking, rolling};
@@ -13,7 +12,7 @@ use tracing_subscriber::fmt::Layer;
 use tracing_subscriber::prelude::*;
 
 /// Initialize the logger.
-pub async fn initialize(config: &GlobalConfig) -> Result<(WorkerGuard, WorkerGuard)> {
+pub async fn initialize(config: &GlobalConfig) -> anyhow::Result<(WorkerGuard, WorkerGuard)> {
     tokio::fs::create_dir_all(&config.logging.directory).await?;
     let file_appender = rolling::daily(
         Path::new(&config.logging.directory).canonicalize()?,
