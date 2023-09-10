@@ -40,13 +40,13 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Wiki::Title).string_len(127).not_null())
                     .col(
                         ColumnDef::new(Wiki::PublishedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
                     .col(
                         ColumnDef::new(Wiki::UpdatedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

@@ -4,7 +4,7 @@ use sea_orm::entity::prelude::*;
 use sea_orm::ActiveValue;
 
 use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, Utc, TimeZone};
 use sea_query::Condition;
 use serde::{Deserialize, Serialize};
 
@@ -68,8 +68,8 @@ pub async fn get_calendar_list(
     let models = Entity::find()
         .filter(
             Condition::any()
-                .add(Column::StartTime.gt(start_time))
-                .add(Column::EndTime.lt(end_time)),
+                .add(Column::StartTime.gt(Utc.timestamp_opt(start_time, 0).unwrap()))
+                .add(Column::EndTime.lt(Utc.timestamp_opt(end_time, 0).unwrap())),
         )
         .all(conn)
         .await?;

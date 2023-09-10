@@ -38,11 +38,11 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Action::CreatedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
-                    .col(ColumnDef::new(Action::StartedAt).timestamp())
+                    .col(ColumnDef::new(Action::StartedAt).timestamp_with_time_zone())
                     .col(ColumnDef::new(Action::ChallengeId).big_integer().not_null())
                     .foreign_key(
                         ForeignKey::create()

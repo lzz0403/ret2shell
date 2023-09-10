@@ -41,13 +41,13 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(WriteUp::Title).string_len(127).not_null())
                     .col(
                         ColumnDef::new(WriteUp::PublishedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
                     .col(
                         ColumnDef::new(WriteUp::UpdatedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

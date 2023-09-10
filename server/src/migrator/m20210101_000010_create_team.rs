@@ -70,7 +70,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Team::LastActiveAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

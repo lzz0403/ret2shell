@@ -39,7 +39,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Submission::CreatedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

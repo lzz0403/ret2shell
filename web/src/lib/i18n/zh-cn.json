@@ -99,7 +99,8 @@
     "gameLink": "比赛链接",
     "iKnow": "了解了",
     "gotoGame": "转到这场比赛",
-    "noGame": "近期没有比赛"
+    "noGame": "近期没有比赛",
+    "failedToFetch": "获取竞赛日历失败"
   },
   "init": {
     "accountTitle": "注册初始管理员用户",

@@ -6,8 +6,14 @@
   import RxButton from '$lib/components/RxButton.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
   import Logo from '$lib/assets/logo-gray.svg'
+  import { onMount } from 'svelte'
+  import { getCalendarList } from '$lib/api/calendar'
+  import { showMessage } from '$lib/stores/toast'
 
   const calendars: Calendar[] = []
+
+  let year = new Date().getFullYear()
+  let month = new Date().getMonth() + 1
 
   interface CalendarBtn {
     data: Calendar
@@ -69,6 +75,28 @@
     await markTo.init({ type: 'html' })
     return dompurify.sanitize((await markTo.render(content)) as string)
   }
+
+  function fetchCalendar() {
+    getCalendarList(
+      Math.floor(new Date(year, month - 1).getTime() / 1000),
+      Math.floor(new Date(year, month).getTime() / 1000)
+    ).then((response) => {
+      if (response.ok && response.status === 200) {
+        response.json().then((data) => {
+          calendars.push(...data)
+        })
+      } else {
+        response.text().then((text) => {
+          console.error(text)
+          showMessage('error', `${$i18n.t('calendar.failedToFetch')}: ${text}`, 5000)
+        })
+      }
+    })
+  }
+
+  onMount(() => {
+    fetchCalendar()
+  })
 </script>
 
 <svelte:head><title>{$platform.name}</title></svelte:head>
@@ -122,11 +150,18 @@
       <div class="flex flex-1 flex-col lg:flex-row lg:p-24 lg:pt-12 lg:pb-36 space-y-6 lg:space-y-0 lg:space-x-24">
         <div class="flex flex-col justify-start items-center !pt-0">
           <RxCalendar
+            {year}
+            {month}
             selectedDays={selectedDates}
             highlightDays={gameDates}
             on:select={(event) => {
               selectedCalendar = null
               chosenDate = event.detail
+            }}
+            on:change-date={(event) => {
+              year = event.detail.year
+              month = event.detail.month
+              fetchCalendar()
             }}
           />
         </div>

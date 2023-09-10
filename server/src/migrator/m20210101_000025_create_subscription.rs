@@ -44,7 +44,7 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Subscription::StartTime)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )

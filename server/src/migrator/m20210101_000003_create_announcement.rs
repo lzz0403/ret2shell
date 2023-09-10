@@ -44,13 +44,13 @@ impl MigrationTrait for Migration {
                     )
                     .col(
                         ColumnDef::new(Announcement::UpdatedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
                     .col(
                         ColumnDef::new(Announcement::PublishedAt)
-                            .timestamp()
+                            .timestamp_with_time_zone()
                             .not_null()
                             .default(CurrentTimestamp),
                     )
