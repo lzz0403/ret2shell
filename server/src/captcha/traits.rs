@@ -1,7 +1,7 @@
 use crate::cache::manager::RedisPool;
 use async_trait::async_trait;
 use serde::{Deserialize, Serialize};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 use thiserror::Error;
 
 /// Validator enum for different types of captcha validation

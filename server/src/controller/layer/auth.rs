@@ -23,10 +23,11 @@ use tracing::{debug, error, warn};
 
 use crate::{
     cache::{self, manager::RedisPool},
+    config::GlobalConfig,
     entity::{
         config::{Auth, Model as ConfigModel},
-        user::{Permissions, Permission},
-    }, config::GlobalConfig,
+        user::{Permission, Permissions},
+    },
 };
 
 #[derive(Clone, Debug, Serialize, Deserialize, Default)]
@@ -154,7 +155,6 @@ pub async fn extract_user_info<B>(
     }
 }
 
-
 pub async fn init_token_or_permission_required<B>(
     State(config): State<GlobalConfig>,
     Extension(token): Extension<Token>,
@@ -174,15 +174,18 @@ pub async fn init_token_or_permission_required<B>(
     debug!("user init token is: {:?}", init_token);
     match init_token {
         Some(token) => {
-            debug!("platform init token is: {}", config.server.init_token.trim());
+            debug!(
+                "platform init token is: {}",
+                config.server.init_token.trim()
+            );
             if token.trim() == config.server.init_token.trim() {
-                return Ok(next.run(req).await);
+                Ok(next.run(req).await)
             } else {
-                return Err((StatusCode::FORBIDDEN, "permission denied"));
+                Err((StatusCode::FORBIDDEN, "permission denied"))
             }
         }
         None => {
-            return permission_required!(Permission::Devops)(Extension(token), req, next).await;
+            permission_required!(Permission::Devops)(Extension(token), req, next).await
         }
     }
 }

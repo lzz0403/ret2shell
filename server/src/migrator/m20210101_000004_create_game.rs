@@ -56,10 +56,26 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Game::Name).string_len(255).not_null())
                     .col(ColumnDef::new(Game::Brief).string_len(255).not_null())
                     .col(ColumnDef::new(Game::Introduction).text().not_null())
-                    .col(ColumnDef::new(Game::StartTime).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(Game::EndTime).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(Game::RegisterTime).timestamp_with_time_zone().not_null())
-                    .col(ColumnDef::new(Game::ArchiveTime).timestamp_with_time_zone().not_null())
+                    .col(
+                        ColumnDef::new(Game::StartTime)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Game::EndTime)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Game::RegisterTime)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
+                    .col(
+                        ColumnDef::new(Game::ArchiveTime)
+                            .timestamp_with_time_zone()
+                            .not_null(),
+                    )
                     .col(ColumnDef::new(Game::Hidden).boolean().not_null())
                     .col(ColumnDef::new(Game::Frozen).boolean().not_null())
                     .col(ColumnDef::new(Game::HostAsGame).boolean().not_null())

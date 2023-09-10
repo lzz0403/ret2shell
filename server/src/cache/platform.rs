@@ -17,8 +17,7 @@ impl Platform {
     ) -> Result<PlatformInfoModel, CacheError<RedisError>> {
         let config = config::get_config(db).await?;
         let mut conn = conn.get().await?;
-        conn.set("config", serde_json::to_string(&config)?)
-            .await?;
+        conn.set("config", serde_json::to_string(&config)?).await?;
         Ok(config)
     }
 

@@ -104,10 +104,7 @@ pub async fn get_config(db: &DatabaseConnection) -> Result<Model, DbErr> {
     }
 }
 
-pub async fn update_config(
-    db: &DatabaseConnection,
-    config: Model,
-) -> Result<(), DbErr> {
+pub async fn update_config(db: &DatabaseConnection, config: Model) -> Result<(), DbErr> {
     let original_info = Entity::find().one(db).await?;
     match original_info {
         Some(original_info) => {

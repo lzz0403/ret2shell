@@ -1,17 +1,17 @@
 mod captcha;
 
 use axum::{
-    extract::State, http::StatusCode, response::IntoResponse, routing::post,
-    Extension, Json, Router,
+    extract::State, http::StatusCode, response::IntoResponse, routing::post, Extension, Json,
+    Router,
 };
 use sea_orm::{DatabaseConnection, DbErr};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, warn};
+use tracing::{debug, error, warn};
 
 use super::layer::auth::{Token, TokenTracker};
 use crate::captcha::captcha_protected;
 use crate::entity::config::Model as ConfigModel;
-use crate::entity::user::{self, Permissions};
+use crate::entity::user::{self, count_user, create_user, Permissions};
 use crate::{cache::manager::RedisPool, controller::GlobalState, entity::user::Permission};
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
@@ -42,7 +42,12 @@ async fn login(
         return Err((StatusCode::CONFLICT, "you are already logged in"));
     }
     let captcha_config = &config.captcha;
-    captcha_protected!(&captcha_config, cache, &body.captcha_id, &body.captcha_answer);
+    captcha_protected!(
+        captcha_config,
+        cache,
+        &body.captcha_id,
+        &body.captcha_answer
+    );
 
     let user = user::get_user_by_account(db, &body.account)
         .await
@@ -99,11 +104,15 @@ async fn register(
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     debug!("register request: {:?}", body);
     let captcha_config = &config.captcha;
-    captcha_protected!(&captcha_config, cache, &body.captcha_id, &body.captcha_answer);
+    captcha_protected!(
+        captcha_config,
+        cache,
+        &body.captcha_id,
+        &body.captcha_answer
+    );
 
-    match user::get_user_by_account(db, &body.email).await {
-        Ok(_) => return Err((StatusCode::CONFLICT, "account already exists")),
-        _ => (),
+    if let Ok(_) = user::get_user_by_account(db, &body.email).await {
+        return Err((StatusCode::CONFLICT, "account already exists"));
     }
 
     let password = bcrypt::hash(body.password, bcrypt::DEFAULT_COST).map_err(|err| {
@@ -111,15 +120,46 @@ async fn register(
         (StatusCode::INTERNAL_SERVER_ERROR, "failed to hash password")
     })?;
 
+    let permissions = match count_user(db).await.map_err(|err| {
+        error!("failed to count user: {:?}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "encountered error in database",
+        )
+    })? {
+        0 => Permissions(vec![
+            Permission::Basic,
+            Permission::Verified,
+            Permission::Publish,
+            Permission::Audit,
+            Permission::Organize,
+            Permission::Devops,
+            Permission::Statistics,
+            Permission::Calendar,
+            Permission::Certificates,
+        ]),
+        _ => Permissions(vec![Permission::Basic]),
+    };
     let new_user = user::Model {
         name: body.name,
         password: Some(password),
         email: Some(body.email),
-        permissions: Permissions(vec![Permission::Basic]),
+        permissions,
         hidden: false,
         banned: false,
         ..Default::default()
     };
 
-    Ok(StatusCode::OK)
+    Ok(Json(
+        create_user(db, new_user)
+            .await
+            .map_err(|err| {
+                error!("failed to create user: {:?}", err);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "failed to create user with database error",
+                )
+            })?
+            .desensitize(),
+    ))
 }

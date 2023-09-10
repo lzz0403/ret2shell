@@ -9,9 +9,7 @@ use serde::{Deserialize, Serialize};
 use tracing::error;
 
 use crate::controller::GlobalState;
-use crate::entity::announcement::{
-    self, Model as AnnouncementModel
-};
+use crate::entity::announcement::{self, Model as AnnouncementModel};
 use crate::entity::user::Permission;
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
@@ -86,7 +84,7 @@ async fn create_announcement(
     State(ref conn): State<DatabaseConnection>,
     Json(data): Json<AnnouncementModel>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let res = match announcement::create_announcement(conn, data.clone()).await {
+    match announcement::create_announcement(conn, data.clone()).await {
         Ok(_) => Ok(StatusCode::CREATED),
         Err(err) => {
             error!("Failed to create announcement: {}", err);
@@ -95,14 +93,13 @@ async fn create_announcement(
                 "failed to create announcement",
             ))
         }
-    };
+    }
     // TODO: push announcement released event
     // let data = AnnouncementReleasedEventData {
     //     is_created: true,
     //     title: data.title,
     // };
     // let _ = push_announcement_released_event(PusherEventLevel::Public, data, cache.pusher).await;
-    res
 }
 
 async fn update_announcement(
@@ -110,7 +107,7 @@ async fn update_announcement(
     Path(id): Path<i64>,
     Json(data): Json<AnnouncementModel>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    let res = match announcement::update_announcement(conn, id, data.clone()).await {
+    match announcement::update_announcement(conn, id, data.clone()).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
             error!("Failed to update announcement: {}", err);
@@ -119,14 +116,13 @@ async fn update_announcement(
                 "failed to update announcement",
             ))
         }
-    };
+    }
     // TODO: push announcement released event
     // let data = AnnouncementReleasedEventData {
     //     is_created: false,
     //     title: data.title,
     // };
     // let _ = push_announcement_released_event(PusherEventLevel::Public, data, cache.pusher).await;
-    res
 }
 
 async fn delete_announcement(

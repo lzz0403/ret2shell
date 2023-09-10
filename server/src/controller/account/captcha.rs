@@ -25,15 +25,11 @@ async fn get_captcha(
         }));
     }
     Ok(Json(
-        captcha::generate_captcha(
-            &captcha.validator,
-            &mut cache,
-            &captcha.difficulty,
-        )
-        .await
-        .map_err(|err| {
-            tracing::error!("query platform info from cache failed: {}", err);
-            (StatusCode::INTERNAL_SERVER_ERROR, "encountered cache error")
-        })?,
+        captcha::generate_captcha(&captcha.validator, &mut cache, &captcha.difficulty)
+            .await
+            .map_err(|err| {
+                tracing::error!("query platform info from cache failed: {}", err);
+                (StatusCode::INTERNAL_SERVER_ERROR, "encountered cache error")
+            })?,
     ))
 }

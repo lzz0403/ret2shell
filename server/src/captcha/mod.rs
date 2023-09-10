@@ -60,7 +60,15 @@ pub async fn check_captcha(
 
 macro_rules! captcha_protected {
     ($cache_config:expr, $cache:expr, $id:expr, $answer:expr) => {
-        match crate::captcha::check_captcha(&$cache_config.validator, $cache, &$cache_config.difficulty, $id, $answer).await {
+        match crate::captcha::check_captcha(
+            &$cache_config.validator,
+            $cache,
+            &$cache_config.difficulty,
+            $id,
+            $answer,
+        )
+        .await
+        {
             Ok(true) => {}
             Ok(false) => {
                 return Err((axum::http::StatusCode::UNAUTHORIZED, "hey robot"));

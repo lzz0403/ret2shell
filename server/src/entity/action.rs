@@ -6,7 +6,7 @@ use sea_orm::entity::prelude::*;
 use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize, Serializer};
-use serde_repr::{Serialize_repr, Deserialize_repr};
+use serde_repr::{Deserialize_repr, Serialize_repr};
 
 pub fn to_option_ts<S>(time: &Option<DateTime<Utc>>, serializer: S) -> Result<S::Ok, S::Error>
 where
