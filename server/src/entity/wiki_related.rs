@@ -81,9 +81,7 @@ pub async fn delete_related_record(
     .await?
     {
         Some(id) => Entity::delete_by_id(id).exec(conn).await.map(|_| ()),
-        None => Err(DbErr::RecordNotFound(
-            "related wiki record not found".to_owned(),
-        )),
+        None => Err(DbErr::RecordNotFound("wiki".to_owned())),
     }
 }
 
