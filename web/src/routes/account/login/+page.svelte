@@ -57,7 +57,7 @@
 
   const captchaAnswerValue = $data.captcha_answer
   $: {
-    console.log('answer', captchaAnswerValue, $data.captcha_answer)
+    // console.log('answer', captchaAnswerValue, $data.captcha_answer)
     if (captchaAnswerValue !== $data.captcha_answer) {
       $touched.captcha_answer = true
     }

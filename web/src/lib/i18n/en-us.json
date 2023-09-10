@@ -65,7 +65,7 @@
   },
   "global": {
     "imageBroken": "Image Broken",
-    "backendOffline": "The backend appears to be offline, please contact your administrator if you continue to see this message after refreshing several times.",
+    "backendOffline": "The backend service seems to be offline. Please try refreshing the page. If the error persists after multiple attempts, please contact the website administrator.",
     "cookieAlert": "We don't use cookies, so don't worry."
   },
   "errors": {

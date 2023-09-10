@@ -65,7 +65,7 @@
   },
   "global": {
     "imageBroken": "图片已损坏",
-    "backendOffline": "后端似乎离线了，如果刷新几次后持续看到此消息，请联系管理员。",
+    "backendOffline": "后端服务似乎离线了，请尝试刷新页面，如果多次尝试仍旧出错，请联系网站管理员。",
     "cookieAlert": "我们不使用小饼干，无须担心。"
   },
   "errors": {
