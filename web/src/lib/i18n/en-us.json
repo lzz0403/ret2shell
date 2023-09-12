@@ -239,5 +239,8 @@
   "user": {
     "anonymous": "[DELETED]",
     "deletedAuthor": "[DELETED]"
+  },
+  "component": {
+    "uploadTips": "Drag and drop files here to upload"
   }
 }
