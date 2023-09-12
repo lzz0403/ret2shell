@@ -33,16 +33,27 @@
 
   let contentRendered: Promise<string> = render(wiki.content)
 
+  function scrollToView() {
+    setTimeout(() => {
+      document.getElementById(decodeURI(location.hash.replace('#', '')))?.scrollIntoView({ behavior: 'smooth' })
+    }, 100)
+  }
+
   page.subscribe((page) => {
     if (!page.params['wiki']) return
-    loading = true
     const arr = page.params['wiki'].split('/')
+
     const id = parseInt(arr[arr.length - 1]) || -1
+    if (id === wiki.id) return
+    loading = true
     if (id > 0) {
       getWiki(id)
         .then((data) => {
           wiki = data
           contentRendered = render(wiki.content)
+          contentRendered.then(() => {
+            scrollToView()
+          })
           getUserInfo(data.author_id)
             .then((data) => {
               user = data
@@ -111,6 +122,6 @@
         {@html desc}
       {/await}
     </article>
-    <div class="h-32"></div>
+    <div class="h-32" />
   </div>
 {/if}

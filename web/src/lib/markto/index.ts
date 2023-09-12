@@ -9,9 +9,9 @@ type IParams = { type: 'html'; options?: MarkToHtmlOptions } | { type: 'terminal
 export class MarkTo {
   private processor: Processor | undefined
 
-  public constructor() {}
+  public constructor() { }
 
-  public async init(params: IParams) {
+  public async init (params: IParams) {
     this.processor = unified().use(remarkParse)
     switch (params.type) {
       case 'html':
@@ -23,13 +23,13 @@ export class MarkTo {
     }
   }
 
-  public async render(markdown: string) {
+  public async render (markdown: string) {
     // console.log(this.processor?.attachers)
     const result = await this.processor?.process(markdown)
     return result?.toString()
   }
 
-  private async initHtml(options?: MarkToHtmlOptions) {
+  private async initHtml (options?: MarkToHtmlOptions) {
     const [remarkRehype, rehypeStringify] = await Promise.all([import('remark-rehype'), import('rehype-stringify')])
     /* remark */ {
       if (options?.katex) {
@@ -47,6 +47,7 @@ export class MarkTo {
       }
       if (options?.prism) {
         const rehypePrismPlus = await import('rehype-prism-plus/common')
+        await import('$lib/styles/prism.scss')
         this.processor?.use(rehypePrismPlus.default, { ignoreMissing: true })
       }
       this.processor?.use(rehypeSlug)
@@ -55,5 +56,5 @@ export class MarkTo {
     }
   }
 
-  private async initTerminal(_options?: MarkToTerminalOptions) {}
+  private async initTerminal (_options?: MarkToTerminalOptions) { }
 }
