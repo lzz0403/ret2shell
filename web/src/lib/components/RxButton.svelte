@@ -52,7 +52,7 @@
 
 <button class={classes} on:click={handleClick} disabled={disabled || loading} {type} {...$$restProps}>
   {#if loading}
-    <span class="loading" />
+    <span class="loading loading-spinner loading-sm" />
   {/if}
   <slot />
 </button>

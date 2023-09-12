@@ -1,5 +1,5 @@
 <script lang="ts">
-  import '$lib/styles/base.sass'
+  import '$lib/styles/base.scss'
   import '@fontsource/jetbrains-mono'
   import 'overlayscrollbars/overlayscrollbars.css'
   import TitleBar from '$lib/blocks/TitleBar.svelte'

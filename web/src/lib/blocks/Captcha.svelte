@@ -97,7 +97,12 @@
       bind:value={captchaAnswer}
       placeholder="0XDEADBEEF######"
     >
-      <RxButton loading={powing} disabled={powing || fetchingPow} on:click={refreshPow}>
+      <RxButton
+        class="border-none overflow-hidden join-item ml-0"
+        loading={powing}
+        disabled={powing || fetchingPow}
+        on:click={refreshPow}
+      >
         {fetchingPow ? $i18n.t('form.fetchingPow') : powing ? $i18n.t('form.powing') : ''}
         {#if !fetchingPow && !powing}
           <span class="icon-[fluent--checkmark-16-regular] w-6 h-6 text-success" />

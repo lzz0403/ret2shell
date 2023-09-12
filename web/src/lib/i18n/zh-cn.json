@@ -95,7 +95,15 @@
     "sideTitle": "知识库",
     "sideToc": "知识库目录",
     "fetchFailed": "获取文章列表失败",
-    "fetchingList": "加载列表中..."
+    "fetchingList": "加载列表中...",
+    "author": "作者",
+    "publishedAt": "发布于",
+    "fetchingContent": "获取内容中...",
+    "unknownAuthor": "[未知]",
+    "updatedAt": "更新于",
+    "welcomeTitle": "欢迎来到知识库！",
+    "guide": "请在左侧目录中选择你想阅读的文章",
+    "rendering": "渲染中..."
   },
   "calendar": {
     "0": "日",
@@ -224,5 +232,9 @@
   "action": {
     "ok": "好的",
     "yes": "确定"
+  },
+  "user": {
+    "anonymous": "[已删除]",
+    "deletedAuthor": "[已删除]"
   }
 }

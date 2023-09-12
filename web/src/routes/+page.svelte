@@ -11,7 +11,7 @@
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
   import RxTag from '$lib/components/RxTag.svelte'
-  import xdsecMascot from '$lib/assets/xdsec-mascot.webp'
+  import '$lib/styles/article.scss'
 
   let calendars: Calendar[] = []
 
@@ -208,7 +208,7 @@
                 </article>
                 <div class="flex-1" />
                 <div class="flex flex-row space-x-2 justify-end">
-                  <RxLink level="primary" href={selectedCalendar.link}>{$i18n.t('calendar.gotoGame')}</RxLink>
+                  <RxLink level="info" href={selectedCalendar.link}>{$i18n.t('calendar.gotoGame')}</RxLink>
                   <RxButton
                     on:click={() => {
                       selectedCalendar = null

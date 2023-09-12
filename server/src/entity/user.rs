@@ -52,6 +52,7 @@ impl Model {
         Self {
             password: None,
             email: None,
+            institute_info: None,
             ..self.clone()
         }
     }

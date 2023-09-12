@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  export let level: 'primary' | 'info' | 'success' | 'warning' | 'error' | null = null
+  export let level: 'info' | 'success' | 'warning' | 'error' | null = null
   export let href: string
   export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'md'
   export let ghost = false
@@ -35,6 +35,7 @@
     justify && `justify-${justify}`,
     !uppercase && 'normal-case',
     square && 'btn-square',
+    (exactlyMatched ? $page.route.id === href : $page.route.id?.startsWith(href)) && 'text-primary',
     clazz,
   ]
     .filter(Boolean)
@@ -44,7 +45,6 @@
 <a
   {href}
   class={classes}
-  class:text-primary={exactlyMatched ? $page.route.id === href : $page.route.id?.startsWith(href)}
   {...$$restProps}
 >
   <slot />

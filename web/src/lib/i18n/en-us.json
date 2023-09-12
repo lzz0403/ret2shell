@@ -24,7 +24,8 @@
     "emailInvalid": "Email format is illegal",
     "registerFailed": "Registration failed",
     "name": "Username",
-    "loginSuccess": "Identity verification successful, welcome back."
+    "loginSuccess": "Identity verification successful, welcome back.",
+    "email": "Email"
   },
   "playground": {
     "title": "Playground",
@@ -94,7 +95,15 @@
     "sideTitle": "Wiki",
     "sideToc": "Wiki table-of-content",
     "fetchFailed": "Failed to get article list",
-    "fetchingList": "Loading list..."
+    "fetchingList": "Loading list...",
+    "fetchingContent": "Fetching content...",
+    "publishedAt": "Published at",
+    "updatedAt": "Updated at",
+    "author": "Author",
+    "unknownAuthor": "[UNKNOWN]",
+    "welcomeTitle": "Welcome to the wiki!",
+    "guide": "Please select the article you want to read in the table of contents on the left",
+    "rendering": "Rendering..."
   },
   "calendar": {
     "0": "Sun.",
@@ -223,5 +232,9 @@
   "action": {
     "ok": "OK",
     "yes": "YES"
+  },
+  "user": {
+    "anonymous": "[DELETED]",
+    "deletedAuthor": "[DELETED]"
   }
 }

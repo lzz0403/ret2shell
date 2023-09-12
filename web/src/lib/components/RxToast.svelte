@@ -11,10 +11,6 @@
   export let persistTime: number | undefined = undefined
   export let level: 'info' | 'warning' | 'success' | 'error' = 'info'
 
-  $: {
-    console.log(id, persistTime)
-  }
-
   let progress: HTMLElement
 
   const dispatch = createEventDispatcher()

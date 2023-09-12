@@ -1,0 +1,29 @@
+article.prose,
+article.prose * {
+  @apply scroll-m-20;
+}
+
+article>pre,
+article>pre * {
+  @apply whitespace-pre-wrap;
+  overflow-wrap: break-word;
+}
+
+article>h1>a,
+article>h2>a,
+article>h3>a,
+article>h4>a,
+article>h5>a,
+article>h6>a {
+  @apply no-underline #{!important};
+}
+
+article>h1>a:hover::after,
+article>h2>a:hover::after,
+article>h3>a:hover::after,
+article>h4>a:hover::after,
+article>h5>a:hover::after,
+article>h6>a:hover::after {
+  content: '¶';
+  @apply text-primary opacity-60 ml-4;
+}
