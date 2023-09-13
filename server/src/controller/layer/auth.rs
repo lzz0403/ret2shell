@@ -212,7 +212,7 @@ pub async fn game_challenges_privilege_required<B>(
 }
 
 /// Construct a middleware closure that validate permissions from token.
-/// 
+///
 /// all the permissions appeared here should be in the `permissions` field in user's token.
 ///
 /// Usage:

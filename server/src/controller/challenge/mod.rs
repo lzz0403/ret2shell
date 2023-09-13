@@ -38,7 +38,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/", post(create_challenge))
         .route_layer(middleware::from_fn(auth::permission_required_any!(
-            Permission::Organize, Permission::Devops
+            Permission::Organize,
+            Permission::Devops
         )))
         .route("/", get(get_challenge_list))
         .route_layer(middleware::from_fn(
@@ -62,7 +63,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     get(get_challenge_build_status).post(add_challenge_to_build_queue),
                 )
                 .route_layer(middleware::from_fn(auth::permission_required_any!(
-                    Permission::Organize, Permission::Devops
+                    Permission::Organize,
+                    Permission::Devops
                 )))
                 .route("/", get(get_challenge_info))
                 .route("/status", get(get_challenge_status))

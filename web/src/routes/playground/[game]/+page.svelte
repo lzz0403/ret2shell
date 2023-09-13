@@ -32,17 +32,13 @@
         <span class="w-4 h-4 icon-[fluent--pin-16-regular]" />
         {$i18n.t('playground.gameIntro')}
       </RxButton>
-      <RxButton ghost>
-        <span class="w-4 h-4 icon-[fluent--pin-16-regular]" />
-        {$i18n.t('playground.challengeList')}
-      </RxButton>
       <div class="join">
         <RxButton class="join-item" ghost>
           <span class="w-4 h-4 icon-[fluent--braces-16-regular]" />
           Easy C++
         </RxButton>
         <RxButton class="join-item ml-0" ghost>
-        <span class="w-4 h-4 icon-[fluent--dismiss-16-regular]" />
+          <span class="w-4 h-4 icon-[fluent--dismiss-16-regular]" />
         </RxButton>
       </div>
     </div>

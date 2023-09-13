@@ -4,7 +4,7 @@ use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
 use chrono::{DateTime, Utc};
 use sea_orm::entity::prelude::*;
 use sea_orm::{FromQueryResult, QueryOrder, QuerySelect};
-use sea_query::{JoinType, Condition};
+use sea_query::{Condition, JoinType};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]

@@ -42,13 +42,16 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                 .route("/", patch(update_game))
                 .route("/submission", get(get_game_submission_list))
                 .route_layer(middleware::from_fn(auth::permission_required_all!(
-                    Permission::Organize, Permission::Devops, Permission::Audit
+                    Permission::Organize,
+                    Permission::Devops,
+                    Permission::Audit
                 )))
                 .route("/", get(get_game))
                 .route("/scoreboard", get(get_scoreboard))
                 .route("/team-solved", get(get_team_solved))
                 .route_layer(middleware::from_fn(auth::permission_required_any!(
-                    Permission::Verified, Permission::Statistics
+                    Permission::Verified,
+                    Permission::Statistics
                 )))
                 .nest("/notification", notification::router(state))
                 .nest("/team", team::router(state))

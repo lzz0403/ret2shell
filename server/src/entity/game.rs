@@ -110,9 +110,9 @@ pub async fn create_game(conn: &DatabaseConnection, game: Model) -> Result<(), D
 }
 
 /// get game list with paginator params.
-/// 
+///
 /// ## Arguments
-/// 
+///
 /// * `conn` - Database connection
 /// * `page` - Page number
 /// * `per_page` - Number of items per page
@@ -154,11 +154,7 @@ pub async fn search_game(conn: &DatabaseConnection, keyword: String) -> Result<V
     Ok(games)
 }
 
-pub async fn update_game(
-    conn: &DatabaseConnection,
-    id: i64,
-    game: Model,
-) -> Result<(), DbErr> {
+pub async fn update_game(conn: &DatabaseConnection, id: i64, game: Model) -> Result<(), DbErr> {
     let active_model = ActiveModel {
         id: ActiveValue::Unchanged(id),
         updated_at: ActiveValue::Set(Utc::now()),

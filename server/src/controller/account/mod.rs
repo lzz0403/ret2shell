@@ -19,7 +19,9 @@ use crate::{cache::manager::RedisPool, controller::GlobalState, entity::user::Pe
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/logout", post(logout))
-        .route_layer(middleware::from_fn(permission_required_all!(Permission::Basic)))
+        .route_layer(middleware::from_fn(permission_required_all!(
+            Permission::Basic
+        )))
         .route("/login", post(login))
         .route("/register", post(register))
         .nest("/captcha", captcha::router(state))

@@ -1,9 +1,9 @@
 use super::MediaError;
 
 pub fn get_media_extension(content_type: &str) -> Result<String, MediaError> {
-    let mime_type = content_type.parse::<mime::Mime>().map_err(|err| {
-        MediaError::ParseContentTypeError(err)
-    })?;
+    let mime_type = content_type
+        .parse::<mime::Mime>()
+        .map_err(|err| MediaError::ParseContentTypeError(err))?;
     if mime_type.type_() != mime::IMAGE {
         Err(MediaError::UnsupportedFileType(mime_type.to_string()))
     } else {
