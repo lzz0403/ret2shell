@@ -46,7 +46,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
                 )))
                 .route("/", get(get_game))
                 .route("/scoreboard", get(get_scoreboard))
-                // .route("/team-solved", get(get_team_solved))
+                .route("/team-solved", get(get_team_solved))
                 .route_layer(middleware::from_fn(auth::permission_required!(
                     Permission::Verified
                 )))
@@ -237,28 +237,28 @@ async fn get_scoreboard(
     }
 }
 
-// #[derive(Deserialize)]
-// struct TeamSolvedQuery {
-//     pub team_id: Option<i64>,
-// }
+#[derive(Deserialize)]
+struct TeamSolvedQuery {
+    pub team_id: Option<i64>,
+}
 
-// async fn get_team_solved(
-//     State(ref conn): State<DatabaseConnection>,
-//     Path(game_id): Path<i64>,
-//     Query(query): Query<TeamSolvedQuery>,
-// ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-//     let team_id = match query.team_id {
-//         Some(id) => id,
-//         None => return Err((StatusCode::BAD_REQUEST, "team_id needed")),
-//     };
-//     match submission::get_solved_submission_of_team(conn, game_id, team_id).await {
-//         Ok(solved_challenges) => Ok(Json(solved_challenges)),
-//         Err(err) => {
-//             error!("Failed to get team solved challenges: {}", err);
-//             Err((
-//                 StatusCode::INTERNAL_SERVER_ERROR,
-//                 "failed to get team solved challenges",
-//             ))
-//         }
-//     }
-// }
+async fn get_team_solved(
+    State(ref conn): State<DatabaseConnection>,
+    Path(game_id): Path<i64>,
+    Query(query): Query<TeamSolvedQuery>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let team_id = match query.team_id {
+        Some(id) => id,
+        None => return Err((StatusCode::BAD_REQUEST, "team_id needed")),
+    };
+    match submission::get_solved_submission_of_team(conn, game_id, team_id).await {
+        Ok(solved_challenges) => Ok(Json(solved_challenges)),
+        Err(err) => {
+            error!("Failed to get team solved challenges: {}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to get team solved challenges",
+            ))
+        }
+    }
+}

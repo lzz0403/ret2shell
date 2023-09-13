@@ -4,7 +4,7 @@ use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
 use chrono::{DateTime, Utc};
 use sea_orm::entity::prelude::*;
 use sea_orm::{FromQueryResult, QueryOrder, QuerySelect};
-use sea_query::JoinType;
+use sea_query::{JoinType, Condition};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
@@ -111,44 +111,44 @@ pub async fn get_submission_page(
     Ok((resp, num_pages))
 }
 
-// pub async fn get_solved_submission_of_team(
-//     conn: &DatabaseConnection,
-//     game_id: i64,
-//     team_id: i64,
-// ) -> anyhow::Result<Vec<ModelWithUserAndChallengeSolvedInfo>> {
-//     let mut sql = Entity::find();
-//     sql = sql
-//         .join(JoinType::InnerJoin, Relation::Challenge.def())
-//         .join(JoinType::InnerJoin, Relation::User.def())
-//         .join(JoinType::InnerJoin, super::challenge::Relation::Tag.def());
-//     let members = super::team::get_team_members(conn, team_id).await?;
-//     sql = sql
-//         .filter(super::challenge::Column::GameId.eq(game_id))
-//         .filter(Column::Solved.eq(true))
-//         .distinct_on([
-//             (super::submission::Entity, super::submission::Column::UserId),
-//             (
-//                 super::submission::Entity,
-//                 super::submission::Column::ChallengeId,
-//             ),
-//         ]);
-//     let mut cond = Condition::any();
-//     for user in members {
-//         cond = cond.add(Column::UserId.eq(user.id))
-//     }
-//     sql = sql.filter(cond);
+pub async fn get_solved_submission_of_team(
+    conn: &DatabaseConnection,
+    game_id: i64,
+    team_id: i64,
+) -> anyhow::Result<Vec<ModelWithUserAndChallengeSolvedInfo>> {
+    let mut sql = Entity::find();
+    sql = sql
+        .join(JoinType::InnerJoin, Relation::Challenge.def())
+        .join(JoinType::InnerJoin, Relation::User.def())
+        .join(JoinType::InnerJoin, super::challenge::Relation::Tag.def());
+    let members = super::team::get_team_members(conn, team_id).await?;
+    sql = sql
+        .filter(super::challenge::Column::GameId.eq(game_id))
+        .filter(Column::Solved.eq(true))
+        .distinct_on([
+            (super::submission::Entity, super::submission::Column::UserId),
+            (
+                super::submission::Entity,
+                super::submission::Column::ChallengeId,
+            ),
+        ]);
+    let mut cond = Condition::any();
+    for user in members {
+        cond = cond.add(Column::UserId.eq(user.id))
+    }
+    sql = sql.filter(cond);
 
-//     let sql = sql
-//         .column_as(super::challenge::Column::Name, "challenge_name")
-//         .column_as(super::user::Column::Name, "user_name")
-//         .column_as(super::challenge::Column::GameId, "game_id")
-//         .column_as(super::challenge::Column::TagId, "tag_id")
-//         .column_as(super::challenge::Column::CurrentScore, "challenge_score")
-//         .column_as(super::tag::Column::Name, "tag_name");
-//     // .order_by_desc(Column::CreatedAt);
-//     let resp = sql
-//         .into_model::<ModelWithUserAndChallengeSolvedInfo>()
-//         .all(conn)
-//         .await?;
-//     Ok(resp)
-// }
+    let sql = sql
+        .column_as(super::challenge::Column::Name, "challenge_name")
+        .column_as(super::user::Column::Name, "user_name")
+        .column_as(super::challenge::Column::GameId, "game_id")
+        .column_as(super::challenge::Column::TagId, "tag_id")
+        .column_as(super::challenge::Column::CurrentScore, "challenge_score")
+        .column_as(super::tag::Column::Name, "tag_name");
+    // .order_by_desc(Column::CreatedAt);
+    let resp = sql
+        .into_model::<ModelWithUserAndChallengeSolvedInfo>()
+        .all(conn)
+        .await?;
+    Ok(resp)
+}

@@ -168,6 +168,33 @@ impl Related<super::write_up::Entity> for Entity {
     }
 }
 
+impl Related<super::team::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::user2_team::Relation::Team.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(super::user2_team::Relation::User.def().rev())
+    }
+}
+
+impl Related<super::ip_address::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::user2_ip_address::Relation::IpAddress.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(super::user2_ip_address::Relation::User.def().rev())
+    }
+}
+
+impl Related<super::subscription::Entity> for Entity {
+    fn to() -> RelationDef {
+        super::user2_subscription::Relation::Subscription.def()
+    }
+    fn via() -> Option<RelationDef> {
+        Some(super::user2_subscription::Relation::User.def().rev())
+    }
+}
+
 impl ActiveModelBehavior for ActiveModel {}
 
 #[allow(dead_code)]
