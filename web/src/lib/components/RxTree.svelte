@@ -69,7 +69,11 @@
   $: reactiveActiveChains(activeChains)
 </script>
 
-<ul class={`pl-${depth * 4}`}>
+<ul
+  class={`pl-${depth * 4} relative ${
+    depth > 0 ? 'before:border-l-2 before:absolute before:h-full before:border-l-base-content/10' : ''
+  }`}
+>
   {#each tree as item}
     <li>
       <div class="join w-full">
@@ -81,7 +85,11 @@
           justify="start"
           href={`${addrPrefix}/${item.id}`}
         >
+        {#if depth === 0}
           <span class="icon-[fluent--notebook-20-regular] w-6 h-6 flex-shrink-0" />
+          {:else}
+          <span class="icon-[fluent--notepad-20-regular] w-6 h-6 flex-shrink-0" />
+          {/if}
           <span class="text-ellipsis overflow-hidden whitespace-nowrap flex-1 text-left">{item.title}</span>
         </RxLink>
         {#if !treeNoChildrenRecord[item.id]}
@@ -94,7 +102,7 @@
             }}
           >
             <span
-              class="icon-[fluent--chevron-down-16-regular] w-6 h-6 flex-shrink-0 transition-all {treeExpandedRecord[
+              class="icon-[fluent--chevron-down-16-regular] w-5 h-5 flex-shrink-0 transition-all {treeExpandedRecord[
                 item.id
               ]
                 ? ' rotate-0'

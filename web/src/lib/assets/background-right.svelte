@@ -73,7 +73,7 @@
       transform="translate(-1001.383 14.3)"
     />
     <g clip-path="url(#b)" transform="translate(-1001.383 14.3)">
-      <circle transform="rotate(-36.554 1872.104 810.779)" cx="1872.1" cy="810.8" r="7" fill="#80808020" />
+      <circle transform="rotate(-36.554 1872.104 810.779)" cx="1872.1" cy="810.8" r="7" />
       <circle
         transform="rotate(-36.554 1872.103 810.778)"
         cx="1872.1"
@@ -86,10 +86,10 @@
       />
     </g>
     <g clip-path="url(#b)" transform="translate(-1001.383 14.3)">
-      <circle transform="rotate(-36.554 1826.347 155.034)" cx="1826.4" cy="155.1" r="8.7" fill="#80808020" />
+      <circle transform="rotate(-36.554 1826.347 155.034)" cx="1826.4" cy="155.1" r="8.7" />
     </g>
     <g clip-path="url(#b)" transform="translate(-1001.383 14.3)">
-      <circle transform="rotate(-36.554 1693.679 565.876)" cx="1693.7" cy="565.9" r="8.7" fill="#80808020" />
+      <circle transform="rotate(-36.554 1693.679 565.876)" cx="1693.7" cy="565.9" r="8.7" />
     </g>
     <g
       clip-path="url(#b)"

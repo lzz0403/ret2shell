@@ -91,11 +91,11 @@
 <div class="flex-1 flex flex-row">
   {#if showSidebar}
     <div
-      class="fixed w-1/4 h-[calc(100vh_-_4rem)] max-w-[512px] bg-base-100/60 backdrop-blur border-r border-r-base-content/5 shadow"
+      class="fixed w-1/5 h-[calc(100vh_-_4rem)] min-w-[24rem] max-w-[32rem] bg-base-100/60 backdrop-blur border-r border-r-base-content/5 shadow"
     >
       <WikiSidebar bind:wiki={wikiEntries} {activeChains} {loading} />
     </div>
-    <div class="w-1/4 flex-shrink-0" />
+    <div class="w-1/5 min-w-[24rem] max-w-[32rem] flex-shrink-0" />
   {:else}
     <RxButton
       size="lg"
@@ -112,7 +112,7 @@
   </div>
   {#if toggleSidebar && !showSidebar}
     <div
-      class="fixed w-full max-w-[400px] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-r border-r-base-content/5 shadow"
+      class="fixed w-full max-w-[24rem] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-r border-r-base-content/5 shadow"
       transition:fly={{ delay: 100, duration: 300, x: -256, y: 0, opacity: 0, easing: quintOut }}
     >
       <WikiSidebar bind:wiki={wikiEntries} {activeChains} {loading} />
