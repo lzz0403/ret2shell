@@ -33,7 +33,14 @@
     "sideToc": "Playground",
     "persistTitle": "Resident practice",
     "gamesTitle": "Previous games",
-    "emptyCategory": "There's nothing here"
+    "emptyCategory": "There's nothing here",
+    "welcomeTitle": "Welcome to the driving range!",
+    "guide": "This includes questions from permanent practice and completed events.",
+    "terminal": "TERMINAL",
+    "challengeAnswer": "SOLUTION",
+    "gameIntro": "INTRODUCTION",
+    "challengeList": "CHALLENGES",
+    "returnToList": "Return to playground list"
   },
   "games": {
     "title": "Games"

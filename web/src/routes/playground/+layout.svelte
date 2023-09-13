@@ -1,12 +1,22 @@
 <script lang="ts">
   import PlaygroundSidebar from '$lib/blocks/PlaygroundSidebar.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
+  import type { Challenge, Tag } from '$lib/models/challenge'
+  import type { Game } from '$lib/models/game'
   import { quintOut } from 'svelte/easing'
   import { fly } from 'svelte/transition'
 
   let screenWidth: number
   let toggleSidebar = false
   $: showSidebar = screenWidth > 1024 // lg
+
+  let playgrounds: Game[] = []
+  let games: Game[] = []
+  let activeGameId: number | null = null
+  let activeGameChallenges: Challenge[] = []
+  let tags: Tag[] = []
+
+  
 </script>
 
 <svelte:window bind:innerWidth={screenWidth} />
@@ -16,13 +26,13 @@
     <div
       class="fixed w-1/5 h-[calc(100vh_-_4rem)] min-w-[24rem] max-w-[32rem] bg-base-100/60 backdrop-blur border-r border-r-base-content/10"
     >
-      <PlaygroundSidebar />
+      <PlaygroundSidebar {games} {playgrounds} {activeGameId} {activeGameChallenges} {tags} />
     </div>
     <div class="w-1/5 min-w-[24rem] max-w-[32rem] flex-shrink-0" />
   {:else}
     <RxButton
       size="lg"
-      class="fixed right-6 bottom-6"
+      class="fixed right-6 bottom-6 z-10"
       on:click={() => {
         toggleSidebar = !toggleSidebar
       }}
@@ -36,7 +46,7 @@
       class="fixed w-full max-w-[24rem] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-r border-r-base-content/10"
       transition:fly={{ delay: 100, duration: 300, x: -256, y: 0, opacity: 0, easing: quintOut }}
     >
-      <PlaygroundSidebar />
+      <PlaygroundSidebar {games} {playgrounds} {activeGameId} {activeGameChallenges} {tags} />
     </div>
     <RxButton
       size="lg"

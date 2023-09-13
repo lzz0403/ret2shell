@@ -1,34 +1,36 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import RxButton from '$lib/components/RxButton.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
+  import type { Challenge, Tag } from '$lib/models/challenge'
   import type { Game } from '$lib/models/game'
   import { theme } from '$lib/stores/theme'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
+    import { quintOut } from 'svelte/easing'
+    import { fly } from 'svelte/transition'
 
-  export let playgrounds: Game[] = [
-    {
-      id: 1,
-      updated_at: 0,
-      name: '一天一道题，强壮逆向人',
-      brief: 'RX的奇妙逆向练习贴',
-      introduction: 'RX的奇妙逆向练习贴',
-      start_time: 0,
-      end_time: 0,
-      register_time: 0,
-      archive_time: 0,
-      hidden: false,
-      frozen: false,
-      host_as_game: false,
-      team_size_limit: 1,
-      cover_path: 'string',
-      enable_team_audit: false,
-      can_register_after_started: true,
-      institute_id: null,
-    },
-  ]
-  export let games: Game[] = []
+  export let playgrounds: Game[]
+  export let games: Game[]
+  export let activeGameId: number | null = null
+  $: activeGame = games.concat(playgrounds).find((item) => item.id === activeGameId)
+  export let activeGameChallenges: Challenge[]
+  export let tags: Tag[]
+
+  let tagsChallengesMap: Map<number, Challenge[]> = new Map<number, Challenge[]>()
+
+  $: {
+    tagsChallengesMap.clear()
+    tags.forEach((tag) => {
+      tagsChallengesMap.set(tag.id, activeGameChallenges.filter((challenge) => challenge.tag_id === tag.id))
+    })
+  }
+
+  page.subscribe((value) => {
+    activeGameId = value.params.game ? parseInt(value.params.game) || null : null
+    // console.log(activeGameId)
+  })
 </script>
 
 <OverlayScrollbarsComponent
@@ -38,57 +40,89 @@
   class="w-full h-full flex flex-col relative print:hidden"
   defer
 >
-  <div class="h-32 bg-base-100 border-b border-b-base-content/5 flex flex-col sticky top-0 p-4">
-    <h1 class="font-bold flex-1 flex flex-row justify-center items-center space-x-2">
+  <div
+    class={`bg-base-100 border-b border-b-base-content/5 flex flex-col sticky top-0 p-4 transition-all duration-300 ${
+      activeGame ? 'h-16' : 'h-32'
+    }`}
+  >
+    <h1 class="font-bold flex flex-row justify-center items-center h-16 space-x-2">
       <span class="icon-[fluent--dumbbell-16-regular] w-6 h-6" />
-      <span>
-        {$i18n.t('playground.sideToc')}
-      </span>
+      {#if activeGame}
+        <span>
+          {activeGame.name}
+        </span>
+      {:else}
+        <span>
+          {$i18n.t('playground.sideToc')}
+        </span>
+      {/if}
     </h1>
-    <div class="flex-1 join">
-      <RxInput class="join-item" />
-      <RxButton square class="join-item ml-0">
-        <span class="icon-[fluent--search-16-regular] w-6 h-6" />
-      </RxButton>
+    {#if !activeGame}
+      <div class="flex-1 join" transition:fly={{ delay: 0, duration: 300, x: 0, y: -32, opacity: 0, easing: quintOut }}>
+        <RxInput class="join-item" />
+        <RxButton square class="join-item ml-0">
+          <span class="icon-[fluent--search-16-regular] w-6 h-6" />
+        </RxButton>
+      </div>
+    {/if}
+  </div>
+  {#if activeGameId}
+    <div class="flex-1 flex-col p-4">
+      <RxLink ghost class="w-full" justify="start" href="/playground">
+        <span class="icon-[fluent--arrow-hook-down-left-16-regular] w-6 h-6" />
+        <span class="flex-1 text-start">{$i18n.t('playground.returnToList')}</span>
+        <span class="icon-[fluent--chevron-down-16-regular] w-5 h-5" />
+      </RxLink>
+      {#each tags as tag}
+        <p class="p-4 text-center opacity-60">{tag.name}</p>
+        {#each activeGameChallenges as chal}
+        <RxLink ghost class="w-full" justify="start" href={`/playground/${activeGameId}#${chal.id}`}>
+          <span class="icon-[fluent--flag-16-regular] w-6 h-6" />
+          <span class="flex-1 text-start">{chal.name}</span>
+          <span class="icon-[fluent--chevron-right-16-regular] w-5 h-5" />
+        </RxLink>
+        {/each}
+      {/each}
     </div>
-  </div>
-  <div class="flex-1 flex-col">
-    {#if playgrounds.length === 0 && games.length === 0}
-      <p class="text-base font-semibold p-4 opacity-60 text-center">{$i18n.t('playground.emptyCategory')}</p>
-    {/if}
-    {#if playgrounds.length > 0}
-      <h2 class="text-base font-semibold p-4 pb-0 flex flex-row items-center justify-center space-x-2 opacity-60">
-        <span class="icon-[fluent--beaker-16-regular] w-6 h-6" />
-        <span>
-          {$i18n.t('playground.persistTitle')}
-        </span>
-      </h2>
-      <div class="flex flex-col p-4">
-        {#each playgrounds as item}
-          <RxLink class="w-full" justify="start" ghost href={`/playground/${item.id}`}>
-            <span class="icon-[fluent--bookmark-16-regular] w-6 h-6" />
-            <span class="flex-1 text-start">{item.name}</span>
-            <span class="icon-[fluent--chevron-right-16-regular] w-5 h-5" />
-          </RxLink>
-        {/each}
-      </div>
-    {/if}
-    {#if games.length > 0}
-      <h2 class="text-base font-semibold p-4 pb-0 flex flex-row items-center justify-center space-x-2 opacity-60">
-        <span class="icon-[fluent--flag-16-regular] w-6 h-6" />
-        <span>
-          {$i18n.t('playground.gamesTitle')}
-        </span>
-      </h2>
-      <div class="flex flex-col p-4">
-        {#each playgrounds as item}
-          <RxLink class="w-full" justify="start" ghost href={`/playground/${item.id}`}>
-            <span class="icon-[fluent--archive-16-regular] w-6 h-6" />
-            <span class="flex-1 text-start">{item.name}</span>
-            <span class="icon-[fluent--chevron-right-16-regular] w-5 h-5" />
-          </RxLink>
-        {/each}
-      </div>
-    {/if}
-  </div>
+  {:else}
+    <div class="flex-1 flex-col">
+      {#if playgrounds.length === 0 && games.length === 0}
+        <p class="text-base font-semibold p-4 opacity-60 text-center">{$i18n.t('playground.emptyCategory')}</p>
+      {/if}
+      {#if playgrounds.length > 0}
+        <h2 class="text-base font-semibold p-4 pb-0 flex flex-row items-center justify-center space-x-2 opacity-60">
+          <span class="icon-[fluent--beaker-16-regular] w-6 h-6" />
+          <span>
+            {$i18n.t('playground.persistTitle')}
+          </span>
+        </h2>
+        <div class="flex flex-col p-4">
+          {#each playgrounds as item}
+            <RxLink class="w-full" justify="start" ghost href={`/playground/${item.id}`}>
+              <span class="icon-[fluent--bookmark-16-regular] w-6 h-6" />
+              <span class="flex-1 text-start">{item.name}</span>
+              <span class="icon-[fluent--chevron-right-16-regular] w-5 h-5" />
+            </RxLink>
+          {/each}
+        </div>
+      {/if}
+      {#if games.length > 0}
+        <h2 class="text-base font-semibold p-4 pb-0 flex flex-row items-center justify-center space-x-2 opacity-60">
+          <span class="icon-[fluent--flag-16-regular] w-6 h-6" />
+          <span>
+            {$i18n.t('playground.gamesTitle')}
+          </span>
+        </h2>
+        <div class="flex flex-col p-4">
+          {#each playgrounds as item}
+            <RxLink class="w-full" justify="start" ghost href={`/playground/${item.id}`}>
+              <span class="icon-[fluent--archive-16-regular] w-6 h-6" />
+              <span class="flex-1 text-start">{item.name}</span>
+              <span class="icon-[fluent--chevron-right-16-regular] w-5 h-5" />
+            </RxLink>
+          {/each}
+        </div>
+      {/if}
+    </div>
+  {/if}
 </OverlayScrollbarsComponent>

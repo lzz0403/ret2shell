@@ -20,11 +20,11 @@ mod institute;
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/:id", patch(update_user).delete(delete_user))
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Devops
         )))
         .route("/", get(get_user_list))
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Verified
         )))
         .route("/:id", get(get_user_info))

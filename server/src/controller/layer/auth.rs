@@ -1,11 +1,5 @@
 //! Authentication & Authorization middlewares.
 //!
-//! permissions for platform controller:
-//!
-//! ```
-//! ["basic", "verified", "publish", "audit", "organize", "devops", "statistics", "ctftime", "certificates"]
-//! ```
-//!
 
 use axum::{
     extract::State,
@@ -19,7 +13,7 @@ use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, 
 use serde::{Deserialize, Serialize};
 use std::sync::{atomic::AtomicBool, Arc};
 use tokio::sync::Mutex;
-use tracing::{debug, error, warn};
+use tracing::{debug, error};
 
 use crate::{
     cache::{self, manager::RedisPool},
@@ -107,7 +101,7 @@ pub async fn extract_user_info<B>(
         let auth_header = match cache::Token::validate(cache, auth_header).await {
             Ok(()) => String::from(auth_header),
             Err(err) => {
-                warn!("validate token failed: {}", err);
+                debug!("validate token failed: {}", err);
                 String::new()
             }
         };
@@ -189,7 +183,7 @@ pub async fn init_token_or_permission_required<B>(
             }
         }
         #[allow(clippy::redundant_closure_call)]
-        None => permission_required!(Permission::Devops)(Extension(token), req, next).await,
+        None => permission_required_all!(Permission::Devops)(Extension(token), req, next).await,
     }
 }
 
@@ -197,6 +191,7 @@ pub async fn challenge_privilege_required<B>(
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    // TODO: implement
     Ok(next.run(req).await)
 }
 
@@ -204,6 +199,7 @@ pub async fn game_privilege_required<B>(
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    // TODO: implement
     Ok(next.run(req).await)
 }
 
@@ -211,19 +207,40 @@ pub async fn game_challenges_privilege_required<B>(
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    // TODO: implement
     Ok(next.run(req).await)
 }
 
 /// Construct a middleware closure that validate permissions from token.
+/// 
+/// all the permissions appeared here should be in the `permissions` field in user's token.
 ///
 /// Usage:
 ///
 /// ```
 /// Router::new()
 ///     .route(...)
-///     .route_layer(axum::middleware::from_fn(permission_required!("basic", "verified", ...)))
+///     .route_layer(axum::middleware::from_fn(permission_required_all!(Permission::Basic, ...)))
 /// ```
-macro_rules! permission_required {
+macro_rules! permission_required_all {
+    ($($perm:expr),*) => {
+        |
+            axum::extract::Extension(token): axum::extract::Extension<crate::controller::layer::auth::Token>,
+            req: axum::http::Request<_>,
+            next: axum::middleware::Next<_>,
+        | async move {
+            let required_perms = [$($perm),*];
+            tracing::debug!("user permissions: {:?}", token.permissions.0);
+            tracing::debug!("required perms: {:?}", required_perms);
+            match required_perms.iter().all(|perm| token.permissions.0.contains(perm)) {
+                true => Ok(next.run(req).await),
+                false => Err((axum::http::StatusCode::FORBIDDEN, "permission denied"))
+            }
+        }
+    };
+}
+
+macro_rules! permission_required_any {
     ($($perm:expr),*) => {
         |
             axum::extract::Extension(token): axum::extract::Extension<crate::controller::layer::auth::Token>,
@@ -241,4 +258,5 @@ macro_rules! permission_required {
     };
 }
 
-pub(crate) use permission_required;
+pub(crate) use permission_required_all;
+pub(crate) use permission_required_any;

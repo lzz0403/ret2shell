@@ -9,7 +9,7 @@ use sea_orm::{DatabaseConnection, DbErr};
 use serde::{Deserialize, Serialize};
 use tracing::{debug, error, warn};
 
-use super::layer::auth::{permission_required, Token, TokenTracker};
+use super::layer::auth::{permission_required_all, Token, TokenTracker};
 use crate::cache;
 use crate::captcha::captcha_protected;
 use crate::entity::config::Model as ConfigModel;
@@ -19,7 +19,7 @@ use crate::{cache::manager::RedisPool, controller::GlobalState, entity::user::Pe
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/logout", post(logout))
-        .route_layer(middleware::from_fn(permission_required!(Permission::Basic)))
+        .route_layer(middleware::from_fn(permission_required_all!(Permission::Basic)))
         .route("/login", post(login))
         .route("/register", post(register))
         .nest("/captcha", captcha::router(state))

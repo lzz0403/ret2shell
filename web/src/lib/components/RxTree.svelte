@@ -6,7 +6,7 @@
   import RxButton from './RxButton.svelte'
   import RxLink from './RxLink.svelte'
   import { onMount } from 'svelte'
-
+  
   // pl-0 pl-4 pl-8 pl-12 pl-16
   export let depth = 0
 
@@ -85,10 +85,10 @@
           justify="start"
           href={`${addrPrefix}/${item.id}`}
         >
-        {#if depth === 0}
-          <span class="icon-[fluent--notebook-20-regular] w-6 h-6 flex-shrink-0" />
+          {#if depth === 0}
+            <span class="icon-[fluent--notebook-20-regular] w-6 h-6 flex-shrink-0" />
           {:else}
-          <span class="icon-[fluent--notepad-20-regular] w-6 h-6 flex-shrink-0" />
+            <span class="icon-[fluent--notepad-20-regular] w-6 h-6 flex-shrink-0" />
           {/if}
           <span class="text-ellipsis overflow-hidden whitespace-nowrap flex-1 text-left">{item.title}</span>
         </RxLink>
@@ -101,13 +101,15 @@
               handleLoadingChildItems(item.id)
             }}
           >
-            <span
-              class="icon-[fluent--chevron-down-16-regular] w-5 h-5 flex-shrink-0 transition-all {treeExpandedRecord[
-                item.id
-              ]
-                ? ' rotate-0'
-                : '-rotate-90'}"
-            />
+            {#if !treeLoadingRecord[item.id]}
+              <span
+                class="icon-[fluent--chevron-down-16-regular] w-5 h-5 flex-shrink-0 transition-all {treeExpandedRecord[
+                  item.id
+                ]
+                  ? ' rotate-0'
+                  : '-rotate-90'}"
+              />
+            {/if}
           </RxButton>
         {/if}
       </div>

@@ -23,36 +23,36 @@ mod tag;
 mod team;
 mod writeup;
 
-pub fn router(_state: &GlobalState) -> Router<GlobalState> {
+pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/", post(create_game))
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Organize
         )))
         .route("/", get(get_game_list))
         .route("/search", get(search_game))
         .route_layer(middleware::from_fn_with_state(
-            _state.clone(),
+            state.clone(),
             info::prepare_user_full_info,
         ))
-        .nest("/tag", tag::router(_state))
+        .nest("/tag", tag::router(state))
         .nest(
             "/:game_id",
             Router::new()
                 .route("/", patch(update_game))
                 .route("/submission", get(get_game_submission_list))
-                .route_layer(middleware::from_fn(auth::permission_required!(
-                    Permission::Organize
+                .route_layer(middleware::from_fn(auth::permission_required_all!(
+                    Permission::Organize, Permission::Devops, Permission::Audit
                 )))
                 .route("/", get(get_game))
                 .route("/scoreboard", get(get_scoreboard))
                 .route("/team-solved", get(get_team_solved))
-                .route_layer(middleware::from_fn(auth::permission_required!(
-                    Permission::Verified
+                .route_layer(middleware::from_fn(auth::permission_required_any!(
+                    Permission::Verified, Permission::Statistics
                 )))
-                .nest("/notification", notification::router(_state))
-                .nest("/team", team::router(_state))
-                .nest("/writeup", writeup::router(_state)),
+                .nest("/notification", notification::router(state))
+                .nest("/team", team::router(state))
+                .nest("/writeup", writeup::router(state)),
         )
 }
 

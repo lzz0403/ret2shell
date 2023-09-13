@@ -109,6 +109,15 @@ pub async fn create_game(conn: &DatabaseConnection, game: Model) -> Result<(), D
     Ok(())
 }
 
+/// get game list with paginator params.
+/// 
+/// ## Arguments
+/// 
+/// * `conn` - Database connection
+/// * `page` - Page number
+/// * `per_page` - Number of items per page
+/// * `host_as_game` - Whether the game will be hosted as a `Game`, or it will be treated as `Playground`, which is open to all users.
+/// * `is_organizer` - Auth parameter, if set to true, all games will returned regardless of `hidden` field.
 pub async fn get_game_page(
     conn: &DatabaseConnection,
     page: u64,
@@ -122,6 +131,9 @@ pub async fn get_game_page(
         .order_by_desc(Column::StartTime);
     if let Some(host_as_game) = host_as_game {
         sql = sql.filter(Column::HostAsGame.eq(host_as_game));
+    } else {
+        // returns games by default
+        sql = sql.filter(Column::HostAsGame.eq(true));
     }
     if !is_organizer {
         sql = sql.filter(Column::Hidden.eq(false));

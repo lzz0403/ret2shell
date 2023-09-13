@@ -19,14 +19,14 @@ use serde::{Deserialize, Serialize};
 use tokio_util::io::ReaderStream;
 use tracing::{error, warn};
 
-use super::layer::auth::{Token, permission_required};
+use super::layer::auth::{Token, permission_required_all};
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/upload", post(upload_media))
         // media image size limited to 10MB
         .route_layer(DefaultBodyLimit::max(1024 * 1024 * 8))
-        .route_layer(middleware::from_fn(permission_required!(Permission::Verified)))
+        .route_layer(middleware::from_fn(permission_required_all!(Permission::Verified)))
         .route("/*path", get(download_media))
 }
 

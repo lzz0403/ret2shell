@@ -39,7 +39,14 @@
     "sideToc": "练习场",
     "persistTitle": "常驻练习",
     "gamesTitle": "以往赛事",
-    "emptyCategory": "这里什么也没有哦"
+    "emptyCategory": "这里什么也没有哦",
+    "welcomeTitle": "欢迎来到练习场！",
+    "guide": "这里包含了常驻练习与已结束赛事的赛题",
+    "terminal": "环境终端",
+    "challengeAnswer": "参考题解",
+    "gameIntro": "赛事介绍",
+    "challengeList": "题目列表",
+    "returnToList": "回到练习场列表"
   },
   "games": {
     "title": "赛事"

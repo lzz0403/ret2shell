@@ -20,8 +20,8 @@ use tracing::error;
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/", get(get_challenge_submission_list))
-        .route_layer(middleware::from_fn(auth::permission_required!(
-            Permission::Organize
+        .route_layer(middleware::from_fn(auth::permission_required_any!(
+            Permission::Organize, Permission::Devops, Permission::Audit
         )))
         // .route("/", post(submit_flag))
         .route_layer(middleware::from_fn_with_state(
@@ -32,7 +32,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
             _state.clone(),
             info::prepare_user_full_info,
         ))
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Verified
         )))
 }

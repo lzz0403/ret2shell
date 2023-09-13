@@ -125,6 +125,7 @@ pub async fn get_solved_submission_of_team(
     sql = sql
         .filter(super::challenge::Column::GameId.eq(game_id))
         .filter(Column::Solved.eq(true))
+        .filter(Column::WithScore.eq(true))
         .distinct_on([
             (super::submission::Entity, super::submission::Column::UserId),
             (

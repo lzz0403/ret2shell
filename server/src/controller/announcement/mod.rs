@@ -19,7 +19,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
             "/:id",
             patch(update_announcement).delete(delete_announcement),
         )
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Publish
         )))
         .route("/:id", get(get_announcement))

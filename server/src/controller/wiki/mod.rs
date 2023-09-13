@@ -17,7 +17,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/", post(create_wiki))
         .route("/:id", patch(update_wiki).delete(delete_wiki))
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Publish
         )))
         .route("/:id", get(get_wiki))

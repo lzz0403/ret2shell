@@ -19,19 +19,26 @@ use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 use tracing::error;
 
+// for challenge answer
 mod answer;
+// for challenge env
 mod env;
+// user hint, organizers publish
 mod hint;
+// for challenge storage, devops only
 mod repo;
+// user submit, organizers audit
 mod submission;
+// for traffic audit, organizers only
 mod traffic;
+// for build workflow, devops only
 mod workflow;
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
         .route("/", post(create_challenge))
-        .route_layer(middleware::from_fn(auth::permission_required!(
-            Permission::Organize
+        .route_layer(middleware::from_fn(auth::permission_required_any!(
+            Permission::Organize, Permission::Devops
         )))
         .route("/", get(get_challenge_list))
         .route_layer(middleware::from_fn(
@@ -42,7 +49,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             state.clone(),
             info::prepare_user_full_info,
         ))
-        .route_layer(middleware::from_fn(auth::permission_required!(
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Verified
         )))
         .nest("/answer", answer::router(state))
@@ -54,8 +61,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     "/build",
                     get(get_challenge_build_status).post(add_challenge_to_build_queue),
                 )
-                .route_layer(middleware::from_fn(auth::permission_required!(
-                    Permission::Organize
+                .route_layer(middleware::from_fn(auth::permission_required_any!(
+                    Permission::Organize, Permission::Devops
                 )))
                 .route("/", get(get_challenge_info))
                 .route("/status", get(get_challenge_status))
@@ -70,7 +77,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     state.clone(),
                     info::prepare_user_full_info,
                 ))
-                .route_layer(middleware::from_fn(auth::permission_required!(
+                .route_layer(middleware::from_fn(auth::permission_required_all!(
                     Permission::Verified
                 )))
                 .nest("/submission", submission::router(state))
@@ -197,6 +204,7 @@ async fn delete_challenge(
     State(ref conn): State<DatabaseConnection>,
     Path(challenge_id): Path<i64>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    // TODO: delete additional models like build actions, containers, etc.
     match challenge::delete_challenge(conn, challenge_id).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(err) => {
