@@ -50,15 +50,16 @@
     </div>
     <div class="w-1/5 min-w-[24rem] max-w-[32rem] flex-shrink-0" />
   {:else}
-    <RxButton
-      size="lg"
-      class="fixed right-6 bottom-6 z-10"
-      on:click={() => {
-        toggleSidebar = !toggleSidebar
-      }}
-    >
-      <span class="icon-[fluent--navigation-16-regular] w-5 h-5" />
-    </RxButton>
+    <label class="btn bg-base-content/5 border-none backdrop-blur btn-square btn-lg fixed right-6 bottom-6 z-10 swap swap-rotate">
+      <input
+        type="checkbox"
+        on:click={() => {
+          toggleSidebar = !toggleSidebar
+        }}
+      />
+      <span class="swap-off icon-[fluent--navigation-16-regular] fill-current w-6 h-6"></span>
+      <span class="swap-on icon-[fluent--dismiss-16-regular] fill-current w-6 h-6"></span>
+    </label>
   {/if}
   <slot />
   {#if toggleSidebar && !showSidebar}
@@ -77,14 +78,5 @@
         {mayHaveMorePlaygrounds}
       />
     </div>
-    <RxButton
-      size="lg"
-      class="fixed right-6 bottom-6"
-      on:click={() => {
-        toggleSidebar = !toggleSidebar
-      }}
-    >
-      <span class="icon-[fluent--dismiss-16-regular] w-5 h-5" />
-    </RxButton>
   {/if}
 </div>
