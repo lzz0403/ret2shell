@@ -3,9 +3,11 @@
 use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
 use chrono::{DateTime, Utc};
 use sea_orm::entity::prelude::*;
-use sea_orm::{FromQueryResult, QueryOrder, QuerySelect};
+use sea_orm::{ActiveValue, FromQueryResult, IntoActiveModel, QueryOrder, QuerySelect};
 use sea_query::{Condition, JoinType};
 use serde::{Deserialize, Serialize};
+
+use super::challenge;
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "submission")]
@@ -115,7 +117,7 @@ pub async fn get_solved_submission_of_team(
     conn: &DatabaseConnection,
     game_id: i64,
     team_id: i64,
-) -> anyhow::Result<Vec<ModelWithUserAndChallengeSolvedInfo>> {
+) -> Result<Vec<ModelWithUserAndChallengeSolvedInfo>, DbErr> {
     let mut sql = Entity::find();
     sql = sql
         .join(JoinType::InnerJoin, Relation::Challenge.def())
@@ -163,4 +165,24 @@ pub async fn get_solved_submission_of_user(
         .filter(super::challenge::Column::GameId.eq(game_id))
         .distinct_on([(Entity, Column::UserId), (Entity, Column::ChallengeId)]);
     sql.into_model().all(db).await
+}
+
+pub async fn create_submission(
+    conn: &DatabaseConnection,
+    submission: Model,
+) -> Result<Model, DbErr> {
+    match challenge::Entity::find_by_id(submission.challenge_id)
+        .one(conn)
+        .await
+    {
+        Ok(Some(_)) => {
+            let active_model = ActiveModel {
+                id: ActiveValue::NotSet,
+                ..submission.into_active_model().reset_all()
+            };
+            active_model.insert(conn).await
+        }
+        Ok(None) => Err(DbErr::RecordNotFound("challenge".to_string())),
+        Err(err) => Err(err),
+    }
 }

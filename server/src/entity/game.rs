@@ -35,6 +35,13 @@ pub struct Model {
     pub institute_id: Option<i64>,
 }
 
+impl Model {
+    pub fn in_progress(&self) -> bool {
+        let now = Utc::now();
+        self.start_time <= now && now <= self.end_time
+    }
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(has_many = "super::calendar::Entity")]

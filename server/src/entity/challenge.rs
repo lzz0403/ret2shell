@@ -8,7 +8,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use super::user::Permission;
-use super::{game, user};
+use super::{game, submission, user};
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
 #[sea_orm(table_name = "challenge")]
 pub struct Model {
@@ -179,4 +179,60 @@ pub async fn get_challenge_page_by_game_and_user(
 pub async fn delete_challenge(conn: &DatabaseConnection, id: i64) -> Result<(), DbErr> {
     // TODO: delete related data and repo folder
     Entity::delete_by_id(id).exec(conn).await.map(|_| ())
+}
+
+pub async fn calc_challenge_score(
+    conn: &DatabaseConnection,
+    game: &game::Model,
+    challenge: &Model,
+) -> Result<i32, DbErr> {
+    let solves = get_challenge_solves_in_game(conn, challenge, game).await?;
+    let score = _calc_challenge_score(challenge, solves);
+    Ok(score)
+}
+
+async fn get_challenge_solves_in_game(
+    conn: &DatabaseConnection,
+    challenge: &Model,
+    game: &game::Model,
+) -> Result<u64, DbErr> {
+    let solves = challenge
+        .find_related(submission::Entity)
+        .filter(submission::Column::Solved.eq(true))
+        .filter(submission::Column::CreatedAt.gt(game.start_time))
+        .filter(submission::Column::CreatedAt.lt(game.end_time))
+        .distinct_on([
+            (submission::Entity, submission::Column::UserId),
+            (submission::Entity, submission::Column::ChallengeId),
+        ])
+        .count(conn)
+        .await?;
+    Ok(solves)
+}
+
+fn _calc_challenge_score(challenge: &Model, solves: u64) -> i32 {
+    let mut score = if challenge.decay == 0 {
+        challenge.initial_score
+    } else {
+        (((solves * solves) as f64 / (challenge.decay * challenge.decay) as f64)
+            * (challenge.minimum_score - challenge.initial_score) as f64
+            + challenge.initial_score as f64)
+            .round() as i32
+    };
+    if score < challenge.minimum_score {
+        score = challenge.minimum_score;
+    }
+    score
+}
+
+pub async fn update_challenge_current_score(
+    conn: &DatabaseConnection,
+    challenge: &Model,
+) -> Result<Model, DbErr> {
+    let active_model = ActiveModel {
+        id: ActiveValue::Unchanged(challenge.id),
+        current_score: ActiveValue::Set(challenge.current_score),
+        ..challenge.clone().into()
+    };
+    Ok(active_model.update(conn).await?)
 }
