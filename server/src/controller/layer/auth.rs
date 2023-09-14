@@ -171,6 +171,9 @@ macro_rules! permission_required_all {
             req: axum::http::Request<_>,
             next: axum::middleware::Next<_>,
         | async move {
+            if token.id <= 0 {
+                return Err((axum::http::StatusCode::UNAUTHORIZED, "please login first"));
+            }
             let required_perms = [$($perm),*];
             tracing::debug!("user permissions: {:?}", token.permissions.0);
             tracing::debug!("required perms: {:?}", required_perms);
@@ -189,6 +192,9 @@ macro_rules! permission_required_any {
             req: axum::http::Request<_>,
             next: axum::middleware::Next<_>,
         | async move {
+            if token.id <= 0 {
+                return Err((axum::http::StatusCode::UNAUTHORIZED, "please login first"));
+            }
             let required_perms = [$($perm),*];
             tracing::debug!("user permissions: {:?}", token.permissions.0);
             tracing::debug!("required perms: {:?}", required_perms);
