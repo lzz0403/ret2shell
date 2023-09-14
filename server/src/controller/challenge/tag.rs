@@ -11,7 +11,7 @@ use axum::{
 };
 use hyper::StatusCode;
 use sea_orm::{DatabaseConnection, DbErr};
-use tracing::error;
+use tracing::{error, warn};
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
     Router::new()
@@ -55,6 +55,10 @@ async fn delete_tag(
     match tag::delete_tag(conn, id).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "tag not found")),
+        Err(DbErr::Custom(_)) => {
+            warn!("try to delete tag {} used by challenge", id);
+            Err((StatusCode::BAD_REQUEST, "tag is used by challenge"))
+        }
         Err(err) => {
             error!("delete_tag error: {}", err);
             Err((StatusCode::INTERNAL_SERVER_ERROR, "failed to delete tag"))
