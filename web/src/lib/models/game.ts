@@ -12,7 +12,7 @@ export interface Game {
   frozen: boolean
   host_as_game: boolean
   team_size_limit: number
-  cover_path: string
+  cover_path: string | null
   enable_team_audit: boolean
   can_register_after_started: boolean
   institute_id: number | null

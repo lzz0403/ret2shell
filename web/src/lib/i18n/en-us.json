@@ -70,7 +70,9 @@
     "envLastTime": "Last time"
   },
   "games": {
-    "title": "Games"
+    "title": "Games",
+    "noGameTitle": "No games found",
+    "noBrief": "The game is very mysterious, nothing is written..."
   },
   "announcements": {
     "title": "Announcements",

@@ -80,7 +80,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Game::Frozen).boolean().not_null())
                     .col(ColumnDef::new(Game::HostAsGame).boolean().not_null())
                     .col(ColumnDef::new(Game::TeamSizeLimit).integer().not_null())
-                    .col(ColumnDef::new(Game::CoverPath).string_len(128).not_null())
+                    .col(ColumnDef::new(Game::CoverPath).string_len(255))
                     .col(ColumnDef::new(Game::EnableTeamAudit).boolean().not_null())
                     .col(
                         ColumnDef::new(Game::CanRegisterAfterStarted)
