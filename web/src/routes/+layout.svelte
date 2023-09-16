@@ -92,6 +92,7 @@
 
 {#if animation}
   <div class="fixed top-0 left-0 w-screen h-screen bg-base-100 z-50" transition:fade={{ duration: 300 }}>
+    <Background />
     <div class="w-full h-full flex flex-col items-center pt-16 pb-24">
       <div class="flex-1" />
       <h1 class="text-3xl font-semibold">{platformTyped}<span class="text-primary animate-ping">_</span></h1>
