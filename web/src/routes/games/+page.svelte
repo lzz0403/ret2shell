@@ -6,30 +6,149 @@
   import Bg from '$lib/assets/background-lines.svg'
   import Logo from '$lib/assets/logo.svg'
   import LogoGray from '$lib/assets/logo-gray.svg'
-    import RxTag from '$lib/components/RxTag.svelte'
+  import RxTag from '$lib/components/RxTag.svelte'
+  import { getGame, getGameList } from '$lib/api/game'
+  import { showMessage } from '$lib/stores/toast'
+  import type { AxiosError } from 'axios'
+  import { blur } from 'svelte/transition'
+  import RxLink from '$lib/components/RxLink.svelte'
+  import RxButton from '$lib/components/RxButton.svelte'
+  import { page } from '$app/stores'
+  import { onDestroy } from 'svelte'
+    import { goto } from '$app/navigation'
 
   let games: Game[] = []
   let currentGame: Game | null = null
   let hasCover = false
-  let loading = false
+  let loading = true
+  const perPage = 10
+  let currentPage = 1
+  let total = 0
+  $: hasNextPage = total > currentPage
+  $: hasPrevPage = currentPage > 1
+
+  let isStarted = false
+  let isEnded = false
+  let unknownState = true
+  $: {
+    if (currentGame) {
+      unknownState = false
+      let startTime = new Date(currentGame.start_time * 1000)
+      let endTime = new Date(currentGame.end_time * 1000)
+      let now = new Date()
+      isStarted = now >= startTime
+      isEnded = now >= endTime
+    } else {
+      unknownState = true
+    }
+  }
+
+  async function fetchPage() {
+    loading = true
+    return getGameList(currentPage, perPage, true)
+      .then((res) => {
+        games = res.games
+        total = res.total
+      })
+      .catch((err) => {
+        showMessage('error', `${$i18n.t('games.fetchGamesError')}: ${(err as AxiosError).response?.data}`, 5000)
+      })
+      .finally(() => {
+        loading = false
+      })
+  }
+
+  function fetchPrevPage() {
+    if (hasPrevPage) {
+      currentPage--
+      fetchPage()
+    }
+  }
+
+  function fetchNextPage() {
+    if (hasNextPage) {
+      currentPage++
+      fetchPage()
+    }
+  }
+
+  fetchPage().then(() => {
+    if (games.length !== 0 && currentGame === null) {
+      currentGame = games[0]
+      hasCover = currentGame?.cover_path !== null
+    }
+  })
+
+  let unsubscribe = page.subscribe((value) => {
+    if (!value.url.hash || value.url.hash === '#' || value.url.hash.trim() === '') {
+      if (games.length !== 0) {
+        currentGame = games[0]
+        hasCover = currentGame?.cover_path !== null
+      }
+      return
+    }
+    let gameId = value.url.hash ? parseInt(value.url.hash.slice(1)) || null : null
+    if (gameId) {
+      currentGame = games.find((item) => item.id === gameId) || null
+      if (!currentGame)
+        getGame(gameId)
+          .then((res) => {
+            if (!res.host_as_game) {
+              goto(`/playground/${res.id}`)
+              return
+            }
+            currentGame = res
+            hasCover = currentGame.cover_path !== null
+          })
+          .catch(() => {
+            currentGame = null
+            hasCover = false
+          })
+      if (currentGame) {
+        hasCover = currentGame.cover_path !== null
+      }
+    } else {
+      if (games.length !== 0) {
+        currentGame = games[0]
+        hasCover = currentGame?.cover_path !== null
+      }
+      showMessage('error', $i18n.t('games.gameIdInvalid'), 5000)
+    }
+  })
+
+  onDestroy(unsubscribe)
 </script>
 
 <svelte:head><title>{$i18n.t('games.title')} - {$platform.name}</title></svelte:head>
 <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">
-  <div class="w-1/4 min-w-[24rem] max-w-[32rem] flex-shrink-0 hidden lg:flex flex-col items-end"></div>
+  <div class="w-1/4 min-w-[24rem] max-w-[32rem] flex-shrink-0 hidden lg:flex flex-col pt-16 pl-16 pr-8 space-y-1">
+    <RxButton class="w-full !bg-transparent" ghost disabled={!hasPrevPage} on:click={fetchPrevPage}>
+      <span class="icon-[fluent--chevron-double-up-16-regular] w-5 h-5" />
+    </RxButton>
+    <div class="divider m-0"></div>
+    {#each games as item}
+      <RxLink href={`/games#${item.id}`} class="w-full" ghost justify="start">
+        <span
+          class={`icon-[fluent--chevron-double-right-16-regular] w-5 h-5 ${
+            currentGame?.id === item.id && 'text-primary'
+          }`}
+        />
+        <span class={`text-base ${currentGame?.id === item.id ? 'font-bold text-primary' : 'font-normal'}`}
+          >{item.name}</span
+        >
+      </RxLink>
+    {/each}
+    <div class="divider m-0"></div>
+    <RxButton class="w-full !bg-transparent" ghost disabled={!hasNextPage} on:click={fetchNextPage}>
+      <span class="icon-[fluent--chevron-double-down-16-regular] w-5 h-5" />
+    </RxButton>
+  </div>
   <div class="flex-1 flex flex-col p-3 lg:p-6 items-center lg:justify-center">
     <div
-      class="w-full lg:w-3/4 h-auto rounded-box bg-base-content/5 backdrop-blur aspect-video transition-all lg:-translate-x-[4rem] rounded-b-none lg:rounded-b-box"
+      class="w-full lg:w-3/4 h-auto rounded-box bg-base-content/5 backdrop-blur shadow-lg aspect-video transition-all lg:-translate-x-[4rem] rounded-b-none lg:rounded-b-box overflow-clip relative"
     >
       {#if hasCover}
-        <RxImage class="w-full h-full relative" src={currentGame?.cover_path || ''} {loading}>
-          <div class="absolute top-0 left-0 w-full h-full flex flex-row justify-center items-center">
-            <h1 class="text-3xl font-bold flex flex-row items-center">
-              <img alt="CTF" src={Logo} width="128" height="128" />
-              <img alt="CTF" src={LogoGray} width="128" height="128" />
-            </h1>
-          </div>
-        </RxImage>
+        <RxImage class="w-full h-full relative" src={currentGame?.cover_path || ''} {loading}></RxImage>
       {:else}
         <RxImage class="w-full h-full relative" src={Bg} {loading}>
           <div class="absolute top-0 left-0 w-full h-full flex flex-row justify-center items-center">
@@ -41,39 +160,71 @@
           </div>
         </RxImage>
       {/if}
+      <RxTag
+        class="absolute top-4 right-4 !bg-neutral/60"
+        level={isStarted && !isEnded ? 'success' : isEnded ? 'warning' : unknownState ? 'error' : 'info'}
+      >
+        <span class="text-base font-bold">
+          {#if isStarted && !isEnded}
+            {$i18n.t('games.started')}
+          {:else if isEnded}
+            {$i18n.t('games.ended')}
+          {:else if unknownState}
+            {$i18n.t('games.unknown')}
+          {:else}
+            {$i18n.t('games.notStarted')}
+          {/if}
+        </span>
+      </RxTag>
     </div>
     <div
       class="h-64 sm:h-40 w-full lg:w-3/4 lg:translate-x-[4rem] lg:-translate-y-[3rem] flex flex-row justify-end transition-all"
     >
       <a
-        class="w-full lg:w-2/3 rounded-box bg-neutral/80 backdrop-blur rounded-t-none lg:rounded-t-box overflow-clip flex flex-row"
+        class="w-full lg:w-2/3 rounded-box bg-neutral/80 backdrop-blur rounded-t-none lg:rounded-t-box overflow-clip flex flex-row relative shadow-lg"
         href={currentGame ? `/games/${currentGame.id}` : '#'}
       >
-      <div class="flex flex-col p-6 space-y-4 sm:space-y-2">
-        <h1 class="text-2xl font-bold flex-1 flex flex-row space-x-4 items-center">
-          <img alt="CTF" src={Logo} width="36" height="36" />
-          <span>{currentGame?.name || $i18n.t('games.noGameTitle')}</span>
-        </h1>
-        <h2 class="font-bold text-base opacity-60">{currentGame?.brief ? currentGame.brief : $i18n.t('games.noBrief')}</h2>
-        <div class="flex-1 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-center justify-center">
-          {#if currentGame}
-          <RxTag label={new Date(currentGame.start_time * 1000).toLocaleDateString('default', {
-            year: 'numeric',
-            day: '2-digit',
-            month: '2-digit',
-          })} />
-          <span class="text-primary transform transition-all rotate-90 sm:rotate-0">=&gt;</span>
-          <RxTag label={new Date(currentGame.end_time * 1000).toLocaleDateString('default', {
-            year: 'numeric',
-            day: '2-digit',
-            month: '2-digit',
-          })} />
-          {/if}
+        <div class="flex flex-col p-6 space-y-4 sm:space-y-2 flex-1 sm:flex-none">
+          <h1 class="text-2xl font-bold flex-1 flex flex-row space-x-4 items-center">
+            <img alt="CTF" src={Logo} width="48" height="48" />
+            <div class="flex flex-col">
+              <span>{currentGame?.name || $i18n.t('games.noGameTitle')}</span>
+              <span class="font-bold text-base opacity-60">
+                {currentGame?.brief ? currentGame.brief : $i18n.t('games.noBrief')}
+              </span>
+            </div>
+          </h1>
+          <div class="flex-1 flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-4 items-center justify-center">
+            {#if currentGame}
+              <RxTag
+                label={new Date(currentGame.start_time * 1000).toLocaleDateString('default', {
+                  year: 'numeric',
+                  day: '2-digit',
+                  month: '2-digit',
+                })}
+              />
+              <span class="text-primary transform transition-all rotate-90 sm:rotate-0">=&gt;</span>
+              <RxTag
+                label={new Date(currentGame.end_time * 1000).toLocaleDateString('default', {
+                  year: 'numeric',
+                  day: '2-digit',
+                  month: '2-digit',
+                })}
+              />
+            {/if}
+          </div>
         </div>
-      </div>
-      <div class="md:flex flex-1 flex-row p-8 justify-end items-center hidden">
-        <span class="icon-[fluent--chevron-double-right-16-regular] text-primary w-8 h-8" />
-      </div>
+        <div class="md:flex flex-1 flex-row p-8 justify-end items-center hidden">
+          <span class="icon-[fluent--chevron-double-right-16-regular] text-primary w-8 h-8" />
+        </div>
+        {#if loading}
+          <div
+            class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-neutral"
+            transition:blur={{ amount: 10 }}
+          >
+            <span class="loading" />
+          </div>
+        {/if}
       </a>
     </div>
   </div>

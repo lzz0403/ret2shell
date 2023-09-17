@@ -1,6 +1,7 @@
 <script lang="ts">
   import { i18n } from '$lib/i18n'
-  import { createEventDispatcher } from 'svelte'
+  import { onDestroy } from 'svelte'
+  import { blur } from 'svelte/transition'
 
   export let loading = true
   export let src: string
@@ -11,21 +12,39 @@
   $: classes = ['overflow-hidden relative', clazz].filter(Boolean).join(' ')
 
   let loadingCover = true
+  let hasError = false
 
-  const dispatcher = createEventDispatcher()
+  function stateWatcher(node: HTMLImageElement) {
+    const onload = () => {
+      // console.log('src loaded:', node.complete)
+      node.complete ? (loadingCover = false) : (loadingCover = true)
+      hasError = false
+    }
+    const onerror = () => {
+      // console.log('src load failed:', node.complete)
+      loadingCover = false
+      hasError = true
+    }
+    node.addEventListener('load', onload)
+    node.addEventListener('error', onerror)
+  }
 
-  const handleLoad = () => {
-    loadingCover = false
-    dispatcher('loaded')
+  $: {
+    if (src) {
+      // console.log('src changed:', src)
+      loadingCover = true
+      hasError = false
+    }
   }
 </script>
 
 <div class={classes} {...$$restProps}>
-  {#if !loading}
-    <img class="object-cover w-full h-full" alt={$i18n.t('form.imageBroken')} {src} on:load={handleLoad} />
-  {/if}
+  <img class="object-cover w-full h-full" alt={$i18n.t('form.imageBroken')} {src} use:stateWatcher />
   {#if loading || loadingCover}
-    <div class="w-full h-full flex flex-col justify-center items-center">
+    <div
+      class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-neutral"
+      transition:blur={{ amount: 10 }}
+    >
       <span class="loading" />
     </div>
   {/if}

@@ -15,7 +15,7 @@
   import type { AxiosError } from 'axios'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import Split from 'split.js'
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
   import { quintOut } from 'svelte/easing'
   import { blur, fly } from 'svelte/transition'
 
@@ -25,6 +25,7 @@
       gutterSize: 8,
       gutterAlign: 'center',
       minSize: 200,
+      sizes: [70, 30],
       gutterStyle: (_dimension, gutterSize) => {
         return {
           height: `${gutterSize}px`,
@@ -62,7 +63,7 @@
   let loadingPlaceHolder: HTMLDivElement
   let openedTabDivRecord: Record<number, HTMLDivElement> = {}
 
-  page.subscribe((value) => {
+  let unsubscribe = page.subscribe((value) => {
     let challengeId = value.url.hash ? parseInt(value.url.hash.slice(1)) || null : null
     if (challengeId) {
       if (openedChallenges.find((chal) => chal.id === challengeId)) {
@@ -99,6 +100,7 @@
       activeChallenge = null
     }
   })
+  onDestroy(unsubscribe)
 
   // user experience
   let challengeScrollExpanded = true
