@@ -94,7 +94,13 @@
     "challengeList": "Challenge list",
     "copyInviteLink": "Copy the team invitation link",
     "takePartIn": "Take part in",
-    "cantTakePartIn": "Not available for participation"
+    "cantTakePartIn": "Not available for participation",
+    "fetchTeamError": "Failed to fetch team info",
+    "takePartInFirst": "You can view the questions only after registering to participate.",
+    "verifyFirst": "Please verify your account before entering",
+    "adminWarning": "The question records submitted by the administrator will not be used as point data, so you can test with confidence.",
+    "adminCanNotTakePartIn": "Administrators cannot create teams",
+    "takePartInAs": "Participated as"
   },
   "announcements": {
     "title": "Announcements",

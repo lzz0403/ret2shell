@@ -1,8 +1,8 @@
 export interface Institute {
   id: number
   name: string
-  description: string
+  description: string | null
   validator: string
-  data: string
-  logo: string
+  data: string | null
+  logo: string | null
 }

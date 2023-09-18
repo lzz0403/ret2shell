@@ -112,6 +112,16 @@ async fn create_team(
         &req.captcha_id,
         &req.captcha_answer
     );
+
+    if user
+        .permissions
+        .0
+        .iter()
+        .any(|p| matches!(p, Permission::Devops | Permission::Organize))
+    {
+        return Err((StatusCode::FORBIDDEN, "host can not create team"));
+    }
+
     let team_name = req.name.trim().to_string();
 
     match team::get_team_by_game_id_and_name(conn, game.id, &team_name).await {
@@ -183,6 +193,16 @@ async fn join_team(
     let id = request.captcha_id;
     let answer = request.captcha_answer;
     captcha_protected!(config.captcha, &mut cache, &id, &answer);
+
+    if user
+        .permissions
+        .0
+        .iter()
+        .any(|p| matches!(p, Permission::Devops | Permission::Organize))
+    {
+        return Err((StatusCode::FORBIDDEN, "host can not create team"));
+    }
+
     let team = match team::get_team_by_token(conn, &request.token).await {
         Ok(Some(team)) => team,
         Ok(None) => return Err((StatusCode::NOT_FOUND, "team not found")),

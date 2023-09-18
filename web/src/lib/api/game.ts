@@ -1,5 +1,6 @@
 import type { Game } from '$lib/models/game'
 import type { Submission } from '$lib/models/submission'
+import type { Team } from '$lib/models/team'
 import { api, api_root } from '.'
 
 export async function getGameList(page: number, per_page: number, host_as_game: boolean) {
@@ -18,4 +19,12 @@ export async function getGameSelfSubmission(game_id: number) {
 
 export async function getGameTeamSubmission(game_id: number, team_id: number) {
   return (await api.get(`${api_root}/team/${game_id}/solved?team_id=${team_id}`)).data as Submission[]
+}
+
+export async function getTeamInfo(game_id: number, team_id: number) {
+  return (await api.get(`${api_root}/team/${game_id}/team/info?team_id=${team_id}`)).data as Team
+}
+
+export async function getSelfTeamInfo(game_id: number) {
+  return (await api.get(`${api_root}/team/${game_id}/team/self`)).data as Team
 }

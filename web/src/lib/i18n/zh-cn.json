@@ -103,7 +103,13 @@
     "challengeList": "题目列表",
     "copyInviteLink": "复制组队邀请链接",
     "takePartIn": "报名参赛",
-    "cantTakePartIn": "当前赛事不可参与"
+    "cantTakePartIn": "当前赛事不可参与",
+    "fetchTeamError": "获取队伍信息失败",
+    "takePartInFirst": "报名参赛后才可查看题目",
+    "verifyFirst": "请先验证你的账户后再参赛",
+    "adminWarning": "管理员提交题目记录不会作为积分数据，可放心测试。",
+    "adminCanNotTakePartIn": "管理员不可创建队伍",
+    "takePartInAs": "已参与"
   },
   "certs": {
     "title": "证书"

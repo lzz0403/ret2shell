@@ -9,7 +9,7 @@
 </script>
 
 <li>
-  <RxLink ghost justify="start" href={`/games/${$game.current?.id}/challenges`}>
+  <RxLink ghost justify="start" href={`/${new Date(($game.current?.archive_time || 0) * 1000) < new Date() ? `playground/${$game.current?.id}` : `games/${$game.current?.id}/challenges`}`}>
     <span class="icon-[fluent--braces-16-regular] w-6 h-6" />
     {$i18n.t('games.challenges')}
   </RxLink>

@@ -13,6 +13,23 @@
   import { game } from '$lib/stores/game'
   import GameMenu from './GameMenu.svelte'
   import TeamBox from './TeamBox.svelte'
+  import { canTakePartInGame } from '$lib/utils/auth'
+  import { onDestroy } from 'svelte'
+  import { Permission } from '$lib/models/user'
+
+  let canTakePartIn = false
+
+  let gameUnsubscribe = game.subscribe((value) => {
+    if (value) {
+      canTakePartInGame().then((res) => {
+        canTakePartIn = res
+      })
+    }
+  })
+
+  onDestroy(() => {
+    gameUnsubscribe()
+  })
 </script>
 
 <div
@@ -82,7 +99,7 @@
         </div>
         {#if $game.current}
           <div class="rounded-box bg-neutral flex flex-col shadow-lg w-full">
-            <TeamBox />
+            <TeamBox {canTakePartIn} />
           </div>
         {/if}
       </RxPopup>
@@ -90,6 +107,12 @@
       <RxLink href="/account/login" exactlyMatched>
         <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
         <span>{$i18n.t('account.login')}</span>
+      </RxLink>
+    {/if}
+    {#if $game.current && !$game.team && canTakePartIn && !$user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
+      <RxLink href={`/games/${$game.current?.id}/participate`} justify="start">
+        <span class="w-6 h-6 icon-[fluent--thumb-like-16-regular]" />
+        {$i18n.t('games.takePartIn')}
       </RxLink>
     {/if}
   {/if}

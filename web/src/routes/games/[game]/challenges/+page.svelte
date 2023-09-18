@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
   import { getChallengeList, getTagList } from '$lib/api/challenge'
   import { getGameSelfSubmission } from '$lib/api/game'
   import GameChallengeSidebar from '$lib/blocks/GameChallengeSidebar.svelte'
@@ -6,8 +7,10 @@
   import { i18n } from '$lib/i18n'
   import type { Challenge, Tag } from '$lib/models/challenge'
   import type { Submission } from '$lib/models/submission'
+  import { Permission } from '$lib/models/user'
   import { game } from '$lib/stores/game'
   import { showMessage } from '$lib/stores/toast'
+  import { user } from '$lib/stores/user'
   import type { AxiosError } from 'axios'
   import { onDestroy, onMount } from 'svelte'
   import { quintOut } from 'svelte/easing'
@@ -62,13 +65,13 @@
   }
 
   onMount(() => {
-    getTagList()
-      .then((res) => {
-        tags = res
+    if (!$game.team && !$user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)) {
+      goto(`/games/${$game.current?.id}`).then(() => {
+        showMessage('warning', $i18n.t('games.takePartInFirst'), 5000)
       })
-      .catch((err) => {
-        showMessage('error', `${$i18n.t('playground.fetchTagsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
-      })
+    } else if ($user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)) {
+      showMessage('info', $i18n.t('games.adminWarning'), 5000)
+    }
   })
 
   let gameUnsubscribe = game.subscribe((value) => {
@@ -77,6 +80,13 @@
       challenges = []
       getChallenges()
       getSelfSubmissions()
+      getTagList()
+        .then((res) => {
+          tags = res
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('playground.fetchTagsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        })
     }
   })
 

@@ -6,6 +6,8 @@
   import RxTag from '$lib/components/RxTag.svelte'
   import { canTakePartInGame } from '$lib/utils/auth'
   import { onDestroy } from 'svelte'
+  import { getInstituteList } from '$lib/api/user'
+  import type { Institute } from '$lib/models/institute'
 
   let isStarted = false
   let isEnded = false
@@ -43,6 +45,7 @@
   }
 
   let canTakePartIn = false
+  let institute: Institute | null = null
 
   let gameUnsubscribe = game.subscribe((value) => {
     if (value) {
@@ -50,7 +53,9 @@
         canTakePartIn = res
       })
       if (value.current?.institute_id) {
-        
+        getInstituteList().then((res) => {
+          institute = res.find((item) => item.id === value.current?.institute_id) || null
+        })
       }
     }
   })
@@ -92,13 +97,15 @@
   </div>
 </div>
 <div class="flex flex-row justify-center items-center p-6 space-x-2">
-  <RxTag label={$game.current?.institute_id ? $i18n.t('games.restrictedGame') : $i18n.t('games.publicGame')} />
+  <RxTag label={$game.current?.institute_id ? `${$i18n.t('games.restrictedGame')}: ${institute?.name}` : $i18n.t('games.publicGame')} />
   <RxTag
     label={($game.current?.team_size_limit || 0) > 1
       ? `${$i18n.t('games.multiPlayer', { limit: $game.current?.team_size_limit })}`
       : $i18n.t('games.singlePlayer')}
   />
-  {#if canTakePartIn}
+  {#if $game.team}
+  <RxTag label={`${$i18n.t('games.takePartInAs')}: ${$game.team.name}`} level="success" />
+  {:else if canTakePartIn}
     <RxTag label={$i18n.t('games.canTakePartIn')} level="success" />
   {:else}
     <RxTag label={$i18n.t('games.cannotTakePartIn')} level="error" />
