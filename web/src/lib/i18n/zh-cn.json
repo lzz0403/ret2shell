@@ -90,7 +90,7 @@
     "fetchGameError": "获取赛事失败",
     "canTakePartIn": "可参与",
     "cannotTakePartIn": "不可参与",
-    "multiPlayer": "组队赛",
+    "multiPlayer": "{{limit}}人组队赛",
     "publicGame": "公开赛事",
     "restrictedGame": "组织限定赛事",
     "singlePlayer": "个人赛",
