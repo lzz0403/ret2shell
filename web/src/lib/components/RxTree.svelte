@@ -20,7 +20,7 @@
   export let fetchChildren: (id: number) => Promise<WikiEntry[]> = () => Promise.resolve([])
 
   function handleLoadingChildItems(id: number) {
-    if (tree.find((item) => item.id === id)?.children?.length || 0 > 0) {
+    if ((tree.find((item) => item.id === id)?.children?.length || 0) > 0) {
       treeExpandedRecord[id] = !treeExpandedRecord[id]
       treeExpandedRecord = treeExpandedRecord
       return

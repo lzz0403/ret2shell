@@ -4,16 +4,17 @@
   import { getGame } from '$lib/api/game'
   import { i18n } from '$lib/i18n'
   import { game } from '$lib/stores/game'
-    import { platform } from '$lib/stores/platform'
+  import { platform } from '$lib/stores/platform'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
+  import { onDestroy } from 'svelte'
 
   let loading = true
   if ($page.params.game) {
     let gameId = parseInt($page.params.game) || null
     if (!gameId) {
       showMessage('error', `${$i18n.t('games.invalidGameId')}: ${$page.params.game}`, 5000)
-          goto('/errors/404')
+      goto('/errors/404')
     } else {
       getGame(gameId)
         .then((res) => {
@@ -31,6 +32,13 @@
         })
     }
   }
+
+  onDestroy(() => {
+    game.update((value) => {
+      value.current = null
+      return value
+    })
+  })
 </script>
 
 <svelte:head><title>{$game.current?.name} - {$platform.name}</title></svelte:head>

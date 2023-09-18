@@ -80,7 +80,13 @@
     "fetchGamesError": "Failed to fetch games",
     "gameIdInvalid": "The specified game does not exist",
     "invalidGameId": "The game does not exist",
-    "fetchGameError": "Failed to fetch game"
+    "fetchGameError": "Failed to fetch game",
+    "publicGame": "Public Game",
+    "restrictedGame": "Institute Limited Game",
+    "multiPlayer": "Multi Player",
+    "singlePlayer": "Single Player",
+    "canTakePartIn": "Can Participate",
+    "cannotTakePartIn": "Can't Participate"
   },
   "announcements": {
     "title": "Announcements",

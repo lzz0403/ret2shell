@@ -1,10 +1,11 @@
 <script lang="ts">
   import { i18n } from '$lib/i18n'
-  import { onDestroy } from 'svelte'
   import { blur } from 'svelte/transition'
 
   export let loading = true
   export let src: string
+  // object-contain object-cover object-fill
+  export let fit: 'contain' | 'cover' | 'fill' = 'cover'
 
   let clazz = ''
   export { clazz as class }
@@ -39,7 +40,7 @@
 </script>
 
 <div class={classes} {...$$restProps}>
-  <img class="object-cover w-full h-full" alt={$i18n.t('form.imageBroken')} {src} use:stateWatcher />
+  <img class={`object-${fit} w-full h-full`} alt={$i18n.t('form.imageBroken')} {src} use:stateWatcher />
   {#if loading || loadingCover}
     <div
       class="absolute top-0 left-0 w-full h-full flex flex-col justify-center items-center bg-neutral"

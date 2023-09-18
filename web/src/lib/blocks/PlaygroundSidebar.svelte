@@ -55,31 +55,27 @@
   class="w-full h-full flex flex-col relative print:hidden"
   defer
 >
-  <div class={`bg-base-100 border-b border-b-base-content/5 flex flex-col sticky top-0 h-32`}>
-    <h1 class="font-bold flex flex-row justify-center items-center h-16 space-x-2">
-      <span class="icon-[fluent--dumbbell-16-regular] w-6 h-6" />
-      {#if activeGame}
-        <span>
-          {activeGame.name}
-        </span>
-      {:else}
-        <span>
-          {$i18n.t('playground.sideToc')}
-        </span>
-      {/if}
-    </h1>
-    <div class="h-16 join px-4">
-      <RxInput class="join-item" />
-      <RxButton square class="join-item ml-0">
-        <span class="icon-[fluent--filter-16-regular] w-6 h-6" />
-      </RxButton>
-    </div>
-  </div>
+  <h1
+    class="font-bold flex flex-row justify-center items-center h-16 space-x-2 sticky top-0 bg-base-100 border-b border-b-base-content/5"
+  >
+    <span class="icon-[fluent--dumbbell-16-regular] w-6 h-6" />
+    {#if activeGame}
+      <span>
+        {activeGame.name}
+      </span>
+    {:else}
+      <span>
+        {$i18n.t('playground.sideToc')}
+      </span>
+    {/if}
+  </h1>
   {#if activeGameId}
     <div class="flex-1 flex-col p-4 overflow-x-hidden">
       <RxLink ghost class="w-full" justify="start" href="/playground">
         <span class="icon-[fluent--arrow-hook-down-left-16-regular] w-6 h-6" />
-        <span class="flex-1 text-start text-ellipsis overflow-hidden whitespace-nowrap">{$i18n.t('playground.returnToList')}</span>
+        <span class="flex-1 text-start text-ellipsis overflow-hidden whitespace-nowrap"
+          >{$i18n.t('playground.returnToList')}</span
+        >
         <span class="icon-[fluent--chevron-down-16-regular] w-5 h-5" />
       </RxLink>
       <ul class="relative">

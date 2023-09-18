@@ -286,13 +286,20 @@
                     </div>
                   {:else if challengeEnvExpanded}
                     <div class="w-full max-w-5xl flex flex-row items-center px-6 space-x-2">
-                      <RxButton ghost class="max-w-xs">
-                        <span class="icon-[fluent--flow-16-regular] w-5 h-5"></span>
-                        <span class="flex-1 text-left opacity-60 text-ellipsis overflow-hidden whitespace-nowrap">
-                          {$i18n.t('playground.noRunningEnv')}
-                        </span>
-                        <span class="icon-[fluent--copy-16-regular] w-5 h-5 text-success"></span>
-                      </RxButton>
+                      <div class="join">
+                        <RxButton ghost class="max-w-xs join-item">
+                          <span class="icon-[fluent--flow-16-regular] w-5 h-5"></span>
+                          <span class="flex-1 text-left opacity-60 text-ellipsis overflow-hidden whitespace-nowrap">
+                            {$i18n.t('playground.noRunningEnv')}
+                          </span>
+                        </RxButton>
+                        <RxButton ghost square class="join-item ml-0">
+                          <span class="icon-[fluent--copy-16-regular] w-5 h-5 text-success"></span>
+                        </RxButton>
+                        <RxButton ghost square class="join-item ml-0">
+                          <span class="icon-[fluent--open-16-regular] w-5 h-5 text-info"></span>
+                        </RxButton>
+                      </div>
                       <span class="text-base font-bold opacity-60">{$i18n.t('playground.envLastTime')}:</span>
                       <span class="text-base font-bold">--:--:--</span>
                       <div class="flex-1"></div>
