@@ -2,11 +2,14 @@ use super::{
     layer::{auth, info},
     GlobalState,
 };
-use crate::entity::{
-    challenge, game,
-    user::{self, Permission},
-};
 use crate::utility::string::deunicode_str;
+use crate::{
+    bucket::Bucket,
+    entity::{
+        challenge, game,
+        user::{self, Permission},
+    },
+};
 use axum::{
     extract::{Path, Query, State},
     middleware,
@@ -96,18 +99,26 @@ async fn create_challenge(
     // TODO: there may exists a same name challenge in the same game
     // Should valid?
     challenge.bucket = Some(format!(
-        "{}/{}_{}",
-        config.config.bucket.path,
-        challenge.game_id,
+        "{}_{}",
+        challenge.id,
         deunicode_str(&challenge.name)
     ));
+    Bucket::initialize(config.config.bucket.path, &challenge)
+        .await
+        .map_err(|err| {
+            error!("failed to init challenge bucket: {}", err);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to init challenge bucket",
+            )
+        })?;
     let created_challenge = match challenge::create_challenge(conn, challenge).await {
         Ok(created_challenge) => created_challenge,
         Err(err) => {
-            error!("create_new_challenge error: {}", err);
+            error!("failed to create new challenge in database: {}", err);
             return Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
-                "failed to create new challenge",
+                "failed to create new challenge in database",
             ));
         }
     };
@@ -135,7 +146,7 @@ async fn update_challenge(
             error!("update_challenge error: {}", err);
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
-                "failed to update challenge",
+                "failed to update challenge in database",
             ))
         }
     }
@@ -167,7 +178,10 @@ async fn get_challenge_list(
             }
             Err(err) => {
                 error!("failed to get game: {}", err);
-                return Err((StatusCode::INTERNAL_SERVER_ERROR, "failed to get game"));
+                return Err((
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "failed to get game due to database error",
+                ));
             }
         },
         None => {
@@ -179,7 +193,7 @@ async fn get_challenge_list(
     let per_page = params.per_page.unwrap_or(10);
     if page < 1 || per_page < 1 {
         error!("Invalid page={} or per_page={}", page, per_page);
-        return Err((StatusCode::BAD_REQUEST, "invalid parameters"));
+        return Err((StatusCode::BAD_REQUEST, "invalid paginate parameters"));
     }
     match challenge::get_challenge_page_by_game_and_user(
         conn,
@@ -195,7 +209,7 @@ async fn get_challenge_list(
             error!("get_challenge_list error: {}", err);
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
-                "failed to get challenge list",
+                "failed to get challenge list due to database error",
             ))
         }
     }
@@ -212,7 +226,7 @@ async fn delete_challenge(
             error!("failed to delete challenge: {}", err);
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
-                "failed to delete challenge",
+                "failed to delete challenge due to database error",
             ))
         }
     }
