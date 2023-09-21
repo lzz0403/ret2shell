@@ -32,18 +32,15 @@ export class MarkTo {
     /* remark */ {
       if (options?.katex) {
         const remarkMath = await import('remark-math')
-        // @ts-expect-error remark has not updated
         this.processor?.use(remarkMath.default)
       }
     }
-    // @ts-expect-error remark has not updated
     this.processor?.use(remarkRehype.default)
 
     /* rehype */ {
       if (options?.katex) {
         const rehypeKatex = await import('rehype-katex')
         await import('katex/dist/katex.css')
-        // @ts-expect-error remark has not updated
         this.processor?.use(rehypeKatex.default)
       }
       if (options?.prism) {
