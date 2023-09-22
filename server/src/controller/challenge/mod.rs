@@ -67,8 +67,6 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     Permission::Devops
                 )))
                 .route("/", get(get_challenge_info))
-                .route("/status", get(get_challenge_status))
-                .route("/static", get(get_challenge_static_info))
                 .route("/attachment", get(download_challenge_attachment))
                 .route_layer(middleware::from_fn(auth::challenge_privilege_required))
                 .route_layer(middleware::from_fn_with_state(
@@ -122,14 +120,6 @@ async fn create_challenge(
             ));
         }
     };
-    // TODO: add checker
-    // new_checker(&created_challenge).await.map_err(|err| {
-    //     error!("create_new_challenge error: {}", err);
-    //     (
-    //         StatusCode::INTERNAL_SERVER_ERROR,
-    //         "failed to create new challenge",
-    //     )
-    // })?;
 
     Ok(Json(created_challenge))
 }
@@ -236,14 +226,6 @@ async fn get_challenge_info(
     Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     Ok(Json(challenge))
-}
-
-async fn get_challenge_status() -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    Ok(Json("to be implemented"))
-}
-
-async fn get_challenge_static_info() -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    Ok(Json("to be implemented"))
 }
 
 async fn download_challenge_attachment() -> Result<impl IntoResponse, (StatusCode, &'static str)> {
