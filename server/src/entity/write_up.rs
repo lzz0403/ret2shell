@@ -3,7 +3,7 @@
 use chrono::serde::ts_seconds::{deserialize as from_ts, serialize as to_ts};
 use chrono::{DateTime, Utc};
 use sea_orm::entity::prelude::*;
-use sea_orm::{ActiveValue, IntoActiveModel, QueryOrder};
+use sea_orm::{ActiveValue, IntoActiveModel, Iterable, QueryOrder, QuerySelect};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, PartialEq, DeriveEntityModel, Eq, Serialize, Deserialize)]
@@ -65,7 +65,9 @@ pub async fn get_writeup_page(
     per_page: u64,
 ) -> Result<(Vec<Model>, u64), DbErr> {
     let mut sql = Entity::find()
+        .select_only()
         .filter(Column::GameId.eq(game_id))
+        .columns(Column::iter().filter(|c| !matches!(c, Column::Content)))
         .order_by_desc(Column::PublishedAt);
     if !show_hidden {
         sql = sql.filter(Column::Hidden.eq(false))
