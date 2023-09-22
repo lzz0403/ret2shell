@@ -60,7 +60,12 @@ impl MigrationTrait for Migration {
                             .on_update(ForeignKeyAction::Cascade)
                             .on_delete(ForeignKeyAction::SetNull),
                     )
-                    .col(ColumnDef::new(Answer::ChallengeId).big_integer().not_null())
+                    .col(
+                        ColumnDef::new(Answer::ChallengeId)
+                            .big_integer()
+                            .not_null()
+                            .unique_key(),
+                    )
                     .foreign_key(
                         ForeignKey::create()
                             .name("answer_challenge_id_fkey")

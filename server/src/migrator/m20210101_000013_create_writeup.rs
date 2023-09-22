@@ -21,6 +21,7 @@ pub enum WriteUp {
     PublishedAt,
     AuthorId,
     GameId,
+    Hidden,
     Content,
 }
 
@@ -68,6 +69,12 @@ impl MigrationTrait for Migration {
                             .to(Game::Table, Game::Id)
                             .on_update(ForeignKeyAction::Cascade)
                             .on_delete(ForeignKeyAction::Cascade),
+                    )
+                    .col(
+                        ColumnDef::new(WriteUp::Hidden)
+                            .boolean()
+                            .not_null()
+                            .default(true),
                     )
                     .col(ColumnDef::new(WriteUp::Content).text().not_null())
                     .to_owned(),
