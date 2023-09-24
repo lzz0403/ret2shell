@@ -49,7 +49,7 @@ export class RnixShell {
   public greet() {
     this.stdio.println(ansiColors.blueBright(get(i18n).t('shell.welcome')))
     this.stdio.println(
-      get(i18n).t('shell.help', { command: ansiEscapes.link(ansiColors.green('help'), 'rnix-cmd://help') })
+      get(i18n).t('shell.helpTips', { command: ansiEscapes.link(ansiColors.green('help'), 'rnix-cmd://help') })
     )
     this.stdio.println('')
   }
