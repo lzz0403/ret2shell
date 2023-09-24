@@ -1,4 +1,4 @@
-import type { Game } from '$lib/models/game'
+import type { Game, Notification } from '$lib/models/game'
 import type { Submission } from '$lib/models/submission'
 import type { Team } from '$lib/models/team'
 import { api, api_root } from '.'

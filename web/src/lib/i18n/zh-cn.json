@@ -36,6 +36,7 @@
     "fetchingList": "获取公告列表..."
   },
   "playground": {
+    "fetchNotificationsFailed": "获取赛事通知失败",
     "title": "练习",
     "searchPlaceholder": "搜索 题目 / 赛事 ...",
     "sideToc": "练习场",

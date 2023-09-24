@@ -1,9 +1,12 @@
 <script lang="ts">
   import { logout } from '$lib/api/account'
   import RxButton from '$lib/components/RxButton.svelte'
+  import RxImage from '$lib/components/RxImage.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
-  import { user, userReset } from '$lib/stores/user'
+  import type { User } from '$lib/models/user'
+  import { user, userInfo, userReset } from '$lib/stores/user'
+  import { onMount } from 'svelte'
 
   function handleLogout() {
     logout().finally(() => {
@@ -13,6 +16,17 @@
       }, 100)
     })
   }
+
+  let userFullInfo: User | null = null
+  let loadingAvatar = false
+
+  onMount(() => {
+    loadingAvatar = true
+    userInfo().then((value) => {
+      userFullInfo = value
+      loadingAvatar = false
+    })
+  })
 </script>
 
 <div class="p-2 flex flex-col">
@@ -21,7 +35,11 @@
       <div
         class="w-10 rounded-full ring-2 ring-offset-base-100 ring-offset-2 !flex flex-col justify-center items-center"
       >
-        <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+        {#if userFullInfo?.cover_path}
+          <RxImage src={userFullInfo.cover_path} loading={loadingAvatar} />
+        {:else}
+          <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+        {/if}
       </div>
     </div>
     <div class="ml-2 flex flex-col items-start overflow-hidden">

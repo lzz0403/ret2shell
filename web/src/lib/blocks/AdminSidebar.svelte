@@ -1,12 +1,39 @@
 <script lang="ts">
+  import { page } from '$app/stores'
   import RxButton from '$lib/components/RxButton.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
   import { Permission } from '$lib/models/user'
   import { user } from '$lib/stores/user'
+  import { onDestroy } from 'svelte'
 
   let firstLevelExpanded = true
   $: secondLevelExpanded = !firstLevelExpanded
+
+  interface RouteItem {
+    name: string
+    icon: string
+    link: string
+  }
+
+  let statisticsRoutes = [
+    {
+      name: $i18n.t('admin.statisticsSummary'),
+      icon: 'fluent--data-pie-24-regular',
+      link: '/admin/statistics',
+    },
+  ] as RouteItem[]
+
+  const pageUnsubscribe = page.subscribe((value) => {
+    if (value.url.pathname) {
+      if (value.url.pathname.startsWith('/admin/statistics')) {
+      }
+    }
+  })
+
+  onDestroy(() => {
+    pageUnsubscribe()
+  })
 </script>
 
 <div

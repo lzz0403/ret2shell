@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { getChallengeList, getTagList } from '$lib/api/challenge'
-  import { getGameSelfSubmission } from '$lib/api/game'
+  import { getGameNotifications, getGameSelfSubmission } from '$lib/api/game'
   import GameChallengeSidebar from '$lib/blocks/GameChallengeSidebar.svelte'
   import GameTeamSidebar from '$lib/blocks/GameTeamSidebar.svelte'
   import HintsPanel from '$lib/blocks/HintsPanel.svelte'
@@ -25,6 +25,7 @@
   import { page } from '$app/stores'
   import { getChallenge } from '$lib/api/challenge'
   import Split from 'split.js'
+  import type { Notification } from '$lib/models/game'
 
   let screenWidth: number
   let toggleSidebar = false
@@ -179,6 +180,33 @@
 
   // bottom panel
   let bottomTab = 0
+
+  // notifications
+  let notifications: Notification[] = []
+
+  function fetchNotifications() {
+    if ($game.current) {
+      getGameNotifications($game.current.id, 1, 20)
+        .then((res) => {
+          notifications = res.notifications
+        })
+        .catch((err) => {
+          showMessage(
+            'error',
+            `${$i18n.t('playground.fetchNotificationsFailed')}: ${(err as AxiosError).response?.data}`,
+            5000
+          )
+        })
+    }
+  }
+
+  let timer = setInterval(() => {
+    fetchNotifications()
+  }, 5000)
+
+  onDestroy(() => {
+    clearInterval(timer)
+  })
 </script>
 
 <svelte:window bind:innerWidth={screenWidth} />
@@ -475,7 +503,7 @@
     <div
       class="w-1/5 h-[calc(100vh_-_4rem)] flex-shrink-0 min-w-[24rem] max-w-[32rem] bg-base-100/60 backdrop-blur border-l border-l-base-content/10 overflow-hidden"
     >
-      <GameTeamSidebar />
+      <GameTeamSidebar {notifications} />
     </div>
   {:else}
     <label
@@ -496,7 +524,7 @@
       class="fixed right-0 w-full max-w-[24rem] h-[calc(100vh_-_4rem)] overflow-hidden backdrop-blur bg-base-100/40 border-l border-l-base-content/10"
       transition:fly={{ delay: 100, duration: 300, x: 256, y: 0, opacity: 0, easing: quintOut }}
     >
-      <GameTeamSidebar />
+      <GameTeamSidebar {notifications} />
     </div>
   {/if}
   {#if toggleSidebar && !showSidebar}

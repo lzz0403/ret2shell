@@ -1,7 +1,7 @@
 <script lang="ts">
   import logo from '$lib/assets/logo.svg'
   import { platform } from '$lib/stores/platform'
-  import { user } from '$lib/stores/user'
+  import { user, userInfo } from '$lib/stores/user'
   import GlobalMenu from '$lib/blocks/GlobalMenu.svelte'
   import CustomizeBox from './CustomizeBox.svelte'
   import { i18n } from '$lib/i18n'
@@ -10,12 +10,13 @@
   import UserBox from './UserBox.svelte'
   import { initConfig } from '$lib/stores/init'
   import RxButton from '$lib/components/RxButton.svelte'
+  import RxImage from '$lib/components/RxImage.svelte'
   import { game } from '$lib/stores/game'
   import GameMenu from './GameMenu.svelte'
   import TeamBox from './TeamBox.svelte'
   import { canTakePartInGame } from '$lib/utils/auth'
-  import { onDestroy } from 'svelte'
-  import { Permission } from '$lib/models/user'
+  import { onDestroy, onMount } from 'svelte'
+  import { Permission, type User } from '$lib/models/user'
 
   let canTakePartIn = false
 
@@ -29,6 +30,17 @@
 
   onDestroy(() => {
     gameUnsubscribe()
+  })
+
+  let userFullInfo: User | null = null
+  let loadingAvatar = false
+
+  onMount(() => {
+    loadingAvatar = true
+    userInfo().then((value) => {
+      userFullInfo = value
+      loadingAvatar = false
+    })
   })
 </script>
 
@@ -91,7 +103,11 @@
           <div
             class="w-8 rounded-full ring-2 ring-offset-base-100 ring-offset-2 !flex flex-col justify-center items-center"
           >
-            <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+            {#if userFullInfo?.cover_path}
+              <RxImage src={userFullInfo.cover_path} loading={loadingAvatar} />
+            {:else}
+              <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+            {/if}
           </div>
         </div>
         <div class="rounded-box bg-neutral flex flex-col shadow-lg w-full">

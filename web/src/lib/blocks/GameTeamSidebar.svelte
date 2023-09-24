@@ -7,7 +7,7 @@
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import type { Notification } from '$lib/models/game'
 
-  export let notifications: Notification[] = []
+  export let notifications: Notification[]
 </script>
 
 <OverlayScrollbarsComponent

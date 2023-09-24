@@ -68,7 +68,8 @@
     "attachmentCount": "Attachment count",
     "envAddr": "Env addr",
     "noRunningEnv": "No running environment...",
-    "envLastTime": "Last time"
+    "envLastTime": "Last time",
+    "fetchNotificationsFailed": "Failed to fetch notifications"
   },
   "games": {
     "title": "Games",
