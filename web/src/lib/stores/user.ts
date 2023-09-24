@@ -71,7 +71,7 @@ async function _fetchUserInfo() {
 }
 
 export async function userInfo() {
-  if (!get(user).info) {
+  if (!get(user).info && get(user).isLoggedIn) {
     await _fetchUserInfo()
   }
   return get(user).info
