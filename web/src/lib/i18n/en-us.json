@@ -370,6 +370,12 @@
       "right": "Correct",
       "wrong": "Wrong",
       "error": "Submission Failed"
+    },
+    "wget": {
+      "downloading": "downloading",
+      "failed": "download failed",
+      "success": "download successful",
+      "usage": "Usage: wget filename"
     }
   }
 }

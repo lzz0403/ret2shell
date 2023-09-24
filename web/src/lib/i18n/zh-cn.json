@@ -369,6 +369,12 @@
       "right": "flag正确",
       "wrong": "flag错误",
       "error": "提交失败"
+    },
+    "wget": {
+      "downloading": "正在下载",
+      "failed": "下载失败",
+      "success": "下载成功",
+      "usage": "用法: wget 文件名"
     }
   }
 }
