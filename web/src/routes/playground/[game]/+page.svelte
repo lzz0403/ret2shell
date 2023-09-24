@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
-  import { getChallenge } from '$lib/api/challenge'
+  import { getChallenge, getChallengeHints } from '$lib/api/challenge'
   import { getGame } from '$lib/api/game'
   import AnswerPanel from '$lib/blocks/AnswerPanel.svelte'
   import Error from '$lib/blocks/Error.svelte'
@@ -11,7 +11,6 @@
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
   import type { Challenge } from '$lib/models/challenge'
-  import type { Game } from '$lib/models/game'
   import { platform } from '$lib/stores/platform'
   import { theme } from '$lib/stores/theme'
   import { showMessage } from '$lib/stores/toast'
@@ -22,6 +21,7 @@
   import { quintOut } from 'svelte/easing'
   import { blur, fly } from 'svelte/transition'
   import { game } from '$lib/stores/game'
+  import type { Hint } from '$lib/models/hint'
 
   onMount(() => {
     Split(['#info-stack', '#work-stack'], {
@@ -65,6 +65,7 @@
   let loadingNewChallenge = false
   let loadingPlaceHolder: HTMLDivElement
   let openedTabDivRecord: Record<number, HTMLDivElement> = {}
+  let hints: Hint[] = []
 
   let unsubscribe = page.subscribe((value) => {
     let challengeId = value.url.hash ? parseInt(value.url.hash.slice(1)) || null : null
@@ -98,6 +99,13 @@
         })
         .finally(() => {
           loadingNewChallenge = false
+        })
+      getChallengeHints(challengeId)
+        .then((res) => {
+          hints = res
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('playground.fetchHintsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
         })
     } else {
       activeChallenge = null
@@ -384,8 +392,13 @@
           {$i18n.t('playground.challengeAnswer')}
         </RxButton>
       </div>
-      <TerminalPanel game={$game.current} challenge={activeChallenge} availableChallenges={$game.challenges} class={bottomTab === 0 ? 'p-6' : 'hidden'} />
-      <HintsPanel class={bottomTab === 1 ? '' : 'hidden'} />
+      <TerminalPanel
+        game={$game.current}
+        challenge={activeChallenge}
+        availableChallenges={$game.challenges}
+        class={bottomTab === 0 ? 'p-6' : 'hidden'}
+      />
+      <HintsPanel {hints} class={bottomTab === 1 ? '' : 'hidden'} />
       <AnswerPanel class={bottomTab === 2 ? '' : 'hidden'} />
     </div>
   </div>

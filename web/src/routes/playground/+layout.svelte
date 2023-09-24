@@ -36,7 +36,6 @@
   let tags: Tag[] = []
 
   let activeGameId: number | null = null
-  let activeGameChallenges: Challenge[] = []
   let playgroundTotalPages: number = 0
   let playgroundPage: number = 1
   let playgroundPageSize = 10
@@ -115,7 +114,7 @@
     if (mayHaveMoreChallenges && activeGameId) {
       getChallengeList(activeGameId, ++challengePage, challengePageSize)
         .then((res) => {
-          activeGameChallenges = activeGameChallenges.concat(res.challenges)
+          $game.challenges = $game.challenges.concat(res.challenges)
           challengeTotalPages = res.total
         })
         .catch((err) => {
@@ -128,7 +127,7 @@
     let newActiveGameId = value.params.game ? parseInt(value.params.game) || null : null
     // console.log(activeGameId)
     if (newActiveGameId && newActiveGameId !== activeGameId) {
-      activeGameChallenges = []
+      $game.challenges = []
       activeGameId = newActiveGameId
 
       getGameSelfSubmission(activeGameId)
@@ -144,8 +143,6 @@
         })
       getChallengeList(activeGameId, challengePage, challengePageSize)
         .then((res) => {
-          // console.log(res)
-          activeGameChallenges = res.challenges
           $game.challenges = res.challenges
           challengeTotalPages = res.total
         })
@@ -175,7 +172,7 @@
         {games}
         {playgrounds}
         {selfSubmissions}
-        {activeGameChallenges}
+        activeGameChallenges={$game.challenges}
         {tags}
         {mayHaveMoreChallenges}
         {mayHaveMoreGames}
@@ -209,7 +206,7 @@
         {games}
         {playgrounds}
         {selfSubmissions}
-        {activeGameChallenges}
+        activeGameChallenges={$game.challenges}
         {tags}
         {mayHaveMoreChallenges}
         {mayHaveMoreGames}

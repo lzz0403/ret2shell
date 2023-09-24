@@ -33,6 +33,7 @@
           .then((res) => {
             game.update((value) => {
               value.current = res
+              value.showGameNav = true
               return value
             })
           })
@@ -76,6 +77,7 @@
       value.current = null
       value.cached = null
       value.team = null
+      value.showGameNav = false
       return value
     })
   })

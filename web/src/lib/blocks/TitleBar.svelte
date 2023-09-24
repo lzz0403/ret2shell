@@ -74,14 +74,14 @@
   {:else}
     <RxLink ghost href={$game.current ? `/games/${$game.current.id}` : '/'} exactlyMatched>
       <img class="hidden xl:block" width="28" height="28" src={logo} alt="logo" />
-      {#if $game.current}
+      {#if $game.showGameNav}
         <span>{$game.current?.name}</span>
       {:else}
         <span>{$platform.name}</span>
       {/if}
     </RxLink>
     <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">
-      {#if $game.current}
+      {#if $game.showGameNav}
         <GameMenu />
       {:else}
         <GlobalMenu />
@@ -113,7 +113,7 @@
         <div class="rounded-box bg-neutral flex flex-col shadow-lg w-full">
           <UserBox />
         </div>
-        {#if $game.current}
+        {#if $game.showGameNav}
           <div class="rounded-box bg-neutral flex flex-col shadow-lg w-full">
             <TeamBox {canTakePartIn} />
           </div>
@@ -125,7 +125,7 @@
         <span>{$i18n.t('account.login')}</span>
       </RxLink>
     {/if}
-    {#if $game.current && !$game.team && canTakePartIn && !$user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
+    {#if $game.showGameNav && !$game.team && canTakePartIn && !$user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
       <RxLink href={`/games/${$game.current?.id}/participate`} justify="start">
         <span class="w-6 h-6 icon-[fluent--thumb-like-16-regular]" />
         {$i18n.t('games.takePartIn')}

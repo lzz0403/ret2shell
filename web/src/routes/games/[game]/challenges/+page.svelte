@@ -1,6 +1,6 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { getChallengeList, getTagList } from '$lib/api/challenge'
+  import { getChallengeHints, getChallengeList, getTagList } from '$lib/api/challenge'
   import { getGameNotifications, getGameSelfSubmission } from '$lib/api/game'
   import GameChallengeSidebar from '$lib/blocks/GameChallengeSidebar.svelte'
   import GameTeamSidebar from '$lib/blocks/GameTeamSidebar.svelte'
@@ -26,6 +26,7 @@
   import { getChallenge } from '$lib/api/challenge'
   import Split from 'split.js'
   import type { Notification } from '$lib/models/game'
+  import type { Hint } from '$lib/models/hint'
 
   let screenWidth: number
   let toggleSidebar = false
@@ -37,7 +38,6 @@
   let challengePageSize = 200
   let challengePage: number = 1
   let selfSubmissions: Submission[] = []
-  let challenges: Challenge[] = []
   $: mayHaveMoreChallenges = challengePage < challengeTotalPages
   let tags: Tag[] = []
   let currentGameIdCache: number | null = null
@@ -46,8 +46,7 @@
     if ($game.current?.id) {
       getChallengeList($game.current?.id, challengePage, challengePageSize)
         .then((res) => {
-          challenges = challenges.concat(res.challenges)
-          $game.challenges = challenges
+          $game.challenges = $game.challenges.concat(res.challenges)
           challengeTotalPages = res.total
         })
         .catch((err) => {
@@ -91,7 +90,7 @@
     if (value.current?.id && currentGameIdCache !== value.current.id) {
       currentGameIdCache = value.current.id
       challengePage = 1
-      challenges = []
+      $game.challenges = []
       getChallenges()
       getSelfSubmissions()
       getTagList()
@@ -135,6 +134,7 @@
   let loadingNewChallenge = false
   let loadingPlaceHolder: HTMLDivElement
   let openedTabDivRecord: Record<number, HTMLDivElement> = {}
+  let hints: Hint[] = []
 
   let unsubscribe = page.subscribe((value) => {
     let challengeId = value.url.hash ? parseInt(value.url.hash.slice(1)) || null : null
@@ -169,6 +169,13 @@
         .finally(() => {
           loadingNewChallenge = false
         })
+      getChallengeHints(challengeId)
+        .then((res) => {
+          hints = res
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('playground.fetchHintsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        })
     } else {
       activeChallenge = null
     }
@@ -188,7 +195,7 @@
 
   function fetchNotifications() {
     if ($game.current) {
-      getGameNotifications($game.current.id, 1, 20)
+      getGameNotifications($game.current.id, 1, 200)
         .then((res) => {
           notifications = res.notifications
         })
@@ -201,6 +208,8 @@
         })
     }
   }
+
+  fetchNotifications()
 
   let timer = setInterval(() => {
     fetchNotifications()
@@ -220,7 +229,7 @@
     >
       <GameChallengeSidebar
         {selfSubmissions}
-        {challenges}
+        challenges={$game.challenges}
         {tags}
         {mayHaveMoreChallenges}
         on:loadMoreChallenges={getMoreChallenges}
@@ -497,8 +506,13 @@
           {$i18n.t('playground.challengeHints')}
         </RxButton>
       </div>
-      <TerminalPanel game={$game.current} challenge={activeChallenge} availableChallenges={$game.challenges} class={bottomTab === 0 ? 'p-6' : 'hidden'} />
-      <HintsPanel class={bottomTab === 1 ? '' : 'hidden'} />
+      <TerminalPanel
+        game={$game.current}
+        challenge={activeChallenge}
+        availableChallenges={$game.challenges}
+        class={bottomTab === 0 ? 'p-6' : 'hidden'}
+      />
+      <HintsPanel class={bottomTab === 1 ? '' : 'hidden'} {hints} />
     </div>
   </div>
   {#if showTeamSidebar}
@@ -536,7 +550,7 @@
     >
       <GameChallengeSidebar
         {selfSubmissions}
-        {challenges}
+        challenges={$game.challenges}
         {tags}
         {mayHaveMoreChallenges}
         on:loadMoreChallenges={getMoreChallenges}

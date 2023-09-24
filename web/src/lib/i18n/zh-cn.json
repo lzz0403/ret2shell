@@ -76,7 +76,8 @@
     "manageEnv": "进入环境",
     "noRunningEnv": "没有正在运行的环境...",
     "packAndDownload": "打包下载所有",
-    "quickAction": "快速操作"
+    "quickAction": "快速操作",
+    "fetchHintsFailed": "获取题目提示信息失败"
   },
   "games": {
     "title": "赛事",

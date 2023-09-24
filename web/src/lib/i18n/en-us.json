@@ -69,7 +69,8 @@
     "envAddr": "Env addr",
     "noRunningEnv": "No running environment...",
     "envLastTime": "Last time",
-    "fetchNotificationsFailed": "Failed to fetch notifications"
+    "fetchNotificationsFailed": "Failed to fetch notifications",
+    "fetchHintsFailed": "Failed to obtain challenge hints"
   },
   "games": {
     "title": "Games",

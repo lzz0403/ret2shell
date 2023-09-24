@@ -18,8 +18,7 @@ export class Ls implements Command {
       return 1
     }
     const map = new Map<number, Array<Challenge>>()
-    const challenges = (await getChallengeList(envp.game?.id)).challenges
-    challenges.forEach((challenge) => {
+    envp.availableChallenges.forEach((challenge) => {
       if (!map.has(challenge.tag_id)) {
         map.set(challenge.tag_id, [])
       }
@@ -27,10 +26,12 @@ export class Ls implements Command {
     })
     let tags = await getTagList()
     Array.from(map.entries()).map(([tagId, challenges]) => {
+      io.println('')
       io.println(ansiColors.bold.blue(tags.find((tag) => tag.id === tagId)?.name || 'UNKNOWN TAG'))
-      return challenges.map((challenge) => {
-        io.println(`    ${ansiEscapes.link(challenge.name, `challenge://${challenge.id}`)}`)
+      challenges.map((challenge) => {
+        io.print(`${ansiEscapes.link(challenge.name, `challenge://${challenge.id}`)}    `)
       })
+      io.println('')
     })
     return 0
   }

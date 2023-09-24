@@ -8,12 +8,14 @@ class GameStore {
   cached: Game | null
   team: Team | null
   challenges: Challenge[]
+  showGameNav: boolean
 
   constructor() {
     this.current = null
     this.cached = null
     this.team = null
     this.challenges = []
+    this.showGameNav = false
   }
 }
 
