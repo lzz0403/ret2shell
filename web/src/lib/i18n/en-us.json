@@ -359,6 +359,16 @@
     },
     "commandInvalid": "Invalid command",
     "commandNotFound": "Command not found: {{command}}",
-    "welcome": "Welcome to Rnix Shell!"
+    "welcome": "Welcome to Rnix Shell!",
+    "submit": {
+      "man": "submit your flag",
+      "no_game": "No game specified in terminal",
+      "no_challenge": "No challenge specified in terminal",
+      "usage": "Usage: submit flag",
+      "waiting": "submitting",
+      "right": "Correct",
+      "wrong": "Wrong",
+      "error": "Submission Failed"
+    }
   }
 }

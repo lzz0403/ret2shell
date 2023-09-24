@@ -74,8 +74,7 @@ async fn get_challenge_submission_list(
 }
 
 async fn submit_flag(
-    Extension(ref conn): Extension<DatabaseConnection>,
-    Extension(game): Extension<game::Model>,
+    State(ref conn): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
     Extension(challenge): Extension<challenge::Model>,
     Json(mut submission): Json<submission::Model>,
@@ -83,17 +82,26 @@ async fn submit_flag(
     // TODO: impl checker
     let result = true;
 
-    submission.solved = result;
-    submission.challenge_id = challenge.id;
-    submission.user_id = user.id;
-    submission.with_score = user.permissions.0.iter().all(|p| {
-        !matches!(
+    if user.permissions.0.iter().all(|p| {
+        matches!(
             p,
             Permission::Audit | Permission::Devops | Permission::Organize
         )
-    }) && game.host_as_game
-        && game.in_progress()
-        && result;
+    }) {
+        return Ok(Json(result));
+    }
+
+    let game = game::get_game(conn, challenge.game_id)
+        .await
+        .map_err(|err| {
+            error!("get_game error: {}", err);
+            (StatusCode::INTERNAL_SERVER_ERROR, "failed to get game")
+        })?
+        .ok_or((StatusCode::NOT_FOUND, "game not found"))?;
+    submission.solved = result;
+    submission.challenge_id = challenge.id;
+    submission.user_id = user.id;
+    submission.with_score = game.host_as_game && game.in_progress() && result;
     if let Err(err) = submission::create_submission(conn, submission).await {
         error!("create_submission error: {}", err);
         return Err((

@@ -359,6 +359,15 @@
     },
     "help": {
       "man": "显示这份帮助"
+    },
+    "submit": {
+      "no_game": "终端中未指明比赛",
+      "no_challenge": "终端中未指明题目",
+      "usage": "用法： submit flag",
+      "waiting": "正在提交",
+      "right": "flag正确",
+      "wrong": "flag错误",
+      "error": "提交失败"
     }
   }
 }

@@ -1,3 +1,8 @@
 export { Echo as echo } from './echo'
 export { Clear as clear } from './clear'
 export { Help as help } from './help'
+export { Submit as submit } from './submit'
+export { Ls as ls } from './ls'
+export { Cd as cd } from './cd'
+export { Wget as wget } from './wget'
+export { Service as service } from './service'
