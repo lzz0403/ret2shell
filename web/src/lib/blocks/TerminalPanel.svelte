@@ -19,6 +19,7 @@
   let shell: RnixShell | null = null
   export let game: Game | null
   export let challenge: Challenge | null
+  export let availableChallenges: Challenge[]
 
   const linkHandler = {
     activate(_event: MouseEvent, text: string, _range: IBufferRange) {
@@ -101,6 +102,7 @@
     } else {
       shell?.setChallenge(null)
     }
+    shell?.setAvailableChallenges(availableChallenges)
   }
 </script>
 
