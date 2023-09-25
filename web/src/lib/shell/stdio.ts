@@ -35,6 +35,18 @@ export class RnixStdio {
     this.print(text + '\n')
   }
 
+  public logError(text: string) {
+    this.println(ansiColors.red('[-] ') + ansiColors.dim.underline(text))
+  }
+
+  public logSuccess(text: string) {
+    this.println(ansiColors.green('[+] ') + ansiColors.dim.underline(text))
+  }
+
+  public logInfo(text: string) {
+    this.println(ansiColors.blue('[*] ') + ansiColors.dim.underline(text))
+  }
+
   public clearInput() {
     this.setInputCursor(0)
     this.userBuffer = ''

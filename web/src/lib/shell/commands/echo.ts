@@ -8,7 +8,7 @@ export class Echo implements Command {
   name = 'echo'
   man = get(i18n).t('shell.echo.man')
   func = async (io: RnixStdio, _args: ParseEntry[], origin: string) => {
-    io.println(origin.replace('echo ', '').trim())
+    io.println(origin.replace('echo', '').trim())
     return 0
   }
 }

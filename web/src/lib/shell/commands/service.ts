@@ -11,10 +11,12 @@ export class Service implements Command {
   man = 'service'
   func = async (io: RnixStdio, _args: ParseEntry[], origin: string, envp: RnixEnv) => {
     if (envp.game == null) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noGameSpecified'))}`)
+      io.logError(get(i18n).t('shell.noGameSpecified'))
+      io.logInfo(get(i18n).t('shell.noGameSpecifiedTips'))
       return 1
     } else if (envp.challenge == null) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noChallengeSpecified'))}`)
+      io.logError(get(i18n).t('shell.noChallengeSpecified'))
+      io.logInfo(get(i18n).t('shell.noChallengeSpecifiedTips'))
       return 1
     }
     return 0

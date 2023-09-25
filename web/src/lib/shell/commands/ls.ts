@@ -14,7 +14,8 @@ export class Ls implements Command {
   man = get(i18n).t('shell.ls.man')
   func = async (io: RnixStdio, _args: ParseEntry[], origin: string, envp: RnixEnv) => {
     if (envp.game == null) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noGameSpecified'))}`)
+      io.logError(get(i18n).t('shell.noGameSpecified'))
+      io.logInfo(get(i18n).t('shell.noGameSpecifiedTips'))
       return 1
     }
     const map = new Map<number, Array<Challenge>>()
@@ -27,9 +28,9 @@ export class Ls implements Command {
     let tags = await getTagList()
     Array.from(map.entries()).map(([tagId, challenges]) => {
       io.println('')
-      io.println(ansiColors.bold.blue(tags.find((tag) => tag.id === tagId)?.name || 'UNKNOWN TAG'))
+      io.println(ansiColors.bold.blue(tags.find((tag) => tag.id === tagId)?.name || '[UNGROUPED]'))
       challenges.map((challenge) => {
-        io.print(`${ansiEscapes.link(challenge.name, `challenge://${challenge.id}`)}    `)
+        io.print(`${ansiEscapes.link(challenge.name, `rnix-chal://${challenge.id}`)}    `)
       })
       io.println('')
     })

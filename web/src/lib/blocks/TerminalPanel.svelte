@@ -25,16 +25,20 @@
     activate(_event: MouseEvent, text: string, _range: IBufferRange) {
       if (text.startsWith('http://') || text.startsWith('https://')) {
         window.open(text, '_blank')
-      } else if (text.startsWith('route://')) {
-        const path = text.replace('route:/', '')
+      } else if (text.startsWith('rnix-route://')) {
+        const path = text.replace('rnix-route:/', '')
         goto(path)
       } else if (text.startsWith('rnix-cmd://')) {
         const action = text.replace('rnix-cmd://', '')
         // console.log('emulating', action)
         shell?.emulateCommand(action)
-      } else if (text.startsWith('challenge://')) {
-        const challengeId = text.replace('challenge://', '')
+      } else if (text.startsWith('rnix-chal://')) {
+        const challengeId = text.replace('rnix-chal://', '')
         window.location.hash = `#${challengeId}`
+
+        // for WSRX Client
+      } else if (text.startsWith('wsrx://')) {
+        window.open(text, '_blank')
       }
     },
     allowNonHttpProtocols: true,

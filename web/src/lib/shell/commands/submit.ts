@@ -13,23 +13,24 @@ export class Submit implements Command {
   man = get(i18n).t('shell.submit.man')
   func = async (io: RnixStdio, _args: ParseEntry[], origin: string, envp: RnixEnv) => {
     if (envp.game == null) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noGameSpecified'))}`)
+      io.logError(get(i18n).t('shell.noGameSpecified'))
+      io.logInfo(get(i18n).t('shell.noGameSpecifiedTips'))
       return 1
     } else if (envp.challenge == null) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.noChallengeSpecified'))}`)
-      return 1
-    }
-
-    if (_args.length == 0) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.submit.usage'))}`)
+      io.logError(get(i18n).t('shell.noChallengeSpecified'))
+      io.logInfo(get(i18n).t('shell.noChallengeSpecifiedTips'))
       return 1
     }
     const flag = origin.replace('submit ', '').trim()
     if (flag.length == 0) {
-      io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.submit.usage'))}`)
+      io.logError(get(i18n).t('shell.submit.usage'))
       return 1
     }
-    io.println(`${ansiColors.green('[+]')} ` + ansiColors.dim(`${get(i18n).t('shell.submit.waiting')}: ${flag}`))
+    if (flag.length == 0) {
+      io.logError(get(i18n).t('shell.submit.usage'))
+      return 1
+    }
+    io.logInfo(`${get(i18n).t('shell.submit.waiting')}: ${flag}`)
 
     try {
       let resp = await submitFlag({
@@ -42,20 +43,18 @@ export class Submit implements Command {
         with_score: false,
       })
       if (resp) {
-        io.println(`${ansiColors.green('[+]')} ${ansiColors.dim(get(i18n).t('shell.submit.right'))}`)
+        io.logSuccess(get(i18n).t('shell.submit.right'))
         return 0
       } else {
-        io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.submit.wrong'))}`)
+        io.logError(get(i18n).t('shell.submit.wrong'))
         return 1
       }
     } catch (err: unknown) {
       if (err instanceof AxiosError) {
-        io.println(
-          `${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.submit.error'))}: ${err.response?.data}`
-        )
+        io.logError(`${ansiColors.dim(get(i18n).t('shell.submit.error'))}: ${err.response?.data}`)
         return 255
       } else {
-        io.println(`${ansiColors.red('[-]')} ${ansiColors.dim(get(i18n).t('shell.submit.error'))}: ${err}`)
+        io.logError(`${ansiColors.dim(get(i18n).t('shell.submit.error'))}: ${err}`)
         return 255
       }
     }
