@@ -113,7 +113,7 @@
 </script>
 
 <div
-  class="h-[calc(100vh_-_4rem)] flex-shrink-0 bg-base-100/60 backdrop-blur border-r border-r-base-content/10 overflow-hidden flex flex-row"
+  class="sticky top-16 h-[calc(100vh_-_4rem)] flex-shrink-0 bg-base-100/60 backdrop-blur border-r border-r-base-content/10 overflow-hidden flex flex-row"
 >
   <div
     class={`${

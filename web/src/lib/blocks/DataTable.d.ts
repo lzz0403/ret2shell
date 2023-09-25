@@ -7,7 +7,7 @@ export interface DTColumn {
     dimmed: boolean
     type: 'plain' | 'number' | 'tag' | 'bool' | 'date' | 'hidden'
     sizePolicy: 'shrink' | 'grow' | number
-    justify?: 'justify-start' | 'justify-center' | 'justify-end'
+    justify?: 'text-start' | 'text-center' | 'text-end'
 }
 
 export interface DTColumnsDef {

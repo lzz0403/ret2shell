@@ -136,7 +136,7 @@
     "serverLogs": "服务器日志",
     "statisticsSummary": "数据概览",
     "config": {
-      "submit": "提交",
+      "update": "更新",
       "platform": {
         "info": {
           "hideMaker": "隐藏页脚中的开发团队信息"
@@ -145,7 +145,8 @@
       },
       "fetching": "正在加载配置信息",
       "saveFailed": "配置保存失败",
-      "saved": "配置保存成功"
+      "saved": "配置保存成功",
+      "updating": "更新中..."
     }
   },
   "docs": {
@@ -362,7 +363,9 @@
     "fetchingList": "加载列表中..."
   },
   "challenges": {
-    "noHint": "暂无提示信息"
+    "noHint": "暂无提示信息",
+    "solved": "已解决",
+    "unsolved": "未解决"
   },
   "shell": {
     "commandInvalid": "命令无效",
@@ -409,5 +412,8 @@
     },
     "noGameSpecifiedTips": "只能在比赛或练习场环境中使用",
     "noChallengeSpecifiedTips": "必须在题目中使用"
+  },
+  "table": {
+    "noData": "没有数据"
   }
 }

@@ -136,7 +136,7 @@
     "mediaSettings": "Media upload settings",
     "pusherSettings": "Message push settings",
     "config": {
-      "submit": "submit",
+      "update": "Update",
       "platform": {
         "info": {
           "hideMaker": "Hide development team information in footer"
@@ -145,7 +145,8 @@
       },
       "fetching": "Loading configuration information",
       "saveFailed": "Configuration save failed",
-      "saved": "Configuration saved successfully"
+      "saved": "Configuration saved successfully",
+      "updating": "Updating..."
     }
   },
   "docs": {
@@ -409,5 +410,8 @@
     },
     "noGameSpecifiedTips": "For use only in a game or playground environment",
     "noChallengeSpecifiedTips": "Must be used in the challenge"
+  },
+  "table": {
+    "noData": "No data"
   }
 }

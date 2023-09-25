@@ -1,96 +1,116 @@
 <script lang="ts">
+  import { getAnnouncementList } from '$lib/api/announcement'
   import type { DTColumnAction, DTColumnsDef, DTDataEntry } from '$lib/blocks/DataTable'
   import DataTable from '$lib/blocks/DataTable.svelte'
+  import { i18n } from '$lib/i18n'
   import type { Announcement } from '$lib/models/announcement'
+  import { showMessage } from '$lib/stores/toast'
+  import type { AxiosError } from 'axios'
+  import { onMount } from 'svelte'
 
-  let page: number = 0
-  let perPage: number = 0
+  let page: number = 1
+  let perPage: number = 12
   let total: number = 0
-  let announcements: Announcement[] = [
+  let loading = false
+  let announcements: Announcement[] = []
+  let actions: DTColumnAction[] = [
     {
-      id: 1,
-      title: 'New Feature Release',
-      updated_at: 1631232000,
-      published_at: 1631232000,
-      publisher_id: 1,
-      content: 'We are excited to announce the release of our new feature!',
-      pinned: true,
+      icon: 'icon-[fluent--edit-16-regular]',
+      label: '',
+      level: 'info',
+      onClick: (data: DTDataEntry) => {
+        // jump to edit page
+      },
     },
     {
-      id: 2,
-      title: 'Upcoming Maintenance',
-      updated_at: 1631232000,
-      published_at: 1631232000,
-      publisher_id: 2,
-      content: 'We will be performing maintenance on our servers on October 1st.',
-      pinned: false,
-    },
-    {
-      id: 3,
-      title: 'Holiday Schedule',
-      updated_at: 1631232000,
-      published_at: 1631232000,
-      publisher_id: 3,
-      content: 'Our office will be closed on December 25th for the holiday.',
-      pinned: true,
+      icon: 'icon-[fluent--delete-16-regular]',
+      label: '',
+      level: 'error',
+      onClick: (data: DTDataEntry) => {
+        // popup delete modal
+      },
     },
   ]
-  let actions: DTColumnAction[] = []
   let colDef: DTColumnsDef = {
     id: {
       header: 'ID',
       dimmed: true,
       type: 'number',
       sizePolicy: 'shrink',
-      justify: 'justify-center',
+      justify: 'text-center',
     },
     title: {
       header: 'Title',
       type: 'plain',
       dimmed: false,
-      sizePolicy: 'shrink',
-      justify: 'justify-start',
+      sizePolicy: 'grow',
+      justify: 'text-start',
     },
     updated_at: {
       header: 'Updated At',
       type: 'hidden',
       dimmed: true,
       sizePolicy: 'shrink',
-      justify: 'justify-start',
+      justify: 'text-start',
     },
     published_at: {
       header: 'Created At',
       type: 'date',
       dimmed: true,
       sizePolicy: 'shrink',
-      justify: 'justify-start',
+      justify: 'text-start',
     },
     publisher_id: {
       header: 'Publisher ID',
       type: 'hidden',
       dimmed: true,
       sizePolicy: 'shrink',
-      justify: 'justify-start',
+      justify: 'text-start',
     },
     content: {
       header: 'Content',
-      type: 'plain',
+      type: 'hidden',
       dimmed: false,
       sizePolicy: 'grow',
-      justify: 'justify-start',
+      justify: 'text-start',
     },
     pinned: {
       header: 'Pinned',
-      type: 'tag',
+      type: 'bool',
       dimmed: false,
       sizePolicy: 'shrink',
-      justify: 'justify-center',
+      justify: 'text-center',
     },
+  }
+
+  function fetchAnnouncements() {
+    loading = true
+    getAnnouncementList(page, perPage)
+      .then((res) => {
+        announcements = res.announcements
+        total = res.total
+      })
+      .catch((err) => {
+        showMessage('error', `${$i18n.t('announcements.fetchFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+      })
+      .finally(() => {
+        loading = false
+      })
+  }
+
+  onMount(() => {
+    fetchAnnouncements()
+  })
+
+  $: {
+    if (page) {
+      fetchAnnouncements()
+    }
   }
 </script>
 
 <div class="flex-1 flex flex-col items-center">
   <div class="w-full max-w-5xl flex flex-col p-4 lg:p-6">
-    <DataTable {actions} data={announcements} {colDef} />
+    <DataTable {actions} data={announcements} {colDef} bind:page {total} {loading} />
   </div>
 </div>
