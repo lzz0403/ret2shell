@@ -250,12 +250,7 @@ pub async fn get_user_page(
                 Column::Password | Column::InstituteInfo | Column::Intro
             )
         }));
-    let mut cond = Condition::any();
-    if !op_user.permissions.0.contains(&Permission::Organize)
-        && !op_user.permissions.0.contains(&Permission::Devops)
-    {
-        cond = cond.add(Column::Hidden.eq(false));
-    }
+    let mut cond = Condition::any().add(Column::Hidden.eq(false));
     if op_user.permissions.0.contains(&Permission::Organize) {
         cond = cond.add(Column::InstituteId.eq(op_user.institute_id));
     }
