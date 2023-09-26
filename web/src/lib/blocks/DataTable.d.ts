@@ -16,6 +16,8 @@ export interface DTColumnsDef {
 export interface DTColumnAction {
   label: string
   icon: string
+  type: 'button' | 'link'
   level: 'info' | 'warning' | 'error' | 'success'
-  onClick: (data: DTDataEntry) => void
+  href?: string
+  onClick?: (data: DTDataEntry) => void
 }

@@ -1,5 +1,6 @@
 <script lang="ts">
   import RxButton from '$lib/components/RxButton.svelte'
+  import RxLink from '$lib/components/RxLink.svelte'
   import RxPaginator from '$lib/components/RxPaginator.svelte'
   import RxTag from '$lib/components/RxTag.svelte'
   import { i18n } from '$lib/i18n'
@@ -11,6 +12,13 @@
   export let page: number
   export let total: number
   export let loading: boolean = false
+  export let booleanIcon = {
+    true: 'icon-[fluent--checkmark-circle-16-regular] text-success',
+    false: 'icon-[fluent--dismiss-circle-16-regular] text-warning',
+  }
+  let clazz = ''
+  export { clazz as class }
+  $: classes = `flex flex-col justify-between ${clazz}`
   // level: text-info text-success text-warning text-error
   export let actions: DTColumnAction[] = []
   $: types = Object.keys(colDef)
@@ -21,9 +29,15 @@
     })
     .reduce((a, b) => ({ ...a, ...b }), {})
   $: dataEntries = data as DTDataEntry[]
+
+  function renderLink(pattern: string, data: DTDataEntry) {
+    // `pattern` will be any str with `{key}` in it,
+    // we should replace it with the value of `data[key]`
+    return pattern.replace(/{(\w+)}/g, (_, key) => data[key]?.toString() || '')
+  }
 </script>
 
-<div class="flex flex-col space-y-2">
+<div class={classes}>
   <table class="w-full max-w-full table table-auto rounded-box overflow-hidden bg-base-content/5 backdrop-blur">
     <thead class="text-base bg-neutral/80">
       <tr>
@@ -101,14 +115,14 @@
               </td>
             {:else if types[key] == 'bool' && typeof dataEntry[key] === 'boolean'}
               <td
-                class={`whitespace-nowrap ${colDef[key].sizePolicy === 'shrink' && 'w-0'} ${
+                class={`whitespace-nowrap leading-[0] ${colDef[key].sizePolicy === 'shrink' && 'w-0'} ${
                   colDef[key].dimmed && 'opacity-60'
                 } ${colDef[key].justify && colDef[key].justify}`}
               >
                 {#if dataEntry[key] === true}
-                  <span class="icon-[fluent--checkmark-circle-16-regular] w-6 h-6 text-success" />
+                  <span class={`w-5 h-5 ${booleanIcon.true}`} />
                 {:else}
-                  <span class="icon-[fluent--dismiss-circle-16-regular] w-6 h-6 text-warning" />
+                  <span class={`w-5 h-5 ${booleanIcon.false}`} />
                 {/if}
               </td>
             {/if}
@@ -117,19 +131,33 @@
             <td class="w-0 whitespace-nowrap">
               <div class="flex flex-row space-x-2">
                 {#each actions as item}
-                  <RxButton
-                    size="sm"
-                    ghost
-                    square={item.label.length === 0}
-                    on:click={() => {
-                      item.onClick(dataEntry)
-                    }}
-                  >
-                    <span class={`${item.icon} w-4 h-4 text-${item.level}`}></span>
-                    {#if item.label.length > 0}
-                      <span class="text-sm">{item.label}</span>
-                    {/if}
-                  </RxButton>
+                  {#if item.type === 'button'}
+                    <RxButton
+                      size="sm"
+                      ghost
+                      square={item.label.length === 0}
+                      on:click={() => {
+                        item.onClick && item.onClick(dataEntry)
+                      }}
+                    >
+                      <span class={`${item.icon} w-4 h-4 text-${item.level}`}></span>
+                      {#if item.label.length > 0}
+                        <span class="text-sm">{item.label}</span>
+                      {/if}
+                    </RxButton>
+                  {:else if item.type === 'link'}
+                    <RxLink
+                      size="sm"
+                      ghost
+                      square={item.label.length === 0}
+                      href={renderLink(item.href || '', dataEntry)}
+                    >
+                      <span class={`${item.icon} w-4 h-4 text-${item.level}`}></span>
+                      {#if item.label.length > 0}
+                        <span class="text-sm">{item.label}</span>
+                      {/if}
+                    </RxLink>
+                  {/if}
                 {/each}
               </div>
             </td>

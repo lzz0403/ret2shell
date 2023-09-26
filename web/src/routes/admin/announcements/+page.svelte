@@ -14,19 +14,20 @@
   let total: number = 0
   let loading = false
   let announcements: Announcement[] = []
+
   let actions: DTColumnAction[] = [
     {
       icon: 'icon-[fluent--edit-16-regular]',
       label: '',
       level: 'info',
-      onClick: (data: DTDataEntry) => {
-        // jump to edit page
-      },
+      type: 'link',
+      href: '#{id}',
     },
     {
       icon: 'icon-[fluent--delete-16-regular]',
       label: '',
       level: 'error',
+      type: 'button',
       onClick: (data: DTDataEntry) => {
         // popup delete modal
       },
@@ -110,8 +111,8 @@
   }
 </script>
 
-<div class="flex-1 flex flex-col items-center">
-  <div class="w-full max-w-5xl flex flex-col p-4 lg:p-6">
+<div class="flex-1 flex flex-col min-h-full items-center">
+  <div class="w-full flex-1 max-w-5xl flex flex-col p-4 lg:p-6">
     <div class="h-16 flex flex-row items-center">
       <h2 class="text-base font-bold flex-1">{$i18n.t('admin.announcementsSettings')}</h2>
       <RxLink size="sm" level="info" href="/admin/announcements/create">
@@ -119,6 +120,18 @@
         <span class="text-base">{$i18n.t('action.create')}</span>
       </RxLink>
     </div>
-    <DataTable {actions} data={announcements} {colDef} bind:page {total} {loading} />
+    <DataTable
+      class="flex-1"
+      {actions}
+      data={announcements}
+      {colDef}
+      bind:page
+      {total}
+      {loading}
+      booleanIcon={{
+        true: 'icon-[fluent--pin-16-regular] text-error',
+        false: '',
+      }}
+    />
   </div>
 </div>
