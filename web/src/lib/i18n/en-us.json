@@ -357,7 +357,10 @@
     "author": "Publisher",
     "publishedAt": "Published at",
     "updatedAt": "Updated at",
-    "unknownAuthor": "[UNKNOWN]"
+    "unknownAuthor": "[UNKNOWN]",
+    "title": "Title",
+    "content": "Content",
+    "pinned": "Pinned"
   },
   "permissions": {
     "beVerifiedToView": "Please verify your email first before accessing",

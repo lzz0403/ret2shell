@@ -11,6 +11,7 @@
 //!
 
 #![warn(missing_docs)]
+#![forbid(unsafe_code)]
 
 use std::{io::Write, net::SocketAddr, process::exit, str::FromStr};
 

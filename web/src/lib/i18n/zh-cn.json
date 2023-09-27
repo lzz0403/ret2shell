@@ -378,7 +378,10 @@
     "author": "发布者",
     "unknownAuthor": "[未知]",
     "updatedAt": "更新于",
-    "publishedAt": "发布于"
+    "publishedAt": "发布于",
+    "title": "标题",
+    "content": "内容",
+    "pinned": "置顶"
   },
   "permissions": {
     "beVerifiedToView": "请先验证邮箱后访问",

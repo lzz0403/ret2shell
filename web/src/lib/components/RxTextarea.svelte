@@ -93,7 +93,7 @@
   class={classes}
   {...$$restProps}
   options={{
-    scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-light' : 'os-theme-dark', autoHide: 'scroll' },
+    scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
   }}
   defer
 >

@@ -42,42 +42,42 @@
       justify: 'text-center',
     },
     title: {
-      header: 'Title',
+      header: $i18n.t('announcement.title'),
       type: 'plain',
       dimmed: false,
       sizePolicy: 'grow',
       justify: 'text-start',
     },
     updated_at: {
-      header: 'Updated At',
+      header: $i18n.t('announcement.updatedAt'),
       type: 'hidden',
       dimmed: true,
       sizePolicy: 'shrink',
       justify: 'text-start',
     },
     published_at: {
-      header: 'Created At',
+      header: $i18n.t('announcement.publishedAt'),
       type: 'date',
       dimmed: true,
       sizePolicy: 'shrink',
       justify: 'text-start',
     },
     publisher_id: {
-      header: 'Publisher ID',
+      header: $i18n.t('announcement.author'),
       type: 'hidden',
       dimmed: true,
       sizePolicy: 'shrink',
       justify: 'text-start',
     },
     content: {
-      header: 'Content',
+      header: $i18n.t('announcement.content'),
       type: 'hidden',
       dimmed: false,
       sizePolicy: 'grow',
       justify: 'text-start',
     },
     pinned: {
-      header: 'Pinned',
+      header: $i18n.t('announcement.pinned'),
       type: 'bool',
       dimmed: false,
       sizePolicy: 'shrink',
@@ -85,11 +85,14 @@
     },
   }
 
+  let publishers = []
+
   function fetchAnnouncements() {
     loading = true
     getAnnouncementList(page, perPage)
       .then((res) => {
         announcements = res.announcements
+
         total = res.total
       })
       .catch((err) => {
