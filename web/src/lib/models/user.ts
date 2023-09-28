@@ -26,18 +26,26 @@ export interface User {
   banned: boolean
 }
 
-export function getUserRole(level: number): string {
-  switch (level) {
-    case 0:
-      return get(i18n).t('account.unverified')
-    case 1:
-      return get(i18n).t('account.player')
-    case 2:
-      return get(i18n).t('account.domainAdmin')
-    case 3:
-      return get(i18n).t('account.superAdmin')
-    default:
-      return get(i18n).t('account.unknown')
+export function permissionToString(permission: Permission) {
+  switch (permission) {
+    case Permission.Basic:
+      return get(i18n).t('permission.basic')
+    case Permission.Verified:
+      return get(i18n).t('permission.verified')
+    case Permission.Publish:
+      return get(i18n).t('permission.publish')
+    case Permission.Audit:
+      return get(i18n).t('permission.audit')
+    case Permission.Organize:
+      return get(i18n).t('permission.organize')
+    case Permission.Devops:
+      return get(i18n).t('permission.devops')
+    case Permission.Statistics:
+      return get(i18n).t('permission.statistics')
+    case Permission.Calendar:
+      return get(i18n).t('permission.calendar')
+    case Permission.Certificates:
+      return get(i18n).t('permission.certificates')
   }
 }
 

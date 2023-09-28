@@ -5,7 +5,7 @@ export interface DTDataEntry {
 export interface DTColumn {
     header: string
     dimmed: boolean
-    type: 'plain' | 'number' | 'tag' | 'bool' | 'date' | 'hidden'
+    type: 'plain' | 'number' | 'tag' | 'bool' | 'date' | 'hidden' | 'tags'
     sizePolicy: 'shrink' | 'grow' | number
     justify?: 'text-start' | 'text-center' | 'text-end'
 }

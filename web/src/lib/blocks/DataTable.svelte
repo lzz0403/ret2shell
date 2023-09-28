@@ -46,8 +46,9 @@
             <td
               class={colDef[key].justify && colDef[key].justify}
               style={`${typeof colDef[key].sizePolicy === 'number' ? `width: ${colDef[key].sizePolicy}px` : ''}`}
-              >{colDef[key].header}</td
             >
+              {colDef[key].header}
+            </td>
           {/if}
         {/each}
         {#if actions.length > 0}
@@ -107,6 +108,26 @@
               >
                 <div class="flex flex-row items-center justify-start">
                   <RxTag level="info" label={dataEntry[key]?.toString()} />
+                </div>
+              </td>
+            {:else if types[key] == 'tags'}
+              <td
+                class={`whitespace-nowrap ${colDef[key].sizePolicy === 'shrink' && 'w-0'} ${
+                  colDef[key].dimmed && 'opacity-60'
+                } ${colDef[key].justify && colDef[key].justify}`}
+              >
+                <div class="flex flex-row items-center justify-start">
+                  <!-- render three tags, and display a `...` if have more -->
+                  {#each (dataEntry[key]?.toString().split('|') || []).slice(0, 3) as tag}
+                    <RxTag level="info" label={tag} />
+                  {/each}
+                  {#if (dataEntry[key]?.toString().split('|') || []).length > 3}
+                    <RxTag
+                      level="info"
+                      label="..."
+                      title={(dataEntry[key]?.toString().split('|') || []).slice(3).join(', ')}
+                    />
+                  {/if}
                 </div>
               </td>
             {:else if types[key] == 'date' && typeof dataEntry[key] === 'number'}

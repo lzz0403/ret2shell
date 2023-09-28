@@ -443,5 +443,16 @@
   },
   "table": {
     "noData": "没有数据"
+  },
+  "permission": {
+    "basic": "基本",
+    "verified": "已认证",
+    "publish": "信息发布",
+    "audit": "信息审计",
+    "organize": "比赛举办",
+    "devops": "平台运维",
+    "statistics": "数据统计",
+    "calendar": "日历发布",
+    "certificates": "证书签发"
   }
 }
