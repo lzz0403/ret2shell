@@ -124,16 +124,16 @@
                   colDef[key].dimmed && 'opacity-60'
                 } ${colDef[key].justify && colDef[key].justify}`}
               >
-                <div class="flex flex-row items-center justify-start">
+                <div class="flex flex-row space-x-2 items-center justify-start">
                   <!-- render three tags, and display a `...` if have more -->
-                  {#each (dataEntry[key]?.toString().split('|') || []).slice(0, 3) as tag}
+                  {#each (dataEntry[key]?.toString().split('|') || []).slice(0, 2) as tag}
                     <RxTag level="info" label={tag} />
                   {/each}
-                  {#if (dataEntry[key]?.toString().split('|') || []).length > 3}
+                  {#if (dataEntry[key]?.toString().split('|') || []).length > 2}
                     <RxTag
                       level="info"
                       label="..."
-                      title={(dataEntry[key]?.toString().split('|') || []).slice(3).join(', ')}
+                      title={(dataEntry[key]?.toString().split('|') || []).slice(2).join(', ')}
                     />
                   {/if}
                 </div>
