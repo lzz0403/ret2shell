@@ -12,9 +12,17 @@
   export let page: number
   export let total: number
   export let loading: boolean = false
-  export let booleanIcon = {
+  let defaultBooleanIcon = {
     true: 'icon-[fluent--checkmark-circle-16-regular] text-success',
     false: 'icon-[fluent--dismiss-circle-16-regular] text-warning',
+  }
+  export let booleanIconsDef: {
+    [key: string]: IconDef
+  } = {}
+
+  interface IconDef {
+    true: string
+    false: string
   }
   let clazz = ''
   export { clazz as class }
@@ -150,9 +158,29 @@
                 } ${colDef[key].justify && colDef[key].justify}`}
               >
                 {#if dataEntry[key] === true}
-                  <span class={`w-5 h-5 ${booleanIcon.true}`} />
+                  <span
+                    class={`w-5 h-5 ${
+                      Object.keys(booleanIconsDef).find((bkey) => bkey === key)
+                        ? booleanIconsDef[
+                            Object.keys(booleanIconsDef)
+                              .find((bkey) => bkey === key)
+                              ?.toString() || ''
+                          ]?.true
+                        : defaultBooleanIcon.true
+                    }`}
+                  />
                 {:else}
-                  <span class={`w-5 h-5 ${booleanIcon.false}`} />
+                  <span
+                    class={`w-5 h-5 ${
+                      Object.keys(booleanIconsDef).find((bkey) => bkey === key)
+                        ? booleanIconsDef[
+                            Object.keys(booleanIconsDef)
+                              .find((bkey) => bkey === key)
+                              ?.toString() || ''
+                          ]?.false
+                        : defaultBooleanIcon.false
+                    }`}
+                  />
                 {/if}
               </td>
             {/if}

@@ -136,9 +136,11 @@
       bind:page
       {total}
       {loading}
-      booleanIcon={{
-        true: 'icon-[fluent--pin-16-regular] text-error',
-        false: '',
+      booleanIconsDef={{
+        pinned: {
+          true: 'icon-[fluent--pin-16-regular] text-error',
+          false: '',
+        },
       }}
     />
   </div>
