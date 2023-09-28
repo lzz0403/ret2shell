@@ -15,6 +15,13 @@
   let loading = false
   let announcements: Announcement[] = []
 
+  $: renderedAnnouncements = announcements.map((a) => {
+    return {
+      ...a,
+      title: `${a.title}|${encodeURI(`#${a.id}`)}`,
+    }
+  })
+
   let actions: DTColumnAction[] = [
     {
       icon: 'icon-[fluent--edit-16-regular]',
@@ -85,8 +92,6 @@
     },
   }
 
-  let publishers = []
-
   function fetchAnnouncements() {
     loading = true
     getAnnouncementList(page, perPage)
@@ -126,7 +131,7 @@
     <DataTable
       class="flex-1"
       {actions}
-      data={announcements}
+      data={renderedAnnouncements}
       {colDef}
       bind:page
       {total}

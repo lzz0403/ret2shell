@@ -80,7 +80,14 @@
                 class={`truncate ${colDef[key].sizePolicy === 'shrink' ? 'w-0' : 'w-full max-w-0'} ${
                   colDef[key].justify && colDef[key].justify
                 } ${colDef[key].dimmed && 'opacity-60'}`}
-                >{dataEntry[key]}
+              >
+                {#if dataEntry[key]?.toString().includes('|')}
+                  <a class="hover:underline" href={dataEntry[key]?.toString().split('|')[1]}>
+                    {dataEntry[key]?.toString().split('|')[0]}
+                  </a>
+                {:else}
+                  <span>{dataEntry[key]?.toString()}</span>
+                {/if}
               </td>
             {:else if types[key] == 'number' && typeof dataEntry[key] === 'number'}
               <td
