@@ -175,7 +175,8 @@
       "permissions": "权限详情"
     },
     "currentPage": "当前",
-    "userListSettings": "用户管理"
+    "userListSettings": "用户管理",
+    "calendarsSettings": "竞赛日历"
   },
   "docs": {
     "title": "技术文档"
@@ -258,7 +259,11 @@
     "fetching": "获取中...",
     "gameOver": "已结束",
     "gameNotStarted": "未开始",
-    "gameOngoing": "进行中"
+    "gameOngoing": "进行中",
+    "fetchFailed": "获取竞赛日历失败",
+    "endTime": "结束时间",
+    "startTime": "开始时间",
+    "name": "竞赛名称"
   },
   "init": {
     "accountTitle": "注册初始管理员用户",

@@ -151,7 +151,8 @@
       "updating": "Updating..."
     },
     "currentPage": "Current",
-    "userListSettings": "User management"
+    "userListSettings": "User management",
+    "calendarsSettings": "Game calendar"
   },
   "docs": {
     "title": "Documents"
@@ -234,7 +235,11 @@
     "fetching": "Fetching...",
     "gameOver": "GAME OVER",
     "gameNotStarted": "NOT STARTED",
-    "gameOngoing": "IN PROGRESS"
+    "gameOngoing": "IN PROGRESS",
+    "fetchFailed": "Failed to get game calendar",
+    "name": "Game name",
+    "startTime": "Starting time",
+    "endTime": "End Time"
   },
   "init": {
     "title": "Initialize",
