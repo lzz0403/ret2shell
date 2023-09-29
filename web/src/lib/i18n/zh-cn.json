@@ -169,9 +169,13 @@
       "info": "平台基础信息",
       "overview": "数据概览",
       "games": "赛事管理",
-      "logs": "服务器日志"
+      "logs": "服务器日志",
+      "persons": "用户管理",
+      "institutes": "组织管理",
+      "permissions": "权限详情"
     },
-    "currentPage": "当前"
+    "currentPage": "当前",
+    "userListSettings": "用户管理"
   },
   "docs": {
     "title": "技术文档"
@@ -369,7 +373,14 @@
   },
   "user": {
     "anonymous": "[已删除]",
-    "deletedAuthor": "[已删除]"
+    "deletedAuthor": "[已删除]",
+    "name": "用户名",
+    "email": "邮箱",
+    "institute_info": "组织内信息",
+    "permissions": "权限",
+    "intro": "简介",
+    "coverPath": "头像图片",
+    "institute_id": "所属组织"
   },
   "component": {
     "uploadTips": "拖放文件到此处上传"
@@ -454,5 +465,11 @@
     "statistics": "数据统计",
     "calendar": "日历发布",
     "certificates": "证书签发"
+  },
+  "users": {
+    "fetchFailed": "获取用户列表失败"
+  },
+  "institutes": {
+    "fetchFailed": "获取组织列表失败"
   }
 }

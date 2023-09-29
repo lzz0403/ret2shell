@@ -150,7 +150,8 @@
       "saved": "Configuration saved successfully",
       "updating": "Updating..."
     },
-    "currentPage": "Current"
+    "currentPage": "Current",
+    "userListSettings": "User management"
   },
   "docs": {
     "title": "Documents"
@@ -348,7 +349,14 @@
   },
   "user": {
     "anonymous": "[DELETED]",
-    "deletedAuthor": "[DELETED]"
+    "deletedAuthor": "[DELETED]",
+    "name": "User name",
+    "email": "Email",
+    "institute_info": "Institute Info",
+    "permissions": "Permissions",
+    "intro": "Intro",
+    "coverPath": "Cover",
+    "institute_id": "Institute"
   },
   "component": {
     "uploadTips": "Drag and drop files here to upload"
@@ -431,5 +439,11 @@
     "statistics": "Statistics",
     "calendar": "Calendar",
     "certificates": "Cert Publish"
+  },
+  "users": {
+    "fetchFailed": "Failed to get user list"
+  },
+  "institutes": {
+    "fetchFailed": "Failed to get list of institutes"
   }
 }

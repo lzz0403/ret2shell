@@ -29,6 +29,24 @@
     },
   ] as RouteItem[]
 
+  let usersRoutes = [
+    {
+      name: $i18n.t('admin.routes.persons'),
+      icon: 'icon-[fluent--person-24-regular]',
+      link: '/admin/users/persons',
+    },
+    {
+      name: $i18n.t('admin.routes.institutes'),
+      icon: 'icon-[fluent--people-24-regular]',
+      link: '/admin/users/institutes',
+    },
+    {
+      name: $i18n.t('admin.routes.permissions'),
+      icon: 'icon-[fluent--shield-24-regular]',
+      link: '/admin/users/permissions',
+    },
+  ] as RouteItem[]
+
   let platformRoutes = [
     {
       name: $i18n.t('admin.basicInfoSettings'),
@@ -93,8 +111,8 @@
         firstLevelExpanded = false
         haveSecondLevel = true
         secondTitle = $i18n.t('admin.wikiSettings')
-      } else if (value.url.pathname === '/admin/users') {
-        currentRoutes = []
+      } else if (value.url.pathname.startsWith('/admin/users')) {
+        currentRoutes = usersRoutes
         firstLevelExpanded = false
         haveSecondLevel = true
         secondTitle = $i18n.t('admin.usersSettings')

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import RxLink from '$lib/components/RxLink.svelte'
-  import { i18n } from '$lib/i18n'
   import { admin, refreshAdminRoute } from '$lib/stores/admin'
   import { onDestroy } from 'svelte'
 
