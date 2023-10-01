@@ -37,7 +37,7 @@
     end_time: z
       .number()
       .int()
-      .min(new Date(2014, 0, 1).getTime() / 1000, { message: $i18n.t('calendar.startTimeLimit') })
+      .min(new Date(2014, 0, 1).getTime() / 1000, { message: $i18n.t('calendar.endTimeLimit') })
       .max(new Date(2077, 0, 1).getTime() / 1000, { message: $i18n.t('calendar.startTimeLimit') }),
   })
 

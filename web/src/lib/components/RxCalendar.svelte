@@ -5,7 +5,7 @@
 
   let clazz = ''
   export { clazz as class }
-  $: classes = ['flex', 'flex-col', 'rounded-box', 'bg-base-content/5', 'backdrop-blur', 'shadow', clazz]
+  $: classes = ['flex', 'flex-col', 'rounded-lg', 'bg-base-content/5', 'backdrop-blur', 'shadow', clazz]
     .filter(Boolean)
     .join(' ')
 

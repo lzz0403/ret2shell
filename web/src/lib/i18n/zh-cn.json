@@ -274,7 +274,8 @@
     "introRequired": "请输入比赛描述",
     "link": "竞赛链接",
     "intro": "赛事简介",
-    "startTimeLimit": "比赛时间需要在2014-2077年之间"
+    "startTimeLimit": "比赛时间需要在2014-2077年之间",
+    "endTimeLimit": "请选择结束时间"
   },
   "init": {
     "accountTitle": "注册初始管理员用户",

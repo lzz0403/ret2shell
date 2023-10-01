@@ -274,7 +274,8 @@
     "introRequired": "Please enter the game intro",
     "link": "Game link",
     "intro": "Game Intro",
-    "startTimeLimit": "The competition time needs to be between 2014-2077"
+    "startTimeLimit": "The competition time needs to be between 2014-2077",
+    "endTimeLimit": "Please select end time"
   },
   "init": {
     "title": "Initialize",

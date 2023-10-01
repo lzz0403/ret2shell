@@ -17,7 +17,7 @@
   let total = 0
   let currentYear = new Date().getFullYear()
   let currentMonth = new Date().getMonth() + 1
-  $: startTime = new Date(currentYear, currentMonth, 0).setDate(1) / 1000
+  $: startTime = new Date(currentYear, currentMonth - 1, 0).getTime() / 1000
   $: endTime = new Date(currentYear, currentMonth, 0).getTime() / 1000
   let loading = false
   let loadingCalendar = false
@@ -120,10 +120,11 @@
 
   function fetchCalendars() {
     loading = true
+    // console.log('before', startTime, endTime)
     getCalendarList(startTime, endTime)
       .then((res) => {
         calendars = res
-        // console.log(calendars)
+        // console.log('after', startTime, endTime, res)
       })
       .catch((err) => {
         showMessage('error', `${$i18n.t('calendar.fetchFailed')}: ${(err as AxiosError).response?.data}`, 5000)
@@ -139,7 +140,9 @@
       currentMonth = 12
       currentYear -= 1
     }
-    fetchCalendars()
+    setTimeout(() => {
+      fetchCalendars()
+    })
   }
 
   function nextMonth() {
@@ -148,18 +151,14 @@
       currentMonth = 1
       currentYear += 1
     }
-    fetchCalendars()
+    setTimeout(() => {
+      fetchCalendars()
+    })
   }
 
   onMount(() => {
     fetchCalendars()
   })
-
-  $: {
-    if (currentMonth) {
-      fetchCalendars()
-    }
-  }
 
   function updateOrCreateCalendar(cal: Calendar) {
     submitting = true
@@ -250,13 +249,13 @@
     <div class="h-16 flex flex-row items-center space-x-2">
       <h2 class="text-base font-bold flex-1">{$i18n.t('admin.calendarsSettings')}</h2>
       <div class="join">
-        <RxButton size="sm" class="join-item" on:click={preMonth}>
+        <RxButton size="sm" class="join-item" on:click={preMonth} disabled={loading}>
           <span class="icon-[fluent--chevron-double-left-20-regular] w-5 h-5"></span>
         </RxButton>
         <h2 class="text-base font-bold join-item flex flex-row items-center px-2 backdrop-blur bg-base-content/5 ml-0">
           <span>{currentYear} - {currentMonth.toString().padStart(2, '0')}</span>
         </h2>
-        <RxButton size="sm" class="join-item ml-0" on:click={nextMonth}>
+        <RxButton size="sm" class="join-item ml-0" on:click={nextMonth} disabled={loading}>
           <span class="icon-[fluent--chevron-double-right-20-regular] w-5 h-5"></span>
         </RxButton>
       </div>
