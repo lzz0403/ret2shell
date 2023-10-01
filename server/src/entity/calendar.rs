@@ -72,6 +72,11 @@ pub async fn get_calendar_list(
                     Condition::all()
                         .add(Column::EndTime.gt(start_time))
                         .add(Column::EndTime.lt(end_time)),
+                )
+                .add(
+                    Condition::all()
+                        .add(Column::StartTime.lt(start_time))
+                        .add(Column::EndTime.gt(end_time)),
                 ),
         )
         .all(conn)

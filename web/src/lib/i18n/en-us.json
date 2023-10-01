@@ -268,7 +268,13 @@
     "submit": "Submit",
     "cantBeEmpty": "Calendar introduction cannot be empty",
     "edit": "Edit Game Event",
-    "create": "Create Game Event"
+    "create": "Create Game Event",
+    "linkInvalid": "Game link format is wrong",
+    "nameRequired": "Please enter the game name",
+    "introRequired": "Please enter the game intro",
+    "link": "Game link",
+    "intro": "Game Intro",
+    "startTimeLimit": "The competition time needs to be between 2014-2077"
   },
   "init": {
     "title": "Initialize",

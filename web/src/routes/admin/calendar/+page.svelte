@@ -139,6 +139,7 @@
       currentMonth = 12
       currentYear -= 1
     }
+    fetchCalendars()
   }
 
   function nextMonth() {
@@ -147,6 +148,7 @@
       currentMonth = 1
       currentYear += 1
     }
+    fetchCalendars()
   }
 
   onMount(() => {
@@ -159,14 +161,10 @@
     }
   }
 
-  function updateOrCreateCalendar() {
-    if (activeCalendar.name.length <= 0 || activeCalendar.intro.length <= 0 || activeCalendar.link.length <= 0) {
-      showMessage('error', $i18n.t('calendar.cantBeEmpty'), 5000)
-      return
-    }
+  function updateOrCreateCalendar(cal: Calendar) {
     submitting = true
     if (activeCalendar.id > 0) {
-      updateCalendar(activeCalendar.id, activeCalendar)
+      updateCalendar(activeCalendar.id, cal)
         .then(() => {
           showMessage('success', $i18n.t('announcement.updateSuccess'), 5000)
           window.location.hash = ''
@@ -179,7 +177,7 @@
         })
     } else {
       const calendar: Calendar = {
-        ...activeCalendar,
+        ...cal,
         id: 0,
         reporter_id: $user.id,
       }
@@ -276,8 +274,8 @@
     on:close={() => {
       window.location.hash = ''
     }}
-    on:submit={() => {
-      updateOrCreateCalendar()
+    on:submit={(event) => {
+      updateOrCreateCalendar(event.detail)
     }}
   />
 </div>
