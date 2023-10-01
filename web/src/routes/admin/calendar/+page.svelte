@@ -182,7 +182,7 @@
         reporter_id: $user.id,
       }
       createCalendar(calendar)
-        .then((res) => {
+        .then(() => {
           showMessage('success', $i18n.t('announcement.createSuccess'), 5000)
           window.location.hash = ''
           fetchCalendars()
@@ -194,6 +194,7 @@
           submitting = false
         })
     }
+    fetchCalendars()
   }
 
   const unsubscribe = page.subscribe((val) => {

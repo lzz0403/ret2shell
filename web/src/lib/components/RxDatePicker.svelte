@@ -9,6 +9,7 @@
   export let selectionEnd = 0
   export let selectionStartName = 'start_time'
   export let selectionEndName = 'end_time'
+  export let hasError = false
 
   const startField = createField(selectionStartName)
   const endField = createField(selectionEndName)
@@ -39,6 +40,7 @@
 </script>
 
 <RxCalendar
+  class={`${hasError ? 'border border-error' : ''}`}
   {year}
   {month}
   on:change-date={(event) => {

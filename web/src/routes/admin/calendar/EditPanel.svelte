@@ -8,7 +8,6 @@
   import { i18n } from '$lib/i18n'
   import type { Calendar } from '$lib/models/calendar'
   import { theme } from '$lib/stores/theme'
-  import { user } from '$lib/stores/user'
   import { validator } from '@felte/validator-zod'
   import { createForm } from 'felte'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
@@ -149,6 +148,7 @@
           <RxDatePicker
             selectionStartName="start_time"
             selectionEndName="end_time"
+            hasError={$errors.start_time !== null || $errors.end_time !== null}
             selectionStart={calendar.start_time}
             selectionEnd={calendar.end_time}
           />
@@ -164,7 +164,7 @@
         </RxFormItem>
       </div>
       <RxFormItem name="submitAction" label="">
-        <RxButton class="w-full" level="primary" type="submit">{$i18n.t('calendar.submit')}</RxButton>
+        <RxButton class="w-full" type="submit">{$i18n.t('calendar.submit')}</RxButton>
       </RxFormItem>
     </RxForm>
   </OverlayScrollbarsComponent>
