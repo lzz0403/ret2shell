@@ -160,7 +160,8 @@
           hasError={$errors.intro !== null}
           errors={$errors.intro || ''}
         >
-          <RxCodeBox name="intro" hasError={$errors.intro !== null} value={calendar.intro}></RxCodeBox>
+          <RxCodeBox name="intro" hasError={$errors.intro !== null} value={calendar.intro} placeholder="Mode = Markdown"
+          ></RxCodeBox>
         </RxFormItem>
       </div>
       <RxFormItem name="submitAction" label="">

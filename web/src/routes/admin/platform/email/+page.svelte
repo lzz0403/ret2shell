@@ -273,7 +273,7 @@
             name="reset_password_email_body"
             hasError={$errors.reset_password_email_body !== null}
             value={platformConfig.email?.reset_password_email_body}
-            placeholder={$i18n.t('init.emailResetPasswordBodyPlaceholder')}
+            placeholder="Mode = HTML | PlainText"
           />
         </RxFormItem>
         <p class="p-1 text-sm opacity-60">{$i18n.t('init.emailTemplateRenderTips')}</p>
@@ -306,7 +306,7 @@
             name="verify_email_body"
             hasError={$errors.reset_password_email_body !== null}
             value={platformConfig.email?.reset_password_email_body}
-            placeholder={$i18n.t('init.emailResetPasswordBodyPlaceholder')}
+            placeholder="Mode = HTML | PlainText"
           />
         </RxFormItem>
         <p class="p-1 text-sm opacity-60">{$i18n.t('init.emailTemplateRenderTips')}</p>

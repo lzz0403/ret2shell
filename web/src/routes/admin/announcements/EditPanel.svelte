@@ -70,6 +70,7 @@
   <RxCodearea
     class="flex-1 bg-base-100/80 backdrop-blur"
     lang="markdown"
+    placeholder="Mode = Markdown"
     {loading}
     readonly={loading || submitting}
     bind:value={announcement.content}
