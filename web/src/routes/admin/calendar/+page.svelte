@@ -12,6 +12,7 @@
   import EditPanel from './EditPanel.svelte'
   import { page } from '$app/stores'
   import { user } from '$lib/stores/user'
+  import { platform } from '$lib/stores/platform'
 
   let currentPage = 0
   let total = 0
@@ -243,6 +244,8 @@
     unsubscribe()
   })
 </script>
+
+<svelte:head><title>{$i18n.t('admin.calendarsSettings')} - {$platform.name}</title></svelte:head>
 
 <div class="w-full flex-1 flex flex-col relative">
   <div class="w-full flex-1 flex flex-col px-6 lg:px-12">

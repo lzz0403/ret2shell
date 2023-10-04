@@ -43,7 +43,7 @@ sea-orm = { version = "0.12", features = [
 sea-orm-migration = "0.12"
 sea-query = "0.30"
 # Utilities
-ring = "0.16"
+ring = "0.17"
 serde = { version = "1.0", features = ["derive"] }
 serde_repr = "0.1"
 serde_json = "1.0"

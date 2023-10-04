@@ -210,7 +210,10 @@
                 </div>
                 <article class="flex-1 prose !max-w-full">
                   {#await gameDescription}
-                    <RxButton ghost loading>{$i18n.t('calendar.fetching')}</RxButton>
+                    <div class="flex flex-row space-x-2">
+                      <span class="loading loading-spinner loading-sm" />
+                      <span>{$i18n.t('calendar.fetching')}</span>
+                    </div>
                   {:then desc}
                     <!-- eslint-disable-next-line svelte/no-at-html-tags -->
                     {@html desc}

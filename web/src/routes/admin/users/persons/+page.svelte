@@ -6,6 +6,7 @@
   import { i18n } from '$lib/i18n'
   import type { Institute } from '$lib/models/institute'
   import { Permission, permissionToString, type User } from '$lib/models/user'
+  import { platform } from '$lib/stores/platform'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
   import { onMount } from 'svelte'
@@ -160,6 +161,8 @@
     }
   }
 </script>
+
+<svelte:head><title>{$i18n.t('admin.userListSettings')} - {$platform.name}</title></svelte:head>
 
 <div class="w-full flex-1 flex flex-col px-6 lg:px-12">
   <div class="h-16 flex flex-row items-center">

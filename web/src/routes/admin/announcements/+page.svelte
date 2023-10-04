@@ -11,6 +11,7 @@
   import CreatePanel from './EditPanel.svelte'
   import { page } from '$app/stores'
   import { user } from '$lib/stores/user'
+  import { platform } from '$lib/stores/platform'
 
   let currentPage: number = 1
   let perPage: number = 15
@@ -220,6 +221,8 @@
     }
   }
 </script>
+
+<svelte:head><title>{$i18n.t('admin.announcementsSettings')} - {$platform.name}</title></svelte:head>
 
 <div class="w-full flex-1 flex flex-col relative">
   <div class="h-16 flex flex-row items-center px-6 lg:px-12">
