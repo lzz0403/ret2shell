@@ -1,4 +1,5 @@
 import type { Institute } from '$lib/models/institute'
+import type { TeamWithGameName } from '$lib/models/team'
 import type { User } from '$lib/models/user'
 import { api, api_root } from '.'
 
@@ -15,4 +16,8 @@ export async function getUserList(page: number, per_page: number, order?: string
 
 export async function getInstituteList() {
   return (await api.get(`${api_root}/user/institute`)).data as Institute[]
+}
+
+export async function getUserTeams(id: number) {
+  return (await api.get(`${api_root}/user/${id}/teams`)).data as TeamWithGameName[]
 }

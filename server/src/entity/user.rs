@@ -13,7 +13,7 @@ use std::str::FromStr;
 #[derive(
     FromPrimitive, ToPrimitive, Clone, Copy, Debug, PartialEq, Serialize_repr, Deserialize_repr, Eq,
 )]
-#[repr(u8)]
+#[repr(i32)]
 pub enum Permission {
     Basic,
     Verified,

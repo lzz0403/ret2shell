@@ -26,8 +26,8 @@ use std::collections::HashSet;
     FromPrimitive,
     ToPrimitive,
 )]
-#[repr(u8)]
-#[sea_orm(rs_type = "u8", db_type = "Integer")]
+#[repr(i32)]
+#[sea_orm(rs_type = "i32", db_type = "Integer")]
 pub enum State {
     Banned = 0,
     #[default]
@@ -67,6 +67,19 @@ pub struct Model {
     pub score: i32,
     #[sea_orm(column_type = "JsonBinary")]
     pub history: TeamScoreHistoryList,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub last_active_at: DateTime<Utc>,
+}
+
+#[derive(FromQueryResult, Serialize)]
+pub struct ModelWithGameName {
+    pub id: i64,
+    pub name: String,
+    pub game_id: i64,
+    pub game_name: String,
+    pub state: State,
+    pub institute_id: Option<i64>,
+    pub score: i32,
     #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
     pub last_active_at: DateTime<Utc>,
 }
@@ -397,6 +410,21 @@ pub async fn get_team_by_token(
     let res = Entity::find()
         .filter(Column::Token.eq(token))
         .one(conn)
+        .await?;
+    Ok(res)
+}
+
+pub async fn get_teams_by_user_id(
+    conn: &DatabaseConnection,
+    user_id: i64,
+) -> Result<Vec<ModelWithGameName>, DbErr> {
+    let res = Entity::find()
+        .join(JoinType::InnerJoin, Relation::User2Team.def())
+        .join(JoinType::InnerJoin, Relation::Game.def())
+        .column_as(super::game::Column::Name, "game_name")
+        .filter(super::user2_team::Column::UserId.eq(user_id))
+        .into_model::<ModelWithGameName>()
+        .all(conn)
         .await?;
     Ok(res)
 }

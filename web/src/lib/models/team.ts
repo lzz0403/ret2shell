@@ -22,6 +22,17 @@ export interface Team {
   last_active_at: number
 }
 
+export interface TeamWithGameName {
+  id: number,
+  name: String,
+  game_id: number,
+  game_name: String,
+  state: State,
+  institute_id: number | null
+  score: number,
+  last_active_at: number,
+}
+
 export interface TeamList {
   teams: Team[]
   total: number

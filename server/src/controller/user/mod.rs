@@ -1,7 +1,10 @@
 use super::layer::{auth, info};
 use crate::{
     controller::GlobalState,
-    entity::user::{self, Permission},
+    entity::{
+        team,
+        user::{self, Permission},
+    },
 };
 use axum::{
     extract::{Path, Query, State},
@@ -27,7 +30,12 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Verified
         )))
-        .route("/:id", get(get_user_info))
+        .nest(
+            "/:id",
+            Router::new()
+                .route("/", get(get_user_info))
+                .route("/teams", get(get_user_teams)),
+        )
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             info::prepare_user_full_info,
@@ -84,8 +92,9 @@ async fn get_user_info(
             return Err((StatusCode::INTERNAL_SERVER_ERROR, "failed to get user info"));
         }
     };
-    if op_user.is_some_and(|Extension(op_user)| op_user.permissions.0.contains(&Permission::Devops) || op_user.id == user.id)
-    {
+    if op_user.is_some_and(|Extension(op_user)| {
+        op_user.permissions.0.contains(&Permission::Devops) || op_user.id == user.id
+    }) {
         return Ok(Json(user));
     }
     if user.hidden {
@@ -120,6 +129,23 @@ async fn delete_user(
         Err(err) => {
             error!("Failed to delete user: {}", err);
             Err((StatusCode::INTERNAL_SERVER_ERROR, "failed to delete user"))
+        }
+    }
+}
+
+async fn get_user_teams(
+    State(ref conn): State<DatabaseConnection>,
+    Path(id): Path<i64>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    match team::get_teams_by_user_id(conn, id).await {
+        Ok(teams) => Ok(Json(teams)),
+        Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "user not found")),
+        Err(err) => {
+            error!("Failed to get user teams: {}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to get user teams",
+            ))
         }
     }
 }

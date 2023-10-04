@@ -28,7 +28,17 @@
     "email": "Email",
     "copyTeamLink": "Copy invite link",
     "passwordNotMatch": "The passwords entered twice do not match",
-    "passwordConfirm": "Password confirmation"
+    "passwordConfirm": "Password confirmation",
+    "permissions": "Permissions",
+    "status": "Status",
+    "banned": "Banned",
+    "hidden": "Hidden",
+    "ok": "OK",
+    "intro": "Introduction",
+    "prizes": "Recent Prizes",
+    "noIntro": "This hacker does not leave anything...",
+    "recentActivities": "Recent Activities",
+    "takePartAs": "Participated in {{game}} as {{team}} and obtained {{score}} points."
   },
   "playground": {
     "title": "Playground",

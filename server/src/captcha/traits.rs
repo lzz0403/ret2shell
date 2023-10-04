@@ -6,7 +6,7 @@ use thiserror::Error;
 
 /// Validator enum for different types of captcha validation
 #[derive(Serialize_repr, Deserialize_repr, Default, Clone, Debug, PartialEq, Eq)]
-#[repr(u8)]
+#[repr(i32)]
 pub enum Validator {
     None,
     #[default]
