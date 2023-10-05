@@ -60,7 +60,7 @@
           {/if}
         {/each}
         {#if actions.length > 0}
-          <td class="w-0"></td>
+          <td></td>
         {/if}
       </tr>
     </thead>
@@ -187,7 +187,7 @@
           {/each}
           {#if actions.length > 0}
             <td class="w-0 whitespace-nowrap py-0">
-              <div class="flex flex-row space-x-2">
+              <div class="flex flex-row space-x-2 min-w-max">
                 {#each actions as item}
                   {#if item.type === 'button'}
                     <RxButton
