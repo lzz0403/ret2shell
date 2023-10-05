@@ -23,14 +23,14 @@ export interface Team {
 }
 
 export interface TeamWithGameName {
-  id: number,
-  name: String,
-  game_id: number,
-  game_name: String,
-  state: State,
+  id: number
+  name: String
+  game_id: number
+  game_name: String
+  state: State
   institute_id: number | null
-  score: number,
-  last_active_at: number,
+  score: number
+  last_active_at: number
 }
 
 export interface TeamList {

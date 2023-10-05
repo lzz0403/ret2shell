@@ -10,13 +10,13 @@ export async function getCalendar(id: number) {
 }
 
 export async function createCalendar(calendar: Calendar) {
-  return (await api.post(`${api_root}/calendar`, calendar))
+  return await api.post(`${api_root}/calendar`, calendar)
 }
 
 export async function updateCalendar(id: number, calendar: Calendar) {
-  return (await api.patch(`${api_root}/calendar/${id}`, calendar))
+  return await api.patch(`${api_root}/calendar/${id}`, calendar)
 }
 
 export async function deleteCalendar(id: number) {
-  return (await api.delete(`${api_root}/calendar/${id}`))
+  return await api.delete(`${api_root}/calendar/${id}`)
 }

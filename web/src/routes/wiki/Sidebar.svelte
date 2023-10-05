@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getWikiList } from '$lib/api/wiki'
-  import RxTree from '$lib/components/RxTree.svelte'
+  import WikiTree from '$lib/blocks/WikiTree.svelte'
   import { i18n } from '$lib/i18n'
   import { transformToWikiEntry, type WikiEntry } from '$lib/models/wiki'
   import { theme } from '$lib/stores/theme'
@@ -40,7 +40,7 @@
       <p class="text-base font-semibold p-4 opacity-60 text-center">{$i18n.t('playground.emptyCategory')}</p>
     {/if}
     <div class="p-4">
-      <RxTree bind:tree={wiki} {activeChains} addrPrefix="/wiki" {fetchChildren} />
+      <WikiTree bind:tree={wiki} {activeChains} addrPrefix="/wiki" {fetchChildren} manageBtn={false} />
     </div>
   {/if}
 </OverlayScrollbarsComponent>

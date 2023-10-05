@@ -3,8 +3,8 @@
   import type { WikiEntry } from '$lib/models/wiki'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
-  import RxButton from './RxButton.svelte'
-  import RxLink from './RxLink.svelte'
+  import RxButton from '../components/RxButton.svelte'
+  import RxLink from '../components/RxLink.svelte'
   import { onMount } from 'svelte'
 
   // pl-0 pl-4 pl-8 pl-12 pl-16
@@ -17,6 +17,7 @@
   export let treeLoadingRecord: Record<number, boolean> = {}
   export let treeNoChildrenRecord: Record<number, boolean> = {}
   export let fetchChildren: (id: number) => Promise<WikiEntry[]> = () => Promise.resolve([])
+  export let manageBtn: boolean = false
 
   function handleLoadingChildItems(id: number) {
     if ((tree.find((item) => item.id === id)?.children?.length || 0) > 0) {
@@ -67,8 +68,8 @@
 </script>
 
 <ul
-  class={`pl-${depth * 4} relative ${
-    depth > 0 ? 'before:border-l-2 before:absolute before:h-full before:border-l-base-content/10' : ''
+  class={`pl-${depth * 4} relative flex flex-col space-y-2 ${
+    depth > 0 ? 'before:border-l-2 before:absolute before:h-full before:border-l-base-content/10 mt-2' : ''
   }`}
 >
   {#each tree as item}
@@ -89,6 +90,17 @@
           {/if}
           <span class="text-ellipsis overflow-hidden whitespace-nowrap flex-1 text-left">{item.title}</span>
         </RxLink>
+        {#if manageBtn}
+          <RxButton
+            class="join-item"
+            ghost
+            on:click={() => {
+              handleLoadingChildItems(item.id)
+            }}
+          >
+            <span class="icon-[fluent--add-16-regular] w-5 h-5"></span>
+          </RxButton>
+        {/if}
         {#if !treeNoChildrenRecord[item.id]}
           <RxButton
             class="join-item"
@@ -110,16 +122,14 @@
           </RxButton>
         {/if}
       </div>
-      {#if treeExpandedRecord[item.id]}
-        {#if item.children}
-          <svelte:self
-            bind:tree={item.children}
-            {fetchChildren}
-            {activeChains}
-            depth={depth + 1}
-            addrPrefix={`${addrPrefix}/${item.id}`}
-          />
-        {/if}
+      {#if treeExpandedRecord[item.id] && item.children && item.children.length > 0}
+        <svelte:self
+          bind:tree={item.children}
+          {fetchChildren}
+          {activeChains}
+          depth={depth + 1}
+          addrPrefix={`${addrPrefix}/${item.id}`}
+        />
       {/if}
     </li>
   {/each}

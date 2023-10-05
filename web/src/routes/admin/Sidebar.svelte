@@ -4,122 +4,74 @@
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
   import { Permission } from '$lib/models/user'
+  import { admin } from '$lib/stores/admin'
   import { user } from '$lib/stores/user'
-  import { onDestroy } from 'svelte'
+  import { onDestroy, type ComponentType } from 'svelte'
 
   let firstLevelExpanded = true
   $: secondLevelExpanded = !firstLevelExpanded
 
-  interface RouteItem {
-    name: string
-    icon: string
-    link: string
-  }
-
-  let statisticsRoutes = [
+  const routes = [
     {
-      name: $i18n.t('admin.statisticsSummary'),
-      icon: 'icon-[fluent--data-histogram-24-regular]',
-      link: '/admin/statistics/overview',
+      name: $i18n.t('admin.statistics'),
+      icon: 'icon-[fluent--data-pie-24-regular]',
+      link: '/admin/statistics',
+      permissions: [Permission.Statistics, Permission.Devops, Permission.Audit, Permission.Organize],
     },
     {
-      name: $i18n.t('admin.serverLogs'),
-      icon: 'icon-[fluent--code-24-regular]',
-      link: '/admin/statistics/logs',
+      name: $i18n.t('admin.platformSettings'),
+      icon: 'icon-[fluent--home-24-regular]',
+      link: '/admin/platform',
+      permissions: [Permission.Devops],
     },
-  ] as RouteItem[]
-
-  let usersRoutes = [
     {
-      name: $i18n.t('admin.routes.persons'),
+      name: $i18n.t('admin.gamesSettings'),
+      icon: 'icon-[fluent--flag-24-regular]',
+      link: '/admin/games',
+      permissions: [Permission.Devops, Permission.Organize, Permission.Audit],
+    },
+    {
+      name: $i18n.t('admin.announcementsSettings'),
+      icon: 'icon-[fluent--megaphone-24-regular]',
+      link: '/admin/announcements',
+      permissions: [Permission.Publish],
+    },
+    {
+      name: $i18n.t('admin.calendarSettings'),
+      icon: 'icon-[fluent--calendar-24-regular]',
+      link: '/admin/calendar',
+      permissions: [Permission.Calendar],
+    },
+    {
+      name: $i18n.t('admin.wikiSettings'),
+      icon: 'icon-[fluent--book-number-24-regular]',
+      link: '/admin/wiki',
+      permissions: [Permission.Publish],
+    },
+    {
+      name: $i18n.t('admin.usersSettings'),
       icon: 'icon-[fluent--person-24-regular]',
-      link: '/admin/users/persons',
+      link: '/admin/users',
+      permissions: [Permission.Organize, Permission.Devops, Permission.Audit],
     },
-    {
-      name: $i18n.t('admin.routes.institutes'),
-      icon: 'icon-[fluent--people-24-regular]',
-      link: '/admin/users/institutes',
-    },
-    {
-      name: $i18n.t('admin.routes.permissions'),
-      icon: 'icon-[fluent--shield-24-regular]',
-      link: '/admin/users/permissions',
-    },
-  ] as RouteItem[]
+  ]
 
-  let platformRoutes = [
-    {
-      name: $i18n.t('admin.basicInfoSettings'),
-      icon: 'icon-[fluent--info-24-regular]',
-      link: '/admin/platform/info',
-    },
-    {
-      name: $i18n.t('admin.captchaSettings'),
-      icon: 'icon-[fluent--beaker-24-regular]',
-      link: '/admin/platform/captcha',
-    },
-    {
-      name: $i18n.t('admin.emailSettings'),
-      icon: 'icon-[fluent--mail-24-regular]',
-      link: '/admin/platform/email',
-    },
-    {
-      name: $i18n.t('admin.mediaSettings'),
-      icon: 'icon-[fluent--image-24-regular]',
-      link: '/admin/platform/media',
-    },
-    {
-      name: $i18n.t('admin.pusherSettings'),
-      icon: 'icon-[fluent--bot-24-regular]',
-      link: '/admin/platform/pusher',
-    },
-  ] as RouteItem[]
-
-  let currentRoutes: RouteItem[] = []
+  $: {
+    if ($admin.secondLevelComponent) {
+      firstLevelExpanded = false
+    } else {
+      firstLevelExpanded = true
+    }
+  }
   let secondTitle = ''
-  let haveSecondLevel = false
 
   const pageUnsubscribe = page.subscribe((value) => {
     if (value.url.pathname) {
-      if (value.url.pathname.startsWith('/admin/statistics')) {
-        currentRoutes = statisticsRoutes
-        firstLevelExpanded = false
-        haveSecondLevel = true
-        secondTitle = $i18n.t('admin.statistics')
-      } else if (value.url.pathname.startsWith('/admin/platform')) {
-        currentRoutes = platformRoutes
-        firstLevelExpanded = false
-        haveSecondLevel = true
-        secondTitle = $i18n.t('admin.platformSettings')
-      } else if (value.url.pathname === '/admin/games') {
-        currentRoutes = []
-        firstLevelExpanded = true
-        haveSecondLevel = false
-        // show games, when user choose it then we construct the second level
-      } else if (value.url.pathname.startsWith('/admin/announcements')) {
-        currentRoutes = []
-        firstLevelExpanded = true
-        haveSecondLevel = false
-        secondTitle = $i18n.t('admin.announcementsSettings')
-      } else if (value.url.pathname.startsWith('/admin/calendar')) {
-        currentRoutes = []
-        firstLevelExpanded = true
-        haveSecondLevel = false
-        secondTitle = $i18n.t('admin.calendarSettings')
-      } else if (value.url.pathname.startsWith('/admin/wiki')) {
-        currentRoutes = []
-        firstLevelExpanded = false
-        haveSecondLevel = true
-        secondTitle = $i18n.t('admin.wikiSettings')
-      } else if (value.url.pathname.startsWith('/admin/users')) {
-        currentRoutes = usersRoutes
-        firstLevelExpanded = false
-        haveSecondLevel = true
-        secondTitle = $i18n.t('admin.usersSettings')
+      const path = value.url.pathname
+      const route = routes.find((r) => path.startsWith(r.link))
+      if (route) {
+        secondTitle = route.name
       } else {
-        currentRoutes = []
-        firstLevelExpanded = true
-        haveSecondLevel = false
         secondTitle = ''
       }
     }
@@ -149,7 +101,7 @@
         square
         ghost
         class="join-item disabled:bg-transparent"
-        disabled={!haveSecondLevel}
+        disabled={$admin.secondLevelComponent === null}
         on:click={() => {
           firstLevelExpanded = !firstLevelExpanded
         }}
@@ -161,111 +113,22 @@
         />
       </RxButton>
     </div>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/statistics"
-      ghost
-      disabled={!$user.permissions.find(
-        (p) =>
-          p === Permission.Statistics || p === Permission.Devops || p === Permission.Audit || p === Permission.Organize
-      )}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.statistics')}
-    >
-      <span class="icon-[fluent--data-pie-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.statistics')}</span>
-      {/if}
-    </RxLink>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/platform"
-      ghost
-      disabled={!$user.permissions.find((p) => p === Permission.Devops) === undefined}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.platformSettings')}
-    >
-      <span class="icon-[fluent--home-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.platformSettings')}</span>
-      {/if}
-    </RxLink>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/games"
-      ghost
-      disabled={!$user.permissions.find(
-        (p) => p === Permission.Devops || p === Permission.Organize || p === Permission.Audit
-      )}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.gamesSettings')}
-    >
-      <span class="icon-[fluent--flag-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.gamesSettings')}</span>
-      {/if}
-    </RxLink>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/announcements"
-      ghost
-      disabled={!$user.permissions.find((p) => p === Permission.Publish)}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.announcementsSettings')}
-    >
-      <span class="icon-[fluent--megaphone-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.announcementsSettings')}</span>
-      {/if}
-    </RxLink>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/calendar"
-      ghost
-      disabled={!$user.permissions.find((p) => p === Permission.Calendar)}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.calendarSettings')}
-    >
-      <span class="icon-[fluent--calendar-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.calendarSettings')}</span>
-      {/if}
-    </RxLink>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/wiki"
-      ghost
-      disabled={!$user.permissions.find((p) => p === Permission.Publish)}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.wikiSettings')}
-    >
-      <span class="icon-[fluent--book-number-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.wikiSettings')}</span>
-      {/if}
-    </RxLink>
-    <RxLink
-      class="flex-nowrap overflow-hidden"
-      href="/admin/users"
-      ghost
-      disabled={!$user.permissions.find(
-        (p) => p === Permission.Organize || p === Permission.Devops || p === Permission.Audit
-      )}
-      justify={firstLevelExpanded ? 'start' : 'center'}
-      square={!firstLevelExpanded}
-      title={$i18n.t('admin.usersSettings')}
-    >
-      <span class="icon-[fluent--person-24-regular] w-6 h-6 flex-shrink-0" />
-      {#if firstLevelExpanded}
-        <span class="text-ellipsis whitespace-nowrap overflow-hidden">{$i18n.t('admin.usersSettings')}</span>
-      {/if}
-    </RxLink>
+    {#each routes as item}
+      <RxLink
+        class="flex-nowrap overflow-hidden"
+        href={item.link}
+        ghost
+        disabled={!$user.permissions.find((p) => item.permissions?.includes(p))}
+        justify={firstLevelExpanded ? 'start' : 'center'}
+        square={!firstLevelExpanded}
+        title={item.name}
+      >
+        <span class={`${item.icon} w-6 h-6 flex-shrink-0`} />
+        {#if firstLevelExpanded}
+          <span class="text-ellipsis whitespace-nowrap overflow-hidden">{item.name}</span>
+        {/if}
+      </RxLink>
+    {/each}
   </div>
   <div class={`${secondLevelExpanded ? 'w-[calc(100%_-_4rem)]' : 'w-0'} transition-all flex flex-col duration-200`}>
     <div class="h-16 bg-base-100 border-b border-b-base-content/5 flex flex-row px-4 items-center">
@@ -274,18 +137,7 @@
       </h2>
     </div>
     <div class="flex-1 flex flex-col space-y-2 p-4">
-      {#each currentRoutes as item}
-        <RxLink
-          class="flex-nowrap overflow-hidden"
-          href={item.link}
-          ghost
-          justify="start"
-          exactlyMatched={item.link === $page.url.pathname}
-        >
-          <span class={`${item.icon} w-6 h-6 flex-shrink-0`} />
-          <span class="text-ellipsis whitespace-nowrap overflow-hidden">{item.name}</span>
-        </RxLink>
-      {/each}
+      <svelte:component this={$admin.secondLevelComponent} />
     </div>
   </div>
 </div>
