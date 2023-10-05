@@ -166,6 +166,12 @@
     onMount(() => {
         fetchgames()
     })
+
+    $: {
+      if (currentPage) {
+        fetchgames()
+      }
+    }
   
   </script>
   
