@@ -68,10 +68,12 @@ pub async fn get_wiki_page(
 }
 
 pub async fn create_wiki(conn: &DatabaseConnection, wiki: Model) -> Result<Model, DbErr> {
-    let mut active_model: ActiveModel = wiki.into();
-    active_model.id = ActiveValue::NotSet;
-    active_model.published_at = ActiveValue::Set(Utc::now());
-    active_model.updated_at = ActiveValue::Set(Utc::now());
+    let active_model = ActiveModel {
+        id: ActiveValue::NotSet,
+        updated_at: ActiveValue::NotSet,
+        published_at: ActiveValue::Set(Utc::now()),
+        ..wiki.into_active_model().reset_all()
+    };
     active_model.insert(conn).await
 }
 

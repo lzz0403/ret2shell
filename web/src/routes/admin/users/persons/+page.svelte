@@ -2,6 +2,7 @@
   import { getInstituteList, getUserList } from '$lib/api/user'
   import type { DTColumnAction, DTColumnsDef, DTDataEntry } from '$lib/blocks/DataTable'
   import DataTable from '$lib/blocks/DataTable.svelte'
+  import RxButton from '$lib/components/RxButton.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
   import { i18n } from '$lib/i18n'
   import type { Institute } from '$lib/models/institute'
@@ -144,19 +145,10 @@
 
   onMount(() => {
     fetchInstitutes()
-    fetchUsers()
   })
 
   $: {
     if (page) {
-      fetchUsers()
-    }
-  }
-
-  $: {
-    if (filter) {
-      fetchUsers()
-    } else {
       fetchUsers()
     }
   }
@@ -171,9 +163,19 @@
       <RxInput
         size="sm"
         placeholder={$i18n.t('admin.filter')}
-        icon="icon-[fluent--filter-16-regular]"
+        icon="icon-[fluent--question-16-regular]"
         bind:value={filter}
-      />
+      >
+        <RxButton
+          class="join-item ml-0"
+          size="sm"
+          on:click={() => {
+            fetchUsers()
+          }}
+        >
+          <span class="icon-[fluent--filter-16-regular] w-4 h-4"></span>
+        </RxButton>
+      </RxInput>
     </div>
   </div>
   <DataTable

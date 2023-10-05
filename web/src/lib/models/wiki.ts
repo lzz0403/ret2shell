@@ -5,7 +5,7 @@ export interface Wiki {
   updated_at: number
   author_id: number
   content: string
-  parent: number
+  parent: number | null
 }
 
 export interface WikiEntry {

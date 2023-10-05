@@ -188,7 +188,10 @@
       "wiki": "Wiki"
     },
     "filter": "Filter...",
-    "enter": "Enter"
+    "wikiGuide": "Welcome to the knowledge base! \nPlease select the article you want to edit on the left, or create a new one.",
+    "create": "Create",
+    "enter": "Enter",
+    "update": "Update"
   },
   "docs": {
     "title": "Documents"
@@ -216,7 +219,10 @@
     "captcha": "Captcha",
     "fetchingPow": "Getting...",
     "fetchCaptchaFailed": "Failed to fetch captcha",
-    "imageBroken": "Image Broken"
+    "imageBroken": "Image Broken",
+    "uploadTips": "Drag the image here to upload...",
+    "imageUploadSuccess": "Image uploaded successfully, {{remaining}} remaining this week.",
+    "imageUploadFail": "Image upload failed"
   },
   "platform": {
     "backendOffline": "The backend service seems to be offline. Please try refreshing the page. If the error persists after multiple attempts, please contact the website administrator.",
@@ -250,7 +256,13 @@
     "welcomeTitle": "Welcome to the wiki!",
     "guide": "Please select the article you want to read in the table of contents on the left",
     "rendering": "Rendering...",
-    "fetchContentFailed": "Failed to obtain article content"
+    "fetchContentFailed": "Failed to obtain article content",
+    "titleEmpty": "The title can not be empty",
+    "contentEmpty": "the content can not be empty",
+    "createSuccess": "Created successfully",
+    "createFailed": "Creation failed",
+    "updateSuccess": "update successfully",
+    "updateFailed": "Update failed"
   },
   "calendar": {
     "0": "Sun.",

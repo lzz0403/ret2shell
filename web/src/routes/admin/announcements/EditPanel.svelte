@@ -74,5 +74,6 @@
     {loading}
     readonly={loading || submitting}
     bind:value={announcement.content}
+    droppable={true}
   />
 </div>

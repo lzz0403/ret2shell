@@ -5,7 +5,9 @@
   import { i18n } from '$lib/i18n'
   import { Permission } from '$lib/models/user'
   import { admin } from '$lib/stores/admin'
+  import { theme } from '$lib/stores/theme'
   import { user } from '$lib/stores/user'
+  import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import { onDestroy, type ComponentType } from 'svelte'
 
   let firstLevelExpanded = true
@@ -131,14 +133,22 @@
     {/each}
   </div>
   <div class={`${secondLevelExpanded ? 'w-[calc(100%_-_4rem)]' : 'w-0'} transition-all flex flex-col duration-200`}>
-    <div class="h-16 bg-base-100 border-b border-b-base-content/5 flex flex-row px-4 items-center">
+    <div class="h-16 flex-shrink-0 bg-base-100 border-b border-b-base-content/5 flex flex-row px-4 items-center">
       <h2 class="font-bold text-base flex flex-row space-x-2 items-center justify-center w-full overflow-hidden">
         <span class="text-ellipsis whitespace-nowrap overflow-hidden">{secondTitle}</span>
       </h2>
     </div>
-    <div class="flex-1 flex flex-col space-y-2 p-4">
-      <svelte:component this={$admin.secondLevelComponent} />
-    </div>
+    <OverlayScrollbarsComponent
+      options={{
+        scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
+      }}
+      class="w-full h-full relative print:hidden"
+      defer
+    >
+      <div class="flex flex-col space-y-2 p-4">
+        <svelte:component this={$admin.secondLevelComponent} />
+      </div>
+    </OverlayScrollbarsComponent>
   </div>
 </div>
 <div class="w-1/5 min-w-[24rem] max-w-[32rem]"></div>

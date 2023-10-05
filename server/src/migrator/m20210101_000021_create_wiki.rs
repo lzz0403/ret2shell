@@ -53,7 +53,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Wiki::AuthorId).big_integer())
                     .foreign_key(
                         ForeignKey::create()
-                            .name("answer_author_id_fkey")
+                            .name("wiki_author_id_fkey")
                             .from(Wiki::Table, Wiki::AuthorId)
                             .to(User::Table, User::Id)
                             .on_update(ForeignKeyAction::Cascade)
@@ -63,7 +63,7 @@ impl MigrationTrait for Migration {
                     .col(ColumnDef::new(Wiki::Parent).big_integer())
                     .foreign_key(
                         ForeignKey::create()
-                            .name("answer_parent_fkey")
+                            .name("wiki_parent_fkey")
                             .from(Wiki::Table, Wiki::Parent)
                             .to(Wiki::Table, Wiki::Id)
                             .on_update(ForeignKeyAction::Cascade)

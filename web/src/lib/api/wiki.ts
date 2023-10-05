@@ -16,3 +16,15 @@ export async function getWiki(id: number) {
 export async function getRelatedWikis(id: number) {
   return (await api.get(`${api_root}/wiki/${id}/related`)).data as Wiki[]
 }
+
+export async function createWiki(wiki: Wiki) {
+  return (await api.post(`${api_root}/wiki`, wiki)).data as Wiki
+}
+
+export async function editWiki(id: number, wiki: Wiki) {
+  return (await api.patch(`${api_root}/wiki/${id}`, wiki)).data as Wiki
+}
+
+export async function deleteWiki(id: number) {
+  return await api.delete(`${api_root}/wiki/${id}`)
+}

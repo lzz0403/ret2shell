@@ -1,6 +1,8 @@
+use super::layer::auth::Token;
 use super::{layer::auth, GlobalState};
 use crate::entity::user::Permission;
 use crate::entity::wiki::{self, Model as WikiModel};
+use axum::Extension;
 use axum::{
     extract::{Path, Query, State},
     middleware,
@@ -44,10 +46,15 @@ async fn get_wiki_list(
 
 async fn create_wiki(
     State(ref conn): State<DatabaseConnection>,
+    Extension(token): Extension<Token>,
     Json(data): Json<WikiModel>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let data = WikiModel {
+        author_id: Some(token.id),
+        ..data
+    };
     match wiki::create_wiki(conn, data).await {
-        Ok(_) => Ok(StatusCode::CREATED),
+        Ok(data) => Ok((StatusCode::CREATED, Json(data))),
         Err(err) => {
             error!("Failed to create wiki: {}", err);
             Err((StatusCode::INTERNAL_SERVER_ERROR, "failed to create wiki"))
@@ -61,7 +68,7 @@ async fn update_wiki(
     Json(data): Json<WikiModel>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     match wiki::update_wiki(conn, id, data).await {
-        Ok(_) => Ok(StatusCode::OK),
+        Ok(data) => Ok((StatusCode::OK, Json(data))),
         Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "wiki not found")),
         Err(err) => {
             error!("Failed to update wiki: {}", err);

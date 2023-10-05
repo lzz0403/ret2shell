@@ -5,7 +5,7 @@ import { api, api_root } from '.'
 
 export async function getGameList(page: number, per_page: number, host_as_game?: boolean) {
   let uri = `${api_root}/game?page=${page}&per_page=${per_page}`
-  if (host_as_game) uri += `&host_as_game=${host_as_game}`
+  if (host_as_game !== undefined) uri += `&host_as_game=${host_as_game}`
   const response = await api.get(uri)
   return response.data as { games: Game[]; total: number }
 }

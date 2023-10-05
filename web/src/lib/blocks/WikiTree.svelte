@@ -5,9 +5,9 @@
   import type { AxiosError } from 'axios'
   import RxButton from '../components/RxButton.svelte'
   import RxLink from '../components/RxLink.svelte'
-  import { onMount } from 'svelte'
+  import { createEventDispatcher, onMount } from 'svelte'
 
-  // pl-0 pl-4 pl-8 pl-12 pl-16
+  // pl-0 pl-2 pl-4 pl-6 pl-8 pl-10 pl-12 pl-14 pl-16 pl-18 pl-20
   export let depth = 0
 
   export let tree: WikiEntry[] = []
@@ -68,7 +68,7 @@
 </script>
 
 <ul
-  class={`pl-${depth * 4} relative flex flex-col space-y-2 ${
+  class={`${depth === 0 ? 'pl-0' : 'pl-4'} relative flex flex-col space-y-2 ${
     depth > 0 ? 'before:border-l-2 before:absolute before:h-full before:border-l-base-content/10 mt-2' : ''
   }`}
 >
@@ -76,12 +76,15 @@
     <li>
       <div class="join w-full overflow-hidden">
         <RxLink
-          exactlyMatched
           bold={false}
           ghost
           class="flex-1 join-item overflow-hidden"
           justify="start"
-          href={`${addrPrefix}/${item.id}`}
+          title={item.title}
+          on:click={() => {
+            handleLoadingChildItems(item.id)
+          }}
+          href={`${addrPrefix}/${item.id}${manageBtn ? '#edit' : ''}`}
         >
           {#if depth === 0}
             <span class="icon-[fluent--notebook-20-regular] w-6 h-6 flex-shrink-0" />
@@ -91,15 +94,9 @@
           <span class="text-ellipsis overflow-hidden whitespace-nowrap flex-1 text-left">{item.title}</span>
         </RxLink>
         {#if manageBtn}
-          <RxButton
-            class="join-item"
-            ghost
-            on:click={() => {
-              handleLoadingChildItems(item.id)
-            }}
-          >
+          <RxLink class="join-item" href={`${addrPrefix}/${item.id}#create`} ghost>
             <span class="icon-[fluent--add-16-regular] w-5 h-5"></span>
-          </RxButton>
+          </RxLink>
         {/if}
         {#if !treeNoChildrenRecord[item.id]}
           <RxButton
@@ -129,6 +126,7 @@
           {activeChains}
           depth={depth + 1}
           addrPrefix={`${addrPrefix}/${item.id}`}
+          {manageBtn}
         />
       {/if}
     </li>

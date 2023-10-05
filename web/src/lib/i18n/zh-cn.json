@@ -188,7 +188,10 @@
     "userListSettings": "用户管理",
     "calendarsSettings": "竞赛日历",
     "filter": "过滤条件...",
-    "enter": "进入"
+    "create": "创建",
+    "wikiGuide": "欢迎来到知识库！请在左侧选择你想编辑的文章，或装创建一篇新的。",
+    "enter": "进入",
+    "update": "更新"
   },
   "docs": {
     "title": "技术文档"
@@ -216,7 +219,10 @@
     "captcha": "验证码",
     "fetchingPow": "获取中...",
     "fetchCaptchaFailed": "获取验证码失败",
-    "imageBroken": "图片已损坏"
+    "imageBroken": "图片已损坏",
+    "uploadTips": "将图片拖拽到此处上传...",
+    "imageUploadSuccess": "图片上传成功，本周剩余 {{remaining}} 张。",
+    "imageUploadFail": "图片上传失败"
   },
   "platform": {
     "backendOffline": "后端服务似乎离线了，请尝试刷新页面，如果多次尝试仍旧出错，请联系网站管理员。",
@@ -250,7 +256,13 @@
     "welcomeTitle": "欢迎来到知识库！",
     "guide": "请在左侧目录中选择你想阅读的文章",
     "rendering": "渲染中...",
-    "fetchContentFailed": "获取文章内容失败"
+    "fetchContentFailed": "获取文章内容失败",
+    "titleEmpty": "标题不能为空",
+    "contentEmpty": "内容不能为空",
+    "createSuccess": "创建成功",
+    "createFailed": "创建失败",
+    "updateSuccess": "更新成功",
+    "updateFailed": "更新失败"
   },
   "calendar": {
     "0": "日",

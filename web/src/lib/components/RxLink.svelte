@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import { createEventDispatcher } from 'svelte'
   export let level: 'info' | 'success' | 'warning' | 'error' | null = null
   export let href: string
   export let size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' = 'md'
@@ -12,6 +13,28 @@
   export let exactlyMatched = false
   let clazz = ''
   export { clazz as class }
+
+  function startsWithPath(path: string) {
+    let route = $page.url.pathname
+      .replace($page.url.hash, '')
+      .split('/')
+      .map((p) => p.trim())
+      .filter(Boolean)
+    let link = path
+      .replace($page.url.hash, '')
+      .split('/')
+      .map((p) => p.trim())
+      .filter(Boolean)
+    if (link.length > route.length) {
+      return false
+    }
+    for (let i = 0; i < link.length; i++) {
+      if (link[i] !== route[i]) {
+        return false
+      }
+    }
+    return true
+  }
 
   /**
    * Possible classes:
@@ -37,13 +60,15 @@
     justify && `justify-${justify}`,
     !uppercase && 'normal-case',
     square && 'btn-square',
-    (exactlyMatched ? $page.url.pathname === href : $page.url.pathname.startsWith(href)) && 'text-primary',
+    (exactlyMatched ? $page.url.pathname === href : startsWithPath(href)) && 'text-primary',
     clazz,
   ]
     .filter(Boolean)
     .join(' ')
+
+  const dispatch = createEventDispatcher()
 </script>
 
-<a {href} class={classes} {...$$restProps}>
+<a {href} class={classes} {...$$restProps} on:click={() => dispatch('click')}>
   <slot />
 </a>
