@@ -125,10 +125,6 @@
       })
   }
 
-  onMount(() => {
-    fetchAnnouncements()
-  })
-
   $: {
     if (currentPage) {
       fetchAnnouncements()

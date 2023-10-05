@@ -28,10 +28,6 @@
       })
   }
 
-  onMount(() => {
-    refresh(page, perPage)
-  })
-
   $: {
     refresh(page, perPage)
   }
