@@ -87,9 +87,7 @@ pub async fn get_instance_by_user_id(
     Ok(instance.map_or_else(
         || None,
         |inst| {
-            if inst.started_at.timestamp() + (inst.renew_count * 3600) as i64
-                > Utc::now().timestamp()
-            {
+            if !inst.should_stop() && inst.running {
                 Some(inst)
             } else {
                 None

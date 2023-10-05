@@ -3,6 +3,7 @@ import { browser } from '$app/environment'
 import type { Permission, Token, User } from '$lib/models/user'
 import { fromBase64 } from 'js-base64'
 import { getUserInfo } from '$lib/api/user'
+import type { Instance } from '$lib/models/instance'
 
 class UserStore {
   token = ''
@@ -11,6 +12,7 @@ class UserStore {
   permissions: Permission[] = []
   isLoggedIn = false
   info: User | null = null
+  runningInstance: Instance | null = null
 
   constructor() {
     if (browser) {

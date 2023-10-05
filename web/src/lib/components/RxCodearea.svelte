@@ -109,7 +109,7 @@
       <span class="loading loading-spinner loading-sm" />
     </div>
   {/if}
-  <div class="absolute left-0 top-0 bottom-0 right-0 p-4">
+  <div class="absolute left-0 top-0 bottom-0 right-0 p-2">
     <pre
       class={`w-full min-h-full relative bg-transparent ${rendering ? 'hidden' : ''}`}
       use:field
