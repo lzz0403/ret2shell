@@ -207,7 +207,10 @@
     "enter": "Enter",
     "update": "Update",
     "instituteListSettings": "Institute management",
-    "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any)."
+    "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any).",
+    "userInfo": "User Info",
+    "userStatistics": "Statistics",
+    "userGames": "Participated Games"
   },
   "docs": {
     "title": "Documents"
@@ -543,7 +546,8 @@
     "certificates": "Cert Publish"
   },
   "users": {
-    "fetchFailed": "Failed to get user list"
+    "fetchFailed": "Failed to get user list",
+    "fetchInfoFailed": "Failed to fetch user information"
   },
   "institutes": {
     "fetchFailed": "Failed to get list of institutes"

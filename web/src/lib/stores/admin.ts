@@ -29,8 +29,8 @@ class AdminStore {
 export const admin = writable(new AdminStore())
 
 export function refreshAdminRoute(path: string) {
-  let routes = path.split('/').filter((x) => x !== '')
-  let routeItems: RouteItem[] = []
+  const routes = path.split('/').filter((x) => x !== '')
+  const routeItems: RouteItem[] = []
   let routePath = ''
   for (const route in routes) {
     routePath += '/' + routes[route]

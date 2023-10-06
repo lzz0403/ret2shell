@@ -207,7 +207,10 @@
     "enter": "进入",
     "update": "更新",
     "instituteListSettings": "组织管理",
-    "deleteWikiConfirm": "确认删除 {{item}} ？该文章下的所有子文章将一并删除（如果有）。"
+    "deleteWikiConfirm": "确认删除 {{item}} ？该文章下的所有子文章将一并删除（如果有）。",
+    "userInfo": "用户信息",
+    "userStatistics": "数据统计",
+    "userGames": "已参与赛事"
   },
   "docs": {
     "title": "技术文档"

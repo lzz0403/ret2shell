@@ -4,7 +4,6 @@ import type { Command } from './interface'
 import type { RnixEnv } from '../shell'
 import { get } from 'svelte/store'
 import { i18n } from '$lib/i18n'
-import ansiColors from 'ansi-colors'
 
 export class Service implements Command {
   name = 'service'

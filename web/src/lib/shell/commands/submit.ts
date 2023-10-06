@@ -33,7 +33,7 @@ export class Submit implements Command {
     io.logInfo(`${get(i18n).t('shell.submit.waiting')}: ${flag}`)
 
     try {
-      let resp = await submitFlag({
+      const resp = await submitFlag({
         id: -1,
         created_at: 0,
         user_id: 0,

@@ -34,7 +34,7 @@ export async function downloadChallengeAttachment(
   file: string,
   callback?: (progress: number) => void
 ) {
-  let resp = await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/attachment?file=${file}`, {
+  const resp = await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/attachment?file=${file}`, {
     responseType: 'blob',
     onDownloadProgress: (e) => {
       let progress = Math.floor((e.loaded * 100) / (e.total || -1))

@@ -126,7 +126,7 @@
         <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
       </div>
       <RxForm {form}>
-        <div class="flex flex">
+        <div class="flex">
           <RxFormItem
             name="name"
             label={$i18n.t('account.name')}
@@ -156,7 +156,7 @@
                 class="w-16 h-16 rounded-full ring-2 ring-offset-base-100 ring-offset-2 !flex flex-col justify-center items-center relative"
               >
                 {#if userSetting?.cover_path}
-                  <RxImage src={userSetting.cover_path} loading={false} />
+                  <RxImage src={userSetting.cover_path} loading={loadingAvatar} />
                 {:else}
                   <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
                 {/if}

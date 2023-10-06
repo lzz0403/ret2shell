@@ -20,7 +20,7 @@ export class Cd implements Command {
       return 1
     }
     const challenge_name = origin.replace(this.name, '').trim()
-    let challenge = envp.availableChallenges.find((challenge) => challenge.name === challenge_name)
+    const challenge = envp.availableChallenges.find((challenge) => challenge.name === challenge_name)
     if (challenge) {
       window.location.hash = `#${challenge.id}`
     } else {

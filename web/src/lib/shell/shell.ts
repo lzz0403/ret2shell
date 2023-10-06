@@ -108,8 +108,10 @@ export class RnixShell {
     this.running = true
     this.greet()
     let pendingBuffer = ''
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       this.stdio.print(this.prompt.head)
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         this.inputBuffer = await this.stdio.input(pendingBuffer)
         if (this.inputBuffer.endsWith(ansiEscapes.cursorUp1)) {

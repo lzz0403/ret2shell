@@ -24,9 +24,9 @@ export interface Team {
 
 export interface TeamWithGameName {
   id: number
-  name: String
+  name: string
   game_id: number
-  game_name: String
+  game_name: string
   state: State
   institute_id: number | null
   score: number

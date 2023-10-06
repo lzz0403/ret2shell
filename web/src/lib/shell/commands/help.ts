@@ -1,7 +1,5 @@
-import type { ParseEntry } from 'shell-quote'
 import type { RnixStdio } from '../stdio'
 import type { Command } from './interface'
-import type { RnixEnv } from '../shell'
 import * as commands from '.'
 import { get } from 'svelte/store'
 import { i18n } from '$lib/i18n'
@@ -11,7 +9,7 @@ import ansiEscapes from 'isomorphic-ansi-escapes'
 export class Help implements Command {
   name = 'help'
   man = get(i18n).t('shell.help.man')
-  func = async (io: RnixStdio, _args: ParseEntry[], origin: string, envp: RnixEnv) => {
+  func = async (io: RnixStdio) => {
     io.println(get(i18n).t('shell.helpWelcome', { terminal: ansiColors.blueBright('Rnix Shell') }))
     io.println(get(i18n).t('shell.helpCommands'))
     io.println('')

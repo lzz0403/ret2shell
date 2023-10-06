@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { DTColumnAction, DTColumnsDef, DTDataEntry } from '$lib/blocks/DataTable'
+  import type { DTColumnAction, DTColumnsDef } from '$lib/blocks/DataTable'
   import DataTable from '$lib/blocks/DataTable.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'

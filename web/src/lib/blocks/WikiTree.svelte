@@ -5,7 +5,7 @@
   import type { AxiosError } from 'axios'
   import RxButton from '../components/RxButton.svelte'
   import RxLink from '../components/RxLink.svelte'
-  import { createEventDispatcher, onMount } from 'svelte'
+  import { onMount } from 'svelte'
 
   // pl-0 pl-2 pl-4 pl-6 pl-8 pl-10 pl-12 pl-14 pl-16 pl-18 pl-20
   export let depth = 0

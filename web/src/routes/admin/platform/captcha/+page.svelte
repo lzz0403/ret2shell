@@ -10,7 +10,7 @@
   import RxCheckBox from '$lib/components/RxCheckBox.svelte'
   import RxRadioGroup from '$lib/components/RxRadioGroup.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
-  import type { Config, Validator } from '$lib/models/config'
+  import type { Config } from '$lib/models/config'
   import { onMount } from 'svelte'
   import { getPlatformConfig, setPlatformConfig } from '$lib/api/platform'
   import type { Obj } from '@felte/core'

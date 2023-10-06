@@ -6,7 +6,6 @@ import { get } from 'svelte/store'
 import { AxiosError } from 'axios'
 import type { RnixEnv } from '../shell'
 import { downloadChallengeAttachment } from '$lib/api/challenge'
-import ansiColors from 'ansi-colors'
 import ansiEscapes from 'isomorphic-ansi-escapes'
 
 export class Wget implements Command {
@@ -26,7 +25,7 @@ export class Wget implements Command {
       io.logError(get(i18n).t('shell.wget.usage'))
       return 1
     }
-    let file = args[0].toString().trim()
+    const file = args[0].toString().trim()
 
     try {
       await downloadChallengeAttachment(envp.game?.id as number, envp.challenge?.id as number, file, (progress) => {

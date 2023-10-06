@@ -13,7 +13,6 @@
   import { blur } from 'svelte/transition'
 
   let loading = true
-  let error = 200
   let isCreate = false
   let wiki: Wiki = {
     id: 0,
@@ -73,7 +72,6 @@
       getWiki(id)
         .then((data) => {
           wiki = data
-          error = 200
 
           isCreate = $page.url.hash.replace('#', '') === 'create'
           if (isCreate) {
@@ -92,7 +90,6 @@
         })
         .catch((err) => {
           showMessage('error', `${$i18n.t('wiki.fetchContentFailed')}: ${(err as AxiosError).response?.data}`)
-          error = (err as AxiosError).response?.status || 500
         })
         .finally(() => {
           loading = false
@@ -172,8 +169,16 @@
 </script>
 
 <div
-  class="h-16 flex-shrink-0 flex flex-row items-center px-2 border-b border-b-base-content/5 bg-base-100/80 backdrop-blur"
+  class="h-16 flex-shrink-0 flex flex-row items-center px-2 border-b border-b-base-content/5 bg-base-100/80 backdrop-blur relative"
 >
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 bg-base-100/80 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
+    </div>
+  {/if}
   <RxInput ghost bind:value={editedWiki.title}></RxInput>
   <RxButton class="join-item" ghost level="info" on:click={createOrSaveWikiItem}>
     {#if isCreate}

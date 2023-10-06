@@ -1,6 +1,6 @@
 <script lang="ts">
   import { theme } from '$lib/stores/theme'
-  import { Terminal, type ITerminalOptions, type IBufferRange } from 'xterm'
+  import { Terminal, type ITerminalOptions } from 'xterm'
   import { FitAddon } from 'xterm-addon-fit'
   import { WebLinksAddon } from 'xterm-addon-web-links'
   import { CanvasAddon } from 'xterm-addon-canvas'
@@ -22,7 +22,7 @@
   export let availableChallenges: Challenge[]
 
   const linkHandler = {
-    activate(_event: MouseEvent, text: string, _range: IBufferRange) {
+    activate(_event: MouseEvent, text: string) {
       if (text.startsWith('http://') || text.startsWith('https://')) {
         window.open(text, '_blank')
       } else if (text.startsWith('rnix-route://')) {

@@ -34,11 +34,11 @@ export class Ls implements Command {
     }
     Array.from(map.entries()).map(([tagId, challenges]) => {
       io.println(ansiColors.bold.blue(tags.find((tag) => tag.id === tagId)?.name || '[UNGROUPED]'))
-      let maxNameLength = challenges.reduce(
+      const maxNameLength = challenges.reduce(
         (max, challenge) => Math.max(max, unicodeStrDisplayLength(challenge.name)),
         0
       )
-      let itemsPerLine = Math.floor(io.termWidth() / (maxNameLength + 2))
+      const itemsPerLine = Math.floor(io.termWidth() / (maxNameLength + 2))
       let iter = 0
       for (const challenge of challenges) {
         // io.print(`${ansiEscapes.link(challenge.name, `rnix-chal://${challenge.id}`)}`)

@@ -13,7 +13,7 @@
   import type { Announcement } from '$lib/models/announcement'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
-  import { onDestroy, onMount } from 'svelte'
+  import { onDestroy } from 'svelte'
   import CreatePanel from './EditPanel.svelte'
   import { page } from '$app/stores'
   import { user } from '$lib/stores/user'
@@ -203,7 +203,7 @@
     submitting = true
     if (activeAnnouncement.id > 0) {
       updateAnnouncement(activeAnnouncement.id, activeAnnouncement)
-        .then((res) => {
+        .then(() => {
           showMessage('success', $i18n.t('announcement.updateSuccess'), 5000)
           window.location.hash = ''
         })
@@ -221,7 +221,7 @@
         publisher_id: $user.id,
       }
       createAnnouncement(announcement)
-        .then((res) => {
+        .then(() => {
           showMessage('success', $i18n.t('announcement.createSuccess'), 5000)
           window.location.hash = ''
           fetchAnnouncements()

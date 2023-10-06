@@ -10,7 +10,6 @@
   import RxCheckBox from '$lib/components/RxCheckBox.svelte'
   import RxRadioGroup from '$lib/components/RxRadioGroup.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
-  import RxTextarea from '$lib/components/RxTextarea.svelte'
   import { getPlatformConfig, setPlatformConfig } from '$lib/api/platform'
   import { onMount } from 'svelte'
   import type { Config } from '$lib/models/config'

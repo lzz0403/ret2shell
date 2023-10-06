@@ -1,6 +1,6 @@
 <script lang="ts">
   import { getInstituteList, getUserInfo, getUserList } from '$lib/api/user'
-  import type { DTColumnAction, DTColumnsDef, DTDataEntry } from '$lib/blocks/DataTable'
+  import type { DTColumnAction, DTColumnsDef } from '$lib/blocks/DataTable'
   import DataTable from '$lib/blocks/DataTable.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
@@ -240,6 +240,7 @@
   </div>
   <PersonPanel
     user={currentUser}
+    loading={loadingUser}
     class={`transition-all ${showPersonPanel ? 'h-full' : 'h-0'}`}
     on:close={() => {
       window.location.hash = ''

@@ -8,7 +8,7 @@
   import { theme } from '$lib/stores/theme'
   import { user } from '$lib/stores/user'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
-  import { onDestroy, type ComponentType } from 'svelte'
+  import { onDestroy } from 'svelte'
 
   let firstLevelExpanded = true
   $: secondLevelExpanded = !firstLevelExpanded
