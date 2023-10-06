@@ -5,7 +5,6 @@
   import { i18n } from '$lib/i18n'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
-  import { onMount } from 'svelte'
   import { platform } from '$lib/stores/platform'
   import { getGameList } from '$lib/api/game'
   import type { Game } from '$lib/models/game'
