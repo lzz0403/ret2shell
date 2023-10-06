@@ -13,6 +13,7 @@
   import { page } from '$app/stores'
   import { user } from '$lib/stores/user'
   import { platform } from '$lib/stores/platform'
+  import { blur } from 'svelte/transition'
 
   let currentPage = 0
   let total = 0
@@ -303,19 +304,19 @@
     }}
   />
   {#if deleteModalOpened}
-  <div
-    class="fixed top-0 left-0 w-full h-full bg-base-100/60 z-50 flex flex-col items-center justify-center"
-    transition:blur={{ amount: 20, duration: 300 }}
-  >
-    <div class="rounded-box p-4 flex flex-col space-y-4 bg-neutral w-64">
-      <h1 class="text-base font-bold">
-        {$i18n.t('form.deleteConfirm', { item: decodeURI(willDeletedCalendar.name.split('|')[0]) })}
-      </h1>
-      <div class="flex flex-row justify-end space-x-4">
-        <RxButton size="sm" on:click={() => (deleteModalOpened = false)}>{$i18n.t('form.cancel')}</RxButton>
-        <RxButton size="sm" level="error" on:click={handleDeleteCalendar}>{$i18n.t('form.confirm')}</RxButton>
+    <div
+      class="fixed top-0 left-0 w-full h-full bg-base-100/60 z-50 flex flex-col items-center justify-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <div class="rounded-box p-4 flex flex-col space-y-4 bg-neutral w-64">
+        <h1 class="text-base font-bold">
+          {$i18n.t('form.deleteConfirm', { item: decodeURI(willDeletedCalendar.name.split('|')[0]) })}
+        </h1>
+        <div class="flex flex-row justify-end space-x-4">
+          <RxButton size="sm" on:click={() => (deleteModalOpened = false)}>{$i18n.t('form.cancel')}</RxButton>
+          <RxButton size="sm" level="error" on:click={handleDeleteCalendar}>{$i18n.t('form.confirm')}</RxButton>
+        </div>
       </div>
     </div>
-  </div>
-{/if}
+  {/if}
 </div>
