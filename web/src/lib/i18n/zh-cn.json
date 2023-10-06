@@ -38,7 +38,11 @@
     "prizes": "近期获奖情况",
     "noIntro": "这名大嘿客什么也没有留下...",
     "recentActivities": "近期活动",
-    "takePartAs": "作为 {{team}} 参与了 {{game}}，获取了 {{score}} 分。"
+    "takePartAs": "作为 {{team}} 参与了 {{game}}，获取了 {{score}} 分。",
+    "infoSetting": "基本信息",
+    "passwordSetting": "重置密码",
+    "instituteSetting": "组织认证",
+    "dangerousSetting": "删号跑路"
   },
   "announcements": {
     "title": "公告",

@@ -38,7 +38,11 @@
     "prizes": "Recent Prizes",
     "noIntro": "This hacker does not leave anything...",
     "recentActivities": "Recent Activities",
-    "takePartAs": "Participated in {{game}} as {{team}} and obtained {{score}} points."
+    "takePartAs": "Participated in {{game}} as {{team}} and obtained {{score}} points.",
+    "infoSetting": "Basic info",
+    "passwordSetting": "Password Reset",
+    "instituteSetting": "Institute",
+    "dangerousSetting": "Delete account"
   },
   "playground": {
     "title": "Playground",
