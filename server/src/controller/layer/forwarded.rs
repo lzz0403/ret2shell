@@ -1,11 +1,21 @@
 use std::net::{IpAddr, SocketAddr};
 use std::str::FromStr;
 
+use axum::extract::State;
+use axum::middleware::Next;
+use axum::response::IntoResponse;
+use axum::Extension;
 use axum::{
     extract::ConnectInfo,
-    http::{header::FORWARDED, HeaderMap, Request},
+    http::{header::FORWARDED, HeaderMap, Request, StatusCode},
 };
+use sea_orm::DatabaseConnection;
 use thiserror::Error;
+use tracing::{debug, error, warn};
+
+use crate::entity::ip_address::link_to_user;
+
+use super::auth::Token;
 
 const X_REAL_IP: &str = "x-real-ip";
 const X_FORWARDED_FOR: &str = "x-forwarded-for";
@@ -279,4 +289,36 @@ pub fn get_client_ip<B: Send>(request: &Request<B>) -> Option<IpAddr> {
         .or_else(|| maybe_x_real_ip(headers))
         .or_else(|| maybe_forwarded(headers))
         .or_else(|| maybe_connect_info(request))
+}
+
+pub async fn record_ip_address<B: Send>(
+    State(ref conn): State<DatabaseConnection>,
+    Extension(token): Extension<Token>,
+    req: Request<B>,
+    next: Next<B>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let ip = match get_client_ip(&req) {
+        Some(ip) => ip.to_string(),
+        None => {
+            warn!("Unable to get client IP address from request");
+            return Ok(next.run(req).await);
+        }
+    };
+    if token.id <= 0 {
+        return Ok(next.run(req).await);
+    }
+    debug!(
+        "recording ip address with user <{}:{}> with {}",
+        token.id, token.name, &ip
+    );
+    match link_to_user(conn, token.id, &ip).await {
+        Ok(_) => Ok(next.run(req).await),
+        Err(err) => {
+            error!("link ip to user error: {}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "record ip address failed",
+            ))
+        }
+    }
 }

@@ -10,6 +10,8 @@ use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 use std::str::FromStr;
 
+use super::ip_address;
+
 #[derive(
     FromPrimitive, ToPrimitive, Clone, Copy, Debug, PartialEq, Serialize_repr, Deserialize_repr, Eq,
 )]
@@ -222,6 +224,20 @@ pub async fn get_user_by_account(db: &DatabaseConnection, account: &str) -> Resu
     }
 }
 
+pub async fn get_ip_address_of_user(
+    conn: &DatabaseConnection,
+    user_id: i64,
+) -> Result<Vec<ip_address::Model>, DbErr> {
+    let user = Entity::find()
+        .filter(Column::Id.eq(user_id))
+        .one(conn)
+        .await?;
+    match user {
+        Some(user) => Ok(user.find_related(ip_address::Entity).all(conn).await?),
+        None => Err(DbErr::RecordNotFound("user".to_string())),
+    }
+}
+
 pub async fn create_user(db: &DatabaseConnection, user: Model) -> Result<Model, DbErr> {
     let active_model: ActiveModel = ActiveModel {
         id: ActiveValue::NotSet,
@@ -319,7 +335,6 @@ fn filter_and_order_user(
 pub async fn update_user(db: &DatabaseConnection, id: i64, user: Model) -> Result<Model, DbErr> {
     let active_model: ActiveModel = ActiveModel {
         id: ActiveValue::Unchanged(id),
-        email: ActiveValue::NotSet,
         password: ActiveValue::NotSet,
         ..user.into_active_model().reset_all()
     };

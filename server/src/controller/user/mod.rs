@@ -33,6 +33,11 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .nest(
             "/:id",
             Router::new()
+                .route("/ip", get(get_user_ip_addresses))
+                .route_layer(middleware::from_fn(auth::permission_required_any!(
+                    Permission::Devops,
+                    Permission::Audit
+                )))
                 .route("/", get(get_user_info))
                 .route("/teams", get(get_user_teams)),
         )
@@ -101,6 +106,23 @@ async fn get_user_info(
         Err((StatusCode::NOT_FOUND, "user not found"))
     } else {
         Ok(Json(user.desensitize()))
+    }
+}
+
+async fn get_user_ip_addresses(
+    State(ref conn): State<DatabaseConnection>,
+    Path(id): Path<i64>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    match user::get_ip_address_of_user(conn, id).await {
+        Ok(ip_addresses) => Ok(Json(ip_addresses)),
+        Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "user not found")),
+        Err(err) => {
+            error!("Failed to get user ip addresses: {}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to get user ip addresses",
+            ))
+        }
     }
 }
 

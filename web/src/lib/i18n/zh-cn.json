@@ -39,10 +39,18 @@
     "noIntro": "这名大嘿客什么也没有留下...",
     "recentActivities": "近期活动",
     "takePartAs": "作为 {{team}} 参与了 {{game}}，获取了 {{score}} 分。",
+    "fetchInfoFailed": "获取用户信息失败",
+    "introTooLong": "简介太长了，1500字以内",
+    "permissionInvalid": "权限标识符不存在",
     "infoSetting": "基本信息",
     "passwordSetting": "重置密码",
     "instituteSetting": "组织认证",
-    "dangerousSetting": "删号跑路"
+    "dangerousSetting": "删号跑路",
+    "update": "更新",
+    "institute_id": "所属组织",
+    "institute_info": "组织内信息",
+    "updateFailed": "更新失败",
+    "updateSuccess": "更新成功"
   },
   "announcements": {
     "title": "公告",
@@ -197,7 +205,11 @@
     "enter": "进入",
     "update": "更新",
     "instituteListSettings": "组织管理",
-    "deleteWikiConfirm": "确认删除 {{item}} ？该文章下的所有子文章将一并删除（如果有）。"
+    "deleteWikiConfirm": "确认删除 {{item}} ？该文章下的所有子文章将一并删除（如果有）。",
+    "userInfo": "用户信息",
+    "userStatistics": "数据统计",
+    "userGames": "已参与赛事",
+    "userIpAddresses": "来源 IP 地址"
   },
   "docs": {
     "title": "技术文档"

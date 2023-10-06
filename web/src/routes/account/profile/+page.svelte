@@ -11,6 +11,7 @@
   import type { AxiosError } from 'axios'
   import RxArticle from '$lib/components/RxArticle.svelte'
   import type { TeamWithGameName } from '$lib/models/team'
+  import { showMessage } from '$lib/stores/toast'
 
   let toggleSidebar = false
   let screenWidth: number
@@ -33,6 +34,7 @@
         loading = false
       })
       .catch((err) => {
+        showMessage('error', `${$i18n.t('account.fetchInfoFailed')}: ${(err as AxiosError).response?.data}`, 5000)
         error = (err as AxiosError).response?.status || 500
       })
     getUserTeams($user.id)
@@ -40,6 +42,7 @@
         teams = value
       })
       .catch((err) => {
+        showMessage('error', `${$i18n.t('account.fetchInfoFailed')}: ${(err as AxiosError).response?.data}`, 5000)
         error = (err as AxiosError).response?.status || 500
       })
   })

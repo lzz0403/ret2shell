@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { getInstituteList, getUserList } from '$lib/api/user'
+  import { getInstituteList, getUserInfo, getUserList } from '$lib/api/user'
   import type { DTColumnAction, DTColumnsDef, DTDataEntry } from '$lib/blocks/DataTable'
   import DataTable from '$lib/blocks/DataTable.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
@@ -10,15 +10,19 @@
   import { platform } from '$lib/stores/platform'
   import { showMessage } from '$lib/stores/toast'
   import type { AxiosError } from 'axios'
-  import { onMount } from 'svelte'
+  import { onDestroy, onMount } from 'svelte'
+  import PersonPanel from './PersonPanel.svelte'
+  import { page } from '$app/stores'
 
-  let page: number = 1
+  let currentPage: number = 1
   let perPage: number = 15
   let total: number = 0
   let loading = false
   let users: User[] = []
   let institutes: Institute[] = []
   let filter: string = ''
+  let showPersonPanel = false
+  let currentUser: User | null = null
 
   $: readerUsers = users.map((a) => {
     return {
@@ -116,7 +120,7 @@
   }
   function fetchUsers() {
     loading = true
-    getUserList(page, perPage, 'id', filter)
+    getUserList(currentPage, perPage, 'id', filter)
       .then((res) => {
         users = res.users
         total = res.total
@@ -148,53 +152,97 @@
   })
 
   $: {
-    if (page) {
+    if (currentPage) {
       fetchUsers()
     }
   }
+
+  let loadingUser = false
+
+  const unsubscribe = page.subscribe((val) => {
+    if (val.url.hash && val.url.hash.replace('#', '')) {
+      const id = parseInt(val.url.hash.replace('#', ''))
+      if (isNaN(id)) {
+        loadingUser = false
+        showPersonPanel = false
+        return
+      }
+      if (id === currentUser?.id) {
+        showPersonPanel = true
+        return
+      }
+      loadingUser = true
+      getUserInfo(id)
+        .then((res) => {
+          currentUser = res
+          showPersonPanel = true
+        })
+        .catch((err) => {
+          showMessage('error', `${$i18n.t('users.fetchInfoFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        })
+        .finally(() => {
+          loadingUser = false
+        })
+    } else {
+      loadingUser = false
+      showPersonPanel = false
+    }
+  })
+
+  onDestroy(() => {
+    unsubscribe()
+  })
 </script>
 
 <svelte:head><title>{$i18n.t('admin.userListSettings')} - {$platform.name}</title></svelte:head>
-
-<div class="w-full flex-1 flex flex-col px-6 lg:px-12">
-  <div class="h-16 flex flex-row items-center">
-    <h2 class="text-base font-bold flex-1">{$i18n.t('admin.userListSettings')}</h2>
-    <div>
-      <RxInput
-        size="sm"
-        placeholder={$i18n.t('admin.filter')}
-        icon="icon-[fluent--question-16-regular]"
-        bind:value={filter}
-      >
-        <RxButton
-          class="join-item ml-0"
+<div class="w-full flex-1 flex flex-col relative">
+  <div class="w-full flex-1 flex flex-col px-6 lg:px-12">
+    <div class="h-16 flex flex-row items-center">
+      <h2 class="text-base font-bold flex-1">{$i18n.t('admin.userListSettings')}</h2>
+      <div>
+        <RxInput
           size="sm"
-          on:click={() => {
-            fetchUsers()
-          }}
+          placeholder={$i18n.t('admin.filter')}
+          icon="icon-[fluent--question-16-regular]"
+          bind:value={filter}
         >
-          <span class="icon-[fluent--filter-16-regular] w-4 h-4"></span>
-        </RxButton>
-      </RxInput>
+          <RxButton
+            class="join-item ml-0"
+            size="sm"
+            on:click={() => {
+              fetchUsers()
+            }}
+          >
+            <span class="icon-[fluent--filter-16-regular] w-4 h-4"></span>
+          </RxButton>
+        </RxInput>
+      </div>
     </div>
+    <DataTable
+      class="flex-1"
+      {actions}
+      data={readerUsers}
+      {colDef}
+      bind:page={currentPage}
+      {total}
+      {loading}
+      booleanIconsDef={{
+        hidden: {
+          true: 'icon-[fluent--eye-off-16-regular] text-warning',
+          false: '',
+        },
+        banned: {
+          true: 'icon-[fluent--circle-off-16-regular] text-error',
+          false: '',
+        },
+      }}
+    />
   </div>
-  <DataTable
-    class="flex-1"
-    {actions}
-    data={readerUsers}
-    {colDef}
-    bind:page
-    {total}
-    {loading}
-    booleanIconsDef={{
-      hidden: {
-        true: 'icon-[fluent--eye-off-16-regular] text-warning',
-        false: '',
-      },
-      banned: {
-        true: 'icon-[fluent--circle-off-16-regular] text-error',
-        false: '',
-      },
+  <PersonPanel
+    user={currentUser}
+    class={`transition-all ${showPersonPanel ? 'h-full' : 'h-0'}`}
+    on:close={() => {
+      window.location.hash = ''
     }}
   />
 </div>

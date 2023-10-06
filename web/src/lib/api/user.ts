@@ -1,4 +1,5 @@
 import type { Institute } from '$lib/models/institute'
+import type { IpAddress } from '$lib/models/ip'
 import type { TeamWithGameName } from '$lib/models/team'
 import type { User } from '$lib/models/user'
 import { api, api_root } from '.'
@@ -20,4 +21,12 @@ export async function getInstituteList() {
 
 export async function getUserTeams(id: number) {
   return (await api.get(`${api_root}/user/${id}/teams`)).data as TeamWithGameName[]
+}
+
+export async function getUserIpAddresses(id: number) {
+  return (await api.get(`${api_root}/user/${id}/ip`)).data as IpAddress[]
+}
+
+export async function updateUser(id: number, data: User) {
+  return (await api.patch(`${api_root}/user/${id}`, data)).data as User
 }

@@ -13,7 +13,6 @@
   import RxCheckBox from '$lib/components/RxCheckBox.svelte'
   import RxRadioGroup from '$lib/components/RxRadioGroup.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
-  import RxTextarea from '$lib/components/RxTextarea.svelte'
   import RxCodeBox from '$lib/components/RxCodeBox.svelte'
 
   let schema = z.object({

@@ -39,10 +39,18 @@
     "noIntro": "This hacker does not leave anything...",
     "recentActivities": "Recent Activities",
     "takePartAs": "Participated in {{game}} as {{team}} and obtained {{score}} points.",
+    "fetchInfoFailed": "Failed to fetch account information",
+    "introTooLong": "The introduction is too long, no more than 1500 words",
+    "permissionInvalid": "Permission identifier does not exist",
     "infoSetting": "Basic info",
     "passwordSetting": "Password Reset",
     "instituteSetting": "Institute",
-    "dangerousSetting": "Delete account"
+    "dangerousSetting": "Delete account",
+    "update": "Update",
+    "institute_id": "Institute",
+    "institute_info": "Institute Info",
+    "updateFailed": "Update failed",
+    "updateSuccess": "update successfully"
   },
   "playground": {
     "title": "Playground",
@@ -197,7 +205,11 @@
     "enter": "Enter",
     "update": "Update",
     "instituteListSettings": "Institute management",
-    "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any)."
+    "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any).",
+    "userInfo": "User Info",
+    "userStatistics": "Statistics",
+    "userGames": "Participated Games",
+    "userIpAddresses": "IP Addresses"
   },
   "docs": {
     "title": "Documents"

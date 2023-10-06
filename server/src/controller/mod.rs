@@ -37,7 +37,7 @@ mod wiki;
 
 use layer::forwarded::get_client_ip;
 
-use self::layer::auth::extract_user_info;
+use self::layer::{auth::extract_user_info, forwarded::record_ip_address};
 
 #[derive(Clone, FromRef)]
 pub struct GlobalState {
@@ -102,6 +102,7 @@ fn construct_router(state: &GlobalState) -> Router<GlobalState> {
         .nest("/wiki", wiki::router(state))
         .nest("/instance", instance::router(state))
         .route("/ping", get(ping))
+        .route_layer(from_fn_with_state(state.clone(), record_ip_address))
         .route_layer(from_fn_with_state(state.clone(), extract_user_info))
 }
 
