@@ -116,8 +116,13 @@
       createWiki(editedWiki)
         .then((data) => {
           showMessage('success', $i18n.t('wiki.createSuccess'), 5000)
-          const pathName = $page.url.pathname.replace('/0#create', '').replace($page.url.hash, '')
-          goto(`${pathName}/${data.id}#edit`)
+          let pathArr = $page.url.pathname
+            .replace($page.url.hash, '')
+            .split('/')
+            .filter((item) => item !== '')
+          if (parseInt(pathArr[pathArr.length - 1]) === 0) pathArr.pop()
+          const pathName = pathArr.join('/')
+          goto(`/${pathName}/${data.id}#edit`)
         })
         .catch((err) => {
           showMessage('error', `${$i18n.t('wiki.createFailed')}: ${(err as AxiosError).response?.data}`, 5000)

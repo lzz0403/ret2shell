@@ -22,18 +22,33 @@
   // we should show error page.
   async function recursiveInsertPath(path: number[]) {
     let currentId = 0
+    const root = transformToWikiEntry(await getWikiList())
+    const replace = (
+      a: Array<WikiEntry>,
+      b: Array<WikiEntry>,
+      predicate = (a: WikiEntry, b: WikiEntry) => a.id === b.id
+    ) => {
+      return b.map((item) => {
+        const index = a.findIndex((i) => predicate(i, item))
+        if (index === -1) {
+          return item
+        }
+        return a[index]
+      })
+    }
+    // merge root into wiki
+    wiki = replace(wiki, root)
     let currentChildren: WikiEntry[] = wiki
+
     for (let i = 0; i < path.length; i++) {
       currentId = path[i]
-      // console.log(currentId)
-      // console.log(currentChildren)
       let currentChild = currentChildren.find((item) => item.id === currentId)
       if (!currentChild) {
         loading = false
         return
       }
       const newChildren = await getWikiList(currentId)
-      currentChild.children = transformToWikiEntry(newChildren)
+      currentChild.children = replace(currentChild.children, transformToWikiEntry(newChildren))
       currentChildren = currentChild.children
     }
     wiki = wiki
