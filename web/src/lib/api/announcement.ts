@@ -17,13 +17,13 @@ export async function getAnnouncement(id: number) {
 }
 
 export async function createAnnouncement(announcement: Announcement) {
-  return api.post(`${api_root}/announcement`, announcement)
+  return await api.post(`${api_root}/announcement`, announcement)
 }
 
 export async function updateAnnouncement(id: number, announcement: Announcement) {
-  return api.patch(`${api_root}/announcement/${id}`, announcement)
+  return await api.patch(`${api_root}/announcement/${id}`, announcement)
 }
 
 export async function deleteAnnouncement(id: number) {
-  return api.delete(`${api_root}/announcement/${id}`)
+  return await api.delete(`${api_root}/announcement/${id}`)
 }
