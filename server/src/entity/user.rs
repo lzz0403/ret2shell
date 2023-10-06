@@ -326,6 +326,25 @@ pub async fn update_user(db: &DatabaseConnection, id: i64, user: Model) -> Resul
     active_model.update(db).await
 }
 
+pub async fn update_self_profile(
+    db: &DatabaseConnection,
+    id: i64,
+    user: Model,
+) -> Result<Model, DbErr> {
+    let active_model: ActiveModel = ActiveModel {
+        id: ActiveValue::Unchanged(id),
+        email: ActiveValue::NotSet,
+        password: ActiveValue::NotSet,
+        institute_id: ActiveValue::NotSet,
+        institute_info: ActiveValue::NotSet,
+        hidden: ActiveValue::NotSet,
+        banned: ActiveValue::NotSet,
+        permissions: ActiveValue::NotSet,
+        ..user.into_active_model().reset_all()
+    };
+    active_model.update(db).await
+}
+
 pub async fn delete_user(db: &DatabaseConnection, id: i64) -> Result<(), DbErr> {
     Entity::delete_by_id(id).exec(db).await?;
     Ok(())

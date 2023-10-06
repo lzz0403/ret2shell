@@ -1,6 +1,7 @@
 mod captcha;
 
 use axum::middleware;
+use axum::routing::patch;
 use axum::{
     extract::State, http::StatusCode, response::IntoResponse, routing::post, Extension, Json,
     Router,
@@ -10,6 +11,7 @@ use serde::{Deserialize, Serialize};
 use tracing::{debug, error, warn};
 
 use super::layer::auth::{permission_required_all, Token, TokenTracker};
+use super::layer::info;
 use crate::cache;
 use crate::captcha::captcha_protected;
 use crate::entity::config::Model as ConfigModel;
@@ -18,6 +20,11 @@ use crate::{cache::manager::RedisPool, controller::GlobalState, entity::user::Pe
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
+        .route("/self", patch(update_self_setting))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            info::prepare_user_full_info,
+        ))
         .route("/logout", post(logout))
         .route_layer(middleware::from_fn(permission_required_all!(
             Permission::Basic
@@ -190,4 +197,21 @@ async fn logout(
     }
 
     Ok(StatusCode::OK)
+}
+
+async fn update_self_setting(
+    State(ref conn): State<DatabaseConnection>,
+    Extension(op_user): Extension<user::Model>,
+    Json(data): Json<user::Model>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    match user::update_self_profile(conn, op_user.id, data).await {
+        Ok(user) => Ok(Json(user)),
+        Err(err) => {
+            error!("failed to update profile: {:?}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to update user with database error",
+            ))
+        }
+    }
 }
