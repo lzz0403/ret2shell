@@ -50,7 +50,9 @@
     "institute_id": "Institute",
     "institute_info": "Institute Info",
     "updateFailed": "Update failed",
-    "updateSuccess": "update successfully"
+    "updateSuccess": "update successfully",
+    "userIntroPlaceholder": "Introduce yourself in one sentence",
+    "fetchFailed": "Failed to get basic info"
   },
   "playground": {
     "title": "Playground",
@@ -205,11 +207,7 @@
     "enter": "Enter",
     "update": "Update",
     "instituteListSettings": "Institute management",
-    "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any).",
-    "userInfo": "User Info",
-    "userStatistics": "Statistics",
-    "userGames": "Participated Games",
-    "userIpAddresses": "IP Addresses"
+    "deleteWikiConfirm": "Confirm to delete {{item}}? \nAll sub-articles under this article will be deleted (if any)."
   },
   "docs": {
     "title": "Documents"
