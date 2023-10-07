@@ -365,6 +365,18 @@ pub async fn delete_user(db: &DatabaseConnection, id: i64) -> Result<(), DbErr> 
     Ok(())
 }
 
+pub async fn update_user_password(db: &DatabaseConnection, id: i64, password: String) -> Result<Model, DbErr> {
+    match Entity::find_by_id(id).one(db).await? {
+        Some(user) => {
+            let mut active_model: ActiveModel = user.into();
+            active_model.id = ActiveValue::Unchanged(id);
+            active_model.password = ActiveValue::Set(Some(password));
+            Ok(active_model.update(db).await?)
+        }
+        None => Err(DbErr::RecordNotFound("user".to_string())),
+    }
+}
+
 #[cfg(test)]
 mod test {
     use sea_orm::IntoActiveModel;

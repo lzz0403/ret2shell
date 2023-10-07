@@ -8,7 +8,7 @@ use axum::{
 };
 use sea_orm::{DatabaseConnection, DbErr};
 use serde::{Deserialize, Serialize};
-use tracing::{debug, error, warn};
+use tracing::{debug, error, warn, info};
 
 use super::layer::auth::{permission_required_all, Token, TokenTracker};
 use super::layer::info;
@@ -20,6 +20,7 @@ use crate::{cache::manager::RedisPool, controller::GlobalState, entity::user::Pe
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
     Router::new()
+        .route("/change-password", patch(change_password))
         .route("/self", patch(update_self_setting))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
@@ -211,6 +212,73 @@ async fn update_self_setting(
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "failed to update user with database error",
+            ))
+        }
+    }
+}
+
+#[derive(Deserialize)]
+struct ChangePasswordRequest {
+    pub old_password: String,
+    pub new_password: String,
+    pub captcha_id: String,
+    pub captcha_answer: String,
+}
+
+async fn change_password(
+    State(ref conn): State<DatabaseConnection>,
+    State(ref mut cache): State<RedisPool>,
+    Extension(config): Extension<ConfigModel>,
+    Extension(token_tracker): Extension<TokenTracker>,
+    Extension(user): Extension<user::Model>,
+    Json(body): Json<ChangePasswordRequest>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let captcha_config = &config.captcha;
+    captcha_protected!(
+        captcha_config,
+        cache,
+        &body.captcha_id,
+        &body.captcha_answer
+    );
+
+    match bcrypt::verify(body.old_password, &user.password.unwrap_or(String::new())) {
+        Ok(true) => {}
+        Ok(false) => return Err((StatusCode::FORBIDDEN, "account or password is wrong")),
+        Err(err) => {
+            warn!("failed to verify password: {:?}", err);
+            return Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to verify password with server error",
+            ))
+        }
+    }
+    let password = bcrypt::hash(body.new_password, bcrypt::DEFAULT_COST).map_err(|err| {
+        warn!("failed to hash password: {:?}", err);
+        (StatusCode::INTERNAL_SERVER_ERROR, "failed to hash password")
+    })?;
+    match user::update_user_password(conn, user.id, password).await {
+        Ok(_) => {
+            info!("Password changed for {}", user.name);
+            if let Some(token) = token_tracker.original {
+                cache::Token::revoke(cache, &token).await.map_err(|err| {
+                    error!("failed to revoke token: {:?}", err);
+                    (
+                        StatusCode::INTERNAL_SERVER_ERROR,
+                        "failed to revoke token with cache error",
+                    )
+                })?;
+            }
+            Ok(StatusCode::OK)
+        },
+        Err(DbErr::RecordNotFound(_)) => {
+            error!("failed to update password: user {} not found", user.name);
+            Err((StatusCode::NOT_FOUND, "user not found"))
+        },
+        Err(err) => {
+            error!("failed to update password: {:?}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to update password with database error",
             ))
         }
     }
