@@ -52,7 +52,10 @@
     "updateFailed": "Update failed",
     "updateSuccess": "update successfully",
     "userIntroPlaceholder": "Introduce yourself in one sentence",
-    "fetchFailed": "Failed to get basic info"
+    "fetchFailed": "Failed to get basic info",
+    "resetPassword": "Reset Password",
+    "changePassword": "Change Password",
+    "oldPassword": "Old Password"
   },
   "playground": {
     "title": "Playground",

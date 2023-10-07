@@ -43,7 +43,7 @@
     "introTooLong": "简介太长了，1500字以内",
     "permissionInvalid": "权限标识符不存在",
     "infoSetting": "基本信息",
-    "passwordSetting": "重置密码",
+    "passwordSetting": "修改密码",
     "instituteSetting": "组织认证",
     "dangerousSetting": "删号跑路",
     "update": "更新",
@@ -52,7 +52,10 @@
     "updateFailed": "更新失败",
     "updateSuccess": "更新成功",
     "userIntroPlaceholder": "一句话介绍一下自己",
-    "fetchFailed": "获取基本信息失败"
+    "fetchFailed": "获取基本信息失败",
+    "resetPassword": "重置密码",
+    "changePassword": "修改密码",
+    "oldPassword": "旧密码"
   },
   "announcements": {
     "title": "公告",

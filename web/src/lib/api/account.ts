@@ -36,3 +36,14 @@ export async function getCaptcha() {
 export async function updateSelfSetting(data: User) {
   return await api.patch(`${api_root}/account/self`, data)
 }
+
+export interface ChangeUserPasswordRequest {
+  old_password: string,
+  new_password: string,
+  captcha_id: string
+  captcha_answer: string
+}
+
+export async function changeUserPassword(request: ChangeUserPasswordRequest) {
+  return await api.patch(`${api_root}/account/change-password`, request)
+}
