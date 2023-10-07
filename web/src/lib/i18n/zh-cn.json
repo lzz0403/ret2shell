@@ -442,7 +442,10 @@
     "permissions": "权限",
     "intro": "简介",
     "coverPath": "头像图片",
-    "institute_id": "所属组织"
+    "institute_id": "所属组织",
+    "nameRequired": "请输入用户名",
+    "emailRequired": "请输入邮箱",
+    "emailInvalid": "无效的邮箱"
   },
   "component": {
     "uploadTips": "拖放文件到此处上传"

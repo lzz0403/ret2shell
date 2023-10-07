@@ -20,6 +20,7 @@
   import { getMediaPath } from '$lib/models/media'
   import { getUserInfo } from '$lib/api/user'
   import { user } from '$lib/stores/user'
+  import RxCodeBox from '$lib/components/RxCodeBox.svelte'
 
   let schema = z.object({
     name: z
@@ -134,7 +135,7 @@
             errors={$errors.name || ''}
           >
             <RxInput
-              icon="icon-[fluent--flag-16-regular]"
+              icon="icon-[fluent--person-16-regular]"
               class="w-full"
               id="name"
               name="name"
@@ -189,7 +190,7 @@
           errors={$errors.email || ''}
         >
           <RxInput
-            icon="icon-[fluent--link-16-regular]"
+            icon="icon-[fluent--mail-16-regular]"
             class="w-full"
             id="email"
             name="email"
@@ -203,15 +204,7 @@
           hasError={$errors.intro !== null}
           errors={$errors.intro || ''}
         >
-          <RxInput
-            icon="icon-[fluent--info-16-regular]"
-            class="w-full"
-            id="intro"
-            name="intro"
-            hasError={$errors.intro !== null}
-            value={userSetting.intro}
-            placeholder={$i18n.t('account.userIntroPlaceholder')}
-          />
+          <RxCodeBox class="h-[20rem]" name="intro" hasError={$errors.intro !== null} value={userSetting.intro} />
         </RxFormItem>
         <RxFormItem name="submitAction" label="">
           <RxButton class="w-full" level="primary" type="submit" loading={submitting}>

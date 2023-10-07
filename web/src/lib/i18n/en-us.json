@@ -442,7 +442,10 @@
     "permissions": "Permissions",
     "intro": "Intro",
     "coverPath": "Cover",
-    "institute_id": "Institute"
+    "institute_id": "Institute",
+    "nameRequired": "please enter user name",
+    "emailRequired": "please input your email",
+    "emailInvalid": "Invalid email"
   },
   "component": {
     "uploadTips": "Drag and drop files here to upload"
