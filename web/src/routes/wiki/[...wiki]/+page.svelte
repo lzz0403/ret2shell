@@ -11,7 +11,7 @@
   import Error from '$lib/blocks/Error.svelte'
   import { onDestroy } from 'svelte'
   import RxArticle from '$lib/components/RxArticle.svelte'
-    import RxButton from '$lib/components/RxButton.svelte'
+  import RxButton from '$lib/components/RxButton.svelte'
 
   let loading = true
   let error = 200
@@ -26,8 +26,8 @@
   }
 
   function scrollToTop() {
-    let pageTop = document.getElementById("page-top")
-    pageTop?.scrollIntoView({behavior: 'smooth'})
+    let pageTop = document.getElementById('page-top')
+    pageTop?.scrollIntoView({ behavior: 'smooth' })
   }
 
   let user: User | undefined
@@ -96,16 +96,19 @@
     </h1>
     <div class="flex flex-row space-x-4 flex-wrap">
       <p>
-        <span class="text-base opacity-80">{$i18n.t('wiki.author')}</span>:
+        <span class="text-base opacity-80">{$i18n.t('wiki.author')}</span>
+        :
         <span class="text-base opacity-80">{user?.name || $i18n.t('wiki.unknownAuthor')}</span>
       </p>
       <p>
-        <span class="text-base opacity-80">{$i18n.t('wiki.publishedAt')}</span>:
+        <span class="text-base opacity-80">{$i18n.t('wiki.publishedAt')}</span>
+        :
         <span class="text-base opacity-80">{new Date(wiki.published_at * 1000).toLocaleString()}</span>
       </p>
       {#if wiki.published_at !== wiki.updated_at}
         <p>
-          <span class="text-base opacity-80">{$i18n.t('wiki.updatedAt')}</span>:
+          <span class="text-base opacity-80">{$i18n.t('wiki.updatedAt')}</span>
+          :
           <span class="text-base opacity-80">{new Date(wiki.updated_at * 1000).toLocaleString()}</span>
         </p>
       {/if}

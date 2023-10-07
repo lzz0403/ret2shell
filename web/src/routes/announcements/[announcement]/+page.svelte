@@ -26,8 +26,8 @@
   }
 
   function scrollToTop() {
-    let pageTop = document.getElementById("page-top")
-    pageTop?.scrollIntoView({behavior: 'smooth'})
+    let pageTop = document.getElementById('page-top')
+    pageTop?.scrollIntoView({ behavior: 'smooth' })
   }
 
   onMount(() => {
@@ -73,16 +73,19 @@
     </h1>
     <div class="flex flex-row space-x-4 flex-wrap justify-center">
       <p>
-        <span class="text-base opacity-80">{$i18n.t('announcement.author')}</span>:
+        <span class="text-base opacity-80">{$i18n.t('announcement.author')}</span>
+        :
         <span class="text-base opacity-80">{user?.name || $i18n.t('announcement.unknownAuthor')}</span>
       </p>
       <p>
-        <span class="text-base opacity-80">{$i18n.t('announcement.publishedAt')}</span>:
+        <span class="text-base opacity-80">{$i18n.t('announcement.publishedAt')}</span>
+        :
         <span class="text-base opacity-80">{new Date(announcement.published_at * 1000).toLocaleString()}</span>
       </p>
       {#if announcement.published_at !== announcement.updated_at}
         <p>
-          <span class="text-base opacity-80">{$i18n.t('announcement.updatedAt')}</span>:
+          <span class="text-base opacity-80">{$i18n.t('announcement.updatedAt')}</span>
+          :
           <span class="text-base opacity-80">{new Date(announcement.updated_at * 1000).toLocaleString()}</span>
         </p>
       {/if}

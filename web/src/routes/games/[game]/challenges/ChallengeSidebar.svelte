@@ -100,8 +100,10 @@
                     <span
                       class={`flex-1 text-start text-ellipsis overflow-hidden whitespace-nowrap ${
                         selfSubmissions.find((item) => item.challenge_id === chal.id) ? 'line-through opacity-60' : ''
-                      }`}>{chal.name}</span
+                      }`}
                     >
+                      {chal.name}
+                    </span>
                     <span class="opacity-60 font-bold">{chal.current_score} pts</span>
                   </RxLink>
                 {/each}

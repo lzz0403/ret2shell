@@ -27,8 +27,10 @@
           onInput(option.id)
           onBlur()
         }}
-        justify="start">{option.label}</RxButton
+        justify="start"
       >
+        {option.label}
+      </RxButton>
     {/each}
   </div>
 </RxPopup>

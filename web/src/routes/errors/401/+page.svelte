@@ -1,6 +1,5 @@
 <script lang="ts">
-    import Error from '$lib/blocks/Error.svelte'
-  </script>
-  
-  <Error status={401} />
-  
+  import Error from '$lib/blocks/Error.svelte'
+</script>
+
+<Error status={401} />

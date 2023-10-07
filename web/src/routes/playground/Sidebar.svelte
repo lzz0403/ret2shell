@@ -72,9 +72,9 @@
     <div class="flex-1 flex-col p-4 overflow-x-hidden space-y-2">
       <RxLink ghost class="w-full" justify="start" href="/playground">
         <span class="icon-[fluent--arrow-hook-down-left-16-regular] w-6 h-6" />
-        <span class="flex-1 text-start text-ellipsis overflow-hidden whitespace-nowrap"
-          >{$i18n.t('playground.returnToList')}</span
-        >
+        <span class="flex-1 text-start text-ellipsis overflow-hidden whitespace-nowrap">
+          {$i18n.t('playground.returnToList')}
+        </span>
         <span class="icon-[fluent--chevron-down-16-regular] w-5 h-5" />
       </RxLink>
       <ul class="relative flex flex-col space-y-2">
@@ -113,8 +113,10 @@
                       <span
                         class={`flex-1 text-start text-ellipsis overflow-hidden whitespace-nowrap ${
                           selfSubmissions.find((item) => item.challenge_id === chal.id) ? 'line-through opacity-60' : ''
-                        }`}>{chal.name}</span
+                        }`}
                       >
+                        {chal.name}
+                      </span>
                     </RxLink>
                   {/each}
                 </ul>

@@ -1,6 +1,5 @@
 <script lang="ts">
-    import Error from '$lib/blocks/Error.svelte'
-  </script>
-  
-  <Error status={404} />
-  
+  import Error from '$lib/blocks/Error.svelte'
+</script>
+
+<Error status={404} />

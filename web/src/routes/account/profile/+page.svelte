@@ -91,9 +91,9 @@
           {#each teams as team}
             <div class="h-12 flex flex-row items-center space-x-2 border-b border-b-base-content/5 mt-2">
               <span class="icon-[fluent--trophy-20-regular] w-5 h-5"></span>
-              <span class="text-base flex-1"
-                >{$i18n.t('account.takePartAs', { team: team.name, game: team.game_name, score: team.score })}</span
-              >
+              <span class="text-base flex-1">
+                {$i18n.t('account.takePartAs', { team: team.name, game: team.game_name, score: team.score })}
+              </span>
               <span class="text-base opacity-60 px-4">
                 {new Date(team.last_active_at * 1000).toLocaleDateString('default', {
                   year: 'numeric',

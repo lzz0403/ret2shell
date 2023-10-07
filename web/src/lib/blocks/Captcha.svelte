@@ -75,15 +75,13 @@
         worker.terminate()
       }
     }
-
-
   }
- $: {
-  if (!enabled) {
+  $: {
+    if (!enabled) {
       captchaId = 'disabled'
       captchaAnswer = 'disabled'
     }
- }
+  }
   onMount(() => {
     refresh()
   })

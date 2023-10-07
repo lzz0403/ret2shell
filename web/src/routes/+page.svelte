@@ -117,7 +117,8 @@
     <section class="h-full min-h-full snap-center flex flex-col items-center justify-center relative">
       <div class="flex-1" />
       <h1 class="text-3xl font-semibold">
-        &nbsp;&nbsp;[&nbsp;{$platform.name}&nbsp;]&nbsp;<span class="text-primary animate-ping">_</span>
+        &nbsp;&nbsp;[&nbsp;{$platform.name}&nbsp;]&nbsp;
+        <span class="text-primary animate-ping">_</span>
       </h1>
       <a class="text-xl text-error mt-8" href={$platform.subject_url}>{$platform.subject_info}</a>
       <div class="flex-1" />
@@ -131,13 +132,17 @@
           (C) 2022 - {new Date().getFullYear()}&nbsp;
           <a href={$platform.footer_url} class="link">{$platform.footer_info}</a>
           {#if !$platform.hide_maker}
-            &nbsp;<span class="opacity-60">|</span>&nbsp;By&nbsp;
+            &nbsp;
+            <span class="opacity-60">|</span>
+            &nbsp;By&nbsp;
             <a href="https://github.com/ret2shell" class="link">
               {$i18n.t('about.maker')}
             </a>
           {/if}
           {#if $platform.record}
-            &nbsp;<span class="opacity-60">|</span>&nbsp;
+            &nbsp;
+            <span class="opacity-60">|</span>
+            &nbsp;
             <a href="https://beian.miit.gov.cn" class="link">{$platform.record}</a>
           {/if}
           <a class="btn btn-sm btn-ghost btn-square ml-2" href="/surprise/sakana">
@@ -225,8 +230,10 @@
                   <RxButton
                     on:click={() => {
                       selectedCalendar = null
-                    }}>{$i18n.t('calendar.iKnow')}</RxButton
+                    }}
                   >
+                    {$i18n.t('calendar.iKnow')}
+                  </RxButton>
                 </div>
               </div>
             {:else}

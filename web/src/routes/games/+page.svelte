@@ -140,8 +140,10 @@
         <span
           class={`text-base flex-1 text-start ${
             $game.cached?.id === item.id ? 'font-bold text-primary' : 'font-normal'
-          }`}>{item.name}</span
+          }`}
         >
+          {item.name}
+        </span>
         <span
           class={`icon-[fluent--chevron-double-right-16-regular] w-5 h-5 ${
             $game.cached?.id === item.id && 'text-primary'

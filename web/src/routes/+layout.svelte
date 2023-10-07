@@ -98,7 +98,10 @@
     <Background />
     <div class="w-full h-full flex flex-col items-center pt-16 pb-24">
       <div class="flex-1" />
-      <h1 class="text-3xl font-semibold">{platformTyped}<span class="text-primary animate-ping">_</span></h1>
+      <h1 class="text-3xl font-semibold">
+        {platformTyped}
+        <span class="text-primary animate-ping">_</span>
+      </h1>
       <div class="text-xl opacity-0 mt-8">_</div>
       <div class="flex-1" />
     </div>

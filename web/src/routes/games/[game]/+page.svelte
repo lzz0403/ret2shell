@@ -97,14 +97,18 @@
   </div>
 </div>
 <div class="flex flex-row justify-center items-center p-6 space-x-2">
-  <RxTag label={$game.current?.institute_id ? `${$i18n.t('games.restrictedGame')}: ${institute?.name}` : $i18n.t('games.publicGame')} />
+  <RxTag
+    label={$game.current?.institute_id
+      ? `${$i18n.t('games.restrictedGame')}: ${institute?.name}`
+      : $i18n.t('games.publicGame')}
+  />
   <RxTag
     label={($game.current?.team_size_limit || 0) > 1
       ? `${$i18n.t('games.multiPlayer', { limit: $game.current?.team_size_limit })}`
       : $i18n.t('games.singlePlayer')}
   />
   {#if $game.team}
-  <RxTag label={`${$i18n.t('games.takePartInAs')}: ${$game.team.name}`} level="success" />
+    <RxTag label={`${$i18n.t('games.takePartInAs')}: ${$game.team.name}`} level="success" />
   {:else if canTakePartIn}
     <RxTag label={$i18n.t('games.canTakePartIn')} level="success" />
   {:else}

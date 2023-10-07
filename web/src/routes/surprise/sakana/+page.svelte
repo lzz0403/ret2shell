@@ -78,6 +78,7 @@
   </div>
 </div>
 <div class="self-center p-12 text-zinc-500 text-center">
-  Illustration (C) <a class="link" href="https://twitter.com/LAttic1ng">Ac4ae0</a>,
+  Illustration (C) <a class="link" href="https://twitter.com/LAttic1ng">Ac4ae0</a>
+  ,
   <a class="link" href="https://twitter.com/arttnba3">arttnba3</a>
 </div>

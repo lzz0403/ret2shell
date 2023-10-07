@@ -2,7 +2,7 @@
   import { i18n } from '$lib/i18n'
   import RxLink from '$lib/components/RxLink.svelte'
   import { user } from '$lib/stores/user'
-    import { Permission } from '$lib/models/user'
+  import { Permission } from '$lib/models/user'
 
   $: hasAdminEntry = $user && $user.permissions.some((p) => p >= Permission.Publish)
 </script>

@@ -43,7 +43,8 @@
     })
   })
 </script>
-<div id="page-top"/>
+
+<div id="page-top" />
 <div
   class="navbar w-auto backdrop-blur shadow bg-neutral/80 transition-shadow z-50 print:hidden px-2 py-0 sticky top-0"
 >

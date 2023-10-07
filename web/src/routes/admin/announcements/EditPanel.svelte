@@ -53,8 +53,10 @@
         class="join-item"
         on:click={() => {
           dispatch('submit', announcement)
-        }}>{$i18n.t('announcement.submit')}</RxButton
+        }}
       >
+        {$i18n.t('announcement.submit')}
+      </RxButton>
       <RxButton
         ghost
         level="error"
