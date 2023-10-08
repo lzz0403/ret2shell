@@ -47,3 +47,38 @@ export interface ChangeUserPasswordRequest {
 export async function changeUserPassword(request: ChangeUserPasswordRequest) {
   return await api.patch(`${api_root}/account/change-password`, request)
 }
+
+export async function resendEmailVerification () {
+  return api.post(`${api_root}/account/send-verification-email`)
+}
+
+export interface VerifyEmailRequest {
+  email: string
+  token: string
+}
+
+export async function verifyEmail (request: VerifyEmailRequest) {
+  return api.post(`${api_root}/account/verify-email`, request)
+}
+
+export interface ResetPassowrdEmailRequest {
+  email: string
+  captcha_id: string
+  captcha_answer: string
+}
+
+export async function ResetPassword (request: ResetPassowrdEmailRequest) {
+  return api.post(`${api_root}/account/send-reset-email`, request)
+}
+
+export interface ResetPasswordRequest {
+  email: string
+  password: string
+  token: string
+  captcha_id: string
+  captcha_answer: string
+}
+
+export async function resetPassword (request: ResetPasswordRequest) {
+  return api.post(`${api_root}/account/reset-password`, request)
+}
