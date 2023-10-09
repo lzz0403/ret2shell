@@ -85,4 +85,5 @@ export async function userInfo() {
 
 export async function refreshUserInfo() {
   if (get(user).isLoggedIn) await _fetchUserInfo()
+  else userReset()
 }

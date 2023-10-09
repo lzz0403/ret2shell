@@ -16,7 +16,7 @@
     <span class="icon-[fluent--people-team-24-regular] w-6 h-6"></span>
     <span>{$i18n.t('account.instituteSetting')}</span>
   </RxLink>
-  <RxLink href="/account/settings/dangerous" ghost justify="start" class="text-error">
+  <RxLink href="/account/settings/mov-rbp-rsp-pop-rbp" ghost justify="start" class="text-error">
     <span class="icon-[fluent--warning-24-regular] w-6 h-6"></span>
     <span>{$i18n.t('account.dangerousSetting')}</span>
   </RxLink>
