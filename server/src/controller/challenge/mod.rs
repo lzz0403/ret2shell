@@ -184,6 +184,7 @@ struct ChallengeListQuery {
     page: Option<u64>,
     per_page: Option<u64>,
     game_id: Option<i64>,
+    tag_id: Option<i64>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -218,6 +219,7 @@ async fn get_challenge_list(
 
     let page = params.page.unwrap_or(1);
     let per_page = params.per_page.unwrap_or(10);
+    let tag_id = params.tag_id;
     if page < 1 || per_page < 1 {
         error!("Invalid page={} or per_page={}", page, per_page);
         return Err((StatusCode::BAD_REQUEST, "invalid paginate parameters"));
@@ -228,6 +230,7 @@ async fn get_challenge_list(
         current_user,
         page,
         per_page,
+        tag_id,
     )
     .await
     {

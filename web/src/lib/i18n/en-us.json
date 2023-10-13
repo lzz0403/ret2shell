@@ -242,7 +242,10 @@
     "userInfo": "User Info",
     "userStatistics": "Statistics",
     "userGames": "Participated Games",
-    "userIpAddresses": "IP address used"
+    "userIpAddresses": "IP address used",
+    "challengeListSettings": "Challenge management",
+    "NotificationListSettings": "Notification management",
+    "teamListSettings": "Team management"
   },
   "docs": {
     "title": "Documents"
@@ -602,6 +605,19 @@
     "invalidVerifyLink": "The link is missing key parameters, please check carefully and try again."
   },
   "challenge": {
+    "gankAuthor": "One-click hammer reveals the questioner",
+    "name": "Challenge name",
+    "tag": "Tag",
+    "status": "Status",
+    "fetchFailed": "Failed to get challenges",
+    "filterTag": "filter tags:"
+  },
+  "tag": {
+    "fetchFailed": "Failed to get tags"
+  },
+  "notification": {
+    "title": "title",
+    "publishedAt": "Published At",
     "gankAuthor": "One-click hammer reveals the questioner"
   },
   "tutorial": {

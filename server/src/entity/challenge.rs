@@ -17,9 +17,9 @@ pub struct Model {
     pub name: String,
     #[sea_orm(column_type = "Text")]
     pub content: Option<String>,
-    pub hidden: bool,
     pub game_id: i64,
     pub tag_id: i64,
+    pub hidden: bool,
     pub initial_score: i32,
     pub current_score: i32,
     pub minimum_score: i32,
@@ -153,6 +153,7 @@ pub async fn get_challenge_page_by_game_and_user(
     user: user::Model,
     page: u64,
     per_page: u64,
+    tag_id: Option<i64>
 ) -> Result<(Vec<Model>, u64), DbErr> {
     let can_see_hidden_challenges = match (user.institute_id, game.institute_id) {
         (Some(user_institute_id), Some(game_institute_id)) => {
@@ -167,6 +168,9 @@ pub async fn get_challenge_page_by_game_and_user(
         .filter(Column::GameId.eq(game.id))
         .columns(Column::iter().filter(|c| !matches!(c, Column::Content | Column::Bucket)))
         .order_by_desc(Column::Id);
+    if let Some(tag_id) = tag_id {
+        sql = sql.filter(Column::TagId.eq(tag_id));
+    }
     if !can_see_hidden_challenges {
         sql = sql.filter(Column::Hidden.eq(false));
     }
