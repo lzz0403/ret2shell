@@ -37,7 +37,7 @@
   let deleteModalOpened = false
   const unsubscribe = page.subscribe((value) => {
     const arr = value.params['wiki'].split('/')
-    // console.log(arr)
+    console.log(arr)
     const id = parseInt(arr[arr.length - 1])
     if (isNaN(id)) {
       loading = false
@@ -46,6 +46,7 @@
     // console.log(id)
     if (id === 0) {
       isCreate = true
+      loading = false
       //   console.log('create')
       wiki = {
         id: 0,
@@ -168,9 +169,7 @@
   }
 </script>
 
-<div
-  class="h-16 flex-shrink-0 flex flex-row items-center px-2 border-b border-b-base-content/5 bg-base-100/80 backdrop-blur relative"
->
+<div class="flex flex-col min-h-full relative">
   {#if loading}
     <div
       class="absolute top-0 left-0 w-full h-full z-20 bg-base-100/80 backdrop-blur flex flex-row justify-center items-center"
@@ -179,36 +178,40 @@
       <span class="loading loading-spinner loading-sm" />
     </div>
   {/if}
-  <RxInput ghost bind:value={editedWiki.title}></RxInput>
-  <RxButton class="join-item" ghost level="info" on:click={createOrSaveWikiItem}>
-    {#if isCreate}
-      <span class="icon-[fluent--add-16-regular] w-5 h-5"></span>
-      <span>{$i18n.t('admin.create')}</span>
-    {:else}
-      <span class="icon-[fluent--save-16-regular] w-5 h-5"></span>
-      <span>{$i18n.t('admin.update')}</span>
-    {/if}
-  </RxButton>
-  {#if !isCreate}
-    <RxButton class="join-item" ghost level="error" on:click={deleteWikiItem}>
-      <span class="icon-[fluent--delete-16-regular] w-5 h-5"></span>
-    </RxButton>
-  {/if}
-</div>
-<RxCodearea class="flex-1" lang="markdown" bind:value={editedWiki.content} droppable={true}></RxCodearea>
-{#if deleteModalOpened}
   <div
-    class="fixed top-0 left-0 w-full h-full bg-base-100/60 z-50 flex flex-col items-center justify-center"
-    transition:blur={{ amount: 20, duration: 300 }}
+    class="h-16 flex-shrink-0 flex flex-row items-center px-2 border-b border-b-base-content/5 bg-base-100/80 backdrop-blur relative"
   >
-    <div class="rounded-box p-4 flex flex-col space-y-4 bg-neutral w-80">
-      <h1 class="text-base font-bold">
-        {$i18n.t('admin.deleteWikiConfirm', { item: decodeURI(wiki.title.split('|')[0]) })}
-      </h1>
-      <div class="flex flex-row justify-end space-x-4">
-        <RxButton size="sm" on:click={() => (deleteModalOpened = false)}>{$i18n.t('form.cancel')}</RxButton>
-        <RxButton size="sm" level="error" on:click={handleDeleteWiki}>{$i18n.t('form.confirm')}</RxButton>
+    <RxInput ghost bind:value={editedWiki.title}></RxInput>
+    <RxButton class="join-item" ghost level="info" on:click={createOrSaveWikiItem}>
+      {#if isCreate}
+        <span class="icon-[fluent--add-16-regular] w-5 h-5"></span>
+        <span>{$i18n.t('admin.create')}</span>
+      {:else}
+        <span class="icon-[fluent--save-16-regular] w-5 h-5"></span>
+        <span>{$i18n.t('admin.update')}</span>
+      {/if}
+    </RxButton>
+    {#if !isCreate}
+      <RxButton class="join-item" ghost level="error" on:click={deleteWikiItem}>
+        <span class="icon-[fluent--delete-16-regular] w-5 h-5"></span>
+      </RxButton>
+    {/if}
+  </div>
+  <RxCodearea class="flex-1" lang="markdown" bind:value={editedWiki.content} droppable={true}></RxCodearea>
+  {#if deleteModalOpened}
+    <div
+      class="fixed top-0 left-0 w-full h-full bg-base-100/60 z-50 flex flex-col items-center justify-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <div class="rounded-box p-4 flex flex-col space-y-4 bg-neutral w-80">
+        <h1 class="text-base font-bold">
+          {$i18n.t('admin.deleteWikiConfirm', { item: decodeURI(wiki.title.split('|')[0]) })}
+        </h1>
+        <div class="flex flex-row justify-end space-x-4">
+          <RxButton size="sm" on:click={() => (deleteModalOpened = false)}>{$i18n.t('form.cancel')}</RxButton>
+          <RxButton size="sm" level="error" on:click={handleDeleteWiki}>{$i18n.t('form.confirm')}</RxButton>
+        </div>
       </div>
     </div>
-  </div>
-{/if}
+  {/if}
+</div>
