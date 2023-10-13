@@ -127,7 +127,9 @@
     "quickAction": "快速操作",
     "fetchHintsFailed": "获取题目提示信息失败",
     "challengeSolves": "已解出",
-    "noNotifications": "暂时没有通知"
+    "noNotifications": "暂时没有通知",
+    "currentEnvNotMatch": "有另一道题目的环境正在运行...",
+    "launch": "容器，启动！"
   },
   "games": {
     "title": "赛事",

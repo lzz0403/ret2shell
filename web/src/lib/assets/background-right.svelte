@@ -133,7 +133,7 @@
   .path {
     stroke-dasharray: 1000;
     stroke-dashoffset: 1000;
-    animation: dash 3s ease-in-out forwards;
+    animation: dash 2s ease-in-out forwards;
   }
 
   @keyframes dash {

@@ -17,6 +17,7 @@
   import { onDestroy } from 'svelte'
   import { goto } from '$app/navigation'
   import { game } from '$lib/stores/game'
+  import LogoAnimate from '$lib/assets/logo-animate.svelte'
 
   let games: Game[] = []
   $: hasCover = $game.cached?.cover_path !== null
@@ -201,7 +202,7 @@
       >
         <div class="flex flex-col p-6 space-y-4 sm:space-y-2 flex-1 sm:flex-none">
           <h1 class="text-2xl font-bold flex-1 flex flex-row space-x-4 items-center">
-            <img alt="CTF" src={Logo} width="48" height="48" />
+            <LogoAnimate width={48} height={48} />
             <div class="flex flex-col">
               <span>{$game.cached?.name || $i18n.t('games.noGameTitle')}</span>
               {#if games.length > 0}

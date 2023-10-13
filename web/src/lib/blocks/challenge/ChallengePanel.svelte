@@ -1,8 +1,11 @@
 <script lang="ts">
   import RxArticle from '$lib/components/RxArticle.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
+  import RxTimer from '$lib/components/RxTimer.svelte'
   import { i18n } from '$lib/i18n'
   import type { Challenge } from '$lib/models/challenge'
+  import type { Instance } from '$lib/models/instance'
+  import { game } from '$lib/stores/game'
 
   export let challenge: Challenge | null
   export let solved: boolean = false
@@ -11,6 +14,22 @@
   let challengeScrollExpanded = true
   let challengeEnvExpanded = false
   let challengeAttachmentExpanded = false
+
+  function calcLastTime(instance: Instance | null) {
+    if (instance === null) return 0
+    const now = new Date().getTime()
+    const start = instance.started_at * 1000
+    const duration = (now - start) / 1000
+    const persistTime = instance.renew_count * 3600
+    return Math.max(0, persistTime - duration)
+  }
+
+  let lastTime = 0
+  setInterval(() => {
+    lastTime = calcLastTime($game.runningInstance)
+  }, 1000)
+
+  $: lastProgress = lastTime / (($game.runningInstance?.renew_count || 1) * 3600)
 </script>
 
 <div
@@ -108,34 +127,64 @@
       </RxButton>
     </div>
   {:else if challengeEnvExpanded}
-    <div class="w-full max-w-5xl flex flex-row items-center px-6 space-x-2">
-      <div class="join">
-        <RxButton ghost class="max-w-xs join-item">
+    <div class="w-full max-w-5xl flex flex-col items-center justify-center px-6 space-x-2">
+      <div class="join w-full items-center">
+        <RxButton ghost class="flex-1 join-item relative">
+          {#if $game.runningInstance && challenge}
+            <div class="absolute h-[2px] bottom-1 left-4 right-4 bg-neutral">
+              <div
+                class="h-[2px] opacity-40"
+                class:bg-success={lastProgress > 0.6}
+                class:bg-warning={lastProgress <= 0.6 && lastProgress > 0.2}
+                class:bg-error={lastProgress <= 0.2}
+                style={`width: ${lastProgress * 100}%`}
+              ></div>
+            </div>
+          {/if}
           <span class="icon-[fluent--flow-16-regular] w-5 h-5"></span>
-          <span class="flex-1 text-left opacity-60 text-ellipsis overflow-hidden whitespace-nowrap">
-            {$i18n.t('playground.noRunningEnv')}
-          </span>
+          {#if $game.runningInstance && challenge && $game.runningInstance.challenge_id === challenge.id}
+            <span class="flex-1 text-left text-ellipsis overflow-hidden whitespace-nowrap">
+              {$game.runningInstance.wsrx}
+            </span>
+          {:else if $game.runningInstance && challenge}
+            <span class="flex-1 text-left text-warning opacity-60 text-ellipsis overflow-hidden whitespace-nowrap">
+              {$i18n.t('playground.currentEnvNotMatch')}
+            </span>
+          {:else}
+            <span class="flex-1 text-left opacity-60 text-ellipsis overflow-hidden whitespace-nowrap">
+              {$i18n.t('playground.noRunningEnv')}
+            </span>
+          {/if}
+          {#if $game.runningInstance && challenge && $game.runningInstance.challenge_id === challenge.id}
+            <span class="opacity-60">{$i18n.t('playground.envLastTime')}</span>
+            <RxTimer time={lastTime} />
+            <RxButton ghost square class="join-item ml-0">
+              <span class="icon-[fluent--copy-16-regular] w-5 h-5 text-success"></span>
+            </RxButton>
+            <RxButton ghost square class="join-item ml-0">
+              <span class="icon-[fluent--open-16-regular] w-5 h-5 text-info"></span>
+            </RxButton>
+          {/if}
         </RxButton>
-        <RxButton ghost square class="join-item ml-0">
-          <span class="icon-[fluent--copy-16-regular] w-5 h-5 text-success"></span>
-        </RxButton>
-        <RxButton ghost square class="join-item ml-0">
-          <span class="icon-[fluent--open-16-regular] w-5 h-5 text-info"></span>
-        </RxButton>
+        {#if $game.runningInstance && challenge && $game.runningInstance.challenge_id === challenge.id}
+          <div class="w-[2px] h-[2rem] bg-base-content/20 mx-2"></div>
+          <RxButton ghost class="join-item ml-0" square>
+            <span class="icon-[fluent--timer-16-regular] w-5 h-5 text-info"></span>
+          </RxButton>
+          <RxButton ghost class="join-item ml-0" square>
+            <span class="icon-[fluent--circle-off-16-regular] w-5 h-5 text-error"></span>
+          </RxButton>
+        {:else if $game.runningInstance && challenge}
+          <RxButton ghost class="join-item ml-0" square>
+            <span class="icon-[fluent--circle-off-16-regular] w-5 h-5 text-error"></span>
+          </RxButton>
+        {:else}
+          <RxButton ghost class="join-item ml-0 text-success">
+            <span class="icon-[fluent--play-16-regular] w-5 h-5"></span>
+            <span>{$i18n.t('playground.launch')}</span>
+          </RxButton>
+        {/if}
       </div>
-      <span class="text-base font-bold opacity-60">{$i18n.t('playground.envLastTime')}:</span>
-      <span class="text-base font-bold">--:--:--</span>
-      <div class="flex-1"></div>
-      <span class="font-bold text-base opacity-60 hidden md:inline-block">{$i18n.t('playground.quickAction')}:</span>
-      <RxButton ghost square>
-        <span class="icon-[fluent--play-16-regular] w-5 h-5 text-success"></span>
-      </RxButton>
-      <RxButton ghost square>
-        <span class="icon-[fluent--timer-16-regular] w-5 h-5 text-info"></span>
-      </RxButton>
-      <RxButton ghost square>
-        <span class="icon-[fluent--circle-off-16-regular] w-5 h-5 text-error"></span>
-      </RxButton>
     </div>
   {/if}
 </div>
