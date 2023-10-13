@@ -120,7 +120,9 @@
     "fetchNotificationsFailed": "Failed to fetch notifications",
     "fetchHintsFailed": "Failed to obtain challenge hints",
     "challengeSolves": "Solves",
-    "noNotifications": "No notification yet"
+    "noNotifications": "No notification yet",
+    "currentEnvNotMatch": "There is another challenge env running...",
+    "launch": "Launch"
   },
   "games": {
     "title": "Games",
