@@ -2,7 +2,7 @@ version: '3'
 
 services:
   database:
-    image: postgres:15
+    image: postgres:16-alpine
     restart: always
     environment:
       POSTGRES_PASSWORD: P@ssw02dInD3v3l0pm3nt
@@ -13,14 +13,14 @@ services:
     ports:
       - "5432:5432"
   cache:
-    image: redis:7
+    image: redis:7-alpine
     restart: always
     volumes:
       - cache:/data
     ports:
       - "6379:6379"
   message_queue:
-    image: nats:2
+    image: nats:2-alpine
     restart: always
     volumes:
       - message_queue:/data
