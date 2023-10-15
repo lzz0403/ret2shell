@@ -603,7 +603,8 @@
     "sendFailed": "邮件发送失败",
     "verifyFailed": "邮箱验证失败",
     "verifySuccess": "邮箱验证成功",
-    "invalidVerifyLink": "链接缺少关键参数，请仔细核对后重试"
+    "invalidVerifyLink": "链接缺少关键参数，请仔细核对后重试",
+    "resent": "已重新发送验证邮件，请注意查收"
   },
   "challenge": {
     "gankAuthor": "一键锤爆出题人",

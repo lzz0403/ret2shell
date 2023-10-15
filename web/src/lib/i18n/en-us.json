@@ -603,7 +603,8 @@
     "sendFailed": "Failed to send email",
     "verifyFailed": "Email verification failed",
     "verifySuccess": "Email verification successful",
-    "invalidVerifyLink": "The link is missing key parameters, please check carefully and try again."
+    "invalidVerifyLink": "The link is missing key parameters, please check carefully and try again.",
+    "resent": "The verification email has been resent, please check it"
   },
   "challenge": {
     "gankAuthor": "One-click hammer reveals the questioner",
