@@ -251,40 +251,43 @@
 <svelte:head><title>{$i18n.t('admin.announcementsSettings')} - {$platform.name}</title></svelte:head>
 
 <div class="w-full flex-1 flex flex-col relative">
-  <div class="h-16 flex flex-row items-center px-6 lg:px-12">
+  <div class="h-16 flex flex-row items-center px-6 lg:px-12 flex-shrink-0">
     <h2 class="text-base font-bold flex-1">{$i18n.t('admin.announcementsSettings')}</h2>
     <RxLink size="sm" level="info" href="#create">
       <span class="icon-[fluent--add-16-regular]" />
       <span class="text-base">{$i18n.t('action.create')}</span>
     </RxLink>
   </div>
-  <DataTable
-    class="flex-1  px-6 lg:px-12"
-    {actions}
-    data={renderedAnnouncements}
-    {colDef}
-    bind:page={currentPage}
-    {total}
-    {loading}
-    booleanIconsDef={{
-      pinned: {
-        true: 'icon-[fluent--pin-16-regular] text-error',
-        false: '',
-      },
-    }}
-  />
-  <CreatePanel
-    class={`transition-all ${showCreatePanel ? 'h-[calc(100%_-_4rem)]' : 'h-0'}`}
-    bind:announcement={activeAnnouncement}
-    loading={loadingAnnouncement}
-    {submitting}
-    on:close={() => {
-      window.location.hash = ''
-    }}
-    on:submit={() => {
-      updateOrCreateAnnouncement()
-    }}
-  />
+  {#if !showCreatePanel}
+    <DataTable
+      class="flex-1  px-6 lg:px-12"
+      {actions}
+      data={renderedAnnouncements}
+      {colDef}
+      bind:page={currentPage}
+      {total}
+      {loading}
+      booleanIconsDef={{
+        pinned: {
+          true: 'icon-[fluent--pin-16-regular] text-error',
+          false: '',
+        },
+      }}
+    />
+  {:else}
+    <CreatePanel
+      class="flex-1"
+      bind:announcement={activeAnnouncement}
+      loading={loadingAnnouncement}
+      {submitting}
+      on:close={() => {
+        window.location.hash = ''
+      }}
+      on:submit={() => {
+        updateOrCreateAnnouncement()
+      }}
+    />
+  {/if}
 </div>
 {#if deleteModalOpened}
   <div

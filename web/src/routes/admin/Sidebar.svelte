@@ -133,7 +133,9 @@
     {/each}
   </div>
   <div class={`${secondLevelExpanded ? 'w-[calc(100%_-_4rem)]' : 'w-0'} transition-all flex flex-col duration-200`}>
-    <div class="h-16 flex-shrink-0 bg-neutral/10 border-b border-b-base-content/5 flex flex-row px-4 items-center">
+    <div
+      class="h-16 flex-shrink-0 bg-neutral/10 backdrop-blur border-b border-b-base-content/5 flex flex-row px-4 items-center"
+    >
       <h2 class="font-bold text-base flex flex-row space-x-2 items-center justify-center w-full overflow-hidden">
         <span class="text-ellipsis whitespace-nowrap overflow-hidden">{secondTitle}</span>
       </h2>

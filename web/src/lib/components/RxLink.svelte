@@ -55,12 +55,12 @@
     level === null && !ghost && 'bg-base-content/5 backdrop-blur',
     ghost && 'btn-ghost',
     level && `${ghost ? 'text' : 'btn'}-${level}`,
-    active && 'text-primary',
     size && `btn-${size}`,
     justify && `justify-${justify}`,
     !uppercase && 'normal-case',
     square && 'btn-square',
-    (exactlyMatched ? $page.url.pathname === href : startsWithPath(href)) && 'text-primary',
+    (active || (exactlyMatched ? $page.url.pathname === href : startsWithPath(href))) &&
+      (ghost ? 'text-primary' : 'btn-primary'),
     clazz,
   ]
     .filter(Boolean)

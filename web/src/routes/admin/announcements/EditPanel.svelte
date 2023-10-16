@@ -13,7 +13,7 @@
   let clazz = ''
   export { clazz as class }
 
-  $: classes = `absolute w-full bg-neutral/20 backdrop-blur bottom-0 flex flex-col overflow-hidden ${clazz}`
+  $: classes = `w-full bg-neutral/20 backdrop-blur flex flex-col overflow-hidden ${clazz}`
 
   const dispatch = createEventDispatcher()
 </script>
