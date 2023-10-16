@@ -49,6 +49,12 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
 }
 
 #[derive(Deserialize)]
+struct WriteupIDQuery {
+    pub writeup_id: i64,
+}
+
+
+#[derive(Deserialize)]
 struct WriteupListQuery {
     pub page: Option<u64>,
     pub per_page: Option<u64>,
@@ -134,8 +140,9 @@ async fn get_writeup(
     State(ref conn): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
     Extension(game): Extension<game::Model>,
-    Query(writeup_id): Query<i64>,
+    Query(query): Query<WriteupIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let writeup_id = query.writeup_id;
     if !user.permissions.0.iter().any(|p| {
         matches!(
             p,

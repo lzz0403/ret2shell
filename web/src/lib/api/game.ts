@@ -19,15 +19,25 @@ export async function getGameSelfSubmission(game_id: number) {
 }
 
 export async function getGameTeamSubmission(game_id: number, team_id: number) {
-  return (await api.get(`${api_root}/team/${game_id}/solved?team_id=${team_id}`)).data as Submission[]
+  return (await api.get(`${api_root}/game/${game_id}/solved?team_id=${team_id}`)).data as Submission[]
+}
+
+export async function getGameTeamList(game_id: number, page: number, per_page: number, filter?: string) {
+  let uri = `${api_root}/game/${game_id}/team?page=${page}&per_page=${per_page}`
+  if (filter !== undefined && filter != null) uri += `&filter=${filter}`
+  return (await api.get(uri)).data as { teams: Team[]; total: number }
 }
 
 export async function getTeamInfo(game_id: number, team_id: number) {
-  return (await api.get(`${api_root}/team/${game_id}/team/info?team_id=${team_id}`)).data as Team
+  return (await api.get(`${api_root}/game/${game_id}/team/info?team_id=${team_id}`)).data as Team
 }
 
 export async function getSelfTeamInfo(game_id: number) {
-  return (await api.get(`${api_root}/team/${game_id}/team/self`)).data as Team
+  return (await api.get(`${api_root}/game/${game_id}/team/self`)).data as Team
+}
+
+export async function changeTeamAudit(game_id: number, team_id: number) {
+  return await api.patch(`${api_root}/game/${game_id}/team/audit?team_id=${team_id}`)
 }
 
 export async function getGameNotifications(game_id: number, page: number, per_page: number) {

@@ -11,6 +11,7 @@ use axum::{
 };
 use hyper::StatusCode;
 use sea_orm::{DatabaseConnection, DbErr};
+use serde::Deserialize;
 use tracing::error;
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
@@ -25,6 +26,11 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
             Permission::Basic,
             Permission::Verified
         )))
+}
+
+#[derive(Deserialize)]
+struct TagIDQuery {
+    pub tag_id: i64,
 }
 
 async fn create_hint(
@@ -57,8 +63,9 @@ async fn get_hint_list(
 
 async fn delete_hint(
     State(ref conn): State<DatabaseConnection>,
-    Query(tag_id): Query<i64>,
+    Query(query): Query<TagIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let tag_id = query.tag_id;
     match hint::delete_hint(conn, tag_id).await {
         Ok(_) => Ok(StatusCode::OK),
         Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "Hint not found")),

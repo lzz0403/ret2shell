@@ -14,6 +14,7 @@ use axum::{
 };
 use hyper::StatusCode;
 use sea_orm::DatabaseConnection;
+use serde::Deserialize;
 use tracing::error;
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
@@ -33,11 +34,18 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
         )))
 }
 
+#[derive(Deserialize)]
+struct GameIDQuery {
+    pub game_id: i64,
+    }
+    
+
 async fn get_challenge_answer(
     State(ref conn): State<DatabaseConnection>,
-    Query(game_id): Query<i64>,
+    Query(query): Query<GameIDQuery>,
     Path(challenge_id): Path<i64>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let game_id = query.game_id;
     let game = match game::get_game(conn, game_id).await {
         Ok(Some(game)) => game,
         Ok(None) => return Err((StatusCode::NOT_FOUND, "Game not found")),

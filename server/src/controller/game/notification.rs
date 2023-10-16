@@ -23,6 +23,12 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
         .route("/", get(get_notification_list))
 }
 
+#[derive(Deserialize)]
+struct NotificationIDQuery {
+    pub notification_id: i64,
+}
+
+
 async fn create_notification(
     State(ref conn): State<DatabaseConnection>,
     Json(notification): Json<notification::Model>,
@@ -80,8 +86,9 @@ async fn get_notification_list(
 
 async fn delete_notification(
     State(ref conn): State<DatabaseConnection>,
-    Query(notification_id): Query<i64>,
+    Query(query): Query<NotificationIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let notification_id = query.notification_id;
     match notification::delete_notification(conn, notification_id).await {
         Ok(_) => Ok(StatusCode::NO_CONTENT),
         Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "notification not found")),
