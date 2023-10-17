@@ -55,16 +55,16 @@
   <div class="divider m-0 ml-2 mr-2" />
   <div class="flex flex-row space-x-2">
     <RxButton ghost class="flex-1">
-      <span class="icon-[fluent--copy-16-regular] w-5 h-5 text-success"></span>
+      <span class="icon-[fluent--copy-20-regular] w-5 h-5 text-success"></span>
     </RxButton>
     <RxButton ghost class="flex-1">
-      <span class="icon-[fluent--open-16-regular] w-5 h-5 text-success"></span>
+      <span class="icon-[fluent--open-20-regular] w-5 h-5 text-success"></span>
     </RxButton>
     <RxButton ghost class="flex-1">
-      <span class="icon-[fluent--timer-16-regular] w-5 h-5 text-info"></span>
+      <span class="icon-[fluent--timer-20-regular] w-5 h-5 text-info"></span>
     </RxButton>
     <RxButton ghost class="flex-1">
-      <span class="icon-[fluent--circle-off-16-regular] w-5 h-5 text-error"></span>
+      <span class="icon-[fluent--circle-off-20-regular] w-5 h-5 text-error"></span>
     </RxButton>
   </div>
 </div>

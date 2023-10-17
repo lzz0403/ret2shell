@@ -19,12 +19,12 @@
   <div class="flex flex-row space-x-2">
     <RxButton ghost class="flex-1" on:click={() => toggleColorScheme('light')}>
       <span
-        class="icon-[fluent--weather-sunny-16-regular] w-6 h-6"
+        class="icon-[fluent--weather-sunny-20-regular] w-5 h-5"
         class:text-primary={$theme.colorScheme === 'light'}
       />
     </RxButton>
     <RxButton ghost class="flex-1" on:click={() => toggleColorScheme('dark')}>
-      <span class="icon-[fluent--weather-moon-16-regular] w-6 h-6" class:text-primary={$theme.colorScheme === 'dark'} />
+      <span class="icon-[fluent--weather-moon-20-regular] w-5 h-5" class:text-primary={$theme.colorScheme === 'dark'} />
     </RxButton>
   </div>
   <div class="text-sm opacity-60 p-2">{$i18n.t('theme.language')}</div>
@@ -36,7 +36,7 @@
       active={$i18n.language === 'zh_CN'}
       on:click={() => toggleLanguage('zh_CN')}
     >
-      <span class="icon-[fluent--local-language-16-regular] w-6 h-6" />
+      <span class="icon-[fluent--local-language-20-regular] w-5 h-5" />
       <span>{$i18n.t('theme.simplifiedChinese')}</span>
     </RxButton>
     <RxButton
@@ -46,7 +46,7 @@
       active={$i18n.language === 'en_US'}
       on:click={() => toggleLanguage('en_US')}
     >
-      <span class="icon-[fluent--local-language-16-regular] w-6 h-6" />
+      <span class="icon-[fluent--local-language-20-regular] w-5 h-5" />
       <span>{$i18n.t('theme.english')}</span>
     </RxButton>
   </div>

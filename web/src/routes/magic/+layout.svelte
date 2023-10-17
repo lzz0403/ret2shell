@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores'
   import RxLink from '$lib/components/RxLink.svelte'
+  import RxPing from '$lib/components/RxPing.svelte'
   import { platform } from '$lib/stores/platform'
 
   $platform.see_magic_category = true
@@ -15,5 +16,8 @@
   href="/magic"
   exactlyMatched
 >
-  <span class="icon-[fluent--apps-list-20-regular] w-6 h-6"></span>
+  <div class="w-full h-full relative flex items-center justify-center">
+    <RxPing level="info" />
+    <span class="icon-[fluent--apps-list-20-regular] w-6 h-6"></span>
+  </div>
 </RxLink>

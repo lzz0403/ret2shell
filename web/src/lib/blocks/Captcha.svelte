@@ -94,7 +94,7 @@
     </RxButton>
   {:else if enabled && !loading && !failed && captcha?.validator === Validator.Pow}
     <RxInput
-      icon="icon-[fluent--beaker-16-regular]"
+      icon="icon-[fluent--beaker-20-regular]"
       class="w-full"
       type="text"
       {hasError}
@@ -110,12 +110,12 @@
       >
         {fetchingPow ? $i18n.t('form.fetchingPow') : powing ? $i18n.t('form.powing') : ''}
         {#if !fetchingPow && !powing}
-          <span class="icon-[fluent--checkmark-16-regular] w-6 h-6 text-success" />
+          <span class="icon-[fluent--checkmark-20-regular] w-5 h-5 text-success" />
         {/if}
       </RxButton>
     </RxInput>
   {:else if enabled && !loading && !failed && captcha?.validator === Validator.Image}
-    <RxInput icon="icon-[fluent--beaker-16-regular]" class="w-full" type="text" {hasError} bind:value={captchaAnswer}>
+    <RxInput icon="icon-[fluent--beaker-20-regular]" class="w-full" type="text" {hasError} bind:value={captchaAnswer}>
       <RxButton
         class="border-none w-24 p-0 overflow-hidden join-item ml-0"
         disabled={fetchingImg}

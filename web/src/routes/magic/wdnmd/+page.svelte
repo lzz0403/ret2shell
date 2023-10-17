@@ -97,7 +97,7 @@
     if (operator === '>= && <=') {
       fullExpr = `${exprs[prevClickIndex]} >= ${exprs[index]} && ${exprs[prevClickIndex]} <= ${exprs[index]}`
     } else fullExpr = `${exprs[prevClickIndex]} ${operator} ${exprs[index]}`
-    console.log(fullExpr)
+    // console.log(fullExpr)
     if (eval(fullExpr) === true) {
       score += combo + 1
       combo++

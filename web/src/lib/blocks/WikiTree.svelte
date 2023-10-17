@@ -87,15 +87,15 @@
           href={`${addrPrefix}/${item.id}${manageBtn ? '#edit' : ''}`}
         >
           {#if depth === 0}
-            <span class="icon-[fluent--notebook-20-regular] w-6 h-6 flex-shrink-0" />
+            <span class="icon-[fluent--notebook-20-regular] w-5 h-5 flex-shrink-0" />
           {:else}
-            <span class="icon-[fluent--notepad-20-regular] w-6 h-6 flex-shrink-0" />
+            <span class="icon-[fluent--notepad-20-regular] w-5 h-5 flex-shrink-0" />
           {/if}
           <span class="text-ellipsis overflow-hidden whitespace-nowrap flex-1 text-left">{item.title}</span>
         </RxLink>
         {#if manageBtn}
           <RxLink class="join-item" href={`${addrPrefix}/${item.id}#create`} ghost>
-            <span class="icon-[fluent--add-16-regular] w-5 h-5"></span>
+            <span class="icon-[fluent--add-20-regular] w-5 h-5"></span>
           </RxLink>
         {/if}
         {#if !treeNoChildrenRecord[item.id]}
@@ -109,7 +109,7 @@
           >
             {#if !treeLoadingRecord[item.id]}
               <span
-                class="icon-[fluent--chevron-down-16-regular] w-5 h-5 flex-shrink-0 transition-all {treeExpandedRecord[
+                class="icon-[fluent--chevron-down-20-regular] w-5 h-5 flex-shrink-0 transition-all {treeExpandedRecord[
                   item.id
                 ]
                   ? ' rotate-0'

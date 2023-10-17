@@ -13,8 +13,8 @@
   export let total: number
   export let loading: boolean = false
   let defaultBooleanIcon = {
-    true: 'icon-[fluent--checkmark-circle-16-regular] text-success',
-    false: 'icon-[fluent--dismiss-circle-16-regular] text-warning',
+    true: 'icon-[fluent--checkmark-circle-20-regular] text-success',
+    false: 'icon-[fluent--dismiss-circle-20-regular] text-warning',
   }
   export let booleanIconsDef: {
     [key: string]: IconDef

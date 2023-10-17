@@ -69,6 +69,10 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                 )))
                 .route("/", get(get_challenge_info))
                 .route("/attachment", get(download_challenge_attachment))
+                .nest("/submission", submission::router(state))
+                .nest("/env", env::router(state))
+                .nest("/repo", repo::router(state))
+                .nest("/workflow", workflow::router(state))
                 .route_layer(middleware::from_fn(auth::challenge_privilege_required))
                 .route_layer(middleware::from_fn_with_state(
                     state.clone(),
@@ -79,15 +83,11 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                     info::prepare_user_full_info,
                 ))
                 .route("/solved", get(get_solved_user_list))
+                .nest("/hint", hint::router(state))
+                .nest("/answer", answer::router(state))
                 .route_layer(middleware::from_fn(auth::permission_required_all!(
                     Permission::Verified
-                )))
-                .nest("/answer", answer::router(state))
-                .nest("/submission", submission::router(state))
-                .nest("/env", env::router(state))
-                .nest("/repo", repo::router(state))
-                .nest("/workflow", workflow::router(state))
-                .nest("/hint", hint::router(state)),
+                ))),
         )
 }
 

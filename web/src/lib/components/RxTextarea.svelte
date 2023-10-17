@@ -100,7 +100,7 @@
   {#if droppable && showDropTips}
     <div class="alert alert-info shadow-lg rounded-lg absolute top-0 left-0 w-full z-10">
       <div class="flex flex-row items-center space-x-2">
-        <span class="icon-[fluent--cloud-arrow-up-24-regular] w-6 h-6" />
+        <span class="icon-[fluent--cloud-arrow-up-20-regular] w-5 h-5" />
         <span>{$i18n.t('form.uploadTips')}</span>
       </div>
     </div>

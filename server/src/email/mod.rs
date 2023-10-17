@@ -6,14 +6,17 @@ use async_nats::jetstream::{
 };
 use lettre::{
     message::{header, SinglePart},
-    transport::smtp::authentication::Credentials,
+    transport::smtp::{
+        authentication::Credentials,
+        client::{Tls, TlsParameters},
+    },
     AsyncSmtpTransport, AsyncTransport, Message, Tokio1Executor,
 };
 use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 use thiserror::Error;
 use tokio_stream::StreamExt;
-use tracing::{error, info};
+use tracing::{debug, error, info};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Email {
@@ -137,9 +140,24 @@ async fn send_email_impl(email: Email, db_conn: &DatabaseConnection) -> Result<(
         hot_config.email.username.clone(),
         hot_config.email.password.clone(),
     );
+    debug!(
+        "smtp_credentials: {} {}",
+        hot_config.email.username, hot_config.email.password
+    );
+    debug!(
+        "smtp host: {} {}:{}",
+        hot_config.email.tls, hot_config.email.host, hot_config.email.port
+    );
+    debug!("email: {:?}", email);
     let mailer: AsyncSmtpTransport<Tokio1Executor> = match hot_config.email.tls.as_str() {
         "starttls" => AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&hot_config.email.host),
-        "tls" => AsyncSmtpTransport::<Tokio1Executor>::relay(&hot_config.email.host),
+        "tls" => Ok(
+            AsyncSmtpTransport::<Tokio1Executor>::relay(&hot_config.email.host)?.tls(Tls::Wrapper(
+                TlsParameters::builder(hot_config.email.host.clone())
+                    .build()
+                    .unwrap(),
+            )),
+        ),
         "none" => Ok(AsyncSmtpTransport::<Tokio1Executor>::builder_dangerous(
             &hot_config.email.host,
         )),
@@ -157,7 +175,6 @@ async fn send_email_impl(email: Email, db_conn: &DatabaseConnection) -> Result<(
     Ok(())
 }
 
-#[allow(dead_code)]
 pub async fn send_email(
     email: &Email,
     queue: &async_nats::jetstream::Context,

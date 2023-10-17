@@ -61,6 +61,9 @@
   })
 </script>
 
+<svelte:head>
+  <title>{$i18n.t('game.home')} - {$game.current?.name}</title>
+</svelte:head>
 <div class="h-48 bg-base-content/5 backdrop-blur relative">
   {#if $game.current?.cover_path}
     <RxImage

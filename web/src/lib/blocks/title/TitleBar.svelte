@@ -64,7 +64,7 @@
 >
   {#if !$initConfig.processing}
     <RxPopup class="btn-square btn-ghost xl:hidden" name="navPopup" popupWidth={64}>
-      <span slot="button" class="icon-[fluent--navigation-16-regular] w-5 h-5" />
+      <span slot="button" class="icon-[fluent--navigation-20-regular] w-5 h-5" />
       <div class="rounded-box bg-neutral flex flex-col shadow-lg w-full">
         <ul class="menu menu-vertical">
           {#if $game.current}
@@ -80,9 +80,9 @@
     <ul class="menu menu-horizontal px-6 space-x-2 hidden xl:flex">
       <li>
         <RxButton ghost>
-          <span class="icon-[fluent--chevron-double-right-16-regular] opacity-60" />
+          <span class="icon-[fluent--chevron-double-right-20-regular] opacity-60" />
           <span>{$i18n.t('init.title')}</span>
-          <span class="icon-[fluent--chevron-double-left-16-regular] opacity-60" />
+          <span class="icon-[fluent--chevron-double-left-20-regular] opacity-60" />
         </RxButton>
       </li>
     </ul>
@@ -119,7 +119,7 @@
     }}
   >
     <div slot="button">
-      <span class="icon-[fluent--wand-16-regular] w-5 h-5" />
+      <span class="icon-[fluent--wand-20-regular] w-5 h-5" />
       {#if !$platform.see_custom_box}
         <RxPing level="info" />
       {/if}
@@ -148,7 +148,7 @@
             {#if $user.info?.cover_path}
               <RxImage src={$user.info.cover_path} loading={loadingAvatar} />
             {:else}
-              <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+              <span class="w-5 h-5 icon-[fluent--person-20-regular]" />
             {/if}
           </div>
         </div>
@@ -163,13 +163,13 @@
       </RxPopup>
     {:else}
       <RxLink href="/account/login" exactlyMatched>
-        <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+        <span class="w-5 h-5 icon-[fluent--person-20-regular]" />
         <span class="hidden sm:inline">{$i18n.t('account.login')}</span>
       </RxLink>
     {/if}
     {#if $game.showGameNav && !$game.team && canTakePartIn && !$user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
       <RxLink href={`/games/${$game.current?.id}/participate`} justify="start">
-        <span class="w-6 h-6 icon-[fluent--thumb-like-16-regular]" />
+        <span class="w-5 h-5 icon-[fluent--thumb-like-20-regular]" />
         {$i18n.t('games.takePartIn')}
       </RxLink>
     {/if}

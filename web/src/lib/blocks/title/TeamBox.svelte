@@ -16,7 +16,7 @@
         <div
           class="w-10 rounded-full ring-2 ring-offset-base-100 ring-offset-2 !flex flex-col justify-center items-center"
         >
-          <span class="w-6 h-6 icon-[fluent--flag-16-regular]" />
+          <span class="w-5 h-5 icon-[fluent--flag-20-regular]" />
         </div>
       </div>
       <div class="ml-2 flex flex-col items-start overflow-hidden">
@@ -26,26 +26,26 @@
     </RxLink>
     <div class="divider m-0 ml-2 mr-2" />
     <RxButton justify="start" ghost>
-      <span class="w-6 h-6 icon-[fluent--copy-16-regular] text-success" />
+      <span class="w-5 h-5 icon-[fluent--copy-20-regular] text-success" />
       {$i18n.t('games.copyInviteLink')}
     </RxButton>
     <RxButton justify="start" ghost>
-      <span class="w-6 h-6 icon-[fluent--arrow-upload-16-regular] text-success" />
+      <span class="w-5 h-5 icon-[fluent--arrow-upload-20-regular] text-success" />
       {$i18n.t('games.submitWriteup')}
     </RxButton>
   {:else if $user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
     <RxButton disabled justify="start">
-      <span class="w-6 h-6 icon-[fluent--thumb-dislike-16-regular]" />
+      <span class="w-5 h-5 icon-[fluent--thumb-dislike-20-regular]" />
       {$i18n.t('games.adminCanNotTakePartIn')}
     </RxButton>
   {:else if canTakePartIn}
     <RxLink href={`/games/${$game.current?.id}/participate`} justify="start" ghost>
-      <span class="w-6 h-6 icon-[fluent--thumb-like-16-regular]" />
+      <span class="w-5 h-5 icon-[fluent--thumb-like-20-regular]" />
       {$i18n.t('games.takePartIn')}
     </RxLink>
   {:else}
     <RxButton disabled justify="start">
-      <span class="w-6 h-6 icon-[fluent--thumb-dislike-16-regular]" />
+      <span class="w-5 h-5 icon-[fluent--thumb-dislike-20-regular]" />
       {$i18n.t('games.cantTakePartIn')}
     </RxButton>
   {/if}

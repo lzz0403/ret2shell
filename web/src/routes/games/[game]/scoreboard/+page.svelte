@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { i18n } from '$lib/i18n'
+  import type { Team } from '$lib/models/team'
+  import { game } from '$lib/stores/game'
   import { colorDefs, theme } from '$lib/stores/theme'
   import { Chart } from 'chart.js/auto'
   import { onMount } from 'svelte'
@@ -22,6 +25,7 @@
 
   let canvas: HTMLCanvasElement
   let chart: Chart
+  let teams: Team[] = []
 
   theme.subscribe(() => {
     if (chart) {
@@ -47,23 +51,8 @@
     chart = new Chart(canvas, {
       type: 'line',
       data: {
-        labels: ['1', '2', '3', '4', '5', '6'],
-        datasets: [
-          {
-            label: 'AAA',
-            data: [0, 110, 240, 300, 400, 500],
-            fill: false,
-            tension: 0,
-            pointStyle: 'rectRounded',
-          },
-          {
-            label: 'BBB',
-            data: [0, 0, 200, 400, 500, 700],
-            fill: false,
-            tension: 0,
-            pointStyle: 'rectRounded',
-          },
-        ],
+        labels: [],
+        datasets: [],
       },
       options: {
         responsive: true,
@@ -86,8 +75,18 @@
   })
 </script>
 
+<svelte:head>
+  <title>{$i18n.t('game.scoreboard')} - {$game.current?.name}</title>
+</svelte:head>
 <div class="flex-1 flex flex-col p-6 lg:p-12">
-  <div class="h-80 relative">
-    <canvas bind:this={canvas}></canvas>
+  <div class="h-80 rounded-box overflow-hidden bg-neutral/30 backdrop-blur">
+    <div class="w-full h-full relative">
+      <canvas bind:this={canvas}></canvas>
+      {#if teams.length === 0}
+        <div class="absolute w-full h-full top-0 left-0 flex flex-row items-center justify-center">
+          <span class="font-bold text-base opacity-80">{$i18n.t('game.noScoreboard')}</span>
+        </div>
+      {/if}
+    </div>
   </div>
 </div>

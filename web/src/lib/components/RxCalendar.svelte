@@ -109,10 +109,10 @@
   <div class="h-16 flex flex-row items-center justify-between p-2 border-b border-b-base-content/5">
     <div class="flex flex-row space-x-2">
       <RxButton ghost on:click={() => handleSetYear(year - 1)}>
-        <span class="icon-[fluent--chevron-double-left-16-regular] w-6 h-6" />
+        <span class="icon-[fluent--chevron-double-left-20-regular] w-5 h-5" />
       </RxButton>
       <RxButton ghost on:click={() => handleSetMonth(month - 1)}>
-        <span class="icon-[fluent--chevron-left-16-regular] w-6 h-6" />
+        <span class="icon-[fluent--chevron-left-20-regular] w-5 h-5" />
       </RxButton>
     </div>
     <RxButton
@@ -126,10 +126,10 @@
     </RxButton>
     <div class="flex flex-row space-x-2">
       <RxButton ghost on:click={() => handleSetMonth(month + 1)}>
-        <span class="icon-[fluent--chevron-right-16-regular] w-6 h-6" />
+        <span class="icon-[fluent--chevron-right-20-regular] w-5 h-5" />
       </RxButton>
       <RxButton ghost on:click={() => handleSetYear(year + 1)}>
-        <span class="icon-[fluent--chevron-double-right-16-regular] w-6 h-6" />
+        <span class="icon-[fluent--chevron-double-right-20-regular] w-5 h-5" />
       </RxButton>
     </div>
   </div>

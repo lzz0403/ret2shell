@@ -530,7 +530,11 @@
   },
   "game": {
     "fetchingList": "Loading list...",
-    "fetchFailed": "Failed to get game"
+    "fetchFailed": "Failed to get game",
+    "scoreboard": "Scoreboard",
+    "challenges": "Challenges",
+    "home": "Homepage",
+    "noScoreboard": "Team score curve is not available"
   },
   "challenges": {
     "noHint": "No hints yet",

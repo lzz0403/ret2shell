@@ -20,6 +20,8 @@ bytes = "1.5"
 futures = "0.3"
 async-trait = "0.1"
 async-recursion = "1.0"
+rustls = "0.21"
+rustls-native-certs = "0.6"
 # Web Framework
 axum = { version = "0.6", features = [
     "headers",
@@ -90,8 +92,13 @@ bb8-redis = "0.13"
 # Email
 lettre = { version = "0.11", features = [
     "smtp-transport",
+    "tokio1",
+    "rustls-tls",
+    "rustls-native-certs",
     "tokio1-rustls-tls",
+    "pool",
     "hostname",
+    "tracing",
     "builder",
 ], default-features = false }
 # Message Queue

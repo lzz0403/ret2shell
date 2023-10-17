@@ -28,7 +28,7 @@
         <div
           class="flex flex-row border-b border-b-base-content/5 h-16 items-center px-4 space-x-2 hover:bg-base-content/5"
         >
-          <span class="icon-[fluent--info-20-regular] w-6 h-6 text-info" />
+          <span class="icon-[fluent--info-20-regular] w-5 h-5 text-info" />
           <span>{item.content}</span>
         </div>
       {/each}

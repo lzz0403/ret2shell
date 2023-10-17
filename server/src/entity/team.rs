@@ -10,7 +10,6 @@ use sea_orm::{ActiveValue, FromQueryResult, IntoActiveModel, QueryOrder, QuerySe
 use sea_query::{Condition, Func, JoinType};
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
-use std::collections::HashSet;
 
 #[derive(
     Clone,
@@ -41,6 +40,7 @@ pub struct TeamScoreHistory {
     pub score: i32,
     #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
     pub time: DateTime<Utc>,
+    pub challenge_id: Option<i64>,
 }
 
 #[derive(Clone, Debug, PartialEq, Default, Eq, Serialize, Deserialize, FromJsonQueryResult)]
@@ -49,8 +49,8 @@ pub struct TeamScoreHistoryList(Vec<TeamScoreHistory>);
 impl TeamScoreHistoryList {
     pub fn new() -> Self {
         Self(vec![TeamScoreHistory {
-            score: 0,
             time: Utc::now(),
+            ..Default::default()
         }])
     }
 }
@@ -240,69 +240,6 @@ pub async fn calc_team_score(
         team_score += challenge_score.score
     }
     Ok(team_score)
-}
-
-#[allow(dead_code)]
-pub async fn update_team_history_and_active_time(
-    conn: &DatabaseConnection,
-    time: DateTime<Utc>,
-    team: &Model,
-    score: i32,
-) -> Result<(), DbErr> {
-    let mut history = team.history.clone();
-    history.0.push(TeamScoreHistory { time, score });
-    let mut active_model: ActiveModel = team.clone().into();
-    active_model.id = ActiveValue::Unchanged(team.id);
-    active_model.score = ActiveValue::Set(score);
-    active_model.history = ActiveValue::Set(history);
-    active_model.last_active_at = ActiveValue::Set(time);
-
-    active_model.update(conn).await?;
-    Ok(())
-}
-
-#[allow(dead_code)]
-pub async fn get_affected_teams_by_challenge_id(
-    conn: &DatabaseConnection,
-    challenge_id: i64,
-) -> Result<Vec<Model>, DbErr> {
-    let submissions = super::submission::Entity::find()
-        .filter(super::submission::Column::ChallengeId.eq(challenge_id))
-        .all(conn)
-        .await?;
-    let mut team_ids = HashSet::new();
-    let mut teams: Vec<Model> = Vec::new();
-    for submission in submissions {
-        let user = submission.find_related(user::Entity).one(conn).await?;
-        if let Some(user) = user {
-            let team = user.find_related(Entity).one(conn).await?;
-            if let Some(team) = team {
-                if !team_ids.contains(&team.id) {
-                    team_ids.insert(team.id);
-                    teams.push(team);
-                }
-            }
-        }
-    }
-    Ok(teams)
-}
-
-#[allow(dead_code)]
-pub async fn update_team_history_only(
-    conn: &DatabaseConnection,
-    time: DateTime<Utc>,
-    team: &Model,
-    score: i32,
-) -> Result<(), DbErr> {
-    let mut history = team.history.clone();
-    history.0.push(TeamScoreHistory { time, score });
-    let mut active_model: ActiveModel = team.clone().into();
-    active_model.id = ActiveValue::Unchanged(team.id);
-    active_model.score = ActiveValue::Set(score);
-    active_model.history = ActiveValue::Set(history);
-
-    active_model.update(conn).await?;
-    Ok(())
 }
 
 pub async fn get_team_page_by_game_id(

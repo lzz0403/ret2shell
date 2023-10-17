@@ -36,7 +36,7 @@
         {#if $user.info?.cover_path}
           <RxImage src={$user.info.cover_path} loading={loadingAvatar} />
         {:else}
-          <span class="w-6 h-6 icon-[fluent--person-16-regular]" />
+          <span class="w-5 h-5 icon-[fluent--person-20-regular]" />
         {/if}
       </div>
     </div>
@@ -47,12 +47,12 @@
   </RxLink>
   <div class="divider m-0 ml-2 mr-2" />
   <RxLink href="/account/settings" justify="start" ghost>
-    <span class="w-6 h-6 icon-[fluent--settings-16-regular]" />
+    <span class="w-5 h-5 icon-[fluent--settings-20-regular]" />
     {$i18n.t('account.settings')}
   </RxLink>
   <div class="divider m-0 ml-2 mr-2" />
   <RxButton ghost justify="start" on:click={handleLogout}>
-    <span class="w-6 h-6 icon-[fluent--arrow-exit-20-regular] text-error" />
+    <span class="w-5 h-5 icon-[fluent--arrow-exit-20-regular] text-error" />
     {$i18n.t('account.logout')}
   </RxButton>
 </div>

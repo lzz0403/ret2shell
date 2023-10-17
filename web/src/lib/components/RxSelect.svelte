@@ -22,7 +22,7 @@
     <span class="flex-1 text-start">
       {availableOptions.find((option) => option.id === value)?.label || 'Select'}
     </span>
-    <span class="icon-[fluent--chevron-down-16-regular] w-5 h-5"></span>
+    <span class="icon-[fluent--chevron-down-20-regular] w-5 h-5"></span>
   </span>
   <div class="rounded-box bg-neutral flex flex-col shadow-lg w-full p-2">
     {#each availableOptions as option}

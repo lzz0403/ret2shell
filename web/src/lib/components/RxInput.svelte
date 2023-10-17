@@ -85,8 +85,8 @@
     />
     {#if type === 'password'}
       <RxButton class="join-item ml-0" on:click={togglePasswordVisible}>
-        <!-- icon-[fluent--eye-16-regular] and icon-[fluent--eye-off-16-regular] -->
-        <div class={`w-5 h-5 icon-[fluent--${passwordVisible ? 'eye' : 'eye-off'}-16-regular]`} />
+        <!-- icon-[fluent--eye-20-regular] and icon-[fluent--eye-off-20-regular] -->
+        <div class={`w-5 h-5 icon-[fluent--${passwordVisible ? 'eye' : 'eye-off'}-20-regular]`} />
       </RxButton>
     {/if}
     <slot />

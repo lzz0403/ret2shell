@@ -5,10 +5,10 @@ import en_US from './en-us.json'
 import zh_CN from './zh-cn.json'
 
 i18next.use(LanguageDetector).init({
-  fallbackLng: 'en_US',
+  fallbackLng: 'en-US',
   resources: {
-    en_US: { translation: en_US },
-    zh_CN: { translation: zh_CN },
+    'en-US': { translation: en_US },
+    'zh-CN': { translation: zh_CN },
   },
   interpolation: {
     escapeValue: false,

@@ -1,6 +1,7 @@
 export interface ScoreHistory {
   score: number
   time: number
+  challenge_id: number | null
 }
 
 export enum State {

@@ -224,6 +224,9 @@
   })
 </script>
 
+<svelte:head>
+  <title>{$i18n.t('game.challenges')} - {$game.current?.name}</title>
+</svelte:head>
 <svelte:window bind:innerWidth={screenWidth} />
 
 <div class="flex-1 flex flex-row overflow-x-hidden">

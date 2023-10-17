@@ -50,8 +50,8 @@
     <span
       class={`${
         solved
-          ? 'icon-[fluent--checkmark-circle-16-regular] text-success'
-          : 'icon-[fluent--question-circle-16-regular] text-base-content/60'
+          ? 'icon-[fluent--checkmark-circle-24-regular] text-success'
+          : 'icon-[fluent--question-circle-24-regular] text-base-content/60'
       } transition-all transform ${challengeScrollExpanded ? 'w-16 h-16 mr-4' : 'w-6 h-6 mr-2'}`}
     />
     <div class="flex flex-col">
@@ -83,7 +83,7 @@
           challengeScrollExpanded = true
         }}
       >
-        <span class="icon-[fluent--archive-16-regular] w-6 h-6 text-warning"></span>
+        <span class="icon-[fluent--archive-20-regular] w-5 h-5 text-warning"></span>
         {#if challengeScrollExpanded}
           <span class="hidden md:inline-block">{$i18n.t('playground.manageAttachments')}</span>
         {/if}
@@ -98,7 +98,7 @@
           challengeScrollExpanded = true
         }}
       >
-        <span class="icon-[fluent--engine-20-regular] w-6 h-6 text-success"></span>
+        <span class="icon-[fluent--engine-20-regular] w-5 h-5 text-success"></span>
         {#if challengeScrollExpanded}
           <span class="hidden md:inline-block">{$i18n.t('playground.manageEnv')}</span>
         {/if}
@@ -141,7 +141,7 @@
               ></div>
             </div>
           {/if}
-          <span class="icon-[fluent--flow-16-regular] w-5 h-5"></span>
+          <span class="icon-[fluent--flow-20-regular] w-5 h-5"></span>
           {#if $game.runningInstance && challenge && $game.runningInstance.challenge_id === challenge.id}
             <span class="flex-1 text-left text-ellipsis overflow-hidden whitespace-nowrap">
               {$game.runningInstance.wsrx}
@@ -159,28 +159,28 @@
             <span class="opacity-60">{$i18n.t('playground.envLastTime')}</span>
             <RxTimer time={lastTime} />
             <RxButton ghost square class="join-item ml-0">
-              <span class="icon-[fluent--copy-16-regular] w-5 h-5 text-success"></span>
+              <span class="icon-[fluent--copy-20-regular] w-5 h-5 text-success"></span>
             </RxButton>
             <RxButton ghost square class="join-item ml-0">
-              <span class="icon-[fluent--open-16-regular] w-5 h-5 text-info"></span>
+              <span class="icon-[fluent--open-20-regular] w-5 h-5 text-info"></span>
             </RxButton>
           {/if}
         </RxButton>
         {#if $game.runningInstance && challenge && $game.runningInstance.challenge_id === challenge.id}
           <div class="w-[2px] h-[2rem] bg-base-content/20 mx-2"></div>
           <RxButton ghost class="join-item ml-0" square>
-            <span class="icon-[fluent--timer-16-regular] w-5 h-5 text-info"></span>
+            <span class="icon-[fluent--timer-20-regular] w-5 h-5 text-info"></span>
           </RxButton>
           <RxButton ghost class="join-item ml-0" square>
-            <span class="icon-[fluent--circle-off-16-regular] w-5 h-5 text-error"></span>
+            <span class="icon-[fluent--circle-off-20-regular] w-5 h-5 text-error"></span>
           </RxButton>
         {:else if $game.runningInstance && challenge}
           <RxButton ghost class="join-item ml-0" square>
-            <span class="icon-[fluent--circle-off-16-regular] w-5 h-5 text-error"></span>
+            <span class="icon-[fluent--circle-off-20-regular] w-5 h-5 text-error"></span>
           </RxButton>
         {:else}
           <RxButton ghost class="join-item ml-0 text-success">
-            <span class="icon-[fluent--play-16-regular] w-5 h-5"></span>
+            <span class="icon-[fluent--play-20-regular] w-5 h-5"></span>
             <span>{$i18n.t('playground.launch')}</span>
           </RxButton>
         {/if}

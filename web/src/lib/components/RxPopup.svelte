@@ -41,7 +41,7 @@
   }}
 >
   <slot name="button">
-    <span class="w-5 h-5 icon-[fluent--chevron-down-16-regular]" />
+    <span class="w-5 h-5 icon-[fluent--chevron-down-20-regular]" />
   </slot>
 </button>
 <div class={popupClasses} data-popup={name}>

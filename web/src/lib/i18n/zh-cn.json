@@ -530,7 +530,11 @@
   },
   "game": {
     "fetchingList": "加载列表中...",
-    "fetchFailed": "获取赛事失败"
+    "fetchFailed": "获取赛事失败",
+    "scoreboard": "积分板",
+    "challenges": "题目",
+    "home": "首页",
+    "noScoreboard": "队伍分数曲线不可用"
   },
   "challenges": {
     "noHint": "暂无提示信息",
