@@ -6,7 +6,7 @@
   import RxSelect from '$lib/components/RxSelect.svelte'
   import { platform } from '$lib/stores/platform'
 
-  let exprs: Array<unknown> = Array.from({ length: 100 }, (_, i) => null)
+  let exprs: Array<unknown> = Array.from({ length: 100 }, () => null)
   const availableExprs = [
     'null',
     'undefined',
@@ -40,7 +40,7 @@
     'NaN',
   ]
   function randomize() {
-    exprs = Array.from({ length: 100 }, (_, i) => availableExprs[Math.floor(Math.random() * availableExprs.length)])
+    exprs = Array.from({ length: 100 }, () => availableExprs[Math.floor(Math.random() * availableExprs.length)])
   }
 
   onMount(() => {

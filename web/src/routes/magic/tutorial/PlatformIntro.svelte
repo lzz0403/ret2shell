@@ -22,7 +22,7 @@
     } else {
       goNext = true
       setTimeout(() => {
-        $step++
+        $step = $step + 1
       }, 500)
     }
   }

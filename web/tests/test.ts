@@ -1,4 +1,4 @@
-import { test, expect, webkit } from '@playwright/test'
+import { test, webkit } from '@playwright/test'
 
 test('basic', async ({ page }) => {
   await page.goto('http://localhost/')

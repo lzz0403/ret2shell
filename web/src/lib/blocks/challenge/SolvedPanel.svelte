@@ -6,7 +6,6 @@
   import type { SubmissionOnlyUserInfo } from '$lib/models/submission'
   import { theme } from '$lib/stores/theme'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
-  import { onMount } from 'svelte'
 
   let clazz = ''
   export { clazz as class }

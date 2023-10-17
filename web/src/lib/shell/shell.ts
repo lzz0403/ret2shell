@@ -34,9 +34,9 @@ export class RnixShell {
   private history: BufferHistory
   private inputBuffer: string = ''
   private running: boolean = false
-  private readonly dispatch: EventDispatcher<Record<string, any>> | null = null
+  private readonly dispatch: EventDispatcher<Record<string, unknown>> | null = null
 
-  public constructor(term: Terminal, dispatch: EventDispatcher<Record<string, any>> | null = null) {
+  public constructor(term: Terminal, dispatch: EventDispatcher<Record<string, unknown>> | null = null) {
     ansiColors.enabled = true
     this.dispatch = dispatch
     this.history = new BufferHistory()

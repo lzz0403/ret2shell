@@ -4,7 +4,6 @@ import type { Command } from './interface'
 import type { RnixEnv } from '../shell'
 import { get } from 'svelte/store'
 import { i18n } from '$lib/i18n'
-import { game } from '$lib/stores/game'
 import ansiEscapes from 'isomorphic-ansi-escapes'
 import ansiColors from 'ansi-colors'
 

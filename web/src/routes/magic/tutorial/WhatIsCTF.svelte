@@ -16,7 +16,7 @@
   function next() {
     goNext = true
     setTimeout(() => {
-      $step++
+      $step = $step + 1
     }, 500)
   }
 </script>

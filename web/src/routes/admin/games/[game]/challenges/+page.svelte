@@ -11,7 +11,6 @@
   import { admin } from '$lib/stores/admin'
   import type { Game } from '$lib/models/game'
   import RxSelect from '$lib/components/RxSelect.svelte'
-  import RxButton from '$lib/components/RxButton.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
 
   let currentPage: number = 1

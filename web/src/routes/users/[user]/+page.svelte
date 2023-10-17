@@ -12,7 +12,6 @@
   import type { TeamWithGameName } from '$lib/models/team'
   import { showMessage } from '$lib/stores/toast'
   import { page } from '$app/stores'
-  import { goto } from '$app/navigation'
   import type { User } from '$lib/models/user'
 
   let toggleSidebar = false

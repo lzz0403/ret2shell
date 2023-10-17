@@ -1,5 +1,4 @@
 <script lang="ts">
-  import logo from '$lib/assets/logo.svg'
   import { platform } from '$lib/stores/platform'
   import { user, userInfo } from '$lib/stores/user'
   import GlobalMenu from './GlobalMenu.svelte'
@@ -16,7 +15,7 @@
   import TeamBox from './TeamBox.svelte'
   import { canTakePartInGame } from '$lib/utils/auth'
   import { onDestroy, onMount } from 'svelte'
-  import { Permission, type User } from '$lib/models/user'
+  import { Permission } from '$lib/models/user'
   import InstanceBox from './InstanceBox.svelte'
   import Engine from '$lib/assets/engine.svelte'
   import LogoAnimate from '$lib/assets/logo-animate.svelte'

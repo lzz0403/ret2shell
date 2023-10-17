@@ -4,7 +4,6 @@
   import RxImage from '$lib/components/RxImage.svelte'
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
-  import type { User } from '$lib/models/user'
   import { user, userInfo, userReset } from '$lib/stores/user'
   import { onMount } from 'svelte'
 
@@ -21,7 +20,7 @@
 
   onMount(() => {
     loadingAvatar = true
-    userInfo().then((value) => {
+    userInfo().then(() => {
       loadingAvatar = false
     })
   })

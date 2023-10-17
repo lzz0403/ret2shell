@@ -1,11 +1,8 @@
 <script lang="ts">
   import { fly } from 'svelte/transition'
   import { step } from './store'
-  import LocationAnimate from '$lib/assets/location-animate.svelte'
   import { i18n } from '$lib/i18n'
   import { onMount } from 'svelte'
-  import RxButton from '$lib/components/RxButton.svelte'
-  import RxInput from '$lib/components/RxInput.svelte'
   let goNext = true
 
   onMount(() => {
@@ -21,7 +18,7 @@
   function next() {
     goNext = true
     setTimeout(() => {
-      $step++
+      $step = $step + 1
     }, 500)
   }
 </script>

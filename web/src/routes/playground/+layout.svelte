@@ -7,7 +7,6 @@
   import { i18n } from '$lib/i18n'
   import type { Tag } from '$lib/models/challenge'
   import type { Game } from '$lib/models/game'
-  import type { Submission } from '$lib/models/submission'
   import { Permission } from '$lib/models/user'
   import { showMessage } from '$lib/stores/toast'
   import { user } from '$lib/stores/user'
