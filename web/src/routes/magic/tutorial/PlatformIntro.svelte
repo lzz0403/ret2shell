@@ -3,7 +3,7 @@
   import { step } from './store'
   import { onMount } from 'svelte'
   import LogoAnimate from '$lib/assets/logo-animate.svelte'
-  import ArrowUpAnimate from '$lib/assets/ArrowUpAnimate.svelte'
+  import ArrowUpAnimate from '$lib/assets/arrow-up-animate.svelte'
   import { platform } from '$lib/stores/platform'
   import { i18n } from '$lib/i18n'
   import RxButton from '$lib/components/RxButton.svelte'
