@@ -59,7 +59,7 @@
     <p class="text-base font-semibold p-4 opacity-60 text-center">{$i18n.t('playground.emptyCategory')}</p>
   {/if}
   <div class="flex-1 flex-col p-4 overflow-x-hidden">
-    <ul class="relative">
+    <ul class="relative space-y-2">
       {#each tags as tag}
         {#if tagsChallengesRecord[tag.id] && tagsChallengesRecord[tag.id].length > 0}
           <li>
@@ -83,7 +83,7 @@
             </RxButton>
             {#if tagExpandedRecord[tag.id]}
               <ul
-                class="pl-4 relative before:border-l-2 before:absolute before:h-full before:border-l-base-content/10 overflow-x-hidden"
+                class="pl-4 relative before:border-l-2 before:absolute before:h-full before:border-l-base-content/10 overflow-x-hidden space-y-2 mt-2"
               >
                 {#each tagsChallengesRecord[tag.id] as chal}
                   <RxLink
