@@ -16,7 +16,7 @@ use axum::{
     extract::{Path, Query, State},
     middleware,
     response::IntoResponse,
-    routing::{get, patch},
+    routing::{get, patch, post},
     Extension, Json, Router,
 };
 use hyper::StatusCode;
@@ -33,19 +33,20 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             Permission::Organize,
             Permission::Devops
         )))
-        .route("/info/teammates", get(get_team_teammates))
-        .route("/info", get(get_team_info))
         .route("/self/rank", get(get_self_team_rank))
         .route("/self/teammates", get(get_self_teammates))
         .route("/self", get(get_self_team_info))
-        .route("/", get(get_team_list).post(create_team).patch(join_team))
+        .route("/", post(create_team).patch(join_team))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
-            info::prepare_game_info,
+            auth::game_participate_privilege_required,
         ))
+        .route("/info", get(get_team_info))
+        .route("/info/teammates", get(get_team_teammates))
+        .route("/", get(get_team_list))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
-            auth::game_privilege_required,
+            info::prepare_game_info_in_path,
         ))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),

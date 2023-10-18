@@ -47,10 +47,14 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             Permission::Devops
         )))
         .route("/", get(get_challenge_list))
-        .route_layer(middleware::from_fn(
-            auth::game_challenges_privilege_required,
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            auth::game_player_privilege_required,
         ))
-        .route_layer(middleware::from_fn(auth::game_privilege_required))
+        .route_layer(middleware::from_fn_with_state(
+            state.clone(),
+            info::prepare_game_info_in_query,
+        ))
         .route_layer(middleware::from_fn_with_state(
             state.clone(),
             info::prepare_user_full_info,
@@ -63,17 +67,20 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             "/:challenge_id",
             Router::new()
                 .route("/", patch(update_challenge).delete(delete_challenge))
+                .nest("/workflow", workflow::router(state))
+                .nest("/repo", repo::router(state))
                 .route_layer(middleware::from_fn(auth::permission_required_any!(
                     Permission::Organize,
                     Permission::Devops
                 )))
                 .route("/", get(get_challenge_info))
                 .route("/attachment", get(download_challenge_attachment))
-                .nest("/submission", submission::router(state))
                 .nest("/env", env::router(state))
-                .nest("/repo", repo::router(state))
-                .nest("/workflow", workflow::router(state))
-                .route_layer(middleware::from_fn(auth::challenge_privilege_required))
+                .nest("/submission", submission::router(state))
+                .route_layer(middleware::from_fn_with_state(
+                    state.clone(),
+                    auth::challenge_privilege_required,
+                ))
                 .route_layer(middleware::from_fn_with_state(
                     state.clone(),
                     info::prepare_challenge_info,

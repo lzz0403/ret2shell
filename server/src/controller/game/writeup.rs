@@ -41,7 +41,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
         ))
         .route_layer(middleware::from_fn_with_state(
             _state.clone(),
-            info::prepare_game_info,
+            info::prepare_game_info_in_path,
         ))
         .route_layer(middleware::from_fn(auth::permission_required_all!(
             Permission::Verified

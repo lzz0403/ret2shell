@@ -167,7 +167,7 @@
       </RxLink>
     {/if}
     {#if $game.showGameNav && !$game.team && canTakePartIn && !$user.permissions.find((p) => p === Permission.Devops || p === Permission.Organize)}
-      <RxLink href={`/games/${$game.current?.id}/participate`} justify="start">
+      <RxLink class="ml-2" href={`/games/${$game.current?.id}/participate`} justify="start">
         <span class="w-5 h-5 icon-[fluent--thumb-like-20-regular]" />
         {$i18n.t('games.takePartIn')}
       </RxLink>

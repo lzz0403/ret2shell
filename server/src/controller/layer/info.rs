@@ -4,14 +4,15 @@ use crate::{
     entity::user,
 };
 use axum::{
-    extract::{Path, State},
+    extract::{Path, Query, State},
     http::{Request, StatusCode},
     middleware::Next,
     response::IntoResponse,
     Extension,
 };
 use sea_orm::{DatabaseConnection, DbErr};
-use tracing::error;
+use serde::Deserialize;
+use tracing::{debug, error};
 
 pub async fn prepare_platform_info<B>(
     State(ref db): State<DatabaseConnection>,
@@ -67,20 +68,48 @@ pub async fn prepare_challenge_info<B>(
     Ok(next.run(req).await)
 }
 
-pub async fn prepare_game_info<B>(
+pub async fn prepare_game_info_in_path<B>(
     State(ref db): State<DatabaseConnection>,
     Path(game_id): Path<i64>,
     mut req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     match crate::entity::game::get_game(db, game_id).await {
-        Ok(game) => {
+        Ok(Some(game)) => {
             req.extensions_mut().insert(game);
         }
         Err(err) => {
             error!("failed to get game: {}", err);
         }
+        _ => {}
     };
+
+    Ok(next.run(req).await)
+}
+
+#[derive(Deserialize)]
+pub struct GameQuery {
+    pub game_id: Option<i64>,
+}
+
+pub async fn prepare_game_info_in_query<B>(
+    State(ref db): State<DatabaseConnection>,
+    Query(query): Query<GameQuery>,
+    mut req: Request<B>,
+    next: Next<B>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    if let Some(game_id) = query.game_id {
+        match crate::entity::game::get_game(db, game_id).await {
+            Ok(Some(game)) => {
+                debug!("game: {:?}", game);
+                req.extensions_mut().insert(game);
+            }
+            Err(err) => {
+                error!("failed to get game: {}", err);
+            }
+            _ => {}
+        };
+    }
 
     Ok(next.run(req).await)
 }

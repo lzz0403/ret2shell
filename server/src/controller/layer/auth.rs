@@ -9,7 +9,9 @@ use axum::{
     Extension,
 };
 use chrono::Local;
+use futures::TryFutureExt;
 use jsonwebtoken::{decode, encode, Algorithm, DecodingKey, EncodingKey, Header, Validation};
+use sea_orm::DatabaseConnection;
 use serde::{Deserialize, Serialize};
 use std::sync::{atomic::AtomicBool, Arc};
 use tokio::sync::Mutex;
@@ -19,8 +21,11 @@ use crate::{
     cache::{self, manager::RedisPool},
     config::GlobalConfig,
     entity::{
+        challenge,
         config::{Auth, Model as ConfigModel},
-        user::{Permission, Permissions},
+        game,
+        team::get_team_by_user_id,
+        user::{self, Permission, Permissions},
     },
 };
 
@@ -206,6 +211,13 @@ macro_rules! permission_required_any {
     };
 }
 
+macro_rules! pass_admin_for_game {
+    ($permissions:expr) => {{
+        let admin_perms = [Permission::Devops, Permission::Organize, Permission::Audit];
+        admin_perms.iter().any(|perm| $permissions.contains(perm))
+    }};
+}
+
 pub(crate) use permission_required_all;
 pub(crate) use permission_required_any;
 
@@ -244,25 +256,139 @@ pub async fn init_token_or_permission_required<B>(
 }
 
 pub async fn challenge_privilege_required<B>(
+    State(ref db): State<DatabaseConnection>,
+    Extension(user): Extension<user::Model>,
+    Extension(challenge): Extension<challenge::Model>,
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    // TODO: implement
-    Ok(next.run(req).await)
+    if pass_admin_for_game!(user.permissions.0) {
+        return Ok(next.run(req).await.into_response());
+    }
+    let game = game::get_game(db, challenge.game_id).await.map_err(|err| {
+        error!("get_game error: {}", err);
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "failed to get game by id",
+        )
+    })?;
+    if let Some(game) = game {
+        let resp = game_player_privilege_required(
+            State(db.clone()),
+            Extension(user),
+            Some(Extension(game)),
+            req,
+            next,
+        )
+        .await?;
+        Ok(resp.into_response())
+    } else {
+        Err((StatusCode::NOT_FOUND, "game not found"))
+    }
 }
 
-pub async fn game_privilege_required<B>(
+// can take part in a game
+pub async fn game_participate_privilege_required<B>(
+    State(ref db): State<DatabaseConnection>,
+    Extension(user): Extension<user::Model>,
+    Extension(game): Extension<game::Model>,
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    // TODO: implement
-    Ok(next.run(req).await)
+    // pass admin
+    if pass_admin_for_game!(user.permissions.0) {
+        return Ok(next.run(req).await);
+    }
+    if game.hidden || game.frozen {
+        return Err((StatusCode::FORBIDDEN, "game is not available"));
+    }
+    if !game.host_as_game {
+        return Err((
+            StatusCode::FORBIDDEN,
+            "playground is not allowed to take part in",
+        ));
+    }
+    if game.end_and_archive()
+        || game.end_but_not_archive()
+        || (game.in_progress() && !game.can_register_after_started)
+    {
+        if get_team_by_user_id(db, game.id, user.id)
+            .map_err(|err| {
+                error!("get_team_by_user_id error: {}", err);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "failed to get team by user id",
+                )
+            })
+            .await?
+            .is_some()
+        {
+            Ok(next.run(req).await)
+        } else {
+            Err((StatusCode::FORBIDDEN, "it's too late to join this game"))
+        }
+    } else {
+        // check if user can join this game
+        // if before register time
+        if game.register_time < Local::now() {
+            if game.institute_id.is_some_and(|game_institute| {
+                user.institute_id
+                    .is_some_and(|user_institute| user_institute != game_institute)
+            }) {
+                Err((
+                    StatusCode::FORBIDDEN,
+                    "game is restricted for another institute",
+                ))
+            } else {
+                Ok(next.run(req).await)
+            }
+        } else {
+            Err((StatusCode::FORBIDDEN, "game is not open for register now"))
+        }
+    }
 }
 
-pub async fn game_challenges_privilege_required<B>(
+pub async fn game_player_privilege_required<B>(
+    State(ref db): State<DatabaseConnection>,
+    Extension(user): Extension<user::Model>,
+    game: Option<Extension<game::Model>>,
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
-    // TODO: implement
-    Ok(next.run(req).await)
+    // pass admin
+    if pass_admin_for_game!(user.permissions.0) {
+        return Ok(next.run(req).await);
+    }
+    if game.is_none() {
+        return Err((StatusCode::NOT_FOUND, "game not found"));
+    }
+    let Extension(game) = game.unwrap();
+    if game.hidden || game.frozen {
+        return Err((StatusCode::FORBIDDEN, "game is not available"));
+    }
+    // playground is open for everyone.
+    if !game.host_as_game {
+        return Ok(next.run(req).await);
+    }
+    if game.end_and_archive() {
+        return Ok(next.run(req).await);
+    } else if game.in_progress() || game.end_but_not_archive() {
+        if get_team_by_user_id(db, game.id, user.id)
+            .map_err(|err| {
+                error!("get_team_by_user_id error: {}", err);
+                (
+                    StatusCode::INTERNAL_SERVER_ERROR,
+                    "failed to get team by user id",
+                )
+            })
+            .await?
+            .is_some()
+        {
+            Ok(next.run(req).await)
+        } else {
+            Err((StatusCode::FORBIDDEN, "you have not joined this game"))
+        }
+    } else {
+        Err((StatusCode::FORBIDDEN, "game has not started"))
+    }
 }
