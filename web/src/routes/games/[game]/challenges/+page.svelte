@@ -262,7 +262,9 @@
         <div class="sticky left-0 p-2 flex-shrink-0 z-20">
           <RxLink ghost active={activeChallenge === null} href="#">
             <span class="w-5 h-5 icon-[fluent--pin-20-regular]" />
-            {$i18n.t('playground.gameIntro')}
+            <span>
+              {$i18n.t('playground.gameIntro')}
+            </span>
           </RxLink>
         </div>
         <div
