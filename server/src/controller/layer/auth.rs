@@ -258,33 +258,26 @@ pub async fn init_token_or_permission_required<B>(
 pub async fn challenge_privilege_required<B>(
     State(ref db): State<DatabaseConnection>,
     Extension(user): Extension<user::Model>,
-    Extension(challenge): Extension<challenge::Model>,
+    challenge: Option<Extension<challenge::Model>>,
+    game: Option<Extension<game::Model>>,
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    if challenge.is_none() {
+        return Err((StatusCode::NOT_FOUND, "challenge not found"));
+    }
+    let Extension(challenge) = challenge.unwrap();
     if pass_admin_for_game!(user.permissions.0) {
         return Ok(next.run(req).await.into_response());
     }
-    let game = game::get_game(db, challenge.game_id).await.map_err(|err| {
-        error!("get_game error: {}", err);
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            "failed to get game by id",
-        )
-    })?;
-    if let Some(game) = game {
-        let resp = game_player_privilege_required(
-            State(db.clone()),
-            Extension(user),
-            Some(Extension(game)),
-            req,
-            next,
-        )
-        .await?;
-        Ok(resp.into_response())
-    } else {
-        Err((StatusCode::NOT_FOUND, "game not found"))
+
+    if challenge.hidden {
+        return Err((StatusCode::NOT_FOUND, "challenge not found"));
     }
+
+    let resp =
+        game_player_privilege_required(State(db.clone()), Extension(user), game, req, next).await?;
+    Ok(resp.into_response())
 }
 
 // can take part in a game
@@ -355,15 +348,18 @@ pub async fn game_player_privilege_required<B>(
     req: Request<B>,
     next: Next<B>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    if game.is_none() {
+        return Err((StatusCode::NOT_FOUND, "game not found"));
+    }
     // pass admin
     if pass_admin_for_game!(user.permissions.0) {
         return Ok(next.run(req).await);
     }
-    if game.is_none() {
+    let Extension(game) = game.unwrap();
+    if game.hidden {
         return Err((StatusCode::NOT_FOUND, "game not found"));
     }
-    let Extension(game) = game.unwrap();
-    if game.hidden || game.frozen {
+    if game.frozen {
         return Err((StatusCode::FORBIDDEN, "game is not available"));
     }
     // playground is open for everyone.

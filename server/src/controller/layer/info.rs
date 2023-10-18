@@ -58,6 +58,15 @@ pub async fn prepare_challenge_info<B>(
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     match crate::entity::challenge::get_challenge(db, challenge_id).await {
         Ok(challenge) => {
+            match crate::entity::game::get_game(db, challenge.game_id).await {
+                Ok(Some(game)) => {
+                    req.extensions_mut().insert(game);
+                }
+                Err(err) => {
+                    error!("failed to get game: {}", err);
+                }
+                _ => {}
+            };
             req.extensions_mut().insert(challenge);
         }
         Err(err) => {
