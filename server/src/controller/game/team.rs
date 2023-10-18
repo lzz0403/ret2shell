@@ -67,7 +67,7 @@ struct ListParams {
     pub page: Option<u64>,
     pub per_page: Option<u64>,
     pub filter: Option<String>,
-    pub need_audit: Option<bool>
+    pub need_audit: Option<bool>,
 }
 
 #[derive(Serialize)]
@@ -366,8 +366,6 @@ async fn update_team_info(
         }
     }
 }
-
-
 
 async fn change_team_audit(
     State(ref conn): State<DatabaseConnection>,

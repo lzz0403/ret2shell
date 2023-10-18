@@ -153,7 +153,7 @@ pub async fn get_challenge_page_by_game_and_user(
     user: user::Model,
     page: u64,
     per_page: u64,
-    tag_id: Option<i64>
+    tag_id: Option<i64>,
 ) -> Result<(Vec<Model>, u64), DbErr> {
     let can_see_hidden_challenges = match (user.institute_id, game.institute_id) {
         (Some(user_institute_id), Some(game_institute_id)) => {

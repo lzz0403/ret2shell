@@ -53,7 +53,6 @@ struct WriteupIDQuery {
     pub writeup_id: i64,
 }
 
-
 #[derive(Deserialize)]
 struct WriteupListQuery {
     pub page: Option<u64>,

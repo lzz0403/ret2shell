@@ -37,8 +37,7 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
 #[derive(Deserialize)]
 struct GameIDQuery {
     pub game_id: i64,
-    }
-    
+}
 
 async fn get_challenge_answer(
     State(ref conn): State<DatabaseConnection>,

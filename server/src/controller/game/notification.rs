@@ -28,7 +28,6 @@ struct NotificationIDQuery {
     pub notification_id: i64,
 }
 
-
 async fn create_notification(
     State(ref conn): State<DatabaseConnection>,
     Json(notification): Json<notification::Model>,
