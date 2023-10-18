@@ -31,8 +31,8 @@
       ghost
       justify="start"
       class="flex-1"
-      active={$i18n.language === 'zh_CN'}
-      on:click={() => toggleLanguage('zh_CN')}
+      active={$i18n.language === 'zh-CN'}
+      on:click={() => toggleLanguage('zh-CN')}
     >
       <span class="icon-[fluent--local-language-20-regular] w-5 h-5" />
       <span>{$i18n.t('theme.simplifiedChinese')}</span>
@@ -41,8 +41,8 @@
       ghost
       justify="start"
       class="flex-1"
-      active={$i18n.language === 'en_US'}
-      on:click={() => toggleLanguage('en_US')}
+      active={$i18n.language === 'en-US'}
+      on:click={() => toggleLanguage('en-US')}
     >
       <span class="icon-[fluent--local-language-20-regular] w-5 h-5" />
       <span>{$i18n.t('theme.english')}</span>

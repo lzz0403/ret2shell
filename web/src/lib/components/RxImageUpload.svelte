@@ -13,7 +13,7 @@
   let clazz = ''
   export { clazz as class }
 
-  $: classes = `flex-1 aspect-video relative rounded-box bg-neutral/40 overflow-hidden ${clazz}`
+  $: classes = `flex-1 aspect-video relative rounded-box bg-base-content/10 overflow-hidden ${clazz}`
 
   let inputEl: HTMLInputElement
   const progress = writable(0)
@@ -58,13 +58,15 @@
     </p>
   {/if}
   <RxButton
-    class="absolute inset-0 w-full h-full opacity-0 hover:opacity-80"
+    class="absolute inset-0 w-full h-full opacity-0 hover:opacity-80 hover:backdrop-blur transition-all"
     on:click={() => {
       inputEl.click()
     }}
   >
-    <span class="icon-[fluent--cloud-arrow-up-20-regular] w-5 h-5"></span>
-    <span class="font-bold text-base">{$i18n.t('form.upload')}</span>
+    <div class="flex flex-row items-center space-x-2">
+      <span class="icon-[fluent--cloud-arrow-up-20-regular] w-5 h-5"></span>
+      <span class="font-bold text-base">{$i18n.t('form.upload')}</span>
+    </div>
   </RxButton>
   {#if $progress && $progress !== 100 && $progress !== 0}
     <div class="alert shadow-lg rounded-lg absolute top-4 left-4 right-4 z-10 flex flex-row">
