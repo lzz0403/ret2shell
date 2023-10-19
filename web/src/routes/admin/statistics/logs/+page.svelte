@@ -29,6 +29,7 @@
   Chart.defaults.plugins.tooltip.titleColor = colorDefs()['base-content']
   Chart.defaults.plugins.tooltip.bodyColor = colorDefs()['base-content']
   Chart.defaults.plugins.tooltip.footerColor = colorDefs()['base-content']
+  Chart.defaults.animation = false
   let canvas: HTMLCanvasElement
   let chart: Chart
   theme.subscribe(() => {
