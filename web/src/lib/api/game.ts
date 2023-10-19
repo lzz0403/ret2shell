@@ -14,6 +14,10 @@ export async function getGame(id: number) {
   return (await api.get(`${api_root}/game/${id}`)).data as Game
 }
 
+export async function updateGame(id: number, game: Game) {
+  return await api.patch(`${api_root}/game/${id}`, game)
+}
+
 export async function getGameSelfSubmission(game_id: number) {
   return (await api.get(`${api_root}/game/${game_id}/solved`)).data as Submission[]
 }

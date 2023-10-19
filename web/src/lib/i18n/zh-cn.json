@@ -258,7 +258,8 @@
     "announcementsIntro": "发布与管理公告栏",
     "calendarIntro": "新增并管理赛事日历",
     "wikiIntro": "在知识库中编写并发布技术文档与知识文章",
-    "usersIntro": "管理用户与机构"
+    "usersIntro": "管理用户与机构",
+    "gameInfo": "比赛信息"
   },
   "docs": {
     "title": "技术文档"
@@ -549,7 +550,27 @@
     "scoreboard": "积分板",
     "challenges": "题目",
     "home": "首页",
-    "noScoreboard": "队伍分数曲线不可用"
+    "noScoreboard": "队伍分数曲线不可用",
+    "name": "赛事名称",
+    "namePlaceholder": "请输入竞赛名称",
+    "brief": "赛事简介",
+    "briefPlaceholder": "请输入赛事简介",
+    "cover": "封面",
+    "introduction": "赛事介绍",
+    "institute_id": "限定组织",
+    "team_size_limit": "队伍人数限制",
+    "team_size_limitPlaceholder": "每队最多人数",
+    "hidden": "隐藏赛事",
+    "frozen": "冻结赛事",
+    "host_as_game": "作为赛事举办",
+    "enable_team_audit": "开启队伍审核",
+    "can_register_after_started": "允许开赛后注册",
+    "saved": "比赛信息已保存",
+    "saveFailed": "比赛信息保存失败",
+    "nameRequired": "赛事名称不能为空",
+    "briefRequired": "赛事简介不能为空",
+    "introductionRequired": "赛事介绍不能为空",
+    "teamSizeLimitRequired": "队伍人数限制不能为空"
   },
   "challenges": {
     "noHint": "暂无提示信息",
@@ -637,7 +658,8 @@
     "fetchFailed": "获取组织列表失败"
   },
   "institute": {
-    "name": "组织名"
+    "name": "组织名",
+    "fatchFailed": "获取组织信息失败"
   },
   "email": {
     "sent": "邮件发送成功",

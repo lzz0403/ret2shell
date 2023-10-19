@@ -43,12 +43,11 @@
   type="file"
   class="hidden"
   bind:this={inputEl}
-  use:field
   on:change={(e) => {
     handleUpload(e)
   }}
 />
-<div class={classes}>
+<div class={classes} use:field>
   {#if value && value.length > 0}
     <img src={value} alt="" class="absolute inset-0 top-0 left-0 w-full h-full object-cover" />
   {:else}

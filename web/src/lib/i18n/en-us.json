@@ -258,7 +258,8 @@
     "announcementsIntro": "Publishing and managing announcement boards",
     "calendarIntro": "Create or manage game calendar",
     "wikiIntro": "Write and publish technical documentation and knowledge articles in the wiki",
-    "usersIntro": "Manage users and organizations"
+    "usersIntro": "Manage users and organizations",
+    "gameInfo": "Game info"
   },
   "docs": {
     "title": "Documents"
@@ -549,7 +550,27 @@
     "scoreboard": "Scoreboard",
     "challenges": "Challenges",
     "home": "Homepage",
-    "noScoreboard": "Team score curve is not available"
+    "noScoreboard": "Team score curve is not available",
+    "name": "Game name",
+    "namePlaceholder": "Please enter game name",
+    "brief": "Brief",
+    "briefPlaceholder": "Please enter game brief",
+    "cover": "Cover",
+    "introduction": "Game introduction",
+    "institute_id": "limited institute",
+    "team_size_limit": "Team size limit",
+    "team_size_limitPlaceholder": "Maximum people per team",
+    "hidden": "Hidden",
+    "frozen": "Frozen",
+    "host_as_game": "Host as game",
+    "enable_team_audit": "Enable team audit",
+    "can_register_after_started": "can register after game",
+    "saved": "game saved",
+    "saveFailed": "Failed to save game",
+    "nameRequired": "Game name cannot be empty",
+    "briefRequired": "Game brief cannot be empty",
+    "introductionRequired": "Game introduction cannot be empty",
+    "teamSizeLimitRequired": "Team size limit cannot be empty"
   },
   "challenges": {
     "noHint": "No hints yet",
@@ -637,7 +658,8 @@
     "fetchFailed": "Failed to get list of institutes"
   },
   "institute": {
-    "name": "Institute name"
+    "name": "Institute name",
+    "fatchFailed": "Failed to get institute information"
   },
   "email": {
     "sent": "email has been sent",
