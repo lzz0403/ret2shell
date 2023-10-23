@@ -12,7 +12,7 @@
 
   import { goto } from '$app/navigation'
   import { getChallengeHints, getChallengeList, getTagList } from '$lib/api/challenge'
-  import { getGameNotifications, getGameSelfSubmission } from '$lib/api/game'
+  import { getGameNotifications, getGameSelfSubmission, getGameTeamSubmission } from '$lib/api/game'
   import ChallengeSidebar from './ChallengeSidebar.svelte'
   import TeamSidebar from './TeamSidebar.svelte'
   import HintsPanel from '$lib/blocks/challenge/HintsPanel.svelte'
@@ -52,6 +52,7 @@
   $: mayHaveMoreChallenges = challengePage < challengeTotalPages
   let tags: Tag[] = []
   let currentGameIdCache: number | null = null
+  let currentTeamIdCache: number | null = null
 
   function getChallenges() {
     if ($game.current?.id) {
@@ -83,7 +84,12 @@
 
   function getSelfSubmissions() {
     if ($game.current?.id) {
-      getGameSelfSubmission($game.current?.id)
+      let func = $game.team
+        ? (id: number) => {
+            return getGameTeamSubmission(id, $game.team?.id || 0)
+          }
+        : getGameSelfSubmission
+      func($game.current?.id)
         .then((res) => {
           $game.submissions = res
         })
@@ -121,6 +127,10 @@
         .catch((err) => {
           showMessage('error', `${$i18n.t('playground.fetchTagsFailed')}: ${(err as AxiosError).response?.data}`, 5000)
         })
+    }
+    if (value.team?.id && currentTeamIdCache !== value.team.id) {
+      currentTeamIdCache = value.team.id
+      getSelfSubmissions()
     }
   })
 
@@ -275,7 +285,7 @@
   {/if}
   <div class="flex-1 flex flex-col overflow-x-hidden">
     <div id="info-stack" class="flex flex-col overflow-x-hidden">
-      <div class="border-b border-b-base-content/10 flex flex-row h-16 overflow-hidden bg-neutral/30 backdrop-blur">
+      <div class="border-b border-b-base-content/10 flex flex-row h-16 overflow-hidden bg-neutral/20 backdrop-blur">
         <div class="sticky left-0 p-2 flex-shrink-0 z-20">
           <RxLink ghost active={activeChallenge === null} href="#">
             <span class="w-5 h-5 icon-[fluent--pin-20-regular]" />
@@ -380,7 +390,7 @@
       </div>
     </div>
     <div id="work-stack" class="flex flex-col backdrop-blur min-h-16">
-      <div class="border-b border-b-base-content/5 bg-neutral/30 flex flex-row items-center p-2 space-x-2">
+      <div class="border-b border-b-base-content/5 bg-neutral/20 flex flex-row items-center p-2 space-x-2">
         <RxButton
           ghost
           active={bottomTab === 0}

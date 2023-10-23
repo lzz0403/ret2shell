@@ -159,7 +159,16 @@
       activeChallenge = null
     }
   })
-  onDestroy(unsubscribe)
+  onDestroy(() => {
+    unsubscribe()
+    game.update((value) => {
+      value.current = null
+      value.cached = null
+      value.team = null
+      value.showGameNav = false
+      return value
+    })
+  })
 
   // bottom panel
   let bottomTab = 0
@@ -170,7 +179,7 @@
 {#if error - 200 < 100}
   <div class="flex-1 flex flex-col overflow-x-hidden">
     <div id="info-stack" class="flex flex-col overflow-x-hidden">
-      <div class="flex flex-row h-16 bg-neutral/30 border-b border-b-base-content/10">
+      <div class="flex flex-row h-16 bg-neutral/20 border-b border-b-base-content/10">
         <div class="sticky left-0 p-2 flex-shrink-0 z-50">
           <RxLink ghost active={activeChallenge === null} href="#">
             <span class="w-5 h-5 icon-[fluent--pin-20-regular]" />
@@ -275,7 +284,7 @@
       </div>
     </div>
     <div id="work-stack" class="flex flex-col backdrop-blur">
-      <div class="border-b border-b-base-content/5 bg-neutral/30 flex flex-row items-center p-2 space-x-2">
+      <div class="border-b border-b-base-content/5 bg-neutral/20 flex flex-row items-center p-2 space-x-2">
         <RxButton
           ghost
           active={bottomTab === 0}

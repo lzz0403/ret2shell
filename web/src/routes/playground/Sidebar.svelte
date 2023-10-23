@@ -48,7 +48,7 @@
 </script>
 
 <h1
-  class="font-bold flex flex-row justify-center items-center h-16 space-x-2 sticky top-0 bg-neutral/10 backdrop-blur border-b border-b-base-content/5 z-10"
+  class="font-bold flex flex-row justify-center items-center h-16 space-x-2 sticky top-0 border-b border-b-base-content/5 z-10"
 >
   <span class="icon-[fluent--dumbbell-20-regular] w-5 h-5" />
   {#if activeGame}

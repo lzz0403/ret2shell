@@ -28,7 +28,11 @@
     const start = instance.started_at * 1000
     const duration = (now - start) / 1000
     const persistTime = instance.renew_count * 3600
-    return Math.max(0, persistTime - duration)
+    let result = Math.max(0, persistTime - duration)
+    if (result === 0) {
+      $game.runningInstance = null
+    }
+    return result
   }
 
   let lastTime = calcLastTime($game.runningInstance)

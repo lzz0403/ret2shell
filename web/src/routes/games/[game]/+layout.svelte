@@ -14,6 +14,7 @@
   import { user } from '$lib/stores/user'
   import { Permission } from '$lib/models/user'
   import LogoAnimate from '$lib/assets/logo-animate.svelte'
+  import '$lib/styles/transitions.scss'
 
   let loading = false
   let delayedLoading = false
@@ -91,7 +92,7 @@
 {#if loading || delayedLoading}
   <div class="fixed -left-1 -right-1 -top-1 -bottom-1 z-50">
     <img src={BgBlur} alt="" class="w-full h-full object-fill" />
-    <div class="fixed left-0 right-0 top-0 bottom-0 bg-base-100/90 backdrop-blur"></div>
+    <div class="fixed left-0 right-0 top-0 bottom-0 bg-base-100/80 backdrop-blur"></div>
   </div>
   <div
     class="w-screen h-screen fixed z-50 flex flex-col items-center justify-center space-y-8"
@@ -101,12 +102,13 @@
     <div in:fly={{ x: 0, y: -64, duration: 1500 }}>
       <LogoAnimate width={128} height={128} />
     </div>
-    <div
-      class="flex flex-col space-y-8 items-center justify-center"
-      in:fly={{ x: 0, y: 32, duration: 1500, opacity: 0 }}
-    >
-      <p class="text-2xl opacity-60 font-bold">W E L C O M E&nbsp;&nbsp;&nbsp;T O</p>
-      <h1 class="text-3xl font-bold">{$game.current?.name || $game.cached?.name || $i18n.t('games.loading')}</h1>
+    <div class="flex flex-col space-y-8 items-center justify-center">
+      <div in:fly={{ x: 0, y: 32, duration: 1500, opacity: 0, delay: 300 }}>
+        <p class="text-2xl opacity-60 font-bold expand-then-shrink">WELCOME TO</p>
+      </div>
+      <h1 class="text-3xl font-bold" in:fly={{ x: 0, y: 32, duration: 1500, opacity: 0, delay: 700 }}>
+        {$game.current?.name || $game.cached?.name || $i18n.t('games.loading')}
+      </h1>
     </div>
     <div class="h-32"></div>
   </div>

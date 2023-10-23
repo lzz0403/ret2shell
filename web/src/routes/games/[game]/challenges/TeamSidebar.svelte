@@ -10,7 +10,7 @@
   export let notifications: Notification[]
 </script>
 
-<div class="flex flex-col h-32 sticky top-0 bg-neutral/30 border-b border-b-base-content/5 z-10 p-6">
+<div class="flex flex-col h-32 sticky top-0 border-b border-b-base-content/5 z-10 p-6">
   <div class="flex-1 flex flex-row items-center space-x-2">
     {#if $game.team}
       <span class="icon-[fluent--people-team-20-regular] w-5 h-5" />
