@@ -12,7 +12,7 @@
 
   import { goto } from '$app/navigation'
   import { getChallengeHints, getChallengeList, getTagList } from '$lib/api/challenge'
-  import { getGameNotifications, getGameSelfSubmission, getGameTeamSubmission } from '$lib/api/game'
+  import { getGameNotifications } from '$lib/api/game'
   import ChallengeSidebar from './ChallengeSidebar.svelte'
   import TeamSidebar from './TeamSidebar.svelte'
   import HintsPanel from '$lib/blocks/challenge/HintsPanel.svelte'
@@ -22,11 +22,9 @@
   import RxLink from '$lib/components/RxLink.svelte'
   import { i18n } from '$lib/i18n'
   import type { Challenge, Tag } from '$lib/models/challenge'
-  import { Permission } from '$lib/models/user'
   import { game, refreshTeam } from '$lib/stores/game'
   import { theme } from '$lib/stores/theme'
   import { showMessage } from '$lib/stores/toast'
-  import { user } from '$lib/stores/user'
   import type { AxiosError } from 'axios'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import { onDestroy, onMount } from 'svelte'
@@ -52,9 +50,11 @@
   $: mayHaveMoreChallenges = challengePage < challengeTotalPages
   let tags: Tag[] = []
   let currentGameIdCache: number | null = null
+  let loading = false
 
   function getChallenges() {
     if ($game.current?.id) {
+      loading = true
       getChallengeList($game.current?.id, challengePage, challengePageSize)
         .then((res) => {
           $game.challenges = $game.challenges
@@ -84,6 +84,9 @@
               5000
             )
           }
+        })
+        .finally(() => {
+          loading = false
         })
     }
   }
@@ -237,6 +240,7 @@
       class="w-1/5 h-[calc(100vh_-_4rem)] flex-shrink-0 flex flex-col min-w-[24rem] max-w-[32rem] bg-neutral/20 backdrop-blur border-r border-r-base-content/10 overflow-hidden"
     >
       <ChallengeSidebar
+        {loading}
         selfSubmissions={$game.submissions}
         challenges={$game.challenges}
         {tags}
@@ -455,6 +459,7 @@
       transition:fly={{ delay: 100, duration: 300, x: -256, y: 0, opacity: 0, easing: quintOut }}
     >
       <ChallengeSidebar
+        {loading}
         selfSubmissions={$game.submissions}
         challenges={$game.challenges}
         {tags}

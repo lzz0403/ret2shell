@@ -198,6 +198,7 @@
 
   $: {
     if (filterNeedAudit !== storedFilter) {
+      currentPage = 1
       fetchTeams()
       storedFilter = filterNeedAudit
     }

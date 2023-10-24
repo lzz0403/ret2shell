@@ -125,7 +125,8 @@
     "launch": "Launch",
     "fetchAnswerFailed": "Failed to obtain solution",
     "challengeAnswerWarning": "The purpose of the problem solutions is to provide some help when you really have no ideas. Please try to do the questions independently and do not rely on the problem solutions. Do not use the problem solutions to increase your scores, refresh your problem solving records, etc.!",
-    "challengeSolvedWarning": "Only the top 20 players who solved the problem are displayed, excluding hidden and disabled users; you can view the time of solving the problem by hovering the mouse over the user name."
+    "challengeSolvedWarning": "Only the top 20 players who solved the problem are displayed, excluding hidden and disabled users; you can view the time of solving the problem by hovering the mouse over the user name.",
+    "fetchingList": "Fetching playground list..."
   },
   "games": {
     "title": "Games",

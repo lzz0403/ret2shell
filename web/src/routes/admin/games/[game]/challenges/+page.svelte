@@ -182,6 +182,7 @@
   $: watchPage(currentPage, $admin.game)
   $: {
     if (filterTagID !== storedFilter) {
+      currentPage = 1
       fetchChallenges()
       storedFilter = filterTagID
     }

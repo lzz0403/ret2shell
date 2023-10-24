@@ -2,7 +2,6 @@
   import { platform } from '$lib/stores/platform'
   import { i18n } from '$lib/i18n'
   import RxCard from '$lib/components/RxCard.svelte'
-  import RxLink from '$lib/components/RxLink.svelte'
 </script>
 
 <svelte:head><title>{$i18n.t('admin.title')} - {$platform.name}</title></svelte:head>

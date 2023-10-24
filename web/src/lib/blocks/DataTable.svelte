@@ -65,14 +65,6 @@
       </tr>
     </thead>
     <tbody class="w-full max-w-full overflow-hidden text-base relative">
-      {#if loading}
-        <div
-          class="absolute top-0 left-0 w-full h-full flex flex-row justify-center items-center backdrop-blur z-20"
-          transition:blur={{ amount: 20, duration: 300 }}
-        >
-          <span class="loading loading-spinner loading-sm" />
-        </div>
-      {/if}
       {#if dataEntries.length === 0}
         <tr class="border-b-base-100/5">
           <td colspan={Object.keys(colDef).length + (actions.length > 0 ? 1 : 0)} class="text-center">
@@ -222,6 +214,14 @@
           {/if}
         </tr>
       {/each}
+      {#if loading}
+        <div
+          class="absolute top-0 left-0 w-full h-full flex flex-row justify-center items-center backdrop-blur z-20"
+          transition:blur={{ amount: 20, duration: 300 }}
+        >
+          <span class="loading loading-spinner loading-sm" />
+        </div>
+      {/if}
     </tbody>
   </table>
   <div class="flex flex-row items-center justify-center w-full">

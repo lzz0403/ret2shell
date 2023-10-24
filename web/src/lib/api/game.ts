@@ -57,7 +57,7 @@ export async function getGameTeamList(
   let uri = `${api_root}/game/${game_id}/team?page=${page}&per_page=${per_page}`
   if (filter !== undefined && filter !== null && filter !== '') uri += `&filter=${filter}`
   if (filterNeedAudit !== undefined && filterNeedAudit !== null) uri += `&need_audit=${filterNeedAudit}`
-  console.log(uri)
+  // console.log(uri)
   return (await api.get(uri)).data as { teams: Team[]; total: number }
 }
 

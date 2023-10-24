@@ -115,7 +115,7 @@
         if (p) return i
       })
       .filter((p) => p !== undefined) as number[]
-    console.log($data.permissions)
+    // console.log($data.permissions)
     $touched.permissions = true
   }
 

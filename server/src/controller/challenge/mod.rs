@@ -77,7 +77,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
                 .route("/attachment", get(download_challenge_attachment))
                 .nest("/env", env::router(state))
                 .nest("/submission", submission::router(state))
-                .route("/solved", get(get_solved_user_list))
+                .route("/solved-team", get(get_solved_team_list))
+                .route("/solved-user", get(get_solved_user_list))
                 .nest("/hint", hint::router(state))
                 .nest("/answer", answer::router(state))
                 .route_layer(middleware::from_fn_with_state(
@@ -99,7 +100,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
 }
 
 #[derive(Deserialize)]
-struct SolvedUserListQuery {
+struct ListQuery {
     page: Option<u64>,
     per_page: Option<u64>,
 }
@@ -113,7 +114,7 @@ struct SolvedUserList {
 async fn get_solved_user_list(
     State(ref conn): State<DatabaseConnection>,
     Extension(challenge): Extension<challenge::Model>,
-    Query(params): Query<SolvedUserListQuery>,
+    Query(params): Query<ListQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     let page = params.page.unwrap_or(1);
     let per_page = params.per_page.unwrap_or(20);
@@ -128,6 +129,35 @@ async fn get_solved_user_list(
             Err((
                 StatusCode::INTERNAL_SERVER_ERROR,
                 "failed to get solved user list due to database error",
+            ))
+        }
+    }
+}
+
+#[derive(Serialize)]
+struct SolvedTeamList {
+    teams: Vec<submission_entity::ModelOnlyTeamInfo>,
+    total: u64,
+}
+
+async fn get_solved_team_list(
+    State(ref conn): State<DatabaseConnection>,
+    Extension(challenge): Extension<challenge::Model>,
+    Query(params): Query<ListQuery>,
+) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
+    let page = params.page.unwrap_or(1);
+    let per_page = params.per_page.unwrap_or(20);
+    if page < 1 || per_page < 1 {
+        error!("Invalid page={} or per_page={}", page, per_page);
+        return Err((StatusCode::BAD_REQUEST, "invalid paginate parameters"));
+    }
+    match submission_entity::get_solved_team_page(conn, challenge.id, page, per_page).await {
+        Ok((teams, total)) => Ok(Json(SolvedTeamList { teams, total })),
+        Err(err) => {
+            error!("get_solved_team_list error: {}", err);
+            Err((
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "failed to get solved team list due to database error",
             ))
         }
     }

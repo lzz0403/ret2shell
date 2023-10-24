@@ -20,7 +20,7 @@
 
   const { field, onBlur, onInput } = createField(name)
 
-  function handleUpload(e: Event) {
+  function handleUpload() {
     if (inputEl.files && inputEl.files.length > 0) {
       const file = inputEl.files[0]
       uploadMedia(file, false, progress)
@@ -43,8 +43,8 @@
   type="file"
   class="hidden"
   bind:this={inputEl}
-  on:change={(e) => {
-    handleUpload(e)
+  on:change={() => {
+    handleUpload()
   }}
 />
 <div class={classes} use:field>

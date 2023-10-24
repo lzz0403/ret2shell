@@ -16,7 +16,6 @@
   import { getPlatformVersion } from '$lib/api/platform'
   import RxPopup from '$lib/components/RxPopup.svelte'
   import LogoAnimate from '$lib/assets/logo-animate.svelte'
-  import { fade } from 'svelte/transition'
 
   let calendars: Calendar[] = []
 

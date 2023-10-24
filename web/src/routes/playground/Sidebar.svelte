@@ -21,6 +21,7 @@
   export let mayHaveMorePlaygrounds: boolean
   export let mayHaveMoreGames: boolean
   export let mayHaveMoreChallenges: boolean
+  export let loading = false
 
   const dispatch = createEventDispatcher()
 
@@ -139,7 +140,12 @@
     </div>
   {:else}
     <div class="flex-1 flex-col">
-      {#if playgrounds.length === 0 && filteredGames.length === 0}
+      {#if loading}
+        <div class="flex flex-row justify-center items-center h-16 space-x-2">
+          <span class="loading loading-spinner loading-sm" />
+          <span class="text-base">{$i18n.t('playground.fetchingList')}</span>
+        </div>
+      {:else if playgrounds.length === 0 && filteredGames.length === 0}
         <p class="text-base font-semibold p-4 opacity-60 text-center">{$i18n.t('playground.emptyCategory')}</p>
       {/if}
       {#if playgrounds.length > 0}

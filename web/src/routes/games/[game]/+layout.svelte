@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/stores'
-  import { getGame, getSelfTeamInfo } from '$lib/api/game'
+  import { getGame } from '$lib/api/game'
   import Background from '$lib/blocks/Background.svelte'
   import BgBlur from '$lib/assets/bg-blur.webp'
   import { i18n } from '$lib/i18n'

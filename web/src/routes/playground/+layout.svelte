@@ -47,6 +47,7 @@
   $: mayHaveMoreChallenges = challengePage < challengeTotalPages
   $: mayHaveMoreGames = gamePage < gameTotalPages
   $: mayHaveMorePlaygrounds = playgroundPage < playgroundTotalPages
+  let loading = true
 
   getGameList(playgroundPage, playgroundPageSize, false)
     .then((res) => {
@@ -60,6 +61,9 @@
         5000
       )
     })
+    .finally(() => {
+      loading = false
+    })
 
   getGameList(gamePage, gamePageSize, true)
     .then((res) => {
@@ -68,6 +72,9 @@
     })
     .catch((err) => {
       showMessage('error', `${$i18n.t('playground.fetchGamesFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+    })
+    .finally(() => {
+      loading = false
     })
 
   getTagList()
@@ -189,6 +196,7 @@
       class="w-1/5 h-[calc(100vh_-_4rem)] flex-shrink-0 flex flex-col min-w-[24rem] max-w-[32rem] bg-neutral/20 backdrop-blur border-r border-r-base-content/10 overflow-hidden"
     >
       <Sidebar
+        {loading}
         {games}
         {playgrounds}
         selfSubmissions={$game.submissions}
@@ -223,6 +231,7 @@
       transition:fly={{ delay: 100, duration: 300, x: -256, y: 0, opacity: 0, easing: quintOut }}
     >
       <Sidebar
+        {loading}
         {games}
         {playgrounds}
         selfSubmissions={$game.submissions}

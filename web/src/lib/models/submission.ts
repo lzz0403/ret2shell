@@ -14,3 +14,10 @@ export interface SubmissionOnlyUserInfo {
   user_id: number
   user_name: string
 }
+
+export interface SubmissionOnlyTeamInfo {
+  id: number
+  created_at: number
+  team_id: number
+  team_name: string
+}

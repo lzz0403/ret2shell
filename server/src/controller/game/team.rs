@@ -7,7 +7,8 @@ use crate::{
         GlobalState,
     },
     entity::{
-        config, game, team,
+        config, game,
+        team::{self, TeamScoreHistory, TeamScoreHistoryList},
         user::{self, Permission},
         user2_team,
     },
@@ -19,6 +20,7 @@ use axum::{
     routing::{get, patch, post},
     Extension, Json, Router,
 };
+use chrono::Utc;
 use hyper::StatusCode;
 use sea_orm::{DatabaseConnection, DbErr};
 use serde::{Deserialize, Serialize};
@@ -161,6 +163,12 @@ async fn create_team(
         game_id: game.id,
         state,
         institute_id: user.institute_id,
+        history: TeamScoreHistoryList(vec![TeamScoreHistory {
+            score: 0,
+            challenge_id: None,
+            blood_state: None,
+            time: Utc::now(),
+        }]),
         ..Default::default()
     };
 

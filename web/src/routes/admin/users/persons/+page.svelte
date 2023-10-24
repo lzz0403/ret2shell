@@ -171,10 +171,10 @@
         return
       }
       loadingUser = true
+      showPersonPanel = true
       getUserInfo(id)
         .then((res) => {
           currentUser = res
-          showPersonPanel = true
         })
         .catch((err) => {
           showMessage('error', `${$i18n.t('users.fetchInfoFailed')}: ${(err as AxiosError).response?.data}`, 5000)
@@ -210,6 +210,7 @@
               class="join-item ml-0"
               size="sm"
               on:click={() => {
+                currentPage = 1
                 fetchUsers()
               }}
             >

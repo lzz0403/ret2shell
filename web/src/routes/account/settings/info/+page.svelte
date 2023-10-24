@@ -111,14 +111,6 @@
 <svelte:head><title>{$i18n.t('account.infoSetting')} - {$platform.name}</title></svelte:head>
 
 <div class="flex-1 relative">
-  {#if loading}
-    <div
-      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
-      transition:blur={{ amount: 20, duration: 300 }}
-    >
-      <span class="loading loading-spinner loading-sm" />
-    </div>
-  {/if}
   <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">
     <div class="flex-1 flex flex-col max-w-5xl">
       <div class="m-2 md:m-4 flex flex-row justify-center items-center space-x-6">
@@ -215,4 +207,12 @@
       <div class="h-32"></div>
     </div>
   </div>
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
+    </div>
+  {/if}
 </div>

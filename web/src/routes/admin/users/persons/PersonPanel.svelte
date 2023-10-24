@@ -30,14 +30,6 @@
     class="w-full h-full relative print:hidden"
     defer
   >
-    {#if loading}
-      <div
-        class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
-        transition:blur={{ amount: 20, duration: 300 }}
-      >
-        <span class="loading loading-spinner loading-sm" />
-      </div>
-    {/if}
     <div class="sticky top-0 h-16 min-h-16 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
       <div class="flex-1 flex flex-row items-center space-x-2 px-4">
         <h1 class="text-base font-bold">{user?.name}</h1>
@@ -63,6 +55,14 @@
       <Info {user} {institutes} />
     {:else if activeTab === 'statistics'}
       <Statistics {user} />
+    {/if}
+    {#if loading}
+      <div
+        class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+        transition:blur={{ amount: 20, duration: 300 }}
+      >
+        <span class="loading loading-spinner loading-sm" />
+      </div>
     {/if}
   </OverlayScrollbarsComponent>
 </div>

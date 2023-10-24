@@ -170,14 +170,6 @@
 </script>
 
 <div class="flex flex-col min-h-full relative backdrop-blur">
-  {#if loading}
-    <div
-      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
-      transition:blur={{ amount: 20, duration: 300 }}
-    >
-      <span class="loading loading-spinner loading-sm" />
-    </div>
-  {/if}
   <div class="h-16 flex-shrink-0 flex flex-row items-center px-2 border-b border-b-base-content/5 relative">
     <RxInput ghost bind:value={editedWiki.title}></RxInput>
     <RxButton class="join-item" ghost level="info" on:click={createOrSaveWikiItem}>
@@ -210,6 +202,14 @@
           <RxButton size="sm" level="error" on:click={handleDeleteWiki}>{$i18n.t('form.confirm')}</RxButton>
         </div>
       </div>
+    </div>
+  {/if}
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
     </div>
   {/if}
 </div>

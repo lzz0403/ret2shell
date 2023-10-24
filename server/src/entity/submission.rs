@@ -46,6 +46,15 @@ pub struct ModelOnlyUserInfo {
     pub user_name: String,
 }
 
+#[derive(Clone, Serialize, Deserialize, FromQueryResult)]
+pub struct ModelOnlyTeamInfo {
+    pub id: i64,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub created_at: DateTime<Utc>,
+    pub team_id: i64,
+    pub team_name: String,
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
@@ -198,6 +207,30 @@ pub async fn get_solved_user_page(
         .distinct_on([(Entity, Column::UserId), (Entity, Column::ChallengeId)]);
     let paginator = sql
         .into_model::<ModelOnlyUserInfo>()
+        .paginate(conn, per_page);
+    let mut resp = paginator.fetch_page(page - 1).await?;
+    resp.sort_by(|a, b| a.created_at.cmp(&b.created_at));
+    let num_pages = paginator.num_pages().await?;
+    Ok((resp, num_pages))
+}
+
+pub async fn get_solved_team_page(
+    conn: &DatabaseConnection,
+    challenge_id: i64,
+    page: u64,
+    per_page: u64,
+) -> Result<(Vec<ModelOnlyTeamInfo>, u64), DbErr> {
+    let sql = Entity::find()
+        .select_only()
+        .columns([Column::Id, Column::TeamId, Column::CreatedAt])
+        .join(JoinType::InnerJoin, Relation::Team.def())
+        .column_as(super::team::Column::Name, "team_name")
+        .filter(Column::TeamId.is_not_null())
+        .filter(Column::ChallengeId.eq(challenge_id))
+        .filter(Column::Solved.eq(true))
+        .distinct_on([(Entity, Column::TeamId), (Entity, Column::ChallengeId)]);
+    let paginator = sql
+        .into_model::<ModelOnlyTeamInfo>()
         .paginate(conn, per_page);
     let mut resp = paginator.fetch_page(page - 1).await?;
     resp.sort_by(|a, b| a.created_at.cmp(&b.created_at));

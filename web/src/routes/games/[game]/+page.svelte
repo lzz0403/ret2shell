@@ -34,10 +34,6 @@
   function calcTime() {
     let now = new Date()
     time = ($game.current?.end_time || 0) - now.getTime() / 1000
-    if (time <= 0) {
-      clearInterval(timer)
-      return
-    }
   }
 
   let canTakePartIn = false
@@ -58,6 +54,7 @@
 
   onDestroy(() => {
     gameUnsubscribe()
+    clearInterval(timer)
   })
 </script>
 

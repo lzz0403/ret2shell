@@ -30,6 +30,11 @@ class GameStore {
     this.showGameNav = false
     this.runningInstance = null
   }
+
+  inProgress(): boolean {
+    const now = new Date().getTime() / 1000
+    return !!this.current && this.current.start_time < now && this.current.end_time > now
+  }
 }
 
 export const game = writable(new GameStore())

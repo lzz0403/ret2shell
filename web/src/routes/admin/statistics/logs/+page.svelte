@@ -75,12 +75,12 @@
 
     if (chart) {
       chart.data.datasets = [
-        ...Object.entries(cpusHistory).map(([_, value]) => {
+        ...Object.entries(cpusHistory).map(([label, value]) => {
           return {
-            label: '',
+            label,
             data: value,
             fill: true,
-            tension: 0.1,
+            tension: 0,
           }
         }),
       ]

@@ -5,15 +5,18 @@
   import { i18n } from '$lib/i18n'
   import type { Challenge, Tag } from '$lib/models/challenge'
   import type { ScoreHistory, Team } from '$lib/models/team'
+  import { Permission } from '$lib/models/user'
   import { game } from '$lib/stores/game'
   import { colorDefs, theme } from '$lib/stores/theme'
   import { showMessage } from '$lib/stores/toast'
+  import { user } from '$lib/stores/user'
   import type { AxiosError } from 'axios'
   import { Chart } from 'chart.js/auto'
   import 'chartjs-adapter-luxon'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import { onDestroy, onMount } from 'svelte'
   import type { Unsubscriber } from 'svelte/store'
+  import { blur } from 'svelte/transition'
 
   Chart.defaults.font.family =
     '"JetBrains Mono", Menlo, -apple-system, "Noto Sans", "Helvetica Neue", Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC", "Source Han Sans CN", "Microsoft YaHei", Consolas, Courier, monospace'
@@ -31,7 +34,7 @@
   Chart.defaults.plugins.tooltip.titleColor = colorDefs()['base-content']
   Chart.defaults.plugins.tooltip.bodyColor = colorDefs()['base-content']
   Chart.defaults.plugins.tooltip.footerColor = colorDefs()['base-content']
-  Chart.defaults.animation = false
+  // Chart.defaults.animation = false
 
   let canvas: HTMLCanvasElement
   let chart: Chart
@@ -43,6 +46,7 @@
   let showAll = false
   let scoreboardTeams: Team[] = []
   let cachedGameId = 0
+  let loading = true
 
   let tagsChallengesRecord: Record<number, Challenge[]> = {}
   let tags: Tag[] = []
@@ -136,20 +140,27 @@
     unsubscribe = game.subscribe((value) => {
       if (value.current && value.current.id !== cachedGameId) {
         cachedGameId = value.current.id
-        getChallengeList(value.current.id, 1, 200)
-          .then((res) => {
-            game.update((value) => {
-              value.challenges = res.challenges
-              return value
+        if (
+          $game.team ||
+          $user.permissions.find(
+            (item) => item === Permission.Audit || item === Permission.Organize || item === Permission.Devops
+          )
+        ) {
+          getChallengeList(value.current.id, 1, 200)
+            .then((res) => {
+              game.update((value) => {
+                value.challenges = res.challenges
+                return value
+              })
             })
-          })
-          .catch((err) => {
-            showMessage(
-              'error',
-              `${$i18n.t('playground.fetchChallengesFailed')}: ${(err as AxiosError).response?.data}`,
-              5000
-            )
-          })
+            .catch((err) => {
+              showMessage(
+                'error',
+                `${$i18n.t('playground.fetchChallengesFailed')}: ${(err as AxiosError).response?.data}`,
+                5000
+              )
+            })
+        }
         refreshScoreboard()
         refreshTop10()
       }
@@ -167,10 +178,12 @@
   })
 
   function refreshScoreboard() {
+    loading = true
     getGameScoreboard($game.current?.id || 0, page, perPage, showAll, instituteId)
       .then((value) => {
         teams = value.teams
         total = value.total
+        loading = false
       })
       .catch((err) => {
         showMessage('error', `${$i18n.t('game.fetchScoreboardFailed')}: ${(err as AxiosError).response?.data}`, 5000)
@@ -178,10 +191,12 @@
   }
 
   function refreshTop10() {
+    loading = true
     getGameScoreboard($game.current?.id || 0, 1, 10, showAll, instituteId)
       .then((value) => {
         scoreboardTeams = value.teams
         updateChart()
+        loading = false
       })
       .catch((err) => {
         showMessage('error', `${$i18n.t('game.fetchScoreboardFailed')}: ${(err as AxiosError).response?.data}`, 5000)
@@ -234,7 +249,7 @@
 <svelte:head>
   <title>{$i18n.t('game.scoreboard')} - {$game.current?.name}</title>
 </svelte:head>
-<div class="flex-1 flex flex-col p-6 lg:p-12 space-y-6">
+<div class="flex-1 flex flex-col p-6 lg:p-12 space-y-6 relative">
   <div class="h-80 rounded-box overflow-hidden bg-neutral/30 backdrop-blur p-6 pb-4">
     <div class="w-full h-full relative">
       <canvas bind:this={canvas}></canvas>
@@ -296,65 +311,78 @@
         {/each}
       </tbody>
     </table>
-    <OverlayScrollbarsComponent
-      options={{
-        scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
-      }}
-      class="relative h-auto print:h-auto print:overflow-auto"
-      defer
-    >
-      <table>
-        <thead class="border-b-4 border-b-base-content/10">
-          <tr class="h-12 border-b border-b-base-content/10">
-            {#each tags as item}
-              {#if tagsChallengesRecord[item.id].length > 0}
-                <th
-                  class="text-base font-bold h-12 border-l border-l-base-content/5"
-                  colspan={tagsChallengesRecord[item.id].length}
-                >
-                  <span class="opacity-60">{item.name}</span>
-                </th>
-              {/if}
-            {/each}
-          </tr>
-          <tr class="h-12">
-            {#each tags as item}
-              {#if tagsChallengesRecord[item.id].length > 0}
-                {#each tagsChallengesRecord[item.id] as challenge}
-                  <th class="text-base border-l border-l-base-content/5" title={challenge.name}>
-                    <div class="w-20 overflow-hidden whitespace-nowrap truncate opacity-80">{challenge.name}</div>
-                  </th>
-                {/each}
-              {/if}
-            {/each}
-          </tr>
-        </thead>
-        <tbody>
-          {#each teams as item}
+    {#if $game.team || $user.permissions.find((item) => item === Permission.Audit || item === Permission.Organize || item === Permission.Devops)}
+      <OverlayScrollbarsComponent
+        options={{
+          scrollbars: {
+            theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light',
+            autoHide: 'scroll',
+          },
+        }}
+        class="relative h-auto print:h-auto print:overflow-auto"
+        defer
+      >
+        <table>
+          <thead class="border-b-4 border-b-base-content/10">
             <tr class="h-12 border-b border-b-base-content/10">
-              {#each tags as tag}
-                {#each tagsChallengesRecord[tag.id] as challenge}
-                  <td class="text-base font-bold">
-                    <div class="flex flex-row justify-center items-center">
-                      {#if getSolveState(item.history, challenge.id) === 1}
-                        <span class="icon-[fluent--trophy-20-filled] text-yellow-500 w-5 h-5"></span>
-                      {:else if getSolveState(item.history, challenge.id) === 2}
-                        <span class="icon-[fluent--trophy-20-filled] text-zinc-500 w-5 h-5"></span>
-                      {:else if getSolveState(item.history, challenge.id) === 3}
-                        <span class="icon-[fluent--trophy-20-filled] text-orange-500 w-5 h-5"></span>
-                      {:else if getSolveState(item.history, challenge.id) !== null}
-                        <span class="icon-[fluent--flag-20-filled] text-error w-5 h-5"></span>
-                      {/if}
-                    </div>
-                  </td>
-                {/each}
+              {#each tags as item}
+                {#if tagsChallengesRecord[item.id].length > 0}
+                  <th
+                    class="text-base font-bold h-12 border-l border-l-base-content/5"
+                    colspan={tagsChallengesRecord[item.id].length}
+                  >
+                    <span class="opacity-60">{item.name}</span>
+                  </th>
+                {/if}
               {/each}
             </tr>
-          {/each}
-        </tbody>
-      </table>
-    </OverlayScrollbarsComponent>
+            <tr class="h-12">
+              {#each tags as item}
+                {#if tagsChallengesRecord[item.id].length > 0}
+                  {#each tagsChallengesRecord[item.id] as challenge}
+                    <th class="text-base border-l border-l-base-content/5" title={challenge.name}>
+                      <div class="w-20 overflow-hidden whitespace-nowrap truncate opacity-80">{challenge.name}</div>
+                    </th>
+                  {/each}
+                {/if}
+              {/each}
+            </tr>
+          </thead>
+          <tbody>
+            {#each teams as item}
+              <tr class="h-12 border-b border-b-base-content/10">
+                {#each tags as tag}
+                  {#each tagsChallengesRecord[tag.id] as challenge}
+                    <td class="text-base font-bold">
+                      <div class="flex flex-row justify-center items-center">
+                        {#if getSolveState(item.history, challenge.id) === 1}
+                          <span class="icon-[fluent--trophy-20-filled] text-yellow-500 w-5 h-5"></span>
+                        {:else if getSolveState(item.history, challenge.id) === 2}
+                          <span class="icon-[fluent--trophy-20-filled] text-zinc-500 w-5 h-5"></span>
+                        {:else if getSolveState(item.history, challenge.id) === 3}
+                          <span class="icon-[fluent--trophy-20-filled] text-orange-500 w-5 h-5"></span>
+                        {:else if getSolveState(item.history, challenge.id) !== null}
+                          <span class="icon-[fluent--flag-20-filled] text-error w-5 h-5"></span>
+                        {/if}
+                      </div>
+                    </td>
+                  {/each}
+                {/each}
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      </OverlayScrollbarsComponent>
+    {/if}
   </div>
   <div class="flex-1"></div>
   <RxPaginator bind:page {total} />
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
+    </div>
+  {/if}
 </div>

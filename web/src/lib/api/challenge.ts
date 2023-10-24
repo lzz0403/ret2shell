@@ -1,7 +1,7 @@
 import type { Answer } from '$lib/models/answer'
 import type { Challenge, Tag } from '$lib/models/challenge'
 import type { Hint } from '$lib/models/hint'
-import type { Submission, SubmissionOnlyUserInfo } from '$lib/models/submission'
+import type { Submission, SubmissionOnlyTeamInfo, SubmissionOnlyUserInfo } from '$lib/models/submission'
 import { api, api_root } from '.'
 
 export async function getChallengeList(
@@ -64,11 +64,19 @@ export async function downloadChallengeAttachment(
 }
 
 export async function getChallengeSolvedUser(id: number, page?: number, per_page?: number) {
-  let uri = `${api_root}/challenge/${id}/solved`
+  let uri = `${api_root}/challenge/${id}/solved-user`
   if (page && per_page) {
     uri += `?page=${page}&per_page=${per_page}`
   }
   return (await api.get(uri)).data as { users: SubmissionOnlyUserInfo[]; total: number }
+}
+
+export async function getChallengeSolvedTeam(id: number, page?: number, per_page?: number) {
+  let uri = `${api_root}/challenge/${id}/solved-team`
+  if (page && per_page) {
+    uri += `?page=${page}&per_page=${per_page}`
+  }
+  return (await api.get(uri)).data as { teams: SubmissionOnlyTeamInfo[]; total: number }
 }
 
 export async function getChallengeAnwser(id: number) {

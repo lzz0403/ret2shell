@@ -21,6 +21,8 @@
   import LogoAnimate from '$lib/assets/logo-animate.svelte'
   import RxTimer from '$lib/components/RxTimer.svelte'
   import RxPing from '$lib/components/RxPing.svelte'
+  import { navigating } from '$app/stores'
+  import { fade } from 'svelte/transition'
 
   let canTakePartIn = false
 
@@ -39,6 +41,33 @@
   let loadingAvatar = false
 
   let gameLastTime = 0
+
+  let pageLoadingProgress: number | null = null
+
+  navigating.subscribe((value) => {
+    if (value) {
+      setTimeout(() => {
+        if ($navigating) {
+          pageLoadingProgress = 0
+        }
+      }, 500)
+    } else {
+      if (pageLoadingProgress !== null) {
+        pageLoadingProgress = 100
+        setTimeout(() => {
+          pageLoadingProgress = null
+        }, 700)
+      }
+    }
+  })
+
+  setInterval(() => {
+    if (pageLoadingProgress !== null) {
+      if (pageLoadingProgress < 85) {
+        pageLoadingProgress += 10
+      }
+    }
+  }, 1000)
 
   function calcTime() {
     let now = new Date()
@@ -175,3 +204,12 @@
     {/if}
   {/if}
 </div>
+{#if pageLoadingProgress !== null}
+  <div class="fixed left-0 top-16 w-screen h-[1px] z-50 animate-pulse">
+    <div
+      class={`h-full transition-all ${pageLoadingProgress === 100 ? 'bg-success' : 'bg-primary'}`}
+      style="width: {pageLoadingProgress}%;"
+      transition:fade={{ duration: 300 }}
+    />
+  </div>
+{/if}

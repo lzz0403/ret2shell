@@ -1,24 +1,34 @@
 <script lang="ts">
-  import { getChallengeSolvedUser } from '$lib/api/challenge'
+  import { getChallengeSolvedTeam, getChallengeSolvedUser } from '$lib/api/challenge'
   import RxTag from '$lib/components/RxTag.svelte'
-  import RxToast from '$lib/components/RxToast.svelte'
   import { i18n } from '$lib/i18n'
   import type { Challenge } from '$lib/models/challenge'
-  import type { SubmissionOnlyUserInfo } from '$lib/models/submission'
+  import type { SubmissionOnlyTeamInfo, SubmissionOnlyUserInfo } from '$lib/models/submission'
+  import { game } from '$lib/stores/game'
   import { theme } from '$lib/stores/theme'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
 
   let clazz = ''
   export { clazz as class }
   export let challenge: Challenge | null
-  let solved: SubmissionOnlyUserInfo[] = []
+  let solvedUsers: SubmissionOnlyUserInfo[] = []
+  let solvedTeams: SubmissionOnlyTeamInfo[] = []
 
   $: classes = `w-full flex-1 relative overflow-hidden ${clazz}`
 
-  $: if (challenge)
-    getChallengeSolvedUser(challenge?.id, 1, 20).then((data) => {
-      solved = data.users
-    })
+  $: watchChallenge(challenge)
+  function watchChallenge(chal: Challenge | null) {
+    solvedTeams = []
+    solvedUsers = []
+    if (chal && $game.inProgress())
+      getChallengeSolvedTeam(chal?.id, 1, 20).then((data) => {
+        solvedTeams = data.teams
+      })
+    else if (chal)
+      getChallengeSolvedUser(chal?.id, 1, 20).then((data) => {
+        solvedUsers = data.users
+      })
+  }
 </script>
 
 <div class={classes}>
@@ -30,7 +40,7 @@
       class="w-full h-full relative print:hidden"
       defer
     >
-      {#if !solved || solved.length === 0}
+      {#if (!solvedUsers || solvedUsers.length === 0) && (!solvedTeams || solvedTeams.length === 0)}
         <p class="w-full min-h-full flex-1 flex flex-row justify-center items-center font-bold opacity-60">
           {$i18n.t('playground.emptyContent')}
         </p>
@@ -43,9 +53,16 @@
             </span>
           </div>
           <div class="flex flex-wrap">
-            {#each solved as item}
+            {#each solvedUsers as item}
               <RxTag class="m-2" title={new Date(item.created_at * 1000).toLocaleString()}>
                 <a class="hover:underline" href={`/users/${item.user_id}`}>{item.user_name}</a>
+              </RxTag>
+            {/each}
+            {#each solvedTeams as item}
+              <RxTag class="m-2" title={new Date(item.created_at * 1000).toLocaleString()}>
+                <a class="hover:underline" href={`/games/${$game.current?.id}/teams/${item.team_id}`}>
+                  {item.team_name}
+                </a>
               </RxTag>
             {/each}
           </div>

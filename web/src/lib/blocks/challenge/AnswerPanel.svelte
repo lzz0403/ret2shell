@@ -1,6 +1,5 @@
 <script lang="ts">
   import RxArticle from '$lib/components/RxArticle.svelte'
-  import RxToast from '$lib/components/RxToast.svelte'
   import { i18n } from '$lib/i18n'
   import type { Answer } from '$lib/models/answer'
   import { theme } from '$lib/stores/theme'

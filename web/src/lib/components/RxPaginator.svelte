@@ -1,8 +1,11 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import RxButton from './RxButton.svelte'
 
   export let total = 0
   export let page = 1
+
+  const dispatch = createEventDispatcher()
 
   // p: page, t: total
   function calculatePagination(p: number, t: number) {
@@ -29,6 +32,7 @@
           active={key === page}
           on:click={() => {
             page = key
+            dispatch('select-page', key)
           }}
           disabled={key === -1}
         >
