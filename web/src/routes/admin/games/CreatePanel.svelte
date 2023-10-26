@@ -18,6 +18,8 @@
   import { z } from 'zod'
   import { createForm } from 'felte'
   import { validator } from '@felte/validator-zod'
+  import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
+  import { theme } from '$lib/stores/theme'
 
   export let game: Game
   export let loading = false
@@ -78,7 +80,7 @@
     },
   })
 
-  $: classes = `w-full bg-neutral/20 backdrop-blur flex flex-col overflow-hidden ${clazz}`
+  $: classes = `w-full bg-neutral/20 backdrop-blur overflow-hidden ${clazz}`
 
   const dispatch = createEventDispatcher()
 
@@ -94,242 +96,251 @@
 </script>
 
 <div class={classes}>
-  <div class="sticky top-0 h-16 min-h-16 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
-    <div class="flex-1 flex flex-row items-center px-4">
-      <h1 class="text-base font-bold">{$i18n.t('game.create')}</h1>
+  <div class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden">
+    <div class="h-16 flex-shrink-0 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
+      <div class="flex-1 flex flex-row items-center px-4">
+        <h1 class="text-base font-bold">{$i18n.t('game.create')}</h1>
+      </div>
+      <RxButton
+        ghost
+        level="error"
+        class="join-item ml-0"
+        disabled={loading || submitting}
+        on:click={() => {
+          dispatch('close')
+        }}
+      >
+        <span class="icon-[fluent--dismiss-20-regular] w-5 h-5"></span>
+      </RxButton>
     </div>
-    <RxButton
-      ghost
-      level="error"
-      class="join-item ml-0"
-      disabled={loading || submitting}
-      on:click={() => {
-        dispatch('close')
+
+    <OverlayScrollbarsComponent
+      options={{
+        scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
       }}
+      class="w-full flex-1 overflow-hidden relative print:hidden"
+      defer
     >
-      <span class="icon-[fluent--dismiss-20-regular] w-5 h-5"></span>
-    </RxButton>
-  </div>
+      <RxForm class="p-4 lg:p-6" {form}>
+        <div class="flex flex-row space-x-4">
+          <div class="flex flex-1 flex-col space-y-2">
+            <RxFormItem
+              name="name"
+              label={$i18n.t('game.name')}
+              hasError={$errors.name !== null}
+              errors={$errors.name || ''}
+            >
+              <RxInput
+                icon="icon-[fluent--flag-16-regular]"
+                class="w-full"
+                id="name"
+                name="name"
+                disabled={loading || submitting}
+                hasError={$errors.name !== null}
+                value={game.name}
+                placeholder={$i18n.t('game.namePlaceholder')}
+              />
+            </RxFormItem>
 
-  <RxForm class="p-4 lg:p-6" {form}>
-    <div class="flex flex-row space-x-4">
-      <div class="flex flex-1 flex-col space-y-2">
-        <RxFormItem
-          name="name"
-          label={$i18n.t('game.name')}
-          hasError={$errors.name !== null}
-          errors={$errors.name || ''}
-        >
-          <RxInput
-            icon="icon-[fluent--flag-16-regular]"
-            class="w-full"
-            id="name"
-            name="name"
-            disabled={loading || submitting}
-            hasError={$errors.name !== null}
-            value={game.name}
-            placeholder={$i18n.t('game.namePlaceholder')}
-          />
-        </RxFormItem>
-
-        <RxFormItem
-          name="brief"
-          label={$i18n.t('game.brief')}
-          hasError={$errors.brief !== null}
-          errors={$errors.brief || ''}
-        >
-          <RxInput
-            icon="icon-[fluent--info-16-regular]"
-            class="w-full"
-            id="brief"
-            name="brief"
-            disabled={loading || submitting}
-            hasError={$errors.brief !== null}
-            value={game.brief}
-            placeholder={$i18n.t('game.briefPlaceholder')}
-          />
-        </RxFormItem>
-        <div class="flex-1"></div>
+            <RxFormItem
+              name="brief"
+              label={$i18n.t('game.brief')}
+              hasError={$errors.brief !== null}
+              errors={$errors.brief || ''}
+            >
+              <RxInput
+                icon="icon-[fluent--info-16-regular]"
+                class="w-full"
+                id="brief"
+                name="brief"
+                disabled={loading || submitting}
+                hasError={$errors.brief !== null}
+                value={game.brief}
+                placeholder={$i18n.t('game.briefPlaceholder')}
+              />
+            </RxFormItem>
+            <div class="flex-1"></div>
+            <div class="flex flex-row space-x-4">
+              <RxFormItem
+                name="host_as_game"
+                label=""
+                hasError={$errors.host_as_game !== null}
+                errors={$errors.host_as_game || ''}
+              >
+                <RxCheckBox
+                  name="host_as_game"
+                  label={$i18n.t('game.host_as_game')}
+                  disabled={loading || submitting}
+                  checked={game.host_as_game}
+                />
+              </RxFormItem>
+              <RxFormItem
+                name="enable_team_audit"
+                label=""
+                hasError={$errors.enable_team_audit !== null}
+                errors={$errors.enable_team_audit || ''}
+              >
+                <RxCheckBox
+                  name="enable_team_audit"
+                  label={$i18n.t('game.enable_team_audit')}
+                  disabled={loading || submitting}
+                  checked={game.enable_team_audit}
+                />
+              </RxFormItem>
+              <RxFormItem
+                name="can_register_after_started"
+                label=""
+                hasError={$errors.can_register_after_started !== null}
+                errors={$errors.can_register_after_started || ''}
+              >
+                <RxCheckBox
+                  name="can_register_after_started"
+                  label={$i18n.t('game.can_register_after_started')}
+                  disabled={loading || submitting}
+                  checked={game.can_register_after_started}
+                />
+              </RxFormItem>
+              <RxFormItem name="hidden" label="" hasError={$errors.hidden !== null} errors={$errors.hidden || ''}>
+                <RxCheckBox
+                  name="hidden"
+                  label={$i18n.t('game.hidden')}
+                  disabled={loading || submitting}
+                  checked={game.hidden}
+                />
+              </RxFormItem>
+              <RxFormItem name="frozen" label="" hasError={$errors.frozen !== null} errors={$errors.frozen || ''}>
+                <RxCheckBox
+                  name="frozen"
+                  label={$i18n.t('game.frozen')}
+                  disabled={loading || submitting}
+                  checked={game.frozen}
+                />
+              </RxFormItem>
+            </div>
+            <div class="flex-1"></div>
+          </div>
+          <RxFormItem
+            class="!flex-none"
+            name="cover_path"
+            label={$i18n.t('game.cover')}
+            hasError={$errors.cover_path !== null}
+            errors={$errors.cover_path || ''}
+          >
+            <RxImageUpload class="h-64" name="cover_path" value={game.cover_path || ''}></RxImageUpload>
+          </RxFormItem>
+        </div>
         <div class="flex flex-row space-x-4">
           <RxFormItem
-            name="host_as_game"
-            label=""
-            hasError={$errors.host_as_game !== null}
-            errors={$errors.host_as_game || ''}
+            name="start_time"
+            label={$i18n.t('game.startTime')}
+            hasError={$errors.start_time !== null}
+            errors={$errors.start_time || ''}
           >
-            <RxCheckBox
-              name="host_as_game"
-              label={$i18n.t('game.host_as_game')}
+            <RxTimePicker name="start_time" value={game.start_time}></RxTimePicker>
+          </RxFormItem>
+          <RxFormItem
+            name="end_time"
+            label={$i18n.t('game.endTime')}
+            hasError={$errors.end_time !== null}
+            errors={$errors.end_time || ''}
+          >
+            <RxTimePicker name="end_time" value={game.end_time}></RxTimePicker>
+          </RxFormItem>
+        </div>
+        <div class="flex flex-row space-x-4">
+          <RxFormItem
+            name="register_time"
+            label={$i18n.t('game.registerTime')}
+            hasError={$errors.register_time !== null}
+            errors={$errors.register_time || ''}
+          >
+            <RxTimePicker name="register_time" value={game.register_time}></RxTimePicker>
+          </RxFormItem>
+          <RxFormItem
+            name="archive_time"
+            label={$i18n.t('game.archiveTime')}
+            hasError={$errors.archive_time !== null}
+            errors={$errors.archive_time || ''}
+          >
+            <RxTimePicker name="archive_time" value={game.archive_time}></RxTimePicker>
+          </RxFormItem>
+        </div>
+        <RxFormItem
+          name="introduction"
+          label={$i18n.t('game.introduction')}
+          hasError={$errors.introduction !== null}
+          errors={$errors.introduction || ''}
+        >
+          <RxCodeBox
+            class="h-[20rem]"
+            name="introduction"
+            disabled={loading || submitting}
+            hasError={$errors.introduction !== null}
+            value={game.introduction}
+          />
+        </RxFormItem>
+        <RxFormItem
+          name="institute_id"
+          label={$i18n.t('game.institute_id')}
+          hasError={$errors.institute_id !== null}
+          errors={$errors.institute_id || ''}
+          class="relative"
+        >
+          <RxSelect
+            name="institute_id"
+            disabled={loading || submitting}
+            availableOptions={institutes
+              .map((i) => {
+                return { id: i.id, label: i.name }
+              }) //@ts-expect-error id is string | number | null
+              .concat([{ id: null, label: 'NONE' }])}
+            value={game.institute_id}
+          />
+        </RxFormItem>
+        <div class="flex flex-row space-x-4">
+          <RxFormItem
+            name="team_size_limit"
+            label={$i18n.t('game.team_size_limit')}
+            hasError={$errors.team_size_limit !== null}
+            errors={$errors.team_size_limit || ''}
+          >
+            <RxInput
+              icon="icon-[fluent--person-20-regular]"
+              class="w-full"
+              id="team_size_limit"
+              name="team_size_limit"
+              type="number"
               disabled={loading || submitting}
-              checked={game.host_as_game}
+              hasError={$errors.team_size_limit !== null}
+              value={game.team_size_limit}
+              placeholder={$i18n.t('game.team_size_limitPlaceholder')}
             />
           </RxFormItem>
           <RxFormItem
-            name="enable_team_audit"
-            label=""
-            hasError={$errors.enable_team_audit !== null}
-            errors={$errors.enable_team_audit || ''}
+            name="blood_award_rate"
+            label={$i18n.t('game.blood_award_rate')}
+            hasError={$errors.blood_award_rate !== null}
+            errors={$errors.blood_award_rate || ''}
           >
-            <RxCheckBox
-              name="enable_team_audit"
-              label={$i18n.t('game.enable_team_audit')}
+            <RxInput
+              icon="icon-[fluent--person-20-regular]"
+              class="w-full"
+              id="blood_award_rate"
+              name="blood_award_rate"
+              type="number"
               disabled={loading || submitting}
-              checked={game.enable_team_audit}
-            />
-          </RxFormItem>
-          <RxFormItem
-            name="can_register_after_started"
-            label=""
-            hasError={$errors.can_register_after_started !== null}
-            errors={$errors.can_register_after_started || ''}
-          >
-            <RxCheckBox
-              name="can_register_after_started"
-              label={$i18n.t('game.can_register_after_started')}
-              disabled={loading || submitting}
-              checked={game.can_register_after_started}
-            />
-          </RxFormItem>
-          <RxFormItem name="hidden" label="" hasError={$errors.hidden !== null} errors={$errors.hidden || ''}>
-            <RxCheckBox
-              name="hidden"
-              label={$i18n.t('game.hidden')}
-              disabled={loading || submitting}
-              checked={game.hidden}
-            />
-          </RxFormItem>
-          <RxFormItem name="frozen" label="" hasError={$errors.frozen !== null} errors={$errors.frozen || ''}>
-            <RxCheckBox
-              name="frozen"
-              label={$i18n.t('game.frozen')}
-              disabled={loading || submitting}
-              checked={game.frozen}
+              hasError={$errors.blood_award_rate !== null}
+              value={game.blood_award_rate}
+              placeholder={$i18n.t('game.blood_award_ratePlaceholder')}
             />
           </RxFormItem>
         </div>
-        <div class="flex-1"></div>
-      </div>
-      <RxFormItem
-        class="!flex-none"
-        name="cover_path"
-        label={$i18n.t('game.cover')}
-        hasError={$errors.cover_path !== null}
-        errors={$errors.cover_path || ''}
-      >
-        <RxImageUpload class="h-64" name="cover_path" value={game.cover_path || ''}></RxImageUpload>
-      </RxFormItem>
-    </div>
-    <div class="flex flex-row space-x-4">
-      <RxFormItem
-        name="start_time"
-        label={$i18n.t('game.startTime')}
-        hasError={$errors.start_time !== null}
-        errors={$errors.start_time || ''}
-      >
-        <RxTimePicker name="start_time" value={game.start_time}></RxTimePicker>
-      </RxFormItem>
-      <RxFormItem
-        name="end_time"
-        label={$i18n.t('game.endTime')}
-        hasError={$errors.end_time !== null}
-        errors={$errors.end_time || ''}
-      >
-        <RxTimePicker name="end_time" value={game.end_time}></RxTimePicker>
-      </RxFormItem>
-    </div>
-    <div class="flex flex-row space-x-4">
-      <RxFormItem
-        name="register_time"
-        label={$i18n.t('game.registerTime')}
-        hasError={$errors.register_time !== null}
-        errors={$errors.register_time || ''}
-      >
-        <RxTimePicker name="register_time" value={game.register_time}></RxTimePicker>
-      </RxFormItem>
-      <RxFormItem
-        name="archive_time"
-        label={$i18n.t('game.archiveTime')}
-        hasError={$errors.archive_time !== null}
-        errors={$errors.archive_time || ''}
-      >
-        <RxTimePicker name="archive_time" value={game.archive_time}></RxTimePicker>
-      </RxFormItem>
-    </div>
-    <RxFormItem
-      name="introduction"
-      label={$i18n.t('game.introduction')}
-      hasError={$errors.introduction !== null}
-      errors={$errors.introduction || ''}
-    >
-      <RxCodeBox
-        class="h-[20rem]"
-        name="introduction"
-        disabled={loading || submitting}
-        hasError={$errors.introduction !== null}
-        value={game.introduction}
-      />
-    </RxFormItem>
-    <RxFormItem
-      name="institute_id"
-      label={$i18n.t('game.institute_id')}
-      hasError={$errors.institute_id !== null}
-      errors={$errors.institute_id || ''}
-      class="relative"
-    >
-      <RxSelect
-        name="institute_id"
-        disabled={loading || submitting}
-        availableOptions={institutes
-          .map((i) => {
-            return { id: i.id, label: i.name }
-          }) //@ts-expect-error id is string | number | null
-          .concat([{ id: null, label: 'NONE' }])}
-        value={game.institute_id}
-      />
-    </RxFormItem>
-    <div class="flex flex-row space-x-4">
-      <RxFormItem
-        name="team_size_limit"
-        label={$i18n.t('game.team_size_limit')}
-        hasError={$errors.team_size_limit !== null}
-        errors={$errors.team_size_limit || ''}
-      >
-        <RxInput
-          icon="icon-[fluent--person-20-regular]"
-          class="w-full"
-          id="team_size_limit"
-          name="team_size_limit"
-          type="number"
-          disabled={loading || submitting}
-          hasError={$errors.team_size_limit !== null}
-          value={game.team_size_limit}
-          placeholder={$i18n.t('game.team_size_limitPlaceholder')}
-        />
-      </RxFormItem>
-      <RxFormItem
-        name="blood_award_rate"
-        label={$i18n.t('game.blood_award_rate')}
-        hasError={$errors.blood_award_rate !== null}
-        errors={$errors.blood_award_rate || ''}
-      >
-        <RxInput
-          icon="icon-[fluent--person-20-regular]"
-          class="w-full"
-          id="blood_award_rate"
-          name="blood_award_rate"
-          type="number"
-          disabled={loading || submitting}
-          hasError={$errors.blood_award_rate !== null}
-          value={game.blood_award_rate}
-          placeholder={$i18n.t('game.blood_award_ratePlaceholder')}
-        />
-      </RxFormItem>
-    </div>
-    <RxFormItem name="submitAction" label="">
-      <RxButton class="w-full" level="primary" type="submit" loading={submitting}>
-        {submitting ? $i18n.t('game.creating') : $i18n.t('game.create')}
-      </RxButton>
-    </RxFormItem>
-  </RxForm>
-  <div class="h-32"></div>
+        <RxFormItem name="submitAction" label="">
+          <RxButton class="w-full" type="submit" loading={submitting}>
+            {submitting ? $i18n.t('game.creating') : $i18n.t('game.create')}
+          </RxButton>
+        </RxFormItem>
+      </RxForm>
+    </OverlayScrollbarsComponent>
+  </div>
 </div>

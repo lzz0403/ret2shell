@@ -338,7 +338,8 @@
     "report": "问题反馈",
     "about": {
       "tip1": "Copyright (c) Ret2Shell, 保留所有权利。"
-    }
+    },
+    "clusterIsDown": "集群离线了……"
   },
   "errors": {
     "401": "请先登录",

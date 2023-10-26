@@ -23,14 +23,8 @@
 </script>
 
 <div class={classes}>
-  <OverlayScrollbarsComponent
-    options={{
-      scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
-    }}
-    class="w-full h-full relative print:hidden"
-    defer
-  >
-    <div class="sticky top-0 h-16 min-h-16 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
+  <div class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden">
+    <div class="h-16 flex-shrink-0 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
       <div class="flex-1 flex flex-row items-center space-x-2 px-4">
         <h1 class="text-base font-bold">{user?.name}</h1>
         <RxButton class="!ml-12" ghost on:click={() => (activeTab = 'info')} active={activeTab === 'info'}>
@@ -51,18 +45,26 @@
         <span class="icon-[fluent--dismiss-20-regular] w-5 h-5"></span>
       </RxButton>
     </div>
-    {#if activeTab === 'info'}
-      <Info {user} {institutes} />
-    {:else if activeTab === 'statistics'}
-      <Statistics {user} />
-    {/if}
-    {#if loading}
-      <div
-        class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
-        transition:blur={{ amount: 20, duration: 300 }}
-      >
-        <span class="loading loading-spinner loading-sm" />
-      </div>
-    {/if}
-  </OverlayScrollbarsComponent>
+    <OverlayScrollbarsComponent
+      options={{
+        scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
+      }}
+      class="w-full flex-1 overflow-hidden relative print:hidden"
+      defer
+    >
+      {#if activeTab === 'info'}
+        <Info {user} {institutes} />
+      {:else if activeTab === 'statistics'}
+        <Statistics {user} />
+      {/if}
+      {#if loading}
+        <div
+          class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+          transition:blur={{ amount: 20, duration: 300 }}
+        >
+          <span class="loading loading-spinner loading-sm" />
+        </div>
+      {/if}
+    </OverlayScrollbarsComponent>
+  </div>
 </div>

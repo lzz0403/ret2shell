@@ -6,21 +6,25 @@
   import type { AxiosError } from 'axios'
   import { onMount } from 'svelte'
   import Engine from '$lib/assets/engine.svelte'
-  import KubenertesLogo from '$lib/assets/kubernetes.svg'
+  import KubenertesLogo from '$lib/assets/kubernetes.svelte'
   import RxTag from '$lib/components/RxTag.svelte'
   import RxPopup from '$lib/components/RxPopup.svelte'
   import '$lib/styles/transitions.scss'
+  import { blur } from 'svelte/transition'
 
   let clusterInfo: ClusterInfo | null = null
   let loading = true
+  let working = false
 
   onMount(() => {
     getPlatformClusterInfo()
       .then((resp) => {
         clusterInfo = resp
+        working = true
       })
       .catch((err) => {
         showMessage('error', `${$i18n.t('platform.fetchStatFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+        working = false
       })
       .finally(() => {
         loading = false
@@ -33,22 +37,33 @@
     ?.clusterDomain
 </script>
 
-<div class="flex-1 flex flex-col p-6 space-y-2">
-  <h1 class="text-3xl font-bold flex flex-row space-x-4 items-center">
-    <img class="animate-spin-slow" src={KubenertesLogo} alt="" width={96} height={96} />
-    <div class="flex flex-col space-y-2">
-      <span>
-        <span>Kubernetes v{clusterInfo?.version.major}.{clusterInfo?.version.minor}</span>
-        <span class="opacity-40">@</span>
-        <span class="opacity-80">{clusterInfo?.default_namespace}</span>
-      </span>
-      <div class="text-base flex flex-row flex-wrap opacity-60">
-        <span>
-          Version: {clusterInfo?.version.gitVersion}-{clusterInfo?.version.goVersion}-{clusterInfo?.version.platform}
-        </span>
+<div class="flex-1 flex flex-col p-6 space-y-2 relative">
+  {#if !loading}
+    <h1 class="text-3xl font-bold flex flex-row space-x-4 items-center">
+      {#if working}
+        <KubenertesLogo class="animate-spin-slow" level="active" width={96} height={96} />
+      {:else}
+        <KubenertesLogo level="down" width={96} height={96} />
+      {/if}
+      <div class="flex flex-col space-y-2">
+        {#if working}
+          <span>
+            <span>Kubernetes v{clusterInfo?.version.major}.{clusterInfo?.version.minor}</span>
+            <span class="opacity-40">@</span>
+            <span class="opacity-80">{clusterInfo?.default_namespace}</span>
+          </span>
+          <div class="text-base flex flex-row flex-wrap opacity-60">
+            <span>
+              Version: {clusterInfo?.version.gitVersion}-{clusterInfo?.version.goVersion}-{clusterInfo?.version
+                .platform}
+            </span>
+          </div>
+        {:else}
+          <span>{$i18n.t('platform.clusterIsDown')}</span>
+        {/if}
       </div>
-    </div>
-  </h1>
+    </h1>
+  {/if}
   <div class="divider"></div>
   <h2 class="font-bold text-base">{$i18n.t('admin.cluster.basicInfo')}</h2>
   <div class="flex flex-row space-x-6 items-center">
@@ -144,4 +159,12 @@
       {/each}
     {/if}
   </div>
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
+    </div>
+  {/if}
 </div>

@@ -27,7 +27,7 @@
   animation: spin 10s linear infinite;
 
   &:hover {
-    animation: spin 0.3s linear infinite;
+    animation-duration: 1s;
   }
 }
 

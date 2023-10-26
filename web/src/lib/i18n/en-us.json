@@ -338,7 +338,8 @@
     "report": "Bug Report",
     "about": {
       "tip1": "Copyright (c) Ret2Shell, All Rights Reserved."
-    }
+    },
+    "clusterIsDown": "The cluster is offline..."
   },
   "errors": {
     "401": "Please Login First",
