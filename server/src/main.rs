@@ -27,7 +27,6 @@ mod audit;
 mod bucket;
 mod cache;
 mod captcha;
-mod checker;
 mod config;
 mod controller;
 mod email;
