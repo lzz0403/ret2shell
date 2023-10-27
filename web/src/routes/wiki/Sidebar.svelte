@@ -5,8 +5,9 @@
   import { transformToWikiEntry, type WikiEntry } from '$lib/models/wiki'
   import { theme } from '$lib/stores/theme'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
+  import type { Writable } from 'svelte/store'
 
-  export let wiki: WikiEntry[]
+  export let wiki: Writable<WikiEntry[]>
   export let activeChains: number[] = []
   export let loading: boolean
 
@@ -36,11 +37,11 @@
       <span class="text-base">{$i18n.t('wiki.fetchingList')}</span>
     </div>
   {:else}
-    {#if wiki.length === 0}
+    {#if $wiki.length === 0}
       <p class="text-base font-semibold p-4 opacity-60 text-center">{$i18n.t('playground.emptyCategory')}</p>
     {/if}
     <div class="p-4">
-      <WikiTree bind:tree={wiki} {activeChains} addrPrefix="/wiki" {fetchChildren} manageBtn={false} />
+      <WikiTree bind:tree={$wiki} {activeChains} addrPrefix="/wiki" {fetchChildren} manageBtn={false} />
     </div>
   {/if}
 </OverlayScrollbarsComponent>

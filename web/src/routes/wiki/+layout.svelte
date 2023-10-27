@@ -11,9 +11,10 @@
   import { page } from '$app/stores'
   import Error from '$lib/blocks/Error.svelte'
   import SidebarLayout from '$lib/blocks/SidebarLayout.svelte'
+  import { writable } from 'svelte/store'
 
   let activeChains: number[] = []
-  let wikiEntries: WikiEntry[] = []
+  let wikiEntries = writable<WikiEntry[]>([])
   let loading = false
   let error = 200
 
@@ -23,7 +24,8 @@
   // we should show error page.
   async function recursiveInsertPath(path: number[]) {
     let currentId = 0
-    let currentChildren: WikiEntry[] = wikiEntries
+    let clonedEntries = $wikiEntries
+    let currentChildren = clonedEntries
     for (let i = 0; i < path.length; i++) {
       currentId = path[i]
       // console.log(currentId)
@@ -37,7 +39,10 @@
       currentChild.children = transformToWikiEntry(newChildren)
       currentChildren = currentChild.children
     }
-    wikiEntries = wikiEntries
+    wikiEntries.update((val) => {
+      val = clonedEntries
+      return val
+    })
 
     loading = false
   }
@@ -46,7 +51,7 @@
     loading = true
     getWikiList()
       .then((data) => {
-        wikiEntries = transformToWikiEntry(data)
+        $wikiEntries = transformToWikiEntry(data)
         error = 200
       })
       .catch((err) => {
