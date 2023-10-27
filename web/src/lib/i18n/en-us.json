@@ -727,7 +727,20 @@
     "fetchFailed": "Failed to get challenges",
     "filterTag": "filter tags:",
     "create": "Create",
-    "isHidden": "Hidden"
+    "isHidden": "Hidden",
+    "nameRequired": "Cahllenge name cannot be empty",
+    "contentRequired": "Challenge content cannot be empty",
+    "tagRequired": "Challenge tag cannot be empty",
+    "initialScoreRequired": "Please specify the initial score for the challenge",
+    "minimumScoreRequired": "Please specify the minimum score for the challenge",
+    "content": "Challenge content",
+    "tag_id": "Challenge tag",
+    "creating": "Challenge is creating",
+    "initial_score": "Initial score",
+    "minimum_score": "Minimum score",
+    "decay": "Score decay",
+    "createSuccess": "Challenge created successfully",
+    "createFailed": "Challenge created failed"
   },
   "tag": {
     "fetchFailed": "Failed to get tags"

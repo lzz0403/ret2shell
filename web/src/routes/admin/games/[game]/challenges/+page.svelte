@@ -7,7 +7,7 @@
   import type { AxiosError } from 'axios'
   import { onDestroy, onMount } from 'svelte'
   import type { Challenge, Tag } from '$lib/models/challenge'
-  import { getChallengeList, getTagList } from '$lib/api/challenge'
+  import { createChallenge, getChallengeList, getTagList } from '$lib/api/challenge'
   import { admin } from '$lib/stores/admin'
   import type { Game } from '$lib/models/game'
   import RxSelect from '$lib/components/RxSelect.svelte'
@@ -24,6 +24,23 @@
   let challenges: Challenge[] = []
   let tags: Tag[] = []
   let filterTagID: number | null = null
+  let submitting: boolean = false
+  let loadingChallenge: boolean = false
+  let activeChallenge: Challenge = {
+    id: 0,
+    name: '',
+    content: '',
+    game_id: 0,
+    tag_id: 0,
+    hidden: false,
+    initial_score: 1000,
+    current_score: 0,
+    minimum_score: 500,
+    updated_at: 0,
+    decay: 10,
+    bucket: '',
+    checker: '',
+  }
 
   let actions: DTColumnAction[] = [
     {
@@ -212,6 +229,23 @@
   onDestroy(() => {
     unsubscribe()
   })
+
+  function handleCreateChallenge(newChallenge: Challenge) {
+    if (!$admin.game) return
+    submitting = true
+    createChallenge($admin.game?.id, newChallenge)
+      .then(() => {
+        showMessage('success', $i18n.t('challenge.createSuccess'), 5000)
+        window.location.hash = ''
+        fetchChallenges()
+      })
+      .catch((err) => {
+        showMessage('error', `${$i18n.t('challenge.createFailed')}: ${(err as AxiosError).response?.data}`, 5000)
+      })
+      .finally(() => {
+        submitting = false
+      })
+  }
 </script>
 
 <svelte:head><title>{$i18n.t('admin.challengeListSettings')} - {$platform.name}</title></svelte:head>
@@ -256,9 +290,16 @@
     </div>
   {:else if showCreatePanel}
     <CreatePanel
+      {tags}
+      bind:challenge={activeChallenge}
       class="flex-1"
+      loading={loadingChallenge}
+      {submitting}
       on:close={() => {
         window.location.hash = ''
+      }}
+      on:submit={(event) => {
+        handleCreateChallenge(event.detail)
       }}
     ></CreatePanel>
   {:else if showEditPanel}

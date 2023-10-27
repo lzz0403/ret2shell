@@ -727,7 +727,20 @@
     "fetchFailed": "获取题目失败",
     "filterTag": "过滤标签：",
     "create": "创建",
-    "isHidden": "已隐藏"
+    "isHidden": "已隐藏",
+    "nameRequired": "题目名称不能为空",
+    "contentRequired": "题目内容不能为空",
+    "tagRequired": "题目标签不能为空",
+    "initialScoreRequired": "请指定题目初始分数",
+    "minimumScoreRequired": "请指定题目最小分数",
+    "content": "题目内容",
+    "tag_id": "题目标签",
+    "creating": "题目正在创建",
+    "initial_score": "初始分数",
+    "minimum_score": "最小分数",
+    "decay": "分数衰减",
+    "createSuccess": "题目创建成功",
+    "createFailed": "题目创建失败"
   },
   "tag": {
     "fetchFailed": "获取标签失败"
