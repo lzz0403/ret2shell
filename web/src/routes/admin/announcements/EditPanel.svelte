@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ExtraPanel from '$lib/blocks/ExtraPanel.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
   import RxCodearea from '$lib/components/RxCodearea.svelte'
   import RxInput from '$lib/components/RxInput.svelte'
@@ -13,62 +14,46 @@
   let clazz = ''
   export { clazz as class }
 
-  $: classes = `w-full bg-neutral/20 backdrop-blur flex flex-col overflow-hidden ${clazz}`
-
   const dispatch = createEventDispatcher()
 </script>
 
-<div class={classes}>
-  <div class="h-16 min-h-16 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
-    <div class="join flex-1">
-      <RxButton
-        on:click={() => {
-          announcement.pinned = !announcement.pinned
-        }}
-        ghost
-        {loading}
-        class="join-item"
-      >
-        {#if !loading}
-          <span class={`icon-[fluent--pin-20-regular] w-5 h-5 ${announcement.pinned ? 'text-error' : 'opacity-60'}`} />
-        {/if}
-      </RxButton>
-      <RxInput
-        ghost
-        class="flex-1 join-item"
-        label="Title"
-        placeholder="Title"
-        disabled={loading || submitting}
-        bind:value={announcement.title}
-      />
-    </div>
-    <div class="join">
-      <RxButton
-        ghost
-        level="primary"
-        disabled={loading || submitting}
-        loading={submitting}
-        class="join-item"
-        on:click={() => {
-          dispatch('submit', announcement)
-        }}
-      >
-        {$i18n.t('announcement.submit')}
-      </RxButton>
-      <RxButton
-        ghost
-        level="error"
-        class="join-item ml-0"
-        on:click={() => {
-          dispatch('close')
-        }}
-      >
-        <span class="icon-[fluent--dismiss-20-regular] w-5 h-5"></span>
-      </RxButton>
-    </div>
+<ExtraPanel class={clazz} on:close={() => dispatch('close')}>
+  <div class="join flex-1" slot="header">
+    <RxButton
+      on:click={() => {
+        announcement.pinned = !announcement.pinned
+      }}
+      ghost
+      {loading}
+      class="join-item"
+    >
+      {#if !loading}
+        <span class={`icon-[fluent--pin-20-regular] w-5 h-5 ${announcement.pinned ? 'text-error' : 'opacity-60'}`} />
+      {/if}
+    </RxButton>
+    <RxInput
+      ghost
+      class="flex-1 join-item"
+      label="Title"
+      placeholder="Title"
+      disabled={loading || submitting}
+      bind:value={announcement.title}
+    />
   </div>
+  <RxButton
+    ghost
+    level="primary"
+    disabled={loading || submitting}
+    loading={submitting}
+    slot="actions"
+    on:click={() => {
+      dispatch('submit', announcement)
+    }}
+  >
+    {$i18n.t('announcement.submit')}
+  </RxButton>
   <RxCodearea
-    class="flex-1"
+    class="w-full h-full"
     lang="markdown"
     placeholder="Mode = Markdown"
     {loading}
@@ -76,4 +61,4 @@
     bind:value={announcement.content}
     droppable={true}
   />
-</div>
+</ExtraPanel>

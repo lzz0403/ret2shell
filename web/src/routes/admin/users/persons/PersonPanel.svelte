@@ -9,6 +9,7 @@
   import { i18n } from '$lib/i18n'
   import { blur } from 'svelte/transition'
   import type { Institute } from '$lib/models/institute'
+  import ExtraPanel from '$lib/blocks/ExtraPanel.svelte'
 
   export let user: User | null
   export let loading = false
@@ -22,49 +23,28 @@
   const dispatch = createEventDispatcher()
 </script>
 
-<div class={classes}>
-  <div class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden">
-    <div class="h-16 flex-shrink-0 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
-      <div class="flex-1 flex flex-row items-center space-x-2 px-4">
-        <h1 class="text-base font-bold">{user?.name}</h1>
-        <RxButton class="!ml-12" ghost on:click={() => (activeTab = 'info')} active={activeTab === 'info'}>
-          {$i18n.t('admin.userInfo')}
-        </RxButton>
-        <RxButton ghost on:click={() => (activeTab = 'statistics')} active={activeTab === 'statistics'}>
-          {$i18n.t('admin.userStatistics')}
-        </RxButton>
-      </div>
-      <RxButton
-        ghost
-        level="error"
-        class="join-item ml-0"
-        on:click={() => {
-          dispatch('close')
-        }}
-      >
-        <span class="icon-[fluent--dismiss-20-regular] w-5 h-5"></span>
-      </RxButton>
-    </div>
-    <OverlayScrollbarsComponent
-      options={{
-        scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
-      }}
-      class="w-full flex-1 overflow-hidden relative print:hidden"
-      defer
-    >
-      {#if activeTab === 'info'}
-        <Info {user} {institutes} />
-      {:else if activeTab === 'statistics'}
-        <Statistics {user} />
-      {/if}
-      {#if loading}
-        <div
-          class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
-          transition:blur={{ amount: 20, duration: 300 }}
-        >
-          <span class="loading loading-spinner loading-sm" />
-        </div>
-      {/if}
-    </OverlayScrollbarsComponent>
+<ExtraPanel class={clazz} on:close={() => dispatch('close')}>
+  <div class="flex-1 flex flex-row items-center space-x-2 px-4" slot="header">
+    <h1 class="text-base font-bold">{user?.name}</h1>
+    <RxButton class="!ml-12" ghost on:click={() => (activeTab = 'info')} active={activeTab === 'info'}>
+      {$i18n.t('admin.userInfo')}
+    </RxButton>
+    <RxButton ghost on:click={() => (activeTab = 'statistics')} active={activeTab === 'statistics'}>
+      {$i18n.t('admin.userStatistics')}
+    </RxButton>
   </div>
-</div>
+
+  {#if activeTab === 'info'}
+    <Info {user} {institutes} />
+  {:else if activeTab === 'statistics'}
+    <Statistics {user} />
+  {/if}
+  {#if loading}
+    <div
+      class="absolute top-0 left-0 w-full h-full z-20 backdrop-blur flex flex-row justify-center items-center"
+      transition:blur={{ amount: 20, duration: 300 }}
+    >
+      <span class="loading loading-spinner loading-sm" />
+    </div>
+  {/if}
+</ExtraPanel>

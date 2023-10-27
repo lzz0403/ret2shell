@@ -9,7 +9,7 @@
   import type { Game, Notification } from '$lib/models/game'
   import { createNotification, deleteGameNotification, getGameNotifications } from '$lib/api/game'
   import RxLink from '$lib/components/RxLink.svelte'
-  import CreatePanel from './EditPanel.svelte'
+  import CreatePanel from './CreatePanel.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
   import { blur } from 'svelte/transition'
   import { page } from '$app/stores'

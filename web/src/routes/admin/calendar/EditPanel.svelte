@@ -1,4 +1,5 @@
 <script lang="ts">
+  import ExtraPanel from '$lib/blocks/ExtraPanel.svelte'
   import RxButton from '$lib/components/RxButton.svelte'
   import RxCodeBox from '$lib/components/RxCodeBox.svelte'
   import RxDatePicker from '$lib/components/RxDatePicker.svelte'
@@ -78,102 +79,77 @@
   }
 </script>
 
-<div class={classes}>
-  <div class="absolute top-0 left-0 w-full h-full flex flex-col overflow-hidden">
-    <div class="h-16 flex-shrink-0 border-b border-b-base-content/5 flex flex-row px-2 items-center space-x-2">
-      <div class="flex-1 flex flex-row items-center px-4">
-        <h1 class="text-base font-bold">{calendar.id > 0 ? $i18n.t('calendar.edit') : $i18n.t('calendar.create')}</h1>
-      </div>
-      <RxButton
-        ghost
-        level="error"
-        class="join-item ml-0"
-        on:click={() => {
-          dispatch('close')
-        }}
+<ExtraPanel
+  class={clazz}
+  on:close={() => dispatch('close')}
+  title={calendar.id > 0 ? $i18n.t('calendar.edit') : $i18n.t('calendar.create')}
+>
+  <RxForm class="p-4 lg:p-6" {form}>
+    <div class="flex flex-row space-x-4">
+      <RxFormItem
+        name="name"
+        label={$i18n.t('calendar.name')}
+        hasError={$errors.name !== null}
+        errors={$errors.name || ''}
       >
-        <span class="icon-[fluent--dismiss-20-regular] w-5 h-5"></span>
-      </RxButton>
+        <RxInput
+          icon="icon-[fluent--flag-20-regular]"
+          class="w-full"
+          id="name"
+          name="name"
+          hasError={$errors.name !== null}
+          placeholder={$i18n.t('calendar.name')}
+          disabled={loading || submitting}
+          value={calendar.name}
+        />
+      </RxFormItem>
+      <RxFormItem
+        name="link"
+        label={$i18n.t('calendar.link')}
+        hasError={$errors.link !== null}
+        errors={$errors.link || ''}
+      >
+        <RxInput
+          icon="icon-[fluent--link-20-regular]"
+          class="w-full"
+          id="link"
+          name="link"
+          hasError={$errors.link !== null}
+          placeholder={$i18n.t('calendar.link')}
+          disabled={loading || submitting}
+          value={calendar.link}
+        />
+      </RxFormItem>
     </div>
-    <OverlayScrollbarsComponent
-      options={{
-        scrollbars: { theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light', autoHide: 'scroll' },
-      }}
-      class="w-full flex-1 overflow-hidden relative print:hidden"
-      defer
-    >
-      <RxForm class="p-4 lg:p-6" {form}>
-        <div class="flex flex-row space-x-4">
-          <RxFormItem
-            name="name"
-            label={$i18n.t('calendar.name')}
-            hasError={$errors.name !== null}
-            errors={$errors.name || ''}
-          >
-            <RxInput
-              icon="icon-[fluent--flag-20-regular]"
-              class="w-full"
-              id="name"
-              name="name"
-              hasError={$errors.name !== null}
-              placeholder={$i18n.t('calendar.name')}
-              disabled={loading || submitting}
-              value={calendar.name}
-            />
-          </RxFormItem>
-          <RxFormItem
-            name="link"
-            label={$i18n.t('calendar.link')}
-            hasError={$errors.link !== null}
-            errors={$errors.link || ''}
-          >
-            <RxInput
-              icon="icon-[fluent--link-20-regular]"
-              class="w-full"
-              id="link"
-              name="link"
-              hasError={$errors.link !== null}
-              placeholder={$i18n.t('calendar.link')}
-              disabled={loading || submitting}
-              value={calendar.link}
-            />
-          </RxFormItem>
-        </div>
-        <div class="flex flex-row space-x-4">
-          <RxFormItem
-            class="!flex-none"
-            name="start_time"
-            label={$i18n.t('calendar.startTime')}
-            hasError={$errors.start_time !== null || $errors.end_time !== null}
-            errors={$errors.start_time || $errors.end_time || ''}
-          >
-            <RxDatePicker
-              selectionStartName="start_time"
-              selectionEndName="end_time"
-              hasError={$errors.start_time !== null || $errors.end_time !== null}
-              selectionStart={calendar.start_time}
-              selectionEnd={calendar.end_time}
-            />
-          </RxFormItem>
-          <RxFormItem
-            class="flex-1"
-            name="intro"
-            label={$i18n.t('calendar.intro')}
-            hasError={$errors.intro !== null}
-            errors={$errors.intro || ''}
-          >
-            <RxCodeBox
-              name="intro"
-              hasError={$errors.intro !== null}
-              value={calendar.intro}
-              placeholder="Mode = Markdown"
-            ></RxCodeBox>
-          </RxFormItem>
-        </div>
-        <RxFormItem name="submitAction" label="">
-          <RxButton class="w-full" type="submit">{$i18n.t('calendar.submit')}</RxButton>
-        </RxFormItem>
-      </RxForm>
-    </OverlayScrollbarsComponent>
-  </div>
-</div>
+    <div class="flex flex-row space-x-4">
+      <RxFormItem
+        class="!flex-none"
+        name="start_time"
+        label={$i18n.t('calendar.startTime')}
+        hasError={$errors.start_time !== null || $errors.end_time !== null}
+        errors={$errors.start_time || $errors.end_time || ''}
+      >
+        <RxDatePicker
+          selectionStartName="start_time"
+          selectionEndName="end_time"
+          hasError={$errors.start_time !== null || $errors.end_time !== null}
+          selectionStart={calendar.start_time}
+          selectionEnd={calendar.end_time}
+        />
+      </RxFormItem>
+      <RxFormItem
+        class="flex-1"
+        name="intro"
+        label={$i18n.t('calendar.intro')}
+        hasError={$errors.intro !== null}
+        errors={$errors.intro || ''}
+      >
+        <RxCodeBox name="intro" hasError={$errors.intro !== null} value={calendar.intro} placeholder="Mode = Markdown"
+        ></RxCodeBox>
+      </RxFormItem>
+    </div>
+    <RxFormItem name="submitAction" label="">
+      <RxButton class="w-full" type="submit">{$i18n.t('calendar.submit')}</RxButton>
+    </RxFormItem>
+  </RxForm>
+</ExtraPanel>
