@@ -236,7 +236,8 @@
       "cluster": "集群情况",
       "about": "关于",
       "gameTags": "标签管理",
-      "tags": "标签管理"
+      "tags": "标签管理",
+      "submissions": "提交记录"
     },
     "currentPage": "当前",
     "userListSettings": "用户管理",
@@ -281,7 +282,8 @@
     "loadingChallenge": "正在加载...",
     "noChallengeLoaded": "题目尚未加载",
     "challengeHints": "提示信息",
-    "challengeAnswer": "题解"
+    "challengeAnswer": "题解",
+    "SubmissionListSettings": "提交记录管理"
   },
   "docs": {
     "title": "技术文档"
@@ -811,5 +813,13 @@
     "fetchFailed": "获取队伍信息失败",
     "auditFailed": "更改队伍审查状态失败",
     "filterNeedAudit": "过滤待审核队伍"
+  },
+  "submission": {
+    "user_name": "提交者",
+    "challenge_name": "题目名",
+    "content": "内容"
+  },
+  "submissions": {
+    "fetchFailed": "获取提交记录失败"
   }
 }

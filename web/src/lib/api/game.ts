@@ -1,5 +1,5 @@
 import type { Game, Notification } from '$lib/models/game'
-import type { Submission } from '$lib/models/submission'
+import type { Submission, SubmissionWithInfo } from '$lib/models/submission'
 import type { Team } from '$lib/models/team'
 import type { User } from '$lib/models/user'
 import { api, api_root } from '.'
@@ -41,6 +41,13 @@ export interface JoinTeamRequest {
 
 export async function joinTeam(game_id: number, req: JoinTeamRequest) {
   return await api.patch(`${api_root}/game/${game_id}/team`, req)
+}
+
+export async function getGameSubmission(game_id: number, page: number, per_page: number) {
+  return (await api.get(`${api_root}/game/${game_id}/submission?page=${page}&per_page=${per_page}`)).data as {
+    submissions: SubmissionWithInfo[]
+    total: number
+  }
 }
 
 export async function getGameSelfSubmission(game_id: number) {

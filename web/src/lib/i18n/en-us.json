@@ -239,7 +239,8 @@
       "cluster": "Cluster Statistics",
       "about": "About",
       "gameTags": "Tags",
-      "tags": "Challenge Tags"
+      "tags": "Challenge Tags",
+      "submissions": "Submit record"
     },
     "filter": "Filter...",
     "wikiGuide": "Welcome to the knowledge base! \nPlease select the article you want to edit on the left, or create a new one.",
@@ -281,7 +282,8 @@
     "loadingChallenge": "Loading...",
     "noChallengeLoaded": "Challenge not loaded yet",
     "challengeHints": "Hints",
-    "challengeAnswer": "Answer"
+    "challengeAnswer": "Answer",
+    "SubmissionListSettings": "Submit records management"
   },
   "docs": {
     "title": "Documents"
@@ -811,5 +813,13 @@
     "fetchFailed": "Failed to get team information",
     "auditFailed": "Failed to change team audit status",
     "filterNeedAudit": "Filter teams to be audited"
+  },
+  "submission": {
+    "user_name": "Submitter",
+    "challenge_name": "Challenge name",
+    "content": "Content"
+  },
+  "submissions": {
+    "fetchFailed": "Failed to get submission record"
   }
 }
