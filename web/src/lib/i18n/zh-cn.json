@@ -283,7 +283,8 @@
     "noChallengeLoaded": "题目尚未加载",
     "challengeHints": "提示信息",
     "challengeAnswer": "题解",
-    "SubmissionListSettings": "提交记录管理"
+    "SubmissionListSettings": "提交记录管理",
+    "WriteUpListSettings": "Write-Up审核"
   },
   "docs": {
     "title": "技术文档"
@@ -844,5 +845,12 @@
     "updateSuccess": "题解更新成功",
     "submiting": "正在提交",
     "submit": "提交"
+  },
+  "writeup": {
+    "title": "标题",
+    "team_name": "队伍名"
+  },
+  "witeup": {
+    "fetchFailed": "获取Write-Up失败"
   }
 }

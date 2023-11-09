@@ -283,7 +283,8 @@
     "noChallengeLoaded": "Challenge not loaded yet",
     "challengeHints": "Hints",
     "challengeAnswer": "Answer",
-    "SubmissionListSettings": "Submit records management"
+    "SubmissionListSettings": "Submit records management",
+    "WriteUpListSettings": "Write-Up Audit"
   },
   "docs": {
     "title": "Documents"
@@ -844,5 +845,12 @@
     "updateSuccess": "Answer updated successfully",
     "submiting": "Submiting",
     "submit": "Submit"
+  },
+  "writeup": {
+    "title": "Title",
+    "team_name": "Team Name"
+  },
+  "witeup": {
+    "fetchFailed": "Failed to get Write-Up"
   }
 }

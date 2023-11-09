@@ -2,6 +2,7 @@ import type { Game, Notification } from '$lib/models/game'
 import type { Submission, SubmissionWithInfo } from '$lib/models/submission'
 import type { Team } from '$lib/models/team'
 import type { User } from '$lib/models/user'
+import type { WriteUp, WriteUpOnlyTeamInfo } from '$lib/models/write_up'
 import { api, api_root } from '.'
 
 export async function getGameList(page: number, per_page: number, host_as_game?: boolean) {
@@ -127,4 +128,20 @@ export async function getGameScoreboard(
   if (all !== undefined && all !== null) uri += `&all=${all}`
   if (institute !== undefined && institute !== null) uri += `&institute=${institute}`
   return (await api.get(uri)).data as Scoreboard
+}
+
+export async function getGameWriteUp(game_id: number, page?: number, per_page?: number) {
+  let uri = `${api_root}/game/${game_id}/writeup`
+  if (page && per_page) {
+    uri += `?page=${page}&per_page=${per_page}`
+  }
+  return (await api.get(uri)).data as { writeups: WriteUpOnlyTeamInfo[]; total: number }
+}
+
+export async function getGameTeamWriteUp(game_id: number, id: number) {
+  return (await api.get(`${api_root}/game/${game_id}/writeup/detail?writeup_id=${id}`)).data as WriteUp
+}
+
+export async function auditGameTeamWriteUp(game_id: number, id: number, audit: boolean) {
+  return await api.patch(`${api_root}/game/${game_id}/writeup/audit?writeup_id=${id}&audit=${audit}`)
 }
