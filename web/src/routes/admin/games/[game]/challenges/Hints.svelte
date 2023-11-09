@@ -10,7 +10,6 @@
   import type { AxiosError } from 'axios'
   import { OverlayScrollbarsComponent } from 'overlayscrollbars-svelte'
   import { onMount } from 'svelte'
-  import { load } from '../../../../account/login/+page'
 
   export let challenge: Challenge
   let loading = false
@@ -90,7 +89,8 @@
           </RxButton>
         </div>
         {#if hints.length === 0}
-          <p class="w-full min-h-full flex-1 flex flex-row justify-center items-center font-bold opacity-60">
+          <div class="h-4"></div>
+          <p class="w-full flex-1 flex flex-row justify-center items-center font-bold opacity-60">
             {$i18n.t('challenges.noHint')}
           </p>
         {/if}
