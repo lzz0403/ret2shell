@@ -70,18 +70,18 @@
 </script>
 
 <div class="w-full flex flex-1 flex-col">
-  <div class="p-12 flex flex-row">
-    <div class="w-full h-full">
-      <OverlayScrollbarsComponent
-        options={{
-          scrollbars: {
-            theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light',
-            autoHide: 'scroll',
-          },
-        }}
-        class="w-full h-full relative print:hidden"
-        defer
-      >
+  <div class="w-full h-full">
+    <OverlayScrollbarsComponent
+      options={{
+        scrollbars: {
+          theme: $theme.colorScheme === 'light' ? 'os-theme-dark' : 'os-theme-light',
+          autoHide: 'scroll',
+        },
+      }}
+      class="w-full h-full relative p-12 print:hidden"
+      defer
+    >
+      <div class="flex flex-col space-y-4">
         <div class="flex flex-row space-x-2">
           <RxInput bind:value={newHint.content} class="w-full" placeholder={$i18n.t('hint.new')} />
           <RxButton ghost on:click={handleCreateHint}>
@@ -89,22 +89,17 @@
           </RxButton>
         </div>
         {#if hints.length === 0}
-          <div class="h-4"></div>
           <p class="w-full flex-1 flex flex-row justify-center items-center font-bold opacity-60">
             {$i18n.t('challenges.noHint')}
           </p>
         {/if}
-        <div class="h-4"></div>
         {#each hints as item}
-          <div
-            class="flex flex-row border-b border-b-base-content/5 h-16 items-center px-4 space-x-2 w-full hover:bg-base-content/5"
-          >
+          <div class="flex flex-row border-b border-b-base-content/5 h-16 items-center pl-4 space-x-2 w-full">
             <span class="icon-[fluent--info-20-regular] w-5 h-5 text-info flex-shrink-0" />
             <div class="text-base overflow-hidden w-full">
               <span>{item.content}</span>
             </div>
             <RxButton
-              size="sm"
               ghost
               on:click={() => {
                 handleDeleteHint(item)
@@ -114,7 +109,7 @@
             </RxButton>
           </div>
         {/each}
-      </OverlayScrollbarsComponent>
-    </div>
+      </div>
+    </OverlayScrollbarsComponent>
   </div>
 </div>
