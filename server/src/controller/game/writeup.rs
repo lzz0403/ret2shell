@@ -142,18 +142,19 @@ async fn get_writeup(
     Query(query): Query<WriteupIDQuery>,
 ) -> Result<impl IntoResponse, (StatusCode, &'static str)> {
     let writeup_id = query.writeup_id;
-    if !user.permissions.0.iter().any(|p| {
+    let is_admin = user.permissions.0.iter().any(|p| {
         matches!(
             p,
             &Permission::Organize | &Permission::Devops | &Permission::Audit
         )
-    }) && !game.end_and_archive()
-    {
+    });
+    if !is_admin && !game.end_and_archive() {
         return Err((StatusCode::FORBIDDEN, "cannot see writeup in this time"));
     }
-    match write_up::get_writeup(conn, writeup_id).await {
+    match write_up::get_writeup_detail(conn, writeup_id, !is_admin).await {
         Ok(Some(writeup)) => Ok(Json(writeup)),
         Ok(None) => Err((StatusCode::NOT_FOUND, "writeup not found")),
+        Err(DbErr::RecordNotFound(_)) => Err((StatusCode::NOT_FOUND, "writeup not found")),
         Err(e) => {
             error!("Failed to get writeup: {}", e);
             Err((StatusCode::INTERNAL_SERVER_ERROR, "Failed to get writeup"))

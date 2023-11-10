@@ -36,6 +36,23 @@ pub struct ModelOnlyTeamInfo {
     pub hidden: bool,
 }
 
+#[derive(FromQueryResult, Serialize)]
+pub struct ModelWithInfo {
+    pub id: i64,
+    pub title: String,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub published_at: DateTime<Utc>,
+    #[serde(deserialize_with = "from_ts", serialize_with = "to_ts")]
+    pub updated_at: DateTime<Utc>,
+    pub author_id: Option<i64>,
+    pub author_name: String,
+    pub team_id: Option<i64>,
+    pub team_name: String,
+    pub game_id: i64,
+    pub hidden: bool,
+    pub content: Option<String>,
+}
+
 #[derive(Copy, Clone, Debug, EnumIter, DeriveRelation)]
 pub enum Relation {
     #[sea_orm(
@@ -108,12 +125,26 @@ pub async fn get_writeup_page(
 }
 
 pub async fn get_writeup(conn: &DatabaseConnection, id: i64) -> Result<Option<Model>, DbErr> {
-    let writeup = Entity::find_by_id(id).one(conn).await?;
-    match writeup {
-        Some(writeup) => match writeup.hidden {
-            true => Err(DbErr::RecordNotFound("writeup".to_string())),
-            false => Ok(Some(writeup)),
-        },
+    Entity::find_by_id(id).one(conn).await
+}
+
+pub async fn get_writeup_detail(
+    conn: &DatabaseConnection,
+    id: i64,
+    filter_hidden: bool,
+) -> Result<Option<ModelWithInfo>, DbErr> {
+    let mut sql = Entity::find()
+        .join(JoinType::InnerJoin, Relation::User.def())
+        .join(JoinType::InnerJoin, Relation::Team.def())
+        .filter(Column::Id.eq(id))
+        .columns(Column::iter().filter(|c| !matches!(c, Column::Content)))
+        .column_as(super::user::Column::Name, "author_name")
+        .column_as(super::team::Column::Name, "team_name");
+    if filter_hidden {
+        sql = sql.filter(Column::Hidden.eq(false))
+    }
+    match sql.into_model::<ModelWithInfo>().one(conn).await? {
+        Some(writeup) => Ok(Some(writeup)),
         None => Err(DbErr::RecordNotFound("writeup".to_string())),
     }
 }
