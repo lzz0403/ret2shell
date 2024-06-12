@@ -1,5 +1,5 @@
-import { fullTheme, themeStore } from "@/lib/storage/theme";
-import Article from "@/lib/widgets/article";
+import { fullTheme, themeStore } from "@storage/theme";
+import Article from "@widgets/article";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createEffect, createSignal, untrack } from "solid-js";
 

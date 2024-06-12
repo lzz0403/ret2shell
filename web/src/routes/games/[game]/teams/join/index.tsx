@@ -1,8 +1,8 @@
-import { canParticipate, gameStore } from "@/lib/storage/game";
-import { Title } from "@/lib/storage/header";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
 import { useNavigate } from "@solidjs/router";
+import { canParticipate, gameStore } from "@storage/game";
+import { Title } from "@storage/header";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import { createEffect } from "solid-js";
 
 export default function () {

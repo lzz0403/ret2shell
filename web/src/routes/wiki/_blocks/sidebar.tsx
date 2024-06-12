@@ -1,11 +1,11 @@
-import type { Article } from "@/lib/models/article";
-import { Permission } from "@/lib/models/user";
-import { accountStore } from "@/lib/storage/account";
-import { fullTheme, t } from "@/lib/storage/theme";
-import { wikiStore } from "@/lib/storage/wiki";
-import Divider from "@/lib/widgets/divider";
-import Link from "@/lib/widgets/link";
-import TreeView, { type TreeNode } from "@/lib/widgets/treeview";
+import type { Article } from "@models/article";
+import { Permission } from "@models/user";
+import { accountStore } from "@storage/account";
+import { fullTheme, t } from "@storage/theme";
+import { wikiStore } from "@storage/wiki";
+import Divider from "@widgets/divider";
+import Link from "@widgets/link";
+import TreeView, { type TreeNode } from "@widgets/treeview";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { Show } from "solid-js";
 

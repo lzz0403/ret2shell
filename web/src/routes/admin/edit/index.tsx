@@ -1,13 +1,13 @@
-import { getPlatformConfig, updatePlatformConfig } from "@/lib/api/platform";
-import LogoAnimate from "@/lib/assets/animates/logo-animate";
-import type { Config } from "@/lib/models/config";
-import { Title } from "@/lib/storage/header";
-import { platformStore, setPlatformStore } from "@/lib/storage/platform";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
-import Button from "@/lib/widgets/button";
-import Input from "@/lib/widgets/input";
+import { getPlatformConfig, updatePlatformConfig } from "@api/platform";
+import LogoAnimate from "@assets/animates/logo-animate";
+import type { Config } from "@models/config";
 import { createForm, setValue, setValues } from "@modular-forms/solid";
+import { Title } from "@storage/header";
+import { platformStore, setPlatformStore } from "@storage/platform";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
+import Button from "@widgets/button";
+import Input from "@widgets/input";
 import type { HTTPError } from "ky";
 import { Show, createSignal, onMount } from "solid-js";
 

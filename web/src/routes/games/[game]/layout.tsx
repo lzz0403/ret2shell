@@ -1,7 +1,7 @@
-import { getGame } from "@/lib/api/game";
-import { gameStore, setGameStore } from "@/lib/storage/game";
-import { Title } from "@/lib/storage/header";
+import { getGame } from "@api/game";
 import { useNavigate, useParams } from "@solidjs/router";
+import { gameStore, setGameStore } from "@storage/game";
+import { Title } from "@storage/header";
 import type { HTTPError } from "ky";
 import { type JSX, onCleanup } from "solid-js";
 

@@ -1,6 +1,6 @@
-import { gameStore } from "@/lib/storage/game";
-import { fullTheme, t } from "@/lib/storage/theme";
-import Link from "@/lib/widgets/link";
+import { gameStore } from "@storage/game";
+import { fullTheme, t } from "@storage/theme";
+import Link from "@widgets/link";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 
 export default function () {

@@ -1,4 +1,4 @@
-import { t } from "@/lib/storage/theme";
+import { t } from "@storage/theme";
 
 export default function () {
     return (

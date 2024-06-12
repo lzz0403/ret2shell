@@ -1,9 +1,9 @@
-import { clearToasts, toastStore } from "@/lib/storage/toast";
-import Button from "@/lib/widgets/button";
-import Toast from "@/lib/widgets/toast";
 import { t } from "@storage/theme";
+import { clearToasts, toastStore } from "@storage/toast";
+import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Popover from "@widgets/popover";
+import Toast from "@widgets/toast";
 import { For, Show } from "solid-js";
 
 export function NotificationBoxContent() {

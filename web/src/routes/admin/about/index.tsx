@@ -1,12 +1,12 @@
-import { type PlatformLicense, getPlatformLicense } from "@/lib/api/platform";
-import LogoAnimate from "@/lib/assets/animates/logo-animate";
-import Spin from "@/lib/assets/animates/spin";
-import { Title } from "@/lib/storage/header";
-import { platformStore, setPlatformStore } from "@/lib/storage/platform";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
-import Card from "@/lib/widgets/card";
-import Divider from "@/lib/widgets/divider";
+import { type PlatformLicense, getPlatformLicense } from "@api/platform";
+import LogoAnimate from "@assets/animates/logo-animate";
+import Spin from "@assets/animates/spin";
+import { Title } from "@storage/header";
+import { platformStore, setPlatformStore } from "@storage/platform";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
+import Card from "@widgets/card";
+import Divider from "@widgets/divider";
 import type { HTTPError } from "ky";
 import { Match, Switch, createSignal } from "solid-js";
 

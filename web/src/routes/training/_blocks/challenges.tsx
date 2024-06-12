@@ -1,4 +1,4 @@
-import { fullTheme } from "@/lib/storage/theme";
+import { fullTheme } from "@storage/theme";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 
 export default function Challenges() {

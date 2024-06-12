@@ -1,9 +1,9 @@
-import type { Challenge } from "@/lib/models/challenge";
-import type { Team } from "@/lib/models/team";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import Progress from "@/lib/widgets/progress";
+import type { Challenge } from "@models/challenge";
+import type { Team } from "@models/team";
 import { A } from "@solidjs/router";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Progress from "@widgets/progress";
 import { For, Match, Switch } from "solid-js";
 
 function TeamDetail(props: {

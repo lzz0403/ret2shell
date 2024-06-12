@@ -1,6 +1,6 @@
-import { fullTheme, t, themeStore } from "@/lib/storage/theme";
-import TreeView, { type TreeNode } from "@/lib/widgets/treeview";
 import { useLocation } from "@solidjs/router";
+import { fullTheme, t, themeStore } from "@storage/theme";
+import TreeView, { type TreeNode } from "@widgets/treeview";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import tocJson from "../contents/toc.json";
 

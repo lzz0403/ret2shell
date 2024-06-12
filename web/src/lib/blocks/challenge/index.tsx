@@ -1,10 +1,10 @@
-import { Permission } from "@/lib/models/user";
-import { accountStore } from "@/lib/storage/account";
-import { gameStore } from "@/lib/storage/game";
-import { fullTheme, t } from "@/lib/storage/theme";
-import Button from "@/lib/widgets/button";
-import Divider from "@/lib/widgets/divider";
 import type { Challenge } from "@models/challenge";
+import { Permission } from "@models/user";
+import { accountStore } from "@storage/account";
+import { gameStore } from "@storage/game";
+import { fullTheme, t } from "@storage/theme";
+import Button from "@widgets/button";
+import Divider from "@widgets/divider";
 import Splitter from "@widgets/splitter";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { Show, createSignal } from "solid-js";

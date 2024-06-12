@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "ESNext",
-        "module": "ESNext",
+        "target": "es2020",
+        "module": "es2020",
         "moduleResolution": "node",
         "allowSyntheticDefaultImports": true,
         "noEmit": true,
@@ -26,5 +26,5 @@
             "@routes/*": ["src/routes/*"]
         }
     },
-    "include": ["src", "tailwind.config.ts", "vite.config.ts"]
+    "include": ["src", "tailwind.config.mts", "vite.config.mts"]
 }

@@ -1,5 +1,5 @@
-import type { Challenge } from "@/lib/models/challenge";
-import type { Team } from "@/lib/models/team";
+import type { Challenge } from "@models/challenge";
+import type { Team } from "@models/team";
 
 export default function TeamSolves(props: {
     teams: Team[];

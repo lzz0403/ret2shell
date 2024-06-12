@@ -1,5 +1,5 @@
-import { setToastStore, toastStore } from "@/lib/storage/toast";
-import Toast from "@/lib/widgets/toast";
+import { setToastStore, toastStore } from "@storage/toast";
+import Toast from "@widgets/toast";
 import { For } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
 

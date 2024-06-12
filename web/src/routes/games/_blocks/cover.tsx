@@ -1,9 +1,9 @@
-import LogoAnimate from "@/lib/assets/animates/logo-animate";
-import { gameStore } from "@/lib/storage/game";
-import { mediaPath } from "@/lib/utils/media";
-import LoadingTips from "@/lib/widgets/loading-tips";
+import LogoAnimate from "@assets/animates/logo-animate";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
+import { mediaPath } from "@lib/utils/media";
 import { useLocation, useNavigate } from "@solidjs/router";
+import { gameStore } from "@storage/game";
+import LoadingTips from "@widgets/loading-tips";
 import { type ComponentProps, Show, createEffect, createSignal } from "solid-js";
 
 export default function (props: ComponentProps<"div">) {

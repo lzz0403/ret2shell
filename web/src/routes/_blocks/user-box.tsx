@@ -1,19 +1,19 @@
-import { generateAccountCode, getAccountCode, logout } from "@/lib/api/account";
-import { HostType } from "@/lib/models/game";
-import { Permission } from "@/lib/models/user";
-import { gameStore } from "@/lib/storage/game";
-import { addToast, clearToasts } from "@/lib/storage/toast";
-import Button from "@/lib/widgets/button";
-import Dialog from "@/lib/widgets/dialog";
-import TimeProgress from "@/lib/widgets/time-progress";
-import Timer from "@/lib/widgets/timer";
+import { generateAccountCode, getAccountCode, logout } from "@api/account";
+import { HostType } from "@models/game";
+import { Permission } from "@models/user";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, refreshUser, resetUser } from "@storage/account";
+import { canParticipate, gameStore } from "@storage/game";
 import { t } from "@storage/theme";
+import { addToast, clearToasts } from "@storage/toast";
 import Avatar from "@widgets/avatar";
+import Button from "@widgets/button";
 import Card from "@widgets/card";
+import Dialog from "@widgets/dialog";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
+import TimeProgress from "@widgets/time-progress";
+import Timer from "@widgets/timer";
 import type { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { Match, Show, Switch, createEffect, createSignal, onMount, untrack } from "solid-js";
@@ -212,6 +212,39 @@ export default function UserBox() {
                                             {t("game.adminCanNotTakePartIn")}
                                         </span>
                                     </Button>
+                                </Match>
+                                <Match when={gameStore.team}>
+                                    <Link
+                                        href={`/games/${gameStore.current?.id}/teams/${gameStore.team?.id}`}
+                                        ghost
+                                        size="sm"
+                                        justify="start"
+                                        class="flex-1"
+                                    >
+                                        <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
+                                        <span class="flex-1 truncate text-start">{gameStore.team?.name}</span>
+                                    </Link>
+                                </Match>
+                                <Match when={gameStore.team}>
+                                    <div />
+                                </Match>
+                                <Match when={canParticipate() && gameStore.team === null}>
+                                    <Link
+                                        href={`/games/${gameStore.current?.id}/teams/create`}
+                                        ghost
+                                        size="sm"
+                                        justify="start"
+                                        class="flex-1"
+                                    >
+                                        <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
+                                        <span class="flex-1 truncate text-start">{t("game.team.joinGame")}</span>
+                                    </Link>
+                                </Match>
+                                <Match when={!canParticipate()}>
+                                    <Link href="#" ghost size="sm" justify="start" class="flex-1" disabled>
+                                        <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
+                                        <span class="flex-1 truncate text-start">{t("game.team.canNotJoin")}</span>
+                                    </Link>
                                 </Match>
                             </Switch>
                         </Card>

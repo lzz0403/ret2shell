@@ -1,4 +1,4 @@
-import Challenge from "@/lib/blocks/challenge";
+import Challenge from "@blocks/challenge";
 import { useSearchParams } from "@solidjs/router";
 import { DateTime } from "luxon";
 import { Match, Switch, createMemo } from "solid-js";

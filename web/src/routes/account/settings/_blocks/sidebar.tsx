@@ -1,6 +1,6 @@
-import { t } from "@/lib/storage/theme";
-import Divider from "@/lib/widgets/divider";
-import Link from "@/lib/widgets/link";
+import { t } from "@storage/theme";
+import Divider from "@widgets/divider";
+import Link from "@widgets/link";
 
 export default function SideBar() {
     return (

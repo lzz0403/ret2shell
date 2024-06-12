@@ -1,5 +1,5 @@
-import { t } from "@/lib/storage/theme";
 import rxSticker from "@assets/imgs/rx.webp";
+import { t } from "@storage/theme";
 
 export default function () {
     const randomTips = [

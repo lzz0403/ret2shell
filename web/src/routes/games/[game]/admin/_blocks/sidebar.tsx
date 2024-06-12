@@ -1,6 +1,6 @@
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import Link from "@/lib/widgets/link";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Link from "@widgets/link";
 
 export default function SideBar() {
     return (

@@ -1,7 +1,7 @@
-import { accountStore } from "@/lib/storage/account";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import Button from "@/lib/widgets/button";
+import { accountStore } from "@storage/account";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Button from "@widgets/button";
 import { Match, Switch } from "solid-js";
 
 export default function () {

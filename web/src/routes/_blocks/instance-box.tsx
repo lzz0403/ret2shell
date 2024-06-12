@@ -1,13 +1,13 @@
-import { accountStore } from "@/lib/storage/account";
-import { addToast } from "@/lib/storage/toast";
-import Input from "@/lib/widgets/input";
-import TimeProgress from "@/lib/widgets/time-progress";
-import { WsrxState, wsrx } from "@/lib/wsrx";
+import { WsrxState, wsrx } from "@lib/wsrx";
+import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
+import Input from "@widgets/input";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
+import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
 import { For, Show, createEffect, createSignal, onCleanup, untrack } from "solid-js";
 

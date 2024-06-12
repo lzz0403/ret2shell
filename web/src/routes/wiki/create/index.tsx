@@ -1,9 +1,9 @@
-import type { Article } from "@/lib/models/article";
-import { Title } from "@/lib/storage/header";
-import { platformStore } from "@/lib/storage/platform";
-import { t } from "@/lib/storage/theme";
-import { refreshWikiToc } from "@/lib/storage/wiki";
+import type { Article } from "@models/article";
 import { useNavigate } from "@solidjs/router";
+import { Title } from "@storage/header";
+import { platformStore } from "@storage/platform";
+import { t } from "@storage/theme";
+import { refreshWikiToc } from "@storage/wiki";
 import CreateForm from "../_blocks/form";
 
 export default function () {

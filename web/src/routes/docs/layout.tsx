@@ -1,6 +1,6 @@
-import SidebarLayout from "@/lib/blocks/sidebar-layout";
-import Button from "@/lib/widgets/button";
+import SidebarLayout from "@blocks/sidebar-layout";
 import { createBreakpoints } from "@solid-primitives/media";
+import Button from "@widgets/button";
 import { type JSX, Show, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import Sidebar from "./_blocks/sidebar";

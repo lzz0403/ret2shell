@@ -1,5 +1,5 @@
-import { Title } from "@/lib/storage/header";
-import { t } from "@/lib/storage/theme";
+import { Title } from "@storage/header";
+import { t } from "@storage/theme";
 
 export default function () {
     return (

@@ -1,8 +1,8 @@
-import type { Article } from "@/lib/models/article";
-import { Permission } from "@/lib/models/user";
-import { accountStore } from "@/lib/storage/account";
-import { t } from "@/lib/storage/theme";
+import type { Article } from "@models/article";
+import { Permission } from "@models/user";
 import { useNavigate } from "@solidjs/router";
+import { accountStore } from "@storage/account";
+import { t } from "@storage/theme";
 import CreateForm from "./_blocks/form";
 
 export default function () {

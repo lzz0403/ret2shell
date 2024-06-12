@@ -1,8 +1,8 @@
-import SidebarLayout from "@/lib/blocks/sidebar-layout";
-import type { Team } from "@/lib/models/team";
-import { gameStore } from "@/lib/storage/game";
-import { Title } from "@/lib/storage/header";
-import { t } from "@/lib/storage/theme";
+import SidebarLayout from "@blocks/sidebar-layout";
+import type { Team } from "@models/team";
+import { gameStore } from "@storage/game";
+import { Title } from "@storage/header";
+import { t } from "@storage/theme";
 import { createSignal } from "solid-js";
 import Sidebar from "./_blocks/sidebar";
 

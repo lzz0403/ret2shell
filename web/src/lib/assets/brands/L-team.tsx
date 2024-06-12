@@ -1,4 +1,4 @@
-import { themeStore } from "@/lib/storage/theme";
+import { themeStore } from "@storage/theme";
 
 export default function (props: { width?: number; height?: number }) {
     const { width, height } = { width: 24, height: 24, ...props };

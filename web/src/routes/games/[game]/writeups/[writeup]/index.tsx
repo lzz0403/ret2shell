@@ -1,9 +1,9 @@
-import { Permission } from "@/lib/models/user";
-import { accountStore } from "@/lib/storage/account";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
+import { Permission } from "@models/user";
 import { useNavigate } from "@solidjs/router";
+import { accountStore } from "@storage/account";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import { DateTime } from "luxon";
 import { createEffect, untrack } from "solid-js";
 

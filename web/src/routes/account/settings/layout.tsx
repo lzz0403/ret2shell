@@ -1,4 +1,4 @@
-import SidebarLayout from "@/lib/blocks/sidebar-layout";
+import SidebarLayout from "@blocks/sidebar-layout";
 import type { JSX } from "solid-js";
 import SideBar from "./_blocks/sidebar";
 

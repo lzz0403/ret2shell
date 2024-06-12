@@ -1,14 +1,14 @@
-import type { Extra } from "@/lib/models/extra";
-import type { Hint } from "@/lib/models/hint";
-import { Permission } from "@/lib/models/user";
-import { accountStore } from "@/lib/storage/account";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import Button from "@/lib/widgets/button";
-import Card from "@/lib/widgets/card";
-import Input from "@/lib/widgets/input";
-import Popover from "@/lib/widgets/popover";
+import type { Extra } from "@models/extra";
+import type { Hint } from "@models/hint";
+import { Permission } from "@models/user";
 import { createForm, required } from "@modular-forms/solid";
+import { accountStore } from "@storage/account";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Button from "@widgets/button";
+import Card from "@widgets/card";
+import Input from "@widgets/input";
+import Popover from "@widgets/popover";
 import { LoremIpsum } from "lorem-ipsum";
 import { For, Show, createSignal } from "solid-js";
 

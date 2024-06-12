@@ -1,7 +1,7 @@
-import SidebarLayout from "@/lib/blocks/sidebar-layout";
-import { Title } from "@/lib/storage/header";
-import { platformStore } from "@/lib/storage/platform";
-import { t } from "@/lib/storage/theme";
+import SidebarLayout from "@blocks/sidebar-layout";
+import { Title } from "@storage/header";
+import { platformStore } from "@storage/platform";
+import { t } from "@storage/theme";
 import type { JSX } from "solid-js";
 import SideBar from "./_blocks/sidebar";
 

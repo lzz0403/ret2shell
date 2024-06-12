@@ -1,7 +1,7 @@
-import type { User } from "@/lib/models/user";
-import { fullTheme } from "@/lib/storage/theme";
-import Avatar from "@/lib/widgets/avatar";
-import Divider from "@/lib/widgets/divider";
+import type { User } from "@models/user";
+import { fullTheme } from "@storage/theme";
+import Avatar from "@widgets/avatar";
+import Divider from "@widgets/divider";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 
 export default function (props: { user: User | null; loading?: boolean }) {

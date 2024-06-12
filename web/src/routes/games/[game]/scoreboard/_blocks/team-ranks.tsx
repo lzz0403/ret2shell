@@ -1,10 +1,10 @@
-import Spin from "@/lib/assets/animates/spin";
-import type { Team } from "@/lib/models/team";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import { randomTips } from "@/lib/utils/loading-tips";
-import Pagination from "@/lib/widgets/pagination";
+import Spin from "@assets/animates/spin";
+import { randomTips } from "@lib/utils/loading-tips";
+import type { Team } from "@models/team";
 import { A } from "@solidjs/router";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Pagination from "@widgets/pagination";
 import { For, Match, Show, Switch } from "solid-js";
 
 // icon-[fluent-emoji-flat--1st-place-medal]

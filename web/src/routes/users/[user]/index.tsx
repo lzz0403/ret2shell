@@ -1,12 +1,12 @@
-import { getUser } from "@/lib/api/user";
-import SidebarLayout from "@/lib/blocks/sidebar-layout";
-import type { User } from "@/lib/models/user";
-import { Title } from "@/lib/storage/header";
-import { platformStore } from "@/lib/storage/platform";
-import { t } from "@/lib/storage/theme";
-import Article from "@/lib/widgets/article";
-import LoadingTips from "@/lib/widgets/loading-tips";
+import { getUser } from "@api/user";
+import SidebarLayout from "@blocks/sidebar-layout";
+import type { User } from "@models/user";
 import { useNavigate, useParams } from "@solidjs/router";
+import { Title } from "@storage/header";
+import { platformStore } from "@storage/platform";
+import { t } from "@storage/theme";
+import Article from "@widgets/article";
+import LoadingTips from "@widgets/loading-tips";
 import { Match, Switch, createSignal } from "solid-js";
 import Sidebar from "./_blocks/sidebar";
 

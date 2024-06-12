@@ -1,8 +1,8 @@
-import { Permission } from "@/lib/models/user";
-import { accountStore } from "@/lib/storage/account";
-import { t } from "@/lib/storage/theme";
-import Divider from "@/lib/widgets/divider";
-import Link from "@/lib/widgets/link";
+import { Permission } from "@models/user";
+import { accountStore } from "@storage/account";
+import { t } from "@storage/theme";
+import Divider from "@widgets/divider";
+import Link from "@widgets/link";
 
 export default function SideBar() {
     return (

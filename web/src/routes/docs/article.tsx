@@ -1,9 +1,9 @@
-import Spin from "@/lib/assets/animates/spin";
-import { Title } from "@/lib/storage/header";
-import { t, themeStore } from "@/lib/storage/theme";
-import Article from "@/lib/widgets/article";
-import Divider from "@/lib/widgets/divider";
+import Spin from "@assets/animates/spin";
 import { useLocation, useNavigate } from "@solidjs/router";
+import { Title } from "@storage/header";
+import { t, themeStore } from "@storage/theme";
+import Article from "@widgets/article";
+import Divider from "@widgets/divider";
 import { Show, createEffect, createSignal } from "solid-js";
 import tocJson from "./contents/toc.json";
 

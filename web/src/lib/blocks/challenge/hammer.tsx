@@ -1,9 +1,9 @@
-import { t } from "@/lib/storage/theme";
-import Button from "@/lib/widgets/button";
-import Card from "@/lib/widgets/card";
-import Input from "@/lib/widgets/input";
 import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
 import xdsecMascotUnsee from "@assets/imgs/xdsec-mascot-unsee.webp";
+import { t } from "@storage/theme";
+import Button from "@widgets/button";
+import Card from "@widgets/card";
+import Input from "@widgets/input";
 
 export default function () {
     return (

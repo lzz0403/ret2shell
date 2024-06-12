@@ -1,9 +1,9 @@
-import { type Article, ArticleAccessPolicy } from "@/lib/models/article";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import Button from "@/lib/widgets/button";
-import Editor from "@/lib/widgets/editor";
+import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Button from "@widgets/button";
+import Editor from "@widgets/editor";
 import { DateTime } from "luxon";
 import { createEffect, createSignal, untrack } from "solid-js";
 

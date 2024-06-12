@@ -1,6 +1,6 @@
-import { t } from "@/lib/storage/theme";
 import xdsecMascotCrying from "@assets/imgs/xdsec-mascot-crying.webp";
 import xdsecMascotUnsee from "@assets/imgs/xdsec-mascot-unsee.webp";
+import { t } from "@storage/theme";
 import { Show } from "solid-js";
 
 export default function (props: { status: number | null }) {
