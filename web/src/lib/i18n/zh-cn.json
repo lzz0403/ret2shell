@@ -110,7 +110,7 @@
       "hint": "提示",
       "files": "文件",
       "answer": "题解",
-      "statistics": "统计数据",
+      "statistics": "统计",
       "settings": "设置",
       "hammer": "锤子",
       "instances": "实例",
@@ -154,7 +154,8 @@
       },
       "description": "比赛管理面板",
       "hammer": {
-        "title": "选手反馈"
+        "title": "选手反馈",
+        "shouldGoto": "管理员请移步管理面板查看选手反馈信息"
       }
     },
     "exit": "退出",

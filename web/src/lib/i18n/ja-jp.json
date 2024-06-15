@@ -93,7 +93,7 @@
       "hint": "ヒント",
       "files": "書類",
       "answer": "答え",
-      "statistics": "統計データ",
+      "statistics": "統計",
       "settings": "設定",
       "hammer": "ハンマー",
       "instances": "容器",
@@ -137,7 +137,8 @@
       },
       "description": "競技運営委員会",
       "hammer": {
-        "title": "プレイヤーのフィードバック"
+        "title": "プレイヤーのフィードバック",
+        "shouldGoto": "管理者は管理パネルにアクセスしてプレイヤーのフィードバック情報を確認してください。"
       }
     },
     "exit": "やめる",

@@ -93,7 +93,7 @@
       "hint": "提示",
       "files": "文件",
       "answer": "題解",
-      "statistics": "統計數據",
+      "statistics": "統計",
       "settings": "設定",
       "hammer": "錘子",
       "instances": "實例",
@@ -137,7 +137,8 @@
       },
       "description": "比賽管理面板",
       "hammer": {
-        "title": "選手回饋"
+        "title": "選手回饋",
+        "shouldGoto": "管理員請移步管理面板查看選手回饋訊息"
       }
     },
     "exit": "退出",

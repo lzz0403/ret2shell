@@ -137,7 +137,8 @@
       },
       "description": "Game management panel",
       "hammer": {
-        "title": "Player feedback"
+        "title": "Player feedback",
+        "shouldGoto": "Administrators please go to the management panel to view player feedback information"
       }
     },
     "exit": "Exit",
