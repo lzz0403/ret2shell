@@ -86,6 +86,8 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     let cluster = r2s_cluster::initialize(&config.cluster).await?;
     info!("Loading module: < Email Worker >");
     r2s_email::initialize(queue.subscribe("email").await?).await?;
+    info!("Loading module: < Event Worker >");
+    let event = r2s_event::initialize(queue.subscribe("event").await?).await;
     info!("Loading module: < Media Storage >");
     let media = r2s_media::initialize(&config.media).await?;
     info!("Loading module: < Checker >");
@@ -97,6 +99,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
         cache,
         auditor,
         bucket,
+        event,
         queue,
         license,
         cluster,

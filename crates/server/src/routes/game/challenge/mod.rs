@@ -8,8 +8,16 @@ use axum::{
     Extension, Json, Router,
 };
 use r2s_bucket::{challenge::ChallengeBucket, Bucket};
-use r2s_database::{challenge, game, team, user::Permission};
+use r2s_database::{
+    challenge, game, team,
+    user::{self, Permission},
+};
+use r2s_event::{
+    events::{ChallengeEvent, ChallengeEventType, EventContainer},
+    Event,
+};
 use r2s_migrator::Database;
+use r2s_queue::Queue;
 use sea_orm::TransactionTrait;
 use serde::{Deserialize, Serialize};
 use tokio_util::io::ReaderStream;
@@ -131,11 +139,16 @@ async fn create_challenge(
 }
 
 async fn update_challenge(
-    State(ref db): State<Database>, State(bucket): State<Bucket>,
+    State(ref db): State<Database>, State(bucket): State<Bucket>, State(ref queue): State<Queue>,
     Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
     Extension(prev_challenge): Extension<challenge::Model>,
     Json(challenge): Json<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+    if !prev_challenge.hidden && !challenge.hidden {
+        return Err(ResponseError::PreconditionFailed(
+            "please hidden challenge before update it".to_owned(),
+        ));
+    }
     let txn = db.conn.begin().await?;
     let challenge = challenge::update(
         &txn,
@@ -177,6 +190,26 @@ async fn update_challenge(
         )
         .await?;
     txn.commit().await?;
+    if prev_challenge.hidden != challenge.hidden {
+        let event = EventContainer {
+            game_id: game.id.clone(),
+            event: Event::Challenge(ChallengeEvent {
+                event_type: if prev_challenge.hidden {
+                    ChallengeEventType::Up
+                } else {
+                    ChallengeEventType::Down
+                },
+                challenge: challenge.clone(),
+                operator: user::Model {
+                    id: token.id,
+                    nickname: token.nickname.clone(),
+                    account: token.account.clone(),
+                    ..Default::default()
+                },
+            }),
+        };
+        queue.publish("event", event).await.ok();
+    }
 
     Ok(Json(challenge))
 }

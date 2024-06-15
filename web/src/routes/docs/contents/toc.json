@@ -298,7 +298,48 @@
             "zh_tw": "事件 API",
             "ja_jp": "イベント API"
         },
-        "children": {}
+        "children": {
+            "game": {
+                "title": {
+                    "en_us": "game",
+                    "zh_cn": "game",
+                    "zh_tw": "game",
+                    "ja_jp": "game"
+                }
+            },
+            "challenge": {
+                "title": {
+                    "en_us": "challenge",
+                    "zh_cn": "challenge",
+                    "zh_tw": "challenge",
+                    "ja_jp": "challenge"
+                }
+            },
+            "submission": {
+                "title": {
+                    "en_us": "submission",
+                    "zh_cn": "submission",
+                    "zh_tw": "submission",
+                    "ja_jp": "submission"
+                }
+            },
+            "chat": {
+                "title": {
+                    "en_us": "chat",
+                    "zh_cn": "chat",
+                    "zh_tw": "chat",
+                    "ja_jp": "chat"
+                }
+            },
+            "devops": {
+                "title": {
+                    "en_us": "devops",
+                    "zh_cn": "devops",
+                    "zh_tw": "devops",
+                    "ja_jp": "devops"
+                }
+            }
+        }
     },
     "http-api": {
         "title": {

@@ -261,7 +261,11 @@ async fn update_game_intro(
         .set_introduction(&result.clone().content.unwrap_or("NO CONTENT".into()))
         .await?;
     game_bucket
-        .take_shot(":memo: update README.md", "platform", "platform@private.ret.sh.cn")
+        .take_shot(
+            ":memo: update README.md",
+            "platform",
+            "platform@private.ret.sh.cn",
+        )
         .await?;
     txn.commit().await?;
 

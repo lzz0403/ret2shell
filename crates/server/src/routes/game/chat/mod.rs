@@ -5,8 +5,13 @@ use axum::{
     routing::get,
     Extension, Json, Router,
 };
-use r2s_database::{challenge, chat, game, team};
+use r2s_database::{challenge, chat, game, team, user};
+use r2s_event::{
+    events::{ChatEvent, ChatEventType, EventContainer},
+    Event,
+};
 use r2s_migrator::Database;
+use r2s_queue::Queue;
 use serde::Deserialize;
 
 use crate::{
@@ -72,9 +77,10 @@ async fn player_get_chat_session(
 }
 
 async fn player_send_chat(
-    State(ref db): State<Database>, Extension(token): Extension<Token>,
-    Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
-    Extension(team): Extension<team::Model>, Json(chat): Json<chat::Model>,
+    State(ref db): State<Database>, State(ref queue): State<Queue>,
+    Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
+    Extension(challenge): Extension<challenge::Model>, Extension(team): Extension<team::Model>,
+    Json(chat): Json<chat::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
     let last_chat = chat::get_last(&db.conn, team.id, challenge.id).await?;
     if let Some(last_chat) = last_chat {
@@ -100,14 +106,30 @@ async fn player_send_chat(
             team_id: team.id,
             challenge_id: challenge.id,
             user_id: token.id,
-            content: chat.content,
+            content: chat.content.clone(),
             game_id: challenge.game_id,
             checked: false,
             ..Default::default()
         },
     )
     .await?;
-    // TODO: insert automate event here.
+    let event = EventContainer {
+        game_id: game.id,
+        event: Event::Chat(ChatEvent {
+            operator: user::Model {
+                id: token.id,
+                account: token.account.clone(),
+                nickname: token.nickname.clone(),
+                ..Default::default()
+            },
+            team,
+            challenge,
+            event_type: ChatEventType::Message,
+            content: chat.content,
+        }),
+    };
+    queue.publish("event", event).await.ok();
+
     Ok(())
 }
 

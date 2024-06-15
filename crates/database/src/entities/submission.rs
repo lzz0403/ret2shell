@@ -32,7 +32,7 @@ impl Model {
     }
 }
 
-#[derive(Clone, Serialize, Deserialize, FromQueryResult)]
+#[derive(Clone, Debug, Serialize, Deserialize, FromQueryResult)]
 pub struct ExModel {
     pub id: i64,
     #[serde(with = "ts_seconds")]

@@ -1,0 +1,28 @@
+[package]
+name = "r2s-event"
+version = "1.4.3"
+edition = "2021"
+rust-version = "1.79.0"
+description = "Event pusher for Ret2Shell - A feature-riches CTF challenge platform."
+authors = ["Reverier-Xu <reverier.xu@woooo.tech>"]
+publish = false
+homepage = "https://ret.sh.cn/"
+keywords = ["ctf", "challenge", "platform", "security", "education"]
+resolver = "2"
+
+[dependencies]
+r2s-config = { version = "1", path = "../config" }
+r2s-database = { version = "1", path = "../database" }
+
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.38", features = ["full"] }
+tracing = "0.1"
+axum = { version = "0.7", features = ["ws"] }
+thiserror = "1.0"
+once_cell = "1.19"
+async-nats = "0.35"
+futures = "0.3"
+
+[lib]
+path = "src/lib.rs"

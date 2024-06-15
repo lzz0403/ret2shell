@@ -11,6 +11,7 @@ use r2s_checker::Checker;
 use r2s_cluster::Cluster;
 use r2s_config::GlobalConfig;
 use r2s_database::DbErr;
+use r2s_event::EventManager;
 use r2s_license::License;
 use r2s_media::Media;
 use r2s_migrator::Database;
@@ -30,6 +31,7 @@ pub struct GlobalState {
     pub license: License,
     pub media: Media,
     pub checker: Checker,
+    pub event: EventManager,
     pub version: String,
 }
 
