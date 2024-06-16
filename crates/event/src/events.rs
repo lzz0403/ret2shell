@@ -25,9 +25,10 @@ pub enum SubmissionEventType {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct SubmissionEvent {
-    pub submission: submission::ExModel,
+    pub submission: submission::Model,
     pub blood_state: Option<u64>,
     pub operator: user::Model,
+    pub team: team::Model,
     pub event_type: SubmissionEventType,
 }
 
