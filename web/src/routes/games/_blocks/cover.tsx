@@ -36,6 +36,13 @@ export default function (props: ComponentProps<"div">) {
             });
         }
     });
+    createEffect(() => {
+        if (!gameStore.current) {
+            untrack(() => {
+                cachedId = 0;
+            });
+        }
+    });
     return (
         <div
             {...props}
