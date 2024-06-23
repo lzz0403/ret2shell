@@ -35,7 +35,7 @@
         "luxon": "^3.4.4",
         "nanoid": "^5.0.7",
         "okwind": "^0.1.2",
-        "overlayscrollbars": "^2.9.0",
+        "overlayscrollbars": "^2.9.1",
         "overlayscrollbars-solid": "^0.5.5",
         "passive-events-support": "^1.1.0",
         "rehype-autolink-headings": "^7.1.0",
