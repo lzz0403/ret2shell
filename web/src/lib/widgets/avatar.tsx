@@ -1,6 +1,6 @@
 import { Avatar } from "@ark-ui/solid";
+import Spin from "@assets/animates/spin";
 import { type JSX, Show, createSignal, splitProps } from "solid-js";
-import Spin from "../assets/animates/spin";
 
 export type AvatarProps = {
     fallback?: string;

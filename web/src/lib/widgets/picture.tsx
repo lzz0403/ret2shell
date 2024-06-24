@@ -1,6 +1,6 @@
+import Spin from "@assets/animates/spin";
 import { type ComponentProps, Show, createEffect, createSignal, splitProps, untrack } from "solid-js";
 import { Transition } from "solid-transition-group";
-import Spin from "../assets/animates/spin";
 
 export type ImageProps = {
     src?: string;

@@ -1,7 +1,7 @@
+import type { PlatformLicense } from "@api/platform";
+import type { ServerConfig } from "@models/config";
 import { makePersisted } from "@solid-primitives/storage";
 import { createStore } from "solid-js/store";
-import type { PlatformLicense } from "../api/platform";
-import type { ServerConfig } from "../models/config";
 
 export const frontendCompatVersion = import.meta.env.VITE_COMPAT_VERSION as string;
 

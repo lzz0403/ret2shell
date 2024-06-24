@@ -1,4 +1,4 @@
-import { leet } from "../api/rpc";
+import { leet } from "@api/rpc";
 import chuunibyou from "./names/chuunibyou";
 import hacker from "./names/hacker";
 

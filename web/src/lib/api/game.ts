@@ -1,8 +1,9 @@
 import type { SearchParamsOption } from "ky";
 import api, { api_root } from ".";
-import type { Article } from "../models/article";
-import type { Game, HostType } from "../models/game";
-import { type Team, TeamState } from "../models/team";
+import type { Article } from "@models/article";
+import type { Game, HostType } from "@models/game";
+import type { Challenge } from "@models/challenge";
+import { type Team, TeamState } from "@models/team";
 
 export async function getGames(page?: number, page_size?: number, host_type?: HostType, weight?: number) {
     return (
@@ -65,3 +66,5 @@ export async function getGameScoreboard(
         })
     ).json<[Team[], number]>();
 }
+
+export async function createChallenge(challenge: Challenge) {}

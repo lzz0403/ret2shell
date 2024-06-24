@@ -1,6 +1,6 @@
+import type { Media } from "@models/media";
 import type { SearchParamsOption } from "ky";
 import api, { api_root } from ".";
-import type { Media } from "../models/media";
 
 export async function uploadMedia(file: File, thumbnail?: boolean) {
     const formData = new FormData();

@@ -1,6 +1,6 @@
+import type { User } from "@models/user";
 import type { SearchParamsOption } from "ky";
 import api, { api_root } from ".";
-import type { User } from "../models/user";
 
 export async function getUserList(
     page?: number,

@@ -1,7 +1,7 @@
 import type { Captcha } from "@models/captcha";
 import type { User } from "@models/user";
 import api, { api_root } from ".";
-import type { Institute } from "../models/institute";
+import type { Institute } from "@models/institute";
 import type { DateTime } from "luxon";
 
 export async function getCaptcha() {

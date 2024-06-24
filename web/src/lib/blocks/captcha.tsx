@@ -1,12 +1,12 @@
+import { getCaptcha } from "@api/account";
+import Spin from "@assets/animates/spin";
 import type { Captcha } from "@models/captcha";
 import { type FormStore, type Maybe, setValue } from "@modular-forms/solid";
 import { t } from "@storage/theme";
+import Button from "@widgets/button";
 import Input, { type TextInputProps } from "@widgets/input";
 import { encode } from "js-base64";
 import { type ComponentProps, createEffect, createSignal, splitProps, untrack } from "solid-js";
-import { getCaptcha } from "../api/account";
-import Spin from "../assets/animates/spin";
-import Button from "../widgets/button";
 
 export default function (
     props: TextInputProps &

@@ -1,10 +1,10 @@
+import type { Challenge } from "@models/challenge";
 import type { Game } from "@models/game";
+import type { Submission } from "@models/submission";
 import type { Team } from "@models/team";
 import { Permission, type User } from "@models/user";
 import { DateTime } from "luxon";
 import { createStore } from "solid-js/store";
-import type { Challenge } from "../models/challenge";
-import type { Submission } from "../models/submission";
 import { accountStore } from "./account";
 import { t } from "./theme";
 

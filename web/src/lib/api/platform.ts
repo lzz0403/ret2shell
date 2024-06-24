@@ -1,9 +1,9 @@
 import type { AuthConfig, Config, ServerConfig } from "@models/config";
+import type { HostType } from "@models/game";
+import type { Institute } from "@models/institute";
 import type { SearchParamsOption } from "ky";
 import type { DateTime } from "luxon";
 import api, { api_root } from ".";
-import type { HostType } from "../models/game";
-import type { Institute } from "../models/institute";
 
 export async function getPlatformInfo() {
     return await api.get(`${api_root}/platform/info`).json<ServerConfig>();

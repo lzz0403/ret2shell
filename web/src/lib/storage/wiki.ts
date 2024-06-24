@@ -1,7 +1,7 @@
+import { getWikiTree } from "@api/wiki";
+import type { Article } from "@models/article";
 import type { HTTPError } from "ky";
 import { createStore } from "solid-js/store";
-import { getWikiTree } from "../api/wiki";
-import type { Article } from "../models/article";
 import { t } from "./theme";
 import { addToast } from "./toast";
 

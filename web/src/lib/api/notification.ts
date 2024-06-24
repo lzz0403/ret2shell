@@ -1,5 +1,5 @@
+import type { Notification } from "@models/notification";
 import api, { api_root } from ".";
-import type { Notification } from "../models/notification";
 
 export async function getNotifications(game_id: number) {
     return await api.get(`${api_root}/game/${game_id}/notification`).json<Notification[]>();
