@@ -29,7 +29,7 @@ function checkEdition() {
                     "Ret2Shell がメジャーアップデートを行いました、これを適用するためにこのページを再読み込みします。再ログインが必要な場合があります。"
                 );
                 break;
-            case "en_us":
+            default:
                 alert(
                     "Ret2Shell has done a major update, we will reload this page to apply it. Please note that you may need re-login."
                 );

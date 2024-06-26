@@ -140,7 +140,8 @@
             "minScore": "最低分数",
             "scoreDecay": "衰减次数",
             "scoreRange": "分数范围",
-            "tag": "标签"
+            "tag": "标签",
+            "fetchFailed": "获取题目列表失败"
         },
         "scoreboard": {
             "title": "积分板",

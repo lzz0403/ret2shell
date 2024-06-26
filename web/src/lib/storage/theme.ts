@@ -12,7 +12,7 @@ let systemPrefersLocale = (window.navigator.language || window.navigator.languag
     .toLowerCase() as Locale;
 
 if (!hasLocale(systemPrefersLocale)) {
-    systemPrefersLocale = "en_us" as Locale;
+    systemPrefersLocale = "zh_cn" as Locale;
 }
 
 export const [themeStore, setThemeStore] = makePersisted(
@@ -65,5 +65,5 @@ export function initTheme() {
     window.onafterprint = onAfterPrint;
 }
 
-const [dict] = createResource(themeStore.locale || "en_us", fetchDictionary);
+const [dict] = createResource(themeStore.locale || "zh_cn", fetchDictionary);
 export const t = translator(dict, resolveTemplate);

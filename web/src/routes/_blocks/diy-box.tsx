@@ -18,6 +18,7 @@ export function DiyBoxContent() {
                             <span>简</span>
                         </Button>
                     </li>
+                    {/* 
                     <li>
                         <Button square onClick={() => setLocale("zh_tw")} ghost justify="center" size="sm">
                             <span>繁</span>
@@ -33,6 +34,8 @@ export function DiyBoxContent() {
                             <span>な</span>
                         </Button>
                     </li>
+                    */}
+                    <li class="w-32" />
                     <li>
                         <Button
                             size="sm"
