@@ -84,10 +84,15 @@ impl Checker {
         }
     }
 
+    /// Check the flag and return results and audit messages.
+    ///
+    /// ## Returns
+    ///
+    /// (correct: bool, msg: String, Option<(peer_team: Option<i64>, reason: String)>)
     pub async fn check(
         &self, bucket: ChallengeBucket, user: user::Model, team: Option<team::Model>,
         submission: submission::Model,
-    ) -> Result<(bool, String), CheckerError> {
+    ) -> Result<(bool, String, Option<(Option<i64>, String)>), CheckerError> {
         let contexts = self.contexts.read().await;
         let (unit, runtime, _) = contexts
             .get(bucket.name.as_str())
@@ -108,8 +113,10 @@ impl Checker {
                 (bucket_path, user_object, team_object, submission_object),
             )
             .await?;
-        let (result, message): (bool, String) = rune::from_value(output)?;
-        Ok((result, message))
+        let (result, message, audit): (bool, String, Option<(Option<i64>, String)>) =
+            rune::from_value(output)?;
+
+        Ok((result, message, audit))
     }
 
     pub async fn environ(
