@@ -6,11 +6,13 @@
 /// * team: Option<{ id: number, name: string, institute_id: number }>
 /// * submission: { id: number, user_id: number, team_id: number, challenge_id: number, content: string }
 ///
-/// Returns: (bool, string)
+/// Returns: (bool, string, Option<(Option<i64>, string)>)
+/// means (correct, msg, audit: { peer_team, reason }), when audit is not None, the team will be treated as cheated,
+/// and the platform will publish a event to administrators. 
 pub async fn check(bucket, user, team, submission) {
   let ok = submission.content == "flag{hello_world}";
   let msg = if ok { "Correct!" } else { "Incorrect!" };
-  (ok, msg)
+  (ok, msg, None)
 }
 
 /// Provides the environment variables when user starts the challenge container.
