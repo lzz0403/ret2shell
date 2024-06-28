@@ -16,4 +16,8 @@ pub enum CheckerError {
     AllocError(#[from] rune::alloc::Error),
     #[error("Executed script error: {0}")]
     ExecError(#[from] rune::runtime::VmError),
+    #[error("Missing fields from script result: {0}")]
+    MissingResultField(String),
+    #[error("Script error: {0}")]
+    ScriptError(String),
 }

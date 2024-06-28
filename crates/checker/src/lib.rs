@@ -6,10 +6,11 @@ use r2s_database::{submission, team, user};
 use rune::{
     alloc,
     runtime::{Object, RuntimeContext},
-    Source, Sources, Unit, Vm,
+    Context, Source, Sources, Unit, Value, Vm,
 };
+use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
-use tracing::{error, info};
+use tracing::{debug, error, info};
 use traits::CheckerError;
 
 pub mod modules;
@@ -20,6 +21,12 @@ type CheckerContext = (Arc<Unit>, Arc<RuntimeContext>, DateTime<Utc>);
 #[derive(Clone, Debug)]
 pub struct Checker {
     contexts: Arc<RwLock<HashMap<String, CheckerContext>>>,
+}
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub struct AuditMessage {
+    peer_team: Option<i64>,
+    reason: String,
 }
 
 macro_rules! to_rune_object {
@@ -64,14 +71,18 @@ impl Checker {
             if self.contexts.read().await.contains_key(key.as_str()) {
                 return Ok(());
             }
-            let mut context = rune_modules::default_context()?;
+            let mut context = Context::with_default_modules()?;
             context.install(rune_modules::http::module(true)?)?;
             context.install(rune_modules::json::module(true)?)?;
             context.install(rune_modules::toml::module(true)?)?;
             context.install(rune_modules::process::module(true)?)?;
+            context.install(ret2script::modules::crypto::module(true)?)?;
+            context.install(ret2script::modules::bucket::module(true)?)?;
+            context.install(ret2script::modules::audit::module(true)?)?;
+            context.install(ret2script::modules::utils::module(true)?)?;
             let mut sources = Sources::new();
             sources.insert(Source::from_path(script_folder.join("main.rx"))?)?;
-            info!("Preloading checker script: {}", script_folder.display());
+            debug!("Preloading checker script: {}", script_folder.display());
 
             let unit = rune::prepare(&mut sources).with_context(&context).build()?;
             let runtime = context.runtime()?;
@@ -92,7 +103,7 @@ impl Checker {
     pub async fn check(
         &self, bucket: ChallengeBucket, user: user::Model, team: Option<team::Model>,
         submission: submission::Model,
-    ) -> Result<(bool, String, Option<(Option<i64>, String)>), CheckerError> {
+    ) -> Result<(bool, String, Option<AuditMessage>), CheckerError> {
         let contexts = self.contexts.read().await;
         let (unit, runtime, _) = contexts
             .get(bucket.name.as_str())
@@ -113,10 +124,36 @@ impl Checker {
                 (bucket_path, user_object, team_object, submission_object),
             )
             .await?;
-        let (result, message, audit): (bool, String, Option<(Option<i64>, String)>) =
-            rune::from_value(output)?;
-
-        Ok((result, message, audit))
+        let output: Result<(bool, String, Option<Object>), Value> = rune::from_value(output)?;
+        if let Ok((result, message, audit)) = output {
+            let audit = if let Some(audit) = audit {
+                Some(AuditMessage {
+                    peer_team: rune::from_value(
+                        audit
+                            .get("peer_team")
+                            .ok_or(CheckerError::MissingResultField(
+                                "audit::peer_team".to_owned(),
+                            ))?
+                            .to_owned(),
+                    )?,
+                    reason: rune::from_value(
+                        audit
+                            .get("reason")
+                            .ok_or(CheckerError::MissingResultField(
+                                "audit::peer_team".to_owned(),
+                            ))?
+                            .to_owned(),
+                    )?,
+                })
+            } else {
+                None
+            };
+            Ok((result, message, audit))
+        } else {
+            Err(CheckerError::ScriptError(
+                "Early returns from script".to_owned(),
+            ))
+        }
     }
 
     pub async fn environ(
@@ -137,12 +174,18 @@ impl Checker {
         let output = vm
             .async_call(["environ"], (bucket_path, user_object, team_object))
             .await?;
-        let object: Object = rune::from_value(output)?;
-        let mut environ = HashMap::new();
-        for (key, value) in object.iter() {
-            environ.insert(key.to_string(), rune::from_value(value.clone())?);
+        let object: Result<Object, Value> = rune::from_value(output)?;
+        if let Ok(object) = object {
+            let mut environ = HashMap::new();
+            for (key, value) in object.iter() {
+                environ.insert(key.to_string(), rune::from_value(value.clone())?);
+            }
+            Ok(environ)
+        } else {
+            Err(CheckerError::ScriptError(
+                "Early returns from script".to_owned(),
+            ))
         }
-        Ok(environ)
     }
 
     pub async fn cleanup(&mut self) {

@@ -1,3 +1,4 @@
+use ret2api::audit;
 
 /// Check flag submitted by user.
 /// 
@@ -6,13 +7,16 @@
 /// * team: Option<{ id: number, name: string, institute_id: number }>
 /// * submission: { id: number, user_id: number, team_id: number, challenge_id: number, content: string }
 ///
-/// Returns: (bool, string, Option<(Option<i64>, string)>)
+/// Returns: (bool, string, Option<{peer_team: i64, reason: string}>)
 /// means (correct, msg, audit: { peer_team, reason }), when audit is not None, the team will be treated as cheated,
-/// and the platform will publish a event to administrators. 
+/// and the platform will publish a event to administrators.
 pub async fn check(bucket, user, team, submission) {
-  let ok = submission.content == "flag{hello_world}";
-  let msg = if ok { "Correct!" } else { "Incorrect!" };
-  (ok, msg, None)
+  let id = audit::decode("you_said_right_but_you_should_play_genshin_impact", "what_the_f*ck", submission.content)?;
+  if id != team.id {
+    return Ok((false, "Incorrect!", Some(#{peer_team: id, reason: `team ${team.id}:'${team.name}' may cheated with team ${id}`})));
+  } else {
+    return Ok((true, "Correct!", None));
+  }
 }
 
 /// Provides the environment variables when user starts the challenge container.
@@ -23,5 +27,8 @@ pub async fn check(bucket, user, team, submission) {
 /// 
 /// Returns: { key: string, value: string }[]
 pub async fn environ(bucket, user, team) {
-  []
+  Ok(#{
+    flag: audit::encode("you_said_right_but_you_should_play_genshin_impact", "what_the_f*ck", team.id),
+  })
 }
+
