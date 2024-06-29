@@ -26,7 +26,7 @@ export default function () {
     return (
         <>
             <Title title={`${user()?.nickname} - ${platformStore.config.name || t("platform.name")!}`} />
-            <SidebarLayout leftBar={<Sidebar user={user()} loading={loading()} />}>
+            <SidebarLayout leftBar={() => <Sidebar user={user()} loading={loading()} />}>
                 <div class="flex-1 flex flex-col items-center">
                     <div class="flex flex-col w-full max-w-5xl p-3 lg:p-6">
                         <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">

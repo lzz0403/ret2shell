@@ -19,7 +19,7 @@ export default function (props: { children?: JSX.Element }) {
     return (
         <>
             <Title title={`${t("wiki.title")} - ${platformStore.config.name || t("platform.name")}`} />
-            <SidebarLayout leftBar={<SideBar />} showLeftBar={showSidebar()}>
+            <SidebarLayout leftBar={() => <SideBar />} showLeftBar={showSidebar()}>
                 {props.children}
             </SidebarLayout>
             <Transition name="slide-fade-right">

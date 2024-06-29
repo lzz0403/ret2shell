@@ -116,7 +116,7 @@ export default function () {
         <>
             <Title title={`${t("game.challenge.title")} - ${gameStore.current?.name || "CTF"}`} />
             <SidebarLayout
-                leftBar={
+                leftBar={() => (
                     <>
                         <div class="border-b border-b-layer-content/10 px-2 h-16 flex items-center justify-center">
                             <Link
@@ -131,13 +131,13 @@ export default function () {
                         </div>
                         <ChallengeList showScore />
                     </>
-                }
-                rightBar={
+                )}
+                rightBar={() => (
                     <div class="flex flex-col">
                         <Team />
                         <Notifications />
                     </div>
-                }
+                )}
             >
                 <div class="flex-1 flex flex-col w-0">
                     <OverlayScrollbarsComponent

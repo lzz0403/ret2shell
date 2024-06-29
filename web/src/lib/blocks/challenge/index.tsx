@@ -117,14 +117,14 @@ export default function (props: {
     return (
         <div class="flex-1">
             <Splitter
-                startPanel={<Intro challenge={props.challenge} />}
-                endPanel={
+                startPanel={() => <Intro challenge={props.challenge} />}
+                endPanel={() => (
                     <BottomPanel
                         inGame={props.inGame}
                         challenge={props.challenge}
                         onStateChange={props.onStateChange}
                     />
-                }
+                )}
                 orientation="vertical"
                 size={[
                     { id: "a", size: 64, minSize: 24 },

@@ -8,7 +8,7 @@ import { createStore } from "solid-js/store";
 import { accountStore } from "./account";
 import { t } from "./theme";
 import { getChallengeList } from "../api/game";
-import { HTTPError } from "ky";
+import type { HTTPError } from "ky";
 import { addToast } from "./toast";
 
 export const [gameStore, setGameStore] = createStore({

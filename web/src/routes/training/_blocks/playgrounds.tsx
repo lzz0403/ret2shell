@@ -23,6 +23,8 @@ export default function Playgrounds() {
     const [gamePage, setGamePage] = createSignal(1);
     const [gameTotal, setGameTotal] = createSignal(1);
 
+    /// TODO: move requests outside
+
     function fetchPlaygrounds() {
         setLoadingPlaygrounds(true);
         getGames(playgroundPage(), pageSize, HostType.CTFTraining)

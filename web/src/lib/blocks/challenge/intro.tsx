@@ -22,8 +22,10 @@ passiveSupport({
 export default function (props: { challenge?: Challenge }) {
     const [larged, setLarged] = createSignal(true);
     const [files, setFiles] = createSignal([] as { folder: "mapped" | "static"; file: string }[]);
+    let cachedChallengeId = 0;
     createEffect(() => {
-        if (props.challenge) {
+        if (props.challenge && props.challenge.id !== cachedChallengeId) {
+            cachedChallengeId = props.challenge.id;
             untrack(() => {
                 getChallengeAttachments(props.challenge!.game_id, props.challenge!.id)
                     .then((resp) => {

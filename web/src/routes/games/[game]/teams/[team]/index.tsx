@@ -11,7 +11,7 @@ export default function () {
     return (
         <>
             <Title title={`${team()?.name ?? t("game.team.title")} - ${gameStore.current?.name ?? "CTF"}`} />
-            <SidebarLayout leftBar={<Sidebar />}>{null}</SidebarLayout>
+            <SidebarLayout leftBar={() => <Sidebar />}>{null}</SidebarLayout>
         </>
     );
 }

@@ -13,7 +13,7 @@ export default function (props: { children?: JSX.Element }) {
     const [showSidebar, setShowSidebar] = createSignal(false);
     return (
         <>
-            <SidebarLayout leftBar={<Sidebar />} showLeftBar={showSidebar()}>
+            <SidebarLayout leftBar={() => <Sidebar />} showLeftBar={showSidebar()}>
                 {props.children}
             </SidebarLayout>
             <Transition name="slide-fade-right">
