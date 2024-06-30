@@ -99,7 +99,8 @@ impl Checker {
     ///
     /// ## Returns
     ///
-    /// (correct: bool, msg: String, Option<(peer_team: Option<i64>, reason: String)>)
+    /// (correct: bool, msg: String, Option<(peer_team: Option<i64>, reason:
+    /// String)>)
     pub async fn check(
         &self, bucket: ChallengeBucket, user: user::Model, team: Option<team::Model>,
         submission: submission::Model,

@@ -86,15 +86,13 @@ impl ActiveModelBehavior for ActiveModel {}
 
 pub async fn get_list<C>(db: &C, team_id: i64) -> Result<Vec<Model>, DbErr>
 where
-    C: ConnectionTrait,
-{
+    C: ConnectionTrait, {
     let sql = Entity::find().filter(Column::TeamId.eq(team_id));
     sql.all(db).await
 }
 pub async fn get_list_ex<C>(db: &C, team_id: i64) -> Result<Vec<ExModel>, DbErr>
 where
-    C: ConnectionTrait,
-{
+    C: ConnectionTrait, {
     let sql = Entity::find()
         .join(JoinType::InnerJoin, Relation::Team.def())
         .join(JoinType::InnerJoin, Relation::Challenge.def())
@@ -106,8 +104,7 @@ where
 
 pub async fn create<C>(db: &C, extra: Model) -> Result<Model, DbErr>
 where
-    C: ConnectionTrait,
-{
+    C: ConnectionTrait, {
     let extra = ActiveModel {
         id: ActiveValue::NotSet,
         ..extra.into_active_model().reset_all()
@@ -117,7 +114,6 @@ where
 
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
 where
-    C: ConnectionTrait,
-{
+    C: ConnectionTrait, {
     Entity::delete_by_id(id).exec(db).await.map(|_| ())
 }
