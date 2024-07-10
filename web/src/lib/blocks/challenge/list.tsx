@@ -6,7 +6,7 @@ import { fullTheme, t } from "@storage/theme";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { Match, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 
-export default function ChallengeList(props: { showScore?: boolean; paginated?: boolean }) {
+export default function ChallengeList(props: { showScore?: boolean; paginated?: boolean; inGame?: boolean }) {
     const [searchParams, _] = useSearchParams();
     const selectedChallengeId = createMemo(() => {
         return Number.parseInt(searchParams.challenge || "") ?? null;
@@ -30,7 +30,8 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
                     if (a.solved !== b.solved) {
                         return a.solved ? 1 : -1;
                     }
-                    return a.challenge.score - b.challenge.score;
+                    if (a.challenge.score !== b.challenge.score) return a.challenge.score - b.challenge.score;
+                    return a.challenge.updated_at < b.challenge.updated_at ? -1 : 1;
                 });
             tree.push({
                 id: tag,
@@ -42,7 +43,9 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
                     name: c.challenge.name,
                     type: "item",
                     searchValue: c.challenge.id.toString(),
-                    link: `/games/${gameStore.current?.id}/challenges?challenge=${c.challenge.id}`,
+                    link: props.inGame
+                        ? `/games/${gameStore.current?.id}/challenges?challenge=${c.challenge.id}`
+                        : `/training/${gameStore.current?.id}?challenge=${c.challenge.id}`,
                     extraClasses: c.solved ? "opacity-60" : "",
                     icon: c.challenge.hidden
                         ? "icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning"

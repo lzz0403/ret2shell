@@ -103,7 +103,7 @@ function BottomPanel(props: {
                 class="relative w-full flex-1 print:h-auto print:overflow-auto"
                 defer
             >
-                <Dynamic component={pages[page()]} />
+                <Dynamic component={pages[page()]} challenge={props.challenge} />
             </OverlayScrollbarsComponent>
         </div>
     );
@@ -112,15 +112,15 @@ function BottomPanel(props: {
 export default function (props: {
     challenge?: Challenge;
     onStateChange?: (challenge: Challenge) => void;
-    inGame: boolean;
+    inGame?: boolean;
 }) {
     return (
         <div class="flex-1">
             <Splitter
-                startPanel={() => <Intro challenge={props.challenge} />}
+                startPanel={() => <Intro challenge={props.challenge} inGame={props.inGame} />}
                 endPanel={() => (
                     <BottomPanel
-                        inGame={props.inGame}
+                        inGame={props.inGame ?? false}
                         challenge={props.challenge}
                         onStateChange={props.onStateChange}
                     />

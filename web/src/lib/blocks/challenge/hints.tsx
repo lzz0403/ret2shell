@@ -1,23 +1,28 @@
+import { createChallengeHint, getChallengeHint, getTeamExtras } from "@/lib/api/game";
+import type { Challenge } from "@/lib/models/challenge";
+import { addToast } from "@/lib/storage/toast";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
 import { Permission } from "@models/user";
-import { createForm, required } from "@modular-forms/solid";
+import { createForm, required, setValue } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
-import { gameStore } from "@storage/game";
+import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
 import Popover from "@widgets/popover";
+import type { HTTPError } from "ky";
 import { LoremIpsum } from "lorem-ipsum";
-import { For, Show, createSignal } from "solid-js";
+import { DateTime } from "luxon";
+import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 type CreateHintForm = {
     content: string;
-    cost?: number;
+    cost: number;
 };
 
-export default function () {
+export default function (props: { challenge?: Challenge }) {
     const [hints, setHints] = createSignal([] as Hint[]);
     const [extras, setExtras] = createSignal([] as Extra[]);
     const lorem = new LoremIpsum({
@@ -27,8 +32,75 @@ export default function () {
         },
     });
     const [form, { Form, Field }] = createForm<CreateHintForm>();
+    setValue(form, "cost", 0);
     const [loading, setLoading] = createSignal(false);
-    function onSubmit(result: CreateHintForm) {}
+    function onSubmit(result: CreateHintForm) {
+        const hint = {
+            id: 0,
+            created_at: DateTime.now(),
+            challenge_id: props.challenge!.id,
+            content: result.content,
+            cost: result.cost ?? 0,
+        } as Hint;
+        createChallengeHint(props.challenge!.game_id, props.challenge!.id, hint)
+            .then(() => {
+                addToast({
+                    level: "success",
+                    description: t("form.createSuccess")!,
+                    duration: 5000,
+                });
+                refreshHint();
+            })
+            .catch((e: HTTPError) => {
+                e.response.text().then((text) => {
+                    addToast({
+                        level: "error",
+                        description: `${t("form.createFailed")}: ${text}`,
+                    });
+                });
+            });
+    }
+    function refreshHint() {
+        setLoading(true);
+        getChallengeHint(props.challenge!.game_id, props.challenge!.id)
+            .then((resp) => {
+                setHints(resp);
+            })
+            .catch((e: HTTPError) => {
+                e.response.text().then((text) => {
+                    addToast({
+                        level: "error",
+                        description: `${t("game.challenge.fetchHintFailed")}: ${text}`,
+                        duration: 5000,
+                    });
+                });
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }
+    createEffect(() => {
+        if (props.challenge) {
+            untrack(() => {
+                refreshHint();
+                if (!isGameAdmin()) {
+                    getTeamExtras(gameStore.current!.id, gameStore.team!.id)
+                        .then((resp) => {
+                            setExtras(resp);
+                        })
+                        .catch((e: HTTPError) => {
+                            e.response.text().then((text) => {
+                                addToast({
+                                    level: "error",
+                                    description: `${t("game.challenge.fetchHintFailed")}: ${text}`,
+                                    duration: 5000,
+                                });
+                            });
+                        });
+                }
+            });
+        }
+    });
     return (
         <div class="flex flex-col p-3 lg:p-6">
             <For each={hints()}>
@@ -36,7 +108,7 @@ export default function () {
                     <div class="px-2 min-h-12 border-b border-b-layer-content/10 flex items-center space-x-2">
                         <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary flex-shrink-0" />
                         <Show
-                            when={hint.cost === 0 || extras().find((e) => e.hint_id === hint.id)}
+                            when={isGameAdmin() || hint.cost === 0 || extras().find((e) => e.hint_id === hint.id)}
                             fallback={
                                 <>
                                     <span class="blur pointer-events-none select-none flex-1">

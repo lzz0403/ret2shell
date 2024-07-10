@@ -1,3 +1,4 @@
+import { HostType } from "@/lib/models/game";
 import { getGame } from "@api/game";
 import { useNavigate, useParams } from "@solidjs/router";
 import { gameStore, setGameStore } from "@storage/game";
@@ -15,6 +16,10 @@ export default function (props: { children?: JSX.Element }) {
     if (game_id)
         getGame(game_id)
             .then((resp) => {
+                if (resp.host_type !== HostType.CTFGame) {
+                    navigate(`/training/${resp.id}`);
+                    return null;
+                }
                 setGameStore({ current: resp });
             })
             .catch((err: HTTPError) => {

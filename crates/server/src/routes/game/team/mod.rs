@@ -5,7 +5,7 @@ use axum::{
     routing::get,
     Extension, Json, Router,
 };
-use r2s_database::{game, team, user::Permission};
+use r2s_database::{extra, game, team, user::Permission};
 use r2s_migrator::Database;
 use serde::Deserialize;
 
@@ -19,6 +19,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         "/:team",
         Router::new()
             .route("/", get(get_team_info))
+            .route("/extra", get(get_team_extra))
             .route_layer(middleware::from_fn_with_state(
                 state.clone(),
                 data::prepare_data!(team, false),
@@ -84,4 +85,10 @@ async fn get_team_list(
     )
     .await?;
     Ok(Json(results))
+}
+
+async fn get_team_extra(
+    State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+    Ok(Json(extra::get_list_ex(&db.conn, team.id).await?))
 }

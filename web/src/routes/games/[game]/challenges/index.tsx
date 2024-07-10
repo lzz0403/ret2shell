@@ -66,13 +66,17 @@ export default function () {
     function appendChallengeHistory(challenge: ChallengeModel) {
         if (challengeHistory().find((c) => c.id === challenge.id)) {
             setTimeout(() => {
-                document.getElementById(`challenge-${challenge.id}`)?.scrollIntoView({ behavior: "smooth" });
+                document
+                    .getElementById(`challenge-${challenge.id}`)
+                    ?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
             }, 100);
             return;
         }
         setChallengeHistory([...challengeHistory(), { id: challenge.id, name: challenge.name }]);
         setTimeout(() => {
-            document.getElementById(`challenge-${challenge.id}`)?.scrollIntoView({ behavior: "smooth" });
+            document
+                .getElementById(`challenge-${challenge.id}`)
+                ?.scrollIntoView({ behavior: "smooth", block: "center", inline: "center" });
         }, 100);
     }
     function onCreateChallenge(result: ChallengeForm) {
@@ -137,7 +141,7 @@ export default function () {
                                 <span>{t("game.challenge.list")}</span>
                             </Link>
                         </div>
-                        <ChallengeList showScore />
+                        <ChallengeList showScore inGame />
                     </>
                 )}
                 rightBar={() => (
@@ -158,29 +162,41 @@ export default function () {
                         }}
                         defer
                     >
-                        <div class="h-full flex px-2 py-0 items-center space-x-2 min-w-max w-max">
-                            <Link
-                                href={`/games/${gameStore.current?.id}/challenges`}
-                                onClick={() => setSearchParams({ challenge: null })}
-                                ghost
-                                active={selectedChallengeId() === null && inCreate() === false}
-                            >
-                                <span class="icon-[fluent--home-20-regular] w-5 h-5" />
-                                <span>{t("game.challenge.welcome")}</span>
-                            </Link>
-
-                            <Show when={accountStore.permissions.includes(Permission.Game)}>
-                                <Link
-                                    active={inCreate()}
-                                    title={t("form.create")}
-                                    ghost
-                                    href={`/games/${gameStore.current?.id}/challenges?create=true`}
-                                >
-                                    <span class="icon-[fluent--add-20-regular] w-5 h-5" />
-                                    <span>{t("form.create")}</span>
-                                </Link>
-                            </Show>
+                        <div class="h-full flex pr-2 py-0 items-center space-x-2 min-w-max w-max">
                             <TransitionGroup name="fade-group-dive-left">
+                                <div class="fade-group-dive-left flex space-x-2 items-center sticky left-0 pl-2 bg-layer z-20">
+                                    <Link
+                                        href={`/games/${gameStore.current?.id}/challenges`}
+                                        onClick={() => setSearchParams({ challenge: null })}
+                                        square={challengeHistory().length > 0}
+                                        ghost
+                                        class="transition-all duration-300 overflow-hidden"
+                                        active={selectedChallengeId() === null && inCreate() === false}
+                                    >
+                                        <span class="icon-[fluent--home-20-regular] w-5 h-5" />
+                                        <Show when={challengeHistory().length === 0}>
+                                            <span>{t("game.challenge.welcome")}</span>
+                                        </Show>
+                                    </Link>
+                                    <Show when={accountStore.permissions.includes(Permission.Game)}>
+                                        <Link
+                                            active={inCreate()}
+                                            title={t("form.create")}
+                                            square={challengeHistory().length > 0}
+                                            ghost
+                                            class="transition-all duration-300 overflow-hidden"
+                                            href={`/games/${gameStore.current?.id}/challenges?create=true`}
+                                        >
+                                            <span class="icon-[fluent--add-20-regular] w-5 h-5" />
+                                            <Show when={challengeHistory().length === 0}>
+                                                <span>{t("form.create")}</span>
+                                            </Show>
+                                        </Link>
+                                    </Show>
+                                    <Show when={challengeHistory().length > 0}>
+                                        <span class="h-12 w-[1px] bg-layer-content/15" />
+                                    </Show>
+                                </div>
                                 <For each={challengeHistory()}>
                                     {(challenge) => (
                                         <div class="fade-group-dive-left flex flex-row">
@@ -221,16 +237,16 @@ export default function () {
                         </div>
                     </OverlayScrollbarsComponent>
                     <Switch fallback={<Welcome />}>
-                        <Match when={inCreate()}>
-                            <Form onDone={onCreateChallenge} loading={creating()} />
-                        </Match>
-                        <Match when={selectedChallenge()}>
-                            <Challenge inGame challenge={selectedChallenge()!} />
-                        </Match>
-                        <Match when={selectedChallengeId() !== null}>
+                        <Match when={loadingChallenge()}>
                             <div class="flex-1 flex flex-row space-x-2 items-center justify-center">
                                 <LoadingTips />
                             </div>
+                        </Match>
+                        <Match when={inCreate()}>
+                            <Form onDone={onCreateChallenge} loading={creating()} inGame />
+                        </Match>
+                        <Match when={selectedChallenge()}>
+                            <Challenge inGame challenge={selectedChallenge()!} />
                         </Match>
                     </Switch>
                 </div>

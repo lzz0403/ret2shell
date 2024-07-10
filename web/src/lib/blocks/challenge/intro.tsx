@@ -8,8 +8,6 @@ import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
 import { createEffect, createSignal, For, Show, untrack } from "solid-js";
-import challenge from ".";
-import Card from "@/lib/widgets/card";
 import Tag from "@/lib/widgets/tag";
 
 passiveSupport({
@@ -22,7 +20,7 @@ passiveSupport({
     ],
 });
 
-export default function (props: { challenge?: Challenge; solved?: boolean; solves?: number }) {
+export default function (props: { challenge?: Challenge; solved?: boolean; solves?: number; inGame?: boolean }) {
     const [files, setFiles] = createSignal([] as { folder: "mapped" | "static"; file: string }[]);
     const [hasEnv, setHasEnv] = createSignal(false);
     let cachedChallengeId = 0;
@@ -65,18 +63,20 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                                 <span class="icon-[fluent--info-20-regular] w-5 h-5" />
                                 <span class="flex-1 truncate">{props.challenge?.name}</span>
                             </span>
-                            <span
-                                class={`font-bold flex flex-row space-x-2 items-center ${props.solved ? "text-success" : "text-warning"}`.trim()}
-                            >
+                            <Show when={props.inGame}>
                                 <span
-                                    class={
-                                        props.solved
-                                            ? "icon-[fluent--checkmark-circle-20-regular] w-5 h-5"
-                                            : "icon-[fluent--flag-20-regular] w-5 h-5"
-                                    }
-                                />
-                                <span>{props.challenge?.score} pts</span>
-                            </span>
+                                    class={`font-bold flex flex-row space-x-2 items-center ${props.solved ? "text-success" : "text-warning"}`.trim()}
+                                >
+                                    <span
+                                        class={
+                                            props.solved
+                                                ? "icon-[fluent--checkmark-circle-20-regular] w-5 h-5"
+                                                : "icon-[fluent--flag-20-regular] w-5 h-5"
+                                        }
+                                    />
+                                    <span>{props.challenge?.score} pts</span>
+                                </span>
+                            </Show>
                             <span class="font-bold flex flex-row space-x-2 items-center">
                                 <span class="icon-[fluent--data-bar-vertical-24-regular] w-5 h-5" />
                                 <span>

@@ -5,6 +5,7 @@ import { type Team, TeamState } from "@models/team";
 import type { SearchParamsOption } from "ky";
 import api, { api_root } from ".";
 import type { Hint } from "../models/hint";
+import { Extra } from "../models/extra";
 
 export async function getGames(page?: number, page_size?: number, host_type?: HostType, weight?: number) {
     return (
@@ -125,4 +126,12 @@ export async function getChallengeAttachments(game_id: number, challenge_id: num
     return await api
         .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/files`)
         .json<{ folder: "static" | "mapped"; file: string }[]>();
+}
+
+export async function getTeamInfo(game_id: number, team_id: number) {
+    return await api.get(`${api_root}/game/${game_id}/team/${team_id}`).json<Team>();
+}
+
+export async function getTeamExtras(game_id: number, team_id: number) {
+    return await api.get(`${api_root}/game/${game_id}/team/${team_id}/extra`).json<Extra[]>();
 }

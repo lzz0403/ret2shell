@@ -5,7 +5,7 @@ import Editor from "@/lib/widgets/editor";
 import Input from "@/lib/widgets/input";
 import { createForm, required, setValue } from "@modular-forms/solid";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { createEffect, untrack } from "solid-js";
+import { createEffect, Show, untrack } from "solid-js";
 import ScorePicker from "./score-picker";
 
 export type ChallengeForm = {
@@ -21,6 +21,7 @@ export default function (props: {
     onDone: (challenge: ChallengeForm) => void;
     editSource?: Challenge;
     loading?: boolean;
+    inGame?: boolean;
 }) {
     const [form, { Form, Field }] = createForm<ChallengeForm>();
     function onSubmit(result: ChallengeForm) {
@@ -83,81 +84,83 @@ export default function (props: {
                                     />
                                 )}
                             </Field>
-                            <div class="flex space-y-2 xl:space-x-2 xl:space-y-0 flex-col xl:flex-row">
-                                <Field name="initial" type="number">
-                                    {(initialField, initialProps) => (
-                                        <Field name="minimum" type="number">
-                                            {(minField, minProps) => (
-                                                <Field name="decay" type="number">
-                                                    {(decayField, decayProps) => (
-                                                        <>
-                                                            <div class="flex flex-col space-y-2 flex-1">
-                                                                <Input
-                                                                    icon={
-                                                                        <span class="icon-[fluent--chevron-double-up-20-regular] w-5 h-5" />
-                                                                    }
-                                                                    title={t("game.challenge.maxScore")}
-                                                                    placeholder={t("game.challenge.maxScore")}
-                                                                    {...initialProps}
-                                                                    value={initialField.value}
-                                                                    error={initialField.error}
-                                                                    type="number"
-                                                                    min={50}
-                                                                    max={1200}
-                                                                    required
+                            <Show when={props.inGame}>
+                                <div class="flex space-y-2 xl:space-x-2 xl:space-y-0 flex-col xl:flex-row">
+                                    <Field name="initial" type="number">
+                                        {(initialField, initialProps) => (
+                                            <Field name="minimum" type="number">
+                                                {(minField, minProps) => (
+                                                    <Field name="decay" type="number">
+                                                        {(decayField, decayProps) => (
+                                                            <>
+                                                                <div class="flex flex-col space-y-2 flex-1">
+                                                                    <Input
+                                                                        icon={
+                                                                            <span class="icon-[fluent--chevron-double-up-20-regular] w-5 h-5" />
+                                                                        }
+                                                                        title={t("game.challenge.maxScore")}
+                                                                        placeholder={t("game.challenge.maxScore")}
+                                                                        {...initialProps}
+                                                                        value={initialField.value}
+                                                                        error={initialField.error}
+                                                                        type="number"
+                                                                        min={50}
+                                                                        max={1200}
+                                                                        required
+                                                                    />
+                                                                    <Input
+                                                                        icon={
+                                                                            <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" />
+                                                                        }
+                                                                        title={t("game.challenge.minScore")}
+                                                                        placeholder={t("game.challenge.minScore")}
+                                                                        {...minProps}
+                                                                        value={minField.value}
+                                                                        error={minField.error}
+                                                                        type="number"
+                                                                        min={50}
+                                                                        max={1200}
+                                                                        required
+                                                                    />
+                                                                    <Input
+                                                                        icon={
+                                                                            <span class="icon-[fluent--number-symbol-20-regular] w-5 h-5" />
+                                                                        }
+                                                                        title={t("game.challenge.scoreDecay")}
+                                                                        placeholder={t("game.challenge.scoreDecay")}
+                                                                        {...decayProps}
+                                                                        value={decayField.value}
+                                                                        error={decayField.error}
+                                                                        type="number"
+                                                                        min={1}
+                                                                        max={30}
+                                                                        required
+                                                                    />
+                                                                </div>
+                                                                <ScorePicker
+                                                                    class="flex-1"
+                                                                    max={initialField.value || 1000}
+                                                                    onChangeMax={(v) => {
+                                                                        setValue(form, "initial", v);
+                                                                    }}
+                                                                    min={minField.value || 500}
+                                                                    onChangeMin={(v) => {
+                                                                        setValue(form, "minimum", v);
+                                                                    }}
+                                                                    decay={decayField.value || 10}
+                                                                    onChangeDecay={(v) => {
+                                                                        setValue(form, "decay", v);
+                                                                    }}
                                                                 />
-                                                                <Input
-                                                                    icon={
-                                                                        <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" />
-                                                                    }
-                                                                    title={t("game.challenge.minScore")}
-                                                                    placeholder={t("game.challenge.minScore")}
-                                                                    {...minProps}
-                                                                    value={minField.value}
-                                                                    error={minField.error}
-                                                                    type="number"
-                                                                    min={50}
-                                                                    max={1200}
-                                                                    required
-                                                                />
-                                                                <Input
-                                                                    icon={
-                                                                        <span class="icon-[fluent--number-symbol-20-regular] w-5 h-5" />
-                                                                    }
-                                                                    title={t("game.challenge.scoreDecay")}
-                                                                    placeholder={t("game.challenge.scoreDecay")}
-                                                                    {...decayProps}
-                                                                    value={decayField.value}
-                                                                    error={decayField.error}
-                                                                    type="number"
-                                                                    min={1}
-                                                                    max={30}
-                                                                    required
-                                                                />
-                                                            </div>
-                                                            <ScorePicker
-                                                                class="flex-1"
-                                                                max={initialField.value || 1000}
-                                                                onChangeMax={(v) => {
-                                                                    setValue(form, "initial", v);
-                                                                }}
-                                                                min={minField.value || 500}
-                                                                onChangeMin={(v) => {
-                                                                    setValue(form, "minimum", v);
-                                                                }}
-                                                                decay={decayField.value || 10}
-                                                                onChangeDecay={(v) => {
-                                                                    setValue(form, "decay", v);
-                                                                }}
-                                                            />
-                                                        </>
-                                                    )}
-                                                </Field>
-                                            )}
-                                        </Field>
-                                    )}
-                                </Field>
-                            </div>
+                                                            </>
+                                                        )}
+                                                    </Field>
+                                                )}
+                                            </Field>
+                                        )}
+                                    </Field>
+                                </div>
+                            </Show>
                             <Field name="content" validate={[required(t("game.challenge.contentRequired")!)]}>
                                 {(field) => (
                                     <Editor
