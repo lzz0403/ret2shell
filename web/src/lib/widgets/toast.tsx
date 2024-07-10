@@ -43,7 +43,7 @@ export default function (props: ComponentProps<"div"> & ToastProps) {
     }
 
     return (
-        <Card {...otherProps} class={`toast ${otherProps.class}`.trim()} contentClass="p-2 group relative">
+        <Card {...otherProps} class={`toast ${otherProps.class ?? ""}`.trim()} contentClass="p-2 group relative">
             <div class="flex flex-col space-y-2">
                 <Show when={toastMsgProps.toast.img}>
                     <div class="flex flex-row items-center justify-center p-6">

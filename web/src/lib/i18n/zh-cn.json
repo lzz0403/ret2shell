@@ -119,6 +119,7 @@
             "list": "题目列表",
             "terminal": "终端",
             "hint": "提示",
+            "info": "基础信息",
             "files": "文件",
             "answer": "题解",
             "statistics": "统计",

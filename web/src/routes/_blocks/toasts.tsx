@@ -7,10 +7,11 @@ export default function () {
     const toasts = () => toastStore.toasts.filter((toast) => toast.shown !== false);
     return (
         <div class="fixed bottom-0 right-0 p-2 max-w-96 w-[calc(100vw-1rem)] flex flex-col space-y-2">
-            <TransitionGroup name="toast">
+            <TransitionGroup name="fade-group-right">
                 <For each={toasts()}>
                     {(toast) => (
                         <Toast
+                            class="fade-group-right"
                             toast={toast}
                             selfDestroy
                             onTimeout={() => {

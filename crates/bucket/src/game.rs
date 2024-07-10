@@ -26,7 +26,7 @@ pub struct GameBucket {
 #[repr(i32)]
 pub enum HostType {
     CTFTraining = 0,
-    CTFGame     = 1,
+    CTFGame = 1,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -163,11 +163,13 @@ impl GameBucket {
             return Err(BucketError::NeedLocking);
         }
         let challenge_config: challenge::ChallengeConfig = serde_json::from_value(challenge)?;
-        let challenge_name = format!(
-            "{}_{:x}",
-            util::deunicode_str(&challenge_config.name),
-            Utc::now().timestamp(),
-        );
+        let challenge_name = util::deunicode_str(&challenge_config.name);
+        let challenge_name = if challenge_name.len() > 72 {
+            challenge_name[..72].to_owned()
+        } else {
+            challenge_name
+        };
+        let challenge_name = format!("{}_{:x}", challenge_name, Utc::now().timestamp(),);
         if self.path.join("challenges").join(&challenge_name).exists() {
             return Err(BucketError::PathConflict(challenge_name));
         }

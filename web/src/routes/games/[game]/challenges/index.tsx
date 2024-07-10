@@ -21,6 +21,7 @@ import { createChallenge, getChallenge } from "@/lib/api/game";
 import type { HTTPError } from "ky";
 import { addToast } from "@/lib/storage/toast";
 import Button from "@/lib/widgets/button";
+import { TransitionGroup } from "solid-transition-group";
 
 export default function () {
     const navigate = useNavigate();
@@ -58,14 +59,21 @@ export default function () {
             setSelectedChallenge(null);
         }
     });
+
     const inCreate = createMemo(() => searchParams.create === "true");
     const [creating, setCreating] = createSignal(false);
     const [challengeHistory, setChallengeHistory] = createSignal<{ id: number; name: string }[]>([]);
     function appendChallengeHistory(challenge: ChallengeModel) {
         if (challengeHistory().find((c) => c.id === challenge.id)) {
+            setTimeout(() => {
+                document.getElementById(`challenge-${challenge.id}`)?.scrollIntoView({ behavior: "smooth" });
+            }, 100);
             return;
         }
         setChallengeHistory([...challengeHistory(), { id: challenge.id, name: challenge.name }]);
+        setTimeout(() => {
+            document.getElementById(`challenge-${challenge.id}`)?.scrollIntoView({ behavior: "smooth" });
+        }, 100);
     }
     function onCreateChallenge(result: ChallengeForm) {
         setCreating(true);
@@ -172,21 +180,41 @@ export default function () {
                                     <span>{t("form.create")}</span>
                                 </Link>
                             </Show>
-                            <For each={challengeHistory()}>
-                                {(challenge) => (
-                                    <Link
-                                        href={`/games/${gameStore.current?.id}/challenges?challenge=${challenge.id}`}
-                                        onClick={() => setSearchParams({ challenge: challenge.id })}
-                                        active={challenge.id === selectedChallengeId() && inCreate() === false}
-                                        ghost
-                                    >
-                                        <span class="icon-[fluent--code-20-regular] w-5 h-5" />
-                                        <span>{challenge.name}</span>
-                                    </Link>
-                                )}
-                            </For>
+                            <TransitionGroup name="fade-group-dive-left">
+                                <For each={challengeHistory()}>
+                                    {(challenge) => (
+                                        <div class="fade-group-dive-left flex flex-row">
+                                            <Link
+                                                href={`/games/${gameStore.current?.id}/challenges?challenge=${challenge.id}`}
+                                                onClick={() => setSearchParams({ challenge: challenge.id })}
+                                                id={`challenge-${challenge.id}`}
+                                                active={challenge.id === selectedChallengeId() && inCreate() === false}
+                                                ghost
+                                                class="max-w-48 rounded-r-none"
+                                            >
+                                                <span class="icon-[fluent--code-20-regular] w-5 h-5" />
+                                                <span class="truncate flex-1 text-left">{challenge.name}</span>
+                                            </Link>
+                                            <Button
+                                                class={`!rounded-l-none ${challenge.id === selectedChallengeId() && inCreate() === false ? "btn-active" : ""}`}
+                                                square
+                                                ghost
+                                                onClick={() => {
+                                                    if (challenge.id === selectedChallengeId())
+                                                        setSearchParams({ challenge: null });
+                                                    setChallengeHistory([
+                                                        ...challengeHistory().filter((s) => s.id !== challenge.id),
+                                                    ]);
+                                                }}
+                                            >
+                                                <span class="icon-[fluent--dismiss-20-regular] w-5 h-5 opacity-60" />
+                                            </Button>
+                                        </div>
+                                    )}
+                                </For>
+                            </TransitionGroup>
                             <Show when={loadingChallenge()}>
-                                <Button loading ghost>
+                                <Button class="opacity-60" loading ghost>
                                     <span>{t("form.loading")}</span>
                                 </Button>
                             </Show>

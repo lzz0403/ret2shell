@@ -159,18 +159,21 @@ export default function () {
                         <span>{`${enableStreamLogs() ? t("admin.logs.stop")! : t("admin.logs.start")!}`}</span>
                     </Button>
                 </div>
-                <div class="flex flex-row flex-wrap p-3 lg:p-6 !pb-0">
+                <div class="inline-flex flex-row items-center flex-wrap p-3 lg:p-6 !pb-0">
                     <For each={logFiles()}>
                         {(file) => (
                             <Button
-                                class="font-normal flex flex-col !h-auto py-2 m-1 overflow-hidden"
+                                class="m-1 overflow-hidden"
+                                size="sm"
                                 loading={downloadingFile() === file}
                                 onClick={() => downloadLog(file)}
                             >
                                 <Show when={downloadingFile() !== file}>
-                                    <span class="icon-[fluent--folder-zip-20-regular] w-8 h-8 flex-shrink-0" />
+                                    <span class="icon-[fluent--folder-zip-20-regular] w-4 h-4 flex-shrink-0" />
                                 </Show>
-                                <span class="truncate">{file.replace("ret2shell.", "").replace(".log", "")}</span>
+                                <span class="truncate flex-1 text-start">
+                                    {file.replace("ret2shell.", "").replace(".log", "")}
+                                </span>
                             </Button>
                         )}
                     </For>

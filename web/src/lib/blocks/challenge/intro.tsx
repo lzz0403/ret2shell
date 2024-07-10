@@ -8,6 +8,9 @@ import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
 import { createEffect, createSignal, For, Show, untrack } from "solid-js";
+import challenge from ".";
+import Card from "@/lib/widgets/card";
+import Tag from "@/lib/widgets/tag";
 
 passiveSupport({
     events: ["mousewheel", "wheel"],
@@ -19,9 +22,9 @@ passiveSupport({
     ],
 });
 
-export default function (props: { challenge?: Challenge }) {
-    const [larged, setLarged] = createSignal(true);
+export default function (props: { challenge?: Challenge; solved?: boolean; solves?: number }) {
     const [files, setFiles] = createSignal([] as { folder: "mapped" | "static"; file: string }[]);
+    const [hasEnv, setHasEnv] = createSignal(false);
     let cachedChallengeId = 0;
     createEffect(() => {
         if (props.challenge && props.challenge.id !== cachedChallengeId) {
@@ -55,57 +58,63 @@ export default function (props: { challenge?: Challenge }) {
                 class="relative w-full flex-1 print:h-auto print:overflow-auto"
                 defer
             >
-                <div
-                    class="flex flex-col"
-                    onWheel={(e: WheelEvent) => {
-                        console.log(e);
-                        if (e.deltaY > 0 && larged()) setLarged(false);
-                        if (e.deltaY < 0 && !larged()) setLarged(true);
-                    }}
-                    id="challenge-header"
-                >
-                    <div class="sticky top-0 w-full flex flex-col border-b border-b-layer-content/15 backdrop-blur z-20">
-                        <div
-                            class={`flex flex-row self-center w-full max-w-5xl items-center transition-all ${larged() ? "h-36" : "h-16"}`}
-                        >
-                            <h1 class="flex flex-row items-center">
+                <div class="flex flex-col items-center">
+                    <div class="flex flex-col w-full max-w-5xl p-3 lg:p-6">
+                        <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6 font-bold">
+                            <span class="flex flex-row space-x-2 items-center flex-1 overflow-hidden">
+                                <span class="icon-[fluent--info-20-regular] w-5 h-5" />
+                                <span class="flex-1 truncate">{props.challenge?.name}</span>
+                            </span>
+                            <span
+                                class={`font-bold flex flex-row space-x-2 items-center ${props.solved ? "text-success" : "text-warning"}`.trim()}
+                            >
                                 <span
-                                    class={`mx-4 icon-[fluent--code-20-regular] transition-all ${larged() ? "w-16 h-16" : "w-5 h-5"}`}
+                                    class={
+                                        props.solved
+                                            ? "icon-[fluent--checkmark-circle-20-regular] w-5 h-5"
+                                            : "icon-[fluent--flag-20-regular] w-5 h-5"
+                                    }
                                 />
-                                <div class="flex flex-col space-y-2">
-                                    <span class={`${larged() ? "text-3xl" : "text-base"} font-bold transition-font`}>
-                                        {props.challenge?.name}
-                                    </span>
-                                    <Show when={larged()}>
-                                        <span class={`${larged() ? "h-auto" : "h-0"} overflow-hidden opacity-60`}>
-                                            {props.challenge?.updated_at.toFormat("yyyy-MM-dd HH:mm:ss")}
-                                        </span>
-                                    </Show>
-                                </div>
-                            </h1>
-                        </div>
-                    </div>
-                    <div class="flex flex-col w-full max-w-5xl self-center p-3 lg:p-6">
+                                <span>{props.challenge?.score} pts</span>
+                            </span>
+                            <span class="font-bold flex flex-row space-x-2 items-center">
+                                <span class="icon-[fluent--data-bar-vertical-24-regular] w-5 h-5" />
+                                <span>
+                                    {props.solves ?? 0} solve{props.solves && props.solves > 1 ? "s" : ""}
+                                </span>
+                            </span>
+                        </header>
+                        <Show when={props.challenge}>
+                            <section class="flex flex-row-reverse flex-wrap items-center min-h-12 border-b border-b-layer-content/15">
+                                <For each={props.challenge!.tag}>
+                                    {(tag) => (
+                                        <Tag class="mx-1" level={tag.primary ? "error" : "info"}>
+                                            <span>{tag.name}</span>
+                                        </Tag>
+                                    )}
+                                </For>
+                            </section>
+                        </Show>
+                        <Show when={hasEnv()}>
+                            <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6" />
+                        </Show>
                         <Show when={files().length > 0}>
-                            <h2 class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
-                                <span class="icon-[fluent--folder-zip-20-regular] w-5 h-5" />
-                                <span>{t("game.challenge.files")}</span>
-                            </h2>
-                            <div class="flex flex-row flex-wrap p-2">
+                            <section class="inline-flex flex-row items-center flex-wrap min-h-12 border-b border-b-layer-content/15">
+                                <h3 class="font-bold flex space-x-2 items-center">
+                                    <span class="icon-[fluent--folder-zip-20-regular] w-5 h-5" />
+                                    <span>{t("game.challenge.files")}:</span>
+                                </h3>
+                                <div class="w-4" />
                                 <For each={files()}>
                                     {(file) => (
-                                        <Button class="font-normal flex flex-col !h-auto py-2 m-1 overflow-hidden">
-                                            <span class="icon-[fluent--folder-zip-20-regular] w-8 h-8 flex-shrink-0" />
-                                            <span class="truncate">{file.file}</span>
+                                        <Button class="m-1" size="sm">
+                                            <span class="icon-[fluent--arrow-download-20-regular] w-5 h-5 flex-shrink-0" />
+                                            <span class="truncate flex-1 text-start">{file.file}</span>
                                         </Button>
                                     )}
                                 </For>
-                            </div>
+                            </section>
                         </Show>
-                        <h2 class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
-                            <span class="icon-[fluent--document-20-regular] w-5 h-5" />
-                            <span>{t("game.challenge.content")}</span>
-                        </h2>
                         <Article content={props.challenge?.content ?? ""} extra />
                     </div>
                 </div>

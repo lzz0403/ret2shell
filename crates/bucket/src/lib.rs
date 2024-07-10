@@ -25,11 +25,13 @@ impl Bucket {
 
     pub async fn create(&self, game: Value) -> Result<game::GameBucket, BucketError> {
         let game_config: GameConfig = serde_json::from_value(game)?;
-        let game_bucket_name = format!(
-            "{}_{:x}",
-            util::deunicode_str(&game_config.name),
-            game_config.start_at.timestamp()
-        );
+        let game_name = util::deunicode_str(&game_config.name);
+        let game_name = if game_name.len() > 72 {
+            game_name[..72].to_owned()
+        } else {
+            game_name
+        };
+        let game_bucket_name = format!("{}_{:x}", game_name, game_config.start_at.timestamp());
         match game::GameBucket::new(&self.path, &game_bucket_name, game_config).await {
             Ok(bucket) => Ok(bucket),
             Err(BucketError::PathConflict(_)) => {
