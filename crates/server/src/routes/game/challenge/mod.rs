@@ -44,6 +44,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             "/:challenge",
             Router::new()
                 .route("/files", get(get_player_attachment))
+                .route("/env", get(get_challenge_env))
                 .route(
                     "/hint",
                     post(create_challenge_hint).delete(delete_challenge_hint),
@@ -72,6 +73,26 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             state.clone(),
             auth::game_access_required,
         ))
+}
+
+macro_rules! get_challenge_bucket {
+    ($bucket:expr, $game:expr, $challenge:expr) => {{
+        $bucket
+            .at($game
+                .bucket
+                .ok_or(ResponseError::PreconditionFailed(format!(
+                    "game {}:'{}' does not have a valid bucket",
+                    $game.id, $game.name
+                )))?)
+            .await?
+            .at($challenge
+                .bucket
+                .ok_or(ResponseError::PreconditionFailed(format!(
+                    "challenge {}:'{}' in game {}:'{}' does not have a valid bucket",
+                    $challenge.id, $challenge.name, $game.id, $game.name
+                )))?)
+            .await?
+    }};
 }
 
 #[derive(Deserialize)]
@@ -480,4 +501,14 @@ async fn delete_challenge_hint(
 ) -> Result<impl IntoResponse, ResponseError> {
     hint::delete(&db.conn, query.id).await?;
     Ok(())
+}
+
+async fn get_challenge_env(
+    State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+    Extension(challenge): Extension<challenge::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+    let challenge_bucket = get_challenge_bucket!(bucket, game, challenge);
+    let env_config = challenge_bucket.env().await?;
+
+    Ok(Json(env_config))
 }

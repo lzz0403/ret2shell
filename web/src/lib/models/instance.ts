@@ -1,15 +1,8 @@
 import type { DateTime } from "luxon";
 
-export type ContainerConfig = {
-    image: string;
-    cpu: string;
-    memory: string;
-    storage: string;
-};
-
-export type InstanceConfig = {
-    containers: ContainerConfig[];
+export type EnvConfig = {
     port: number;
+    images: { tag: string; cpu: number; mem: string }[];
 };
 
 export enum InstanceState {
@@ -36,7 +29,6 @@ export type Instance = {
     challenge_id: number;
     challenge_name?: string;
     state: InstanceState;
-    config: InstanceConfig;
 };
 
 export type Traffic = {

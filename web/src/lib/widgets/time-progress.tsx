@@ -13,14 +13,14 @@ export default function TimeProgress(
         setNow(DateTime.now());
     }, 1000);
     const progress = () => {
-        if (progressProps.startAt.diff(progressProps.endAt).milliseconds <= 0) {
+        if (progressProps.startAt.diff(progressProps.endAt).milliseconds >= 0) {
             return 0;
         }
-        return (
+        const result =
             (progressProps.startAt.diff(now()).milliseconds /
                 progressProps.startAt.diff(progressProps.endAt).milliseconds) *
-            100
-        );
+            100;
+        return result;
     };
     const cleanup = () => clearInterval(interval);
     onCleanup(cleanup);

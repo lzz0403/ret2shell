@@ -40,6 +40,19 @@ pub struct ChallengeConfig {
     pub score_rule: ScoreRule,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ChallengeImage {
+    pub tag: String,
+    pub cpu: f64,
+    pub mem: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ChallengeEnv {
+    pub port: u16,
+    pub images: Vec<ChallengeImage>,
+}
+
 impl ChallengeBucket {
     pub async fn open(
         root_path: impl AsRef<Path>, name: impl AsRef<str>, locked: bool,
@@ -106,6 +119,29 @@ impl ChallengeBucket {
     pub async fn config(&self) -> Result<ChallengeConfig, BucketError> {
         let config = toml::from_str(&read_to_string(&self.path.join("config.toml")).await?)?;
         Ok(config)
+    }
+
+    pub async fn set_env(&self, config: Value) -> Result<(), BucketError> {
+        if !self.locked {
+            return Err(BucketError::NeedLocking);
+        }
+        let config: ChallengeEnv = serde_json::from_value(config)?;
+        write(
+            &self.path.join("env.toml"),
+            toml::to_string_pretty(&config)?,
+        )
+        .await?;
+
+        Ok(())
+    }
+
+    pub async fn env(&self) -> Result<Option<ChallengeEnv>, BucketError> {
+        let path = self.path.join("env.toml");
+        if !path.exists() {
+            return Ok(None);
+        }
+        let config = toml::from_str(&read_to_string(&path).await?)?;
+        Ok(Some(config))
     }
 
     async fn upload_file(

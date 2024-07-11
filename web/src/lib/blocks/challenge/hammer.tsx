@@ -46,7 +46,7 @@ export default function () {
                     gameStore.current?.admins.includes(accountStore.id)
                 }
             >
-                <div class="absolute top-0 left-0 w-full h-full backdrop-blur flex items-center justify-center">
+                <div class="absolute top-0 left-0 w-full h-full bg-layer/60 backdrop-blur flex items-center justify-center">
                     <A
                         class="font-bold hover:underline hover:text-primary flex items-center space-x-2"
                         href={`/games/${gameStore.current?.id}/admin/hammers`}

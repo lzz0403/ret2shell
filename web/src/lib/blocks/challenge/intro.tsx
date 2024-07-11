@@ -1,4 +1,4 @@
-import { getChallengeAttachments } from "@/lib/api/game";
+import { getChallengeAttachments, getChallengeEnv } from "@/lib/api/game";
 import type { Challenge } from "@/lib/models/challenge";
 import { fullTheme, t } from "@/lib/storage/theme";
 import { addToast } from "@/lib/storage/toast";
@@ -7,8 +7,13 @@ import Button from "@/lib/widgets/button";
 import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
-import { createEffect, createSignal, For, Show, untrack } from "solid-js";
-import Tag from "@/lib/widgets/tag";
+import { createEffect, createMemo, createSignal, For, Match, Show, Switch, untrack } from "solid-js";
+import Tag from "@widgets/tag";
+import type { EnvConfig } from "@models/instance";
+import TimeProgress from "@widgets/time-progress";
+import { wsrx } from "@lib/wsrx";
+import { accountStore } from "@/lib/storage/account";
+import Divider from "@/lib/widgets/divider";
 
 passiveSupport({
     events: ["mousewheel", "wheel"],
@@ -22,7 +27,7 @@ passiveSupport({
 
 export default function (props: { challenge?: Challenge; solved?: boolean; solves?: number; inGame?: boolean }) {
     const [files, setFiles] = createSignal([] as { folder: "mapped" | "static"; file: string }[]);
-    const [hasEnv, setHasEnv] = createSignal(false);
+    const [env, setEnv] = createSignal(null as EnvConfig | null);
     let cachedChallengeId = 0;
     createEffect(() => {
         if (props.challenge && props.challenge.id !== cachedChallengeId) {
@@ -41,8 +46,39 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                             });
                         });
                     });
+                getChallengeEnv(props.challenge!.game_id, props.challenge!.id)
+                    .then((resp) => {
+                        setEnv(resp);
+                    })
+                    .catch((e: HTTPError) => {
+                        e.response.text().then((text) => {
+                            addToast({
+                                level: "error",
+                                description: `${t("game.challenge.fetchEnvFailed")}: ${text}`,
+                                duration: 5000,
+                            });
+                        });
+                    });
             });
         }
+    });
+    const instance = createMemo(() => {
+        if (env() && props.challenge) {
+            return wsrx.instances().find((s) => s.challenge_id === props.challenge!.id) ?? null;
+        }
+        return null;
+    });
+    const localAddr = createMemo(() => {
+        if (instance()) {
+            return wsrx.traffic().find((t) => t.instance_id === instance()!.id)?.local_addr ?? null;
+        }
+        return null;
+    });
+    const userExplicitInstance = createMemo(() => {
+        if (env() && props.challenge) {
+            return wsrx.instances().find((s) => s.user_id === accountStore.id) ?? null;
+        }
+        return null;
     });
     return (
         <div class="w-full h-full overflow-hidden flex flex-col">
@@ -84,20 +120,6 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                                 </span>
                             </span>
                         </header>
-                        <Show when={props.challenge}>
-                            <section class="flex flex-row-reverse flex-wrap items-center min-h-12 border-b border-b-layer-content/15">
-                                <For each={props.challenge!.tag}>
-                                    {(tag) => (
-                                        <Tag class="mx-1" level={tag.primary ? "error" : "info"}>
-                                            <span>{tag.name}</span>
-                                        </Tag>
-                                    )}
-                                </For>
-                            </section>
-                        </Show>
-                        <Show when={hasEnv()}>
-                            <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6" />
-                        </Show>
                         <Show when={files().length > 0}>
                             <section class="inline-flex flex-row items-center flex-wrap min-h-12 border-b border-b-layer-content/15">
                                 <h3 class="font-bold flex space-x-2 items-center">
@@ -114,6 +136,82 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                                     )}
                                 </For>
                             </section>
+                        </Show>
+                        <Show when={env()}>
+                            <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6 relative">
+                                <Show when={instance()}>
+                                    <TimeProgress
+                                        class="absolute bottom-0 left-0 right-0"
+                                        startAt={instance()!.created_at}
+                                        endAt={instance()!.created_at.plus({ hours: instance()!.renew_count + 1 })}
+                                    />
+                                </Show>
+                                <h3 class="font-bold flex space-x-2 items-center flex-1">
+                                    <span
+                                        class={`icon-[fluent--play-20-regular] w-5 h-5 ${instance() ? "text-success" : ""}`.trim()}
+                                    />
+                                    <Switch
+                                        fallback={<span class="opacity-80">{t("game.challenge.envNotStart")}</span>}
+                                    >
+                                        <Match when={instance()}>
+                                            <span>
+                                                {t("game.challenge.envIsRunning")}:{" "}
+                                                {localAddr() ?? instance()?.proxy_addr}
+                                            </span>
+                                        </Match>
+                                        <Match when={userExplicitInstance()}>
+                                            <span class="text-warning">
+                                                {t("game.challenge.otherChallengeEnvIsRunning")}:{" "}
+                                                {userExplicitInstance()?.challenge_name}
+                                            </span>
+                                        </Match>
+                                    </Switch>
+                                </h3>
+
+                                <div class="flex flex-row space-x-2">
+                                    <Switch
+                                        fallback={
+                                            <Button ghost size="sm">
+                                                <span class="icon-[fluent--play-20-regular] w-5 h-5 text-success" />
+                                                <span>{t("game.challenge.startEnv")}</span>
+                                            </Button>
+                                        }
+                                    >
+                                        <Match when={instance()}>
+                                            <Button ghost size="sm" square>
+                                                <span class="icon-[fluent--copy-20-regular] w-5 h-5 text-success" />
+                                            </Button>
+                                            <Button ghost size="sm" square>
+                                                <span class="icon-[fluent--open-20-regular] w-5 h-5 text-success" />
+                                            </Button>
+                                            <Divider class="h-8" direction="horizontal" />
+                                            <Button ghost size="sm" square>
+                                                <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />
+                                            </Button>
+                                            <Button ghost size="sm" square>
+                                                <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-primary" />
+                                            </Button>
+                                        </Match>
+                                        <Match when={userExplicitInstance()}>
+                                            <span class="text-warning">
+                                                {t("game.challenge.otherChallengeEnvIsRunning")}:{" "}
+                                                {userExplicitInstance()?.challenge_name}
+                                            </span>
+                                        </Match>
+                                    </Switch>
+                                </div>
+                            </section>
+                        </Show>
+                        <Show when={props.challenge}>
+                            <div class="flex flex-row-reverse flex-wrap py-2">
+                                <For each={props.challenge!.tag}>
+                                    {(tag) => (
+                                        <Tag level={tag.primary ? "success" : "info"} class="m-1">
+                                            <span>{tag.name}</span>
+                                        </Tag>
+                                    )}
+                                </For>
+                            </div>
                         </Show>
                         <Article content={props.challenge?.content ?? ""} extra />
                     </div>

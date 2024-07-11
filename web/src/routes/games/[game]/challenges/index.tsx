@@ -47,6 +47,7 @@ export default function () {
                                 description: `${t("game.challenge.fetchChallengeFailed")}: ${text}`,
                                 duration: 5000,
                             });
+                            setSearchParams({ challenge: null, create: null });
                         });
                     })
                     .finally(() => {

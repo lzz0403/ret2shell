@@ -82,6 +82,7 @@ export default function () {
                                 duration: 5000,
                             });
                         });
+                        setSearchParams({ challenge: null, create: null });
                     })
                     .finally(() => {
                         setLoadingChallenge(false);

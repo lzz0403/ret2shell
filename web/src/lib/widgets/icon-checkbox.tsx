@@ -1,5 +1,5 @@
 import { Checkbox, type CheckboxRootProps, Popover } from "@ark-ui/solid";
-import { type JSX, splitProps } from "solid-js";
+import { createMemo, type JSX, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
 export type CheckboxProps = {
@@ -18,10 +18,13 @@ export default function (
 ) {
     const [checkboxProps, rest] = splitProps(props, ["ghost", "error", "inputProps", "uncheckedIcon", "checkedIcon"]);
 
-    const classes = () =>
-        `btn btn-md items-center justify-center btn-square ${checkboxProps.ghost ? "btn-ghost" : ""} ${rest.disabled ? "btn-disabled" : ""} ${rest.class}`.trim();
-    const iconClasses = () =>
-        `data-[state=unchecked]:${checkboxProps.uncheckedIcon} data-[state=checked]:${checkboxProps.checkedIcon} data-[state=checked]:text-primary !w-5 !h-5`;
+    const classes = createMemo(() =>
+        `btn btn-md items-center justify-center btn-square ${checkboxProps.ghost ? "btn-ghost" : ""} ${rest.disabled ? "btn-disabled" : ""} ${rest.class}`.trim()
+    );
+    const iconClasses = createMemo(
+        () =>
+            `data-[state=unchecked]:${checkboxProps.uncheckedIcon} data-[state=checked]:${checkboxProps.checkedIcon} data-[state=checked]:text-primary !w-5 !h-5`
+    );
 
     // data-[state=unchecked]:icon-[fluent--chat-20-regular] data-[state=checked]:icon-[fluent--chat-20-filled]
     // data-[state=unchecked]:icon-[fluent--pin-20-regular] data-[state=checked]:icon-[fluent--pin-20-filled]

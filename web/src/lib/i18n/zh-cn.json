@@ -150,7 +150,12 @@
             "tagPlaceholder": "题目标签，以 `/` 作为分隔，第一个标签将成为题目分类...",
             "contentRequired": "请输入题目内容",
             "fetchFilesFailed": "获取题目附件失败",
-            "fetchHintFailed": "获取题目提示信息失败"
+            "fetchHintFailed": "获取题目提示信息失败",
+            "fetchEnvFailed": "获取题目环境信息失败",
+            "envNotStart": "题目可开启在线环境",
+            "envIsRunning": "环境已开启",
+            "otherChallengeEnvIsRunning": "另一道题目环境正在运行",
+            "startEnv": "启动！"
         },
         "scoreboard": {
             "title": "积分板",
