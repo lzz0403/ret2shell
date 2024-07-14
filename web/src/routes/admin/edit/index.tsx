@@ -181,9 +181,10 @@ export default function () {
               {(field, props) => (
                 <Checkbox
                   inputProps={props}
-                  checked={field.value}
+                  checked={platformStore.license?.level !== "enterprise" ? false : field.value}
                   error={field.error}
                   title={t("platform.form.hideMaker")}
+                  disabled={platformStore.license?.level !== "enterprise"}
                 >
                   <span>{t("platform.form.hideMaker")}</span>
                 </Checkbox>
