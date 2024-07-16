@@ -32,11 +32,11 @@ use crate::institute;
 #[repr(i32)]
 #[sea_orm(rs_type = "i32", db_type = "Integer")]
 pub enum State {
-  Banned  = 0,
+  Banned = 0,
   #[default]
   Pending = 1,
-  Hidden  = 2,
-  Passed  = 3,
+  Hidden = 2,
+  Passed = 3,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
@@ -212,13 +212,15 @@ impl ActiveModelBehavior for ActiveModel {}
 
 pub async fn get<C>(db: &C, id: i64) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(id).one(db).await
 }
 
 pub async fn get_ex<C>(db: &C, id: i64) -> Result<Option<ExModel>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(id)
     .join(JoinType::InnerJoin, Relation::Institute.def())
     .column_as(institute::Column::Name, "institute_name")
@@ -229,7 +231,8 @@ where
 
 pub async fn get_by_user_id<C>(db: &C, game_id: i64, user_id: i64) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let (_, team): (user::Model, Option<Model>) = match user::Entity::find_by_id(user_id)
     .find_also_related(Entity)
     .filter(Column::GameId.eq(game_id))
@@ -250,7 +253,8 @@ pub async fn get_page<C>(
   institute_id: Option<i64>, filter: Option<String>, order_by: Option<String>, asc: bool,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let state = min_state.unwrap_or(State::Passed);
   let mut sql = Entity::find()
     .filter(Column::GameId.eq(game_id))
@@ -291,7 +295,8 @@ fn filter_sql(mut sql: Select<Entity>, filter: Option<String>) -> Result<Select<
 
 pub async fn create<C>(db: &C, team: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let team = ActiveModel {
     id: ActiveValue::NotSet,
     last_active_at: ActiveValue::Set(Utc::now()),
@@ -303,17 +308,31 @@ where
 
 pub async fn update<C>(db: &C, team: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let team = ActiveModel {
     id: ActiveValue::Unchanged(team.id),
     game_id: ActiveValue::Unchanged(team.game_id),
     ..team.into_active_model().reset_all()
   };
-  team.insert(db).await
+  team.update(db).await
 }
 
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::delete_by_id(id).exec(db).await.map(|_| ())
+}
+
+pub async fn calc_score<C>(db: &C, id: i64) -> Result<i32, DbErr>
+where
+  C: ConnectionTrait,
+{
+  let solves = super::submission::get_list(db, true, false, None, Some(id), None).await?;
+  let score: i32 = solves.iter().map(|s| s.score).sum();
+  let extras = super::extra::get_list(db, id).await?;
+  let extra_score: i32 = extras.iter().map(|e| e.score).sum();
+  let total = score + extra_score;
+  Ok(total)
 }

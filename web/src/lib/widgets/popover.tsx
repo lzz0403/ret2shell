@@ -59,7 +59,9 @@ export default function (
       </Popover.Trigger>
       <Portal>
         <Popover.Positioner>
-          <Popover.Content class={popoverProps.popContentClass}>{popoverProps.children}</Popover.Content>
+          <Popover.Content class={`popover ${popoverProps.popContentClass}`.trim()}>
+            {popoverProps.children}
+          </Popover.Content>
         </Popover.Positioner>
       </Portal>
     </Popover.Root>

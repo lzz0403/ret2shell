@@ -104,6 +104,16 @@ export async function getChallengeHint(game_id: number, challenge_id: number) {
   return await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`).json<Hint[]>();
 }
 
+export async function unlockChallengeHint(game_id: number, challenge_id: number, hint_id: number) {
+  return await api
+    .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint/unlock`, {
+      json: {
+        id: hint_id,
+      },
+    })
+    .json<Extra>();
+}
+
 export async function createChallengeHint(game_id: number, challenge_id: number, hint: Hint) {
   return await api
     .post(`${api_root}/game/${game_id}/challenge/${challenge_id}/hint`, {

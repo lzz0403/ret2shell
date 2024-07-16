@@ -156,7 +156,8 @@
       "envIsRunning": "环境已开启",
       "otherChallengeEnvIsRunning": "另一道题目环境正在运行",
       "startEnv": "启动！",
-      "create": "创建题目"
+      "create": "创建题目",
+      "unlockHintFailed": "解锁提示失败"
     },
     "scoreboard": {
       "title": "积分板",

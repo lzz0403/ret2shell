@@ -16,6 +16,13 @@ export default function () {
               <span>{t("game.adminMode")}</span>
             </Button>
           </Match>
+          <Match when={gameStore.team}>
+            <Button ghost class="w-full" justify="start">
+              <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
+              <span class="flex-1 text-start truncate">{gameStore.team?.name}</span>
+              <span class="text-success">{gameStore.team?.score} pts</span>
+            </Button>
+          </Match>
         </Switch>
       </div>
     </>

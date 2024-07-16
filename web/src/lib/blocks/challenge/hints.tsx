@@ -1,6 +1,11 @@
-import { createChallengeHint, deleteChallengeHint, getChallengeHint, getTeamExtras } from "@api/game";
+import {
+  createChallengeHint,
+  deleteChallengeHint,
+  getChallengeHint,
+  getTeamExtras,
+  unlockChallengeHint,
+} from "@api/game";
 import type { Challenge } from "@models/challenge";
-import { addToast } from "@storage/toast";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
 import { Permission } from "@models/user";
@@ -8,6 +13,7 @@ import { createForm, required, setValue, setValues } from "@modular-forms/solid"
 import { accountStore } from "@storage/account";
 import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
@@ -83,26 +89,26 @@ export default function (props: { challenge?: Challenge }) {
       .finally(() => {
         setLoading(false);
       });
+    if (!isGameAdmin()) {
+      getTeamExtras(gameStore.current!.id, gameStore.team!.id)
+        .then((resp) => {
+          setExtras(resp);
+        })
+        .catch((e: HTTPError) => {
+          e.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.challenge.fetchHintFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        });
+    }
   }
   createEffect(() => {
     if (props.challenge) {
       untrack(() => {
         refreshHint();
-        if (!isGameAdmin()) {
-          getTeamExtras(gameStore.current!.id, gameStore.team!.id)
-            .then((resp) => {
-              setExtras(resp);
-            })
-            .catch((e: HTTPError) => {
-              e.response.text().then((text) => {
-                addToast({
-                  level: "error",
-                  description: `${t("game.challenge.fetchHintFailed")}: ${text}`,
-                  duration: 5000,
-                });
-              });
-            });
-        }
       });
     }
   });
@@ -117,6 +123,22 @@ export default function (props: { challenge?: Challenge }) {
           addToast({
             level: "error",
             description: `${t("form.deleteFailed")}: ${text}`,
+          });
+        });
+      });
+  }
+
+  function handleUnlockHint(id: number) {
+    unlockChallengeHint(gameStore.current!.id, props.challenge!.id, id)
+      .then(() => {
+        refreshHint();
+      })
+      .catch((e: HTTPError) => {
+        e.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("game.challenge.unlockHintFailed")}: ${text}`,
+            duration: 5000,
           });
         });
       });
@@ -149,7 +171,7 @@ export default function (props: { challenge?: Challenge }) {
                           cost: hint.cost,
                         })}
                       </span>
-                      <Button size="sm" level="error">
+                      <Button size="sm" level="error" onClick={() => handleUnlockHint(hint.id)}>
                         {t("platform.yes")}
                       </Button>
                     </Card>

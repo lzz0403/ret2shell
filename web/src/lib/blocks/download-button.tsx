@@ -1,9 +1,9 @@
 import type { ButtonProps } from "@widgets/button";
 import Button from "@widgets/button";
 import type { DownloadProgress } from "ky";
-import { createSignal, Match, Show, splitProps, Switch } from "solid-js";
-import { humanFileSize } from "../utils/size";
+import { Match, Show, Switch, createSignal, splitProps } from "solid-js";
 import { downloadFile } from "../api/file";
+import { humanFileSize } from "../utils/size";
 import Progress from "../widgets/progress";
 
 export default function DownloadButton(
@@ -38,7 +38,7 @@ export default function DownloadButton(
         setTimeout(() => {
           setDownloadComplete(false);
           setProgress(null);
-        }, 1000);
+        }, 2000);
       });
   }
 
@@ -74,6 +74,9 @@ export default function DownloadButton(
           value={progress()?.transferredBytes ?? 0}
           static
         />
+      </Show>
+      <Show when={downloadComplete()}>
+        <span class="text-success font-bold">DONE</span>
       </Show>
     </Button>
   );

@@ -22,7 +22,7 @@ use r2s_queue::Queue;
 use sea_orm::TransactionTrait;
 use serde::{Deserialize, Serialize};
 use tokio_util::io::ReaderStream;
-use tracing::debug;
+use tracing::{debug, warn};
 
 use crate::{
   middleware::{
@@ -55,6 +55,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route("/files", get(get_player_attachment))
         .route("/env", get(get_challenge_env))
         .route("/hint", get(get_challenge_hints))
+        .route("/hint/unlock", post(unlock_hint))
         .route(
           "/submit",
           get(get_challenge_solves_status).post(submit_flag),
@@ -97,6 +98,37 @@ macro_rules! get_challenge_bucket {
       )
       .await?
   }};
+}
+
+async fn update_team_state(db: &Database, team: team::Model) {
+  let score = team::calc_score(&db.conn, team.id).await;
+  if score.is_err() {
+    warn!("calc team score failed: {:?}", score.err());
+    return;
+  }
+  let score = score.unwrap();
+  if score != team.score {
+    let mut team_history = team.history.clone().0;
+    team_history.push(team::TeamScoreHistory {
+      score,
+      challenge_id: None,
+      changed_at: Utc::now(),
+      blood_state: None,
+    });
+    let result = team::update(
+      &db.conn,
+      team::Model {
+        id: team.id,
+        score,
+        history: team::TeamScoreHistoryList(team_history),
+        ..team
+      },
+    )
+    .await;
+    if let Err(e) = result {
+      warn!("update team score failed: {:?}", e);
+    }
+  }
 }
 
 #[derive(Deserialize)]
@@ -484,6 +516,54 @@ async fn get_challenge_hints(
     Ok(Json(hints))
   } else {
     Ok(Json(hints))
+  }
+}
+
+#[derive(Deserialize)]
+struct UnlockHintRequest {
+  pub id: i64,
+}
+
+async fn unlock_hint(
+  State(db): State<Database>, Extension(team): Extension<team::Model>,
+  Extension(challenge): Extension<challenge::Model>, Json(req): Json<UnlockHintRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let txn = db.conn.begin().await?;
+  let hint = hint::get(&txn, req.id).await?;
+  if let Some(hint) = hint {
+    if hint.challenge_id != challenge.id {
+      return Err(ResponseError::PreconditionFailed(
+        "hint does not belong to this challenge".to_owned(),
+      ));
+    }
+    if hint.cost > team.score {
+      return Err(ResponseError::PreconditionFailed(
+        "you does not have enough score to unlock this hint".to_owned(),
+      ));
+    }
+    let extra = extra::create(
+      &txn,
+      extra::Model {
+        created_at: Utc::now(),
+        score: -hint.cost,
+        team_id: team.id,
+        challenge_id: Some(challenge.id),
+        hint_id: Some(hint.id),
+        reason: format!(
+          "unlocked hint [{}] in challenge {}",
+          hint.id, challenge.name
+        ),
+        ..Default::default()
+      },
+    )
+    .await?;
+    txn.commit().await?;
+    tokio::spawn(async move {
+      update_team_state(&db, team).await;
+    });
+    Ok(Json(extra))
+  } else {
+    Err(ResponseError::NotFound("hint".to_string()))
   }
 }
 

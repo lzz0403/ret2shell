@@ -1,6 +1,6 @@
 import { Select, type SelectRootProps } from "@ark-ui/solid";
 import type { CollectionItem } from "@ark-ui/solid/dist/types/types";
-import { setValue, type FormStore } from "@modular-forms/solid";
+import type { FormStore } from "@modular-forms/solid";
 import { type ComponentProps, Index, Show, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
@@ -72,7 +72,7 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
       </Select.Control>
       <Portal>
         <Select.Positioner>
-          <Select.Content class="card w-full">
+          <Select.Content class="card w-full popover">
             <Select.ItemGroup class="card-content p-2 flex flex-col space-y-2">
               <Index each={others.items}>
                 {(item) => (
@@ -81,7 +81,7 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
                     class="btn btn-ghost btn-sm items-center overflow-hidden"
                     title={item().label}
                   >
-                    <Select.ItemText class="flex-1 text-start flex flex-row space-x-2 items-center overflow-hidden">
+                    <Select.ItemText class="flex-1 text-start data-[state=checked]:text-primary flex flex-row space-x-2 items-center overflow-hidden">
                       <Show when={item().icon}>
                         <span class={`${item().icon} flex-shrink-0`.trim()} />
                       </Show>
