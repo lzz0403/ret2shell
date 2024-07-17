@@ -1,4 +1,65 @@
 {
+  "shell": {
+    "service": {
+      "man": "",
+      "startTips": "",
+      "stopTips": "",
+      "restartTips": "",
+      "statusTips": "",
+      "needAction": "",
+      "usage": "",
+      "delayTips": "",
+      "noEnv": "",
+      "error": ""
+    },
+    "cat": {
+      "error": "",
+      "fileNotFound": "",
+      "man": "",
+      "noFileSpecified": "",
+      "permissionDenied": "",
+      "tooManyFiles": ""
+    },
+    "clear": {
+      "man": ""
+    },
+    "commandInvalid": "",
+    "commandNotFound": "",
+    "echo": {
+      "man": ""
+    },
+    "help": {
+      "man": ""
+    },
+    "helpCommands": "",
+    "helpTips": "",
+    "ls": {
+      "error": "",
+      "invalidOption": "",
+      "invalidPath": "",
+      "man": "",
+      "noSuchFileOrDirectory": "",
+      "permissionDenied": "",
+      "tooManyArgs": ""
+    },
+    "noChallengeSpecified": "",
+    "noChallengeSpecifiedTips": "",
+    "noGameSpecified": "",
+    "noGameSpecifiedTips": "",
+    "welcome": "",
+    "wget": {
+      "downloading": "",
+      "failed": "",
+      "fileNotFound": "",
+      "man": "",
+      "success": "",
+      "usage": ""
+    },
+    "whoami": {
+      "man": ""
+    },
+    "canNotSwitchDir": ""
+  },
   "about": {
     "contactTips": "",
     "donate": "",
@@ -655,54 +716,6 @@
     "underMaintenance": "",
     "versionMismatch": "",
     "yes": ""
-  },
-  "shell": {
-    "clear": {
-      "man": ""
-    },
-    "commandInvalid": "",
-    "commandNotFound": "",
-    "echo": {
-      "man": ""
-    },
-    "help": {
-      "man": ""
-    },
-    "helpCommands": "",
-    "helpTips": "",
-    "ls": {
-      "error": "",
-      "man": "",
-      "tooManyArgs": "",
-      "noSuchFileOrDirectory": "",
-      "invalidPath": "",
-      "permissionDenied": "",
-      "invalidOption": ""
-    },
-    "noChallengeSpecified": "",
-    "noChallengeSpecifiedTips": "",
-    "noGameSpecified": "",
-    "noGameSpecifiedTips": "",
-    "welcome": "",
-    "wget": {
-      "downloading": "",
-      "failed": "",
-      "fileNotFound": "",
-      "man": "",
-      "success": "",
-      "usage": ""
-    },
-    "cat": {
-      "man": "",
-      "noFileSpecified": "",
-      "tooManyFiles": "",
-      "error": "",
-      "fileNotFound": "",
-      "permissionDenied": ""
-    },
-    "whoami": {
-      "man": ""
-    }
   },
   "theme": {
     "colorScheme": "",

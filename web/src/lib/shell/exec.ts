@@ -25,6 +25,10 @@ export class Exec {
     }
     cmd = cmd.trim();
     if (cmd === "") return { cmd, code: 0 };
+    if (cmd === "cd") {
+      io.error(t("shell.canNotSwitchDir")!);
+      return { cmd, code: -127 };
+    }
     if (this.commands.has(cmd)) {
       return { cmd, code: await this.commands.get(cmd)!.func(io, challenge, args.slice(1), origin) };
     }

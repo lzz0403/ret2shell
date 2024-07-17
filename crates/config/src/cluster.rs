@@ -56,3 +56,17 @@ impl Merge for Option<Config> {
     }
   }
 }
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ChallengeImage {
+  pub name: String,
+  pub tag: String,
+  pub cpu: f64,
+  pub mem: String,
+  pub port: Option<u16>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ChallengeEnv {
+  pub images: Vec<ChallengeImage>,
+}

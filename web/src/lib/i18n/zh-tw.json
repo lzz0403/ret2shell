@@ -45,7 +45,20 @@
     },
     "whoami": {
       "man": ""
-    }
+    },
+    "service": {
+      "man": "",
+      "startTips": "",
+      "stopTips": "",
+      "restartTips": "",
+      "statusTips": "",
+      "needAction": "",
+      "usage": "",
+      "delayTips": "",
+      "noEnv": "",
+      "error": ""
+    },
+    "canNotSwitchDir": ""
   },
   "about": {
     "contactTips": "",

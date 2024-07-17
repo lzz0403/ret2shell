@@ -5,3 +5,4 @@ export { Clear as clear } from "./clear";
 export { Wget as wget } from "./wget";
 export { Cat as cat } from "./cat";
 export { Whoami as whoami } from "./whoami";
+export { Service as service } from "./service";

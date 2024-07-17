@@ -2,7 +2,9 @@ import { getChallengeAttachments } from "@/lib/api/game";
 import { gameStore } from "@/lib/storage/game";
 import { t } from "@/lib/storage/theme";
 import type { Challenge } from "@models/challenge";
+import ansiColors from "ansi-colors";
 import type { ParseEntry } from "shell-quote";
+import { link } from "../escapes";
 import type { Stdio } from "../stdio";
 import type { Command } from "./interface";
 
@@ -25,6 +27,19 @@ export class Cat implements Command {
     const file = args[0].toString().trim();
     if (file === "README.md") {
       io.println(challenge.content || "");
+    } else if (file === "/etc/motd") {
+      io.println(
+        ansiColors.bold(
+          t("shell.welcome", { shell: `${ansiColors.blue("Rx")}${ansiColors.dim("::")}${ansiColors.blue("Shell")}` })!
+        )
+      );
+      io.info(
+        t("shell.helpTips", {
+          flag: ansiColors.red("flag"),
+          help: link(ansiColors.green("help"), "rnix://command/help"),
+        })!
+      );
+      io.println("");
     } else if (file.startsWith("checkers/")) {
       io.error(t("shell.cat.permissionDenied")!);
       return 1;

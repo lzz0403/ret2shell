@@ -47,19 +47,19 @@ export class Stdio {
   }
 
   public error(text: string) {
-    this.println(ansiColors.red(`[!] ${ansiColors.bold(text)}\n`));
+    this.println(ansiColors.red(`[!] ${ansiColors.bold(text)}`));
   }
 
   public warning(text: string) {
-    this.println(ansiColors.yellow(`[!] ${ansiColors.bold(text)}\n`));
+    this.println(ansiColors.yellow(`[!] ${ansiColors.bold(text)}`));
   }
 
   public success(text: string) {
-    this.println(ansiColors.green(`[+] ${ansiColors.bold(text)}\n`));
+    this.println(ansiColors.green(`[+] ${ansiColors.bold(text)}`));
   }
 
   public info(text: string) {
-    this.println(`${ansiColors.blue("[*]")} ${text}\n`);
+    this.println(`${ansiColors.blue("[*]")} ${text}`);
   }
 
   public termWidth() {

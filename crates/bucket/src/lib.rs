@@ -11,6 +11,7 @@ pub mod challenge;
 pub mod game;
 pub mod git;
 pub mod traits;
+pub use challenge::Hint;
 mod util;
 
 #[derive(Clone, Debug)]

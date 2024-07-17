@@ -19,7 +19,7 @@ use r2s_event::{
 };
 use r2s_migrator::Database;
 use r2s_queue::Queue;
-use sea_orm::TransactionTrait;
+use sea_orm::{DatabaseTransaction, TransactionTrait};
 use serde::{Deserialize, Serialize};
 use tokio_util::io::ReaderStream;
 use tracing::{debug, warn};
@@ -53,7 +53,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           auth::game_admin_required,
         ))
         .route("/files", get(get_player_attachment))
-        .route("/env", get(get_challenge_env))
+        .route("/env", get(get_challenge_env).post(start_challenge_env))
         .route("/hint", get(get_challenge_hints))
         .route("/hint/unlock", post(unlock_hint))
         .route(
@@ -97,6 +97,33 @@ macro_rules! get_challenge_bucket {
           )))?,
       )
       .await?
+  }};
+}
+
+macro_rules! get_challenge_bucket_mut {
+  ($bucket:expr, $game:expr, $challenge:expr) => {{
+    let game_bucket = $bucket
+      .at_mut(
+        $game
+          .bucket
+          .ok_or(ResponseError::PreconditionFailed(format!(
+            "game {}:'{}' does not have a valid bucket",
+            $game.id, $game.name
+          )))?,
+      )
+      .await?;
+    let challenge_bucket = game_bucket
+      .at(
+        $challenge
+          .bucket
+          .clone()
+          .ok_or(ResponseError::PreconditionFailed(format!(
+            "challenge {}:'{}' in game {}:'{}' does not have a valid bucket",
+            $challenge.id, $challenge.name, $game.id, $game.name
+          )))?,
+      )
+      .await?;
+    (game_bucket, challenge_bucket)
   }};
 }
 
@@ -192,6 +219,9 @@ async fn create_challenge(
   let challenge_bucket = game_bucket
     .create(serde_json::to_value(&challenge)?)
     .await?;
+  challenge_bucket
+    .set_description(challenge.content.clone().unwrap_or_default())
+    .await?;
   let challenge = challenge::create(
     &txn,
     challenge::Model {
@@ -235,29 +265,12 @@ async fn update_challenge(
     },
   )
   .await?;
-  let game_bucket = bucket
-    .at_mut(
-      game
-        .bucket
-        .ok_or(ResponseError::PreconditionFailed(format!(
-          "game {}:'{}' does not have a valid bucket",
-          game.id, game.name
-        )))?,
-    )
-    .await?;
-  let challenge_bucket = game_bucket
-    .at(
-      &challenge
-        .bucket
-        .clone()
-        .ok_or(ResponseError::PreconditionFailed(format!(
-          "challenge {}:'{}' in game {}:'{}' does not have a valid bucket",
-          game.id, game.name, challenge.id, challenge.name
-        )))?,
-    )
-    .await?;
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   challenge_bucket
     .set_config(serde_json::to_value(&challenge)?)
+    .await?;
+  challenge_bucket
+    .set_description(challenge.content.clone().unwrap_or_default())
     .await?;
 
   game_bucket
@@ -365,7 +378,7 @@ struct SubmitRequest {
 
 #[allow(clippy::too_many_arguments)]
 async fn submit_flag(
-  State(ref db): State<Database>, State(_bucket): State<Bucket>, State(ref _queue): State<Queue>,
+  State(ref db): State<Database>, State(_bucket): State<Bucket>, State(ref queue): State<Queue>,
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
   team_ext: Option<Extension<team::Model>>, Extension(challenge): Extension<challenge::Model>,
   Json(req): Json<SubmitRequest>,
@@ -387,11 +400,13 @@ async fn submit_flag(
     },
     user_id: token.id,
   };
-  submission::create(&db.conn, submission).await?;
+  let submission = submission::create(&db.conn, submission).await?;
+  queue.publish("check", submission).await?;
+  Ok(())
+
   // TODO: publish solved event
   // TODO: update scoreboard
   // TODO: check flag
-  Ok("TODO: check flag")
 }
 
 #[derive(Serialize, Deserialize, PartialEq, Eq)]
@@ -568,19 +583,31 @@ async fn unlock_hint(
 }
 
 async fn create_challenge_hint(
-  State(ref db): State<Database>, Extension(challenge): Extension<challenge::Model>,
+  State(bucket): State<Bucket>, State(ref db): State<Database>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Json(hint): Json<hint::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  Ok(Json(
-    hint::create(
-      &db.conn,
-      hint::Model {
-        challenge_id: challenge.id,
-        ..hint
-      },
+  let txn = db.conn.begin().await?;
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+
+  let hint = hint::create(
+    &txn,
+    hint::Model {
+      challenge_id: challenge.id,
+      ..hint
+    },
+  )
+  .await?;
+  sync_challenge_hint_with_bucket(&challenge_bucket, &txn, &challenge).await?;
+  txn.commit().await?;
+  game_bucket
+    .commit(
+      format!("new hint for challenge {}", challenge.name),
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
     )
-    .await?,
-  ))
+    .await?;
+  Ok(Json(hint))
 }
 
 #[derive(Deserialize)]
@@ -589,9 +616,40 @@ struct DeleteHintQuery {
 }
 
 async fn delete_challenge_hint(
-  State(ref db): State<Database>, Query(query): Query<DeleteHintQuery>,
+  State(bucket): State<Bucket>, State(ref db): State<Database>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  Query(query): Query<DeleteHintQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  hint::delete(&db.conn, query.id).await?;
+  let txn = db.conn.begin().await?;
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+  hint::delete(&txn, query.id).await?;
+  sync_challenge_hint_with_bucket(&challenge_bucket, &txn, &challenge).await?;
+  txn.commit().await?;
+  game_bucket
+    .commit(
+      format!("delete hint for challenge {}", challenge.name),
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
+    )
+    .await?;
+  Ok(())
+}
+
+async fn sync_challenge_hint_with_bucket(
+  bucket: &ChallengeBucket, db: &DatabaseTransaction, challenge: &challenge::Model,
+) -> Result<(), ResponseError> {
+  let hints = hint::get_list(db, challenge.id).await?;
+  bucket
+    .set_hints(
+      hints
+        .into_iter()
+        .map(|m| r2s_bucket::Hint {
+          content: m.content,
+          cost: m.cost,
+        })
+        .collect(),
+    )
+    .await?;
   Ok(())
 }
 
@@ -603,4 +661,19 @@ async fn get_challenge_env(
   let env_config = challenge_bucket.env().await?;
 
   Ok(Json(env_config))
+}
+
+async fn start_challenge_env(
+  State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+  Extension(challenge): Extension<challenge::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let challenge_bucket = get_challenge_bucket!(bucket, game, challenge);
+  if let Some(_env) = challenge_bucket.env().await? {
+    // TODO: start env here
+    Ok(())
+  } else {
+    Err(ResponseError::PreconditionFailed(
+      "challenge does not have online environment".to_owned(),
+    ))
+  }
 }

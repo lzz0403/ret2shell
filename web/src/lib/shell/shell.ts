@@ -91,6 +91,7 @@ export class Shell {
         help: link(ansiColors.green("help"), "rnix://command/help"),
       })!
     );
+    this.stdio.println("");
   }
 
   public setChallenge(challenge: Challenge | null) {
@@ -148,9 +149,6 @@ export class Shell {
   }
 
   private prompt() {
-    const leftPart = `${ansiColors.green(accountStore.account || "guest")} ${ansiColors.dim("at")} ${ansiColors.blue(
-      gameStore.current?.name || "unknown"
-    )}`;
     const challengeName = this.challenge?.name || "unknown";
     let slicedChallengeName = "";
     if (challengeName.length > 16) {
@@ -158,7 +156,8 @@ export class Shell {
     } else {
       slicedChallengeName = challengeName;
     }
-    const rightPart = `${ansiColors.dim("in")} ${ansiColors.yellow(`/srv/${slicedChallengeName}`)}${
+    const leftPart = `${ansiColors.green(accountStore.account || "guest")}:${ansiColors.blue(gameStore.team?.name || "wheel")} ${ansiColors.yellow(`~/${slicedChallengeName}`)}`;
+    const rightPart = `${ansiColors.dim("in")} ${ansiColors.blue(gameStore.current?.name || "unknown")}${
       this.code === 0 ? "" : ansiColors.redBright(` [${this.code}]`)
     } [${DateTime.now().toFormat("HH:mm:ss")}]`;
     // console.log(this.stdio.termWidth());

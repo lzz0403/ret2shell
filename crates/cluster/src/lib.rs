@@ -6,6 +6,7 @@ use kube::{
 };
 
 mod manager;
+mod registry;
 mod traits;
 
 pub use k8s_openapi::api::core::v1::{ConfigMap, Namespace, Node, Pod};

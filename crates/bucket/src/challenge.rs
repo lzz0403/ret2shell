@@ -1,5 +1,6 @@
 use std::path::{Path, PathBuf};
 
+use r2s_config::cluster::ChallengeEnv;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::{
@@ -42,16 +43,9 @@ pub struct ChallengeConfig {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ChallengeImage {
-  pub tag: String,
-  pub cpu: f64,
-  pub mem: String,
-}
-
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ChallengeEnv {
-  pub port: u16,
-  pub images: Vec<ChallengeImage>,
+pub struct Hint {
+  pub content: String,
+  pub cost: i32,
 }
 
 impl ChallengeBucket {
@@ -81,7 +75,6 @@ impl ChallengeBucket {
       ));
     }
     create_dir(&challenge_path).await?;
-    init_dir!(challenge_path, "images");
     init_dir!(challenge_path, "mapped");
     init_dir!(challenge_path, "checker");
     init_dir!(challenge_path, "src");
@@ -144,6 +137,43 @@ impl ChallengeBucket {
     Ok(Some(config))
   }
 
+  pub async fn set_hints(&self, hints: Vec<Hint>) -> Result<(), BucketError> {
+    if !self.locked {
+      return Err(BucketError::NeedLocking);
+    }
+    write(
+      &self.path.join("hints.toml"),
+      toml::to_string_pretty(&hints)?,
+    )
+    .await?;
+    Ok(())
+  }
+
+  pub async fn hints(&self) -> Result<Vec<Hint>, BucketError> {
+    let path = self.path.join("hints.toml");
+    if !path.exists() {
+      return Ok(vec![]);
+    }
+    let config = toml::from_str(&read_to_string(&path).await?)?;
+    Ok(config)
+  }
+
+  pub async fn set_description(&self, description: String) -> Result<(), BucketError> {
+    if !self.locked {
+      return Err(BucketError::NeedLocking);
+    }
+    write(&self.path.join("README.md"), description.as_bytes()).await?;
+    Ok(())
+  }
+
+  pub async fn description(&self) -> Result<String, BucketError> {
+    let path = self.path.join("README.md");
+    if !path.exists() {
+      return Ok("".to_owned());
+    }
+    Ok(read_to_string(&path).await?)
+  }
+
   async fn upload_file(
     &self, dest: impl AsRef<str>, name: impl AsRef<str>, mut stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), BucketError> {
@@ -167,12 +197,6 @@ impl ChallengeBucket {
     &self, name: impl AsRef<str>, stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), BucketError> {
     self.upload_file("static", name, stdin).await
-  }
-
-  pub async fn upload_images(
-    &self, name: impl AsRef<str>, stdin: impl AsyncRead + Send + Unpin,
-  ) -> Result<(), BucketError> {
-    self.upload_file("images", name, stdin).await
   }
 
   pub async fn upload_mapped(

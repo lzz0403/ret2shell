@@ -1,13 +1,16 @@
 use chrono::{DateTime, Utc};
 use futures_io::AsyncBufRead;
 use k8s_openapi::{
-  api::core::v1::{ConfigMap, Namespace, Node, Pod},
-  apimachinery::pkg::version::Info,
+  api::core::v1::{
+    ConfigMap, Container, ContainerPort, Namespace, Node, Pod, PodSpec, ResourceRequirements,
+  },
+  apimachinery::pkg::{api::resource::Quantity, version::Info},
 };
 use kube::{
   api::{ListParams, LogParams, ObjectList, ObjectMeta},
   Api, Client,
 };
+use r2s_config::cluster::ChallengeEnv;
 
 use super::traits::ClusterError;
 
@@ -139,5 +142,95 @@ impl Cluster {
     let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "infer pod")?);
     let pod = api.get(name).await?;
     Ok(pod)
+  }
+
+  pub async fn list_pods(&self) -> Result<ObjectList<Pod>, ClusterError> {
+    let client = check_enabled!(self.client)?;
+    let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "list pods")?);
+    let pods = api.list(&ListParams::default()).await?;
+    Ok(pods)
+  }
+
+  pub async fn list_pods_by_label(&self, label: &str) -> Result<ObjectList<Pod>, ClusterError> {
+    let client = check_enabled!(self.client)?;
+    let api: Api<Pod> = Api::namespaced(client, &with_namespace!(&self.namespace, "list pods")?);
+    let pods = api
+      .list(&ListParams {
+        label_selector: Some(label.to_owned()),
+        ..Default::default()
+      })
+      .await?;
+    Ok(pods)
+  }
+
+  pub async fn create_challenge_env(
+    &self, user_id: i64, team_id: Option<i64>, challenge_id: i64, challenge_name: &str,
+    env_config: ChallengeEnv,
+  ) -> Result<(), ClusterError> {
+    let pod_name = format!(
+      "ret2shell-{challenge_id}-{user_id}-{}",
+      team_id.unwrap_or(0)
+    );
+    let pod = Pod {
+      metadata: ObjectMeta {
+        name: Some(pod_name.clone()),
+        labels: Some(
+          [
+            ("ret.sh.cn/service", pod_name),
+            ("ret.sh.cn/challenge", challenge_id.to_string()),
+            ("ret.sh.cn/user", user_id.to_string()),
+            ("ret.sh.cn/team", team_id.unwrap_or(0).to_string()),
+          ]
+          .iter()
+          .cloned()
+          .map(|(k, v)| (k.to_owned(), v.to_owned()))
+          .collect(),
+        ),
+        annotations: Some(
+          [("ret.sh.cn/challenge-name", challenge_name.to_owned())]
+            .iter()
+            .cloned()
+            .map(|(k, v)| (k.to_owned(), v.to_owned()))
+            .collect(),
+        ),
+        ..Default::default()
+      },
+      spec: Some(PodSpec {
+        containers: env_config
+          .images
+          .iter()
+          .map(|image| Container {
+            name: image.name.clone(),
+            image: Some(image.tag.clone()),
+            ports: image.port.map(|port| {
+              vec![ContainerPort {
+                container_port: port as i32,
+                name: Some(format!("ret2shell-traffic-{}", port)),
+                protocol: Some("TCP".to_owned()),
+                ..Default::default()
+              }]
+            }),
+            resources: Some(ResourceRequirements {
+              limits: Some(
+                [
+                  ("cpu", image.cpu.to_string()),
+                  ("memory", image.mem.clone()),
+                ]
+                .iter()
+                .cloned()
+                .map(|(k, v)| (k.to_owned(), Quantity(v)))
+                .collect(),
+              ),
+              ..Default::default()
+            }),
+            ..Default::default()
+          })
+          .collect(),
+        ..Default::default()
+      }),
+      ..Default::default()
+    };
+    self.create_pod(pod).await?;
+    Ok(())
   }
 }
