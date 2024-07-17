@@ -723,7 +723,14 @@
       "fileNotFound": "文件不存在。"
     },
     "noChallengeSpecified": "不在题目中。",
-    "noChallengeSpecifiedTips": "只有在题目环境中才能下载附件。"
+    "noChallengeSpecifiedTips": "只有在题目环境中才能下载附件。",
+    "cat": {
+      "man": "查看文件内容。",
+      "noFileSpecified": "没有指定文件。",
+      "tooManyFiles": "参数过多。",
+      "error": "读取文件出错。",
+      "fileNotFound": "文件不存在。"
+    }
   },
   "permission": {
     "basic": "用户",

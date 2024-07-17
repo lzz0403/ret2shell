@@ -1,5 +1,6 @@
 import type { Terminal } from "@xterm/xterm";
 import ansiColors from "ansi-colors";
+import { DateTime } from "luxon";
 import { parse } from "shell-quote";
 import stripAnsi from "strip-ansi";
 import type { Challenge } from "../models/challenge";
@@ -8,6 +9,7 @@ import { gameStore } from "../storage/game";
 import { t } from "../storage/theme";
 import { cursorDown1, cursorUp1, link } from "./escapes";
 import { Exec } from "./exec";
+import { slice, unicodeStrDisplayLength } from "./pty";
 import { Stdio } from "./stdio";
 
 export class BufferHistory {
@@ -80,7 +82,7 @@ export class Shell {
   public greet() {
     this.stdio.println(
       ansiColors.bold(
-        t("shell.welcome", { shell: `${ansiColors.blue("R")}et ${ansiColors.dim("2")} ${ansiColors.red("S")}hell` })!
+        t("shell.welcome", { shell: `${ansiColors.blue("Rx")}${ansiColors.dim("::")}${ansiColors.blue("Shell")}` })!
       )
     );
     this.stdio.info(
@@ -89,7 +91,6 @@ export class Shell {
         help: link(ansiColors.green("help"), "rnix://command/help"),
       })!
     );
-    this.stdio.println("");
   }
 
   public setChallenge(challenge: Challenge | null) {
@@ -143,15 +144,31 @@ export class Shell {
       const result = await this.exec.exec(this.stdio, this.challenge, args, this.inputBuffer);
       this.onExecuted?.(result.cmd, result.code);
       this.code = result.code;
-      this.stdio.print("\n");
     }
   }
 
   private prompt() {
-    return `${ansiColors.green(accountStore.account || "guest")} ${ansiColors.dim("at")} ${ansiColors.blue(
+    const leftPart = `${ansiColors.green(accountStore.account || "guest")} ${ansiColors.dim("at")} ${ansiColors.blue(
       gameStore.current?.name || "unknown"
-    )} ${ansiColors.dim("in")} ${ansiColors.yellow(`/srv/${this.challenge?.name}`)} ${
-      this.code === 0 ? "" : ansiColors.redBright(`[${this.code}]`)
-    }\n${this.code === 0 ? ansiColors.greenBright.bold("$") : ansiColors.redBright.bold("$")} `;
+    )}`;
+    const challengeName = this.challenge?.name || "unknown";
+    let slicedChallengeName = "";
+    if (challengeName.length > 16) {
+      slicedChallengeName = `${slice(challengeName, 0, 16)}…`;
+    } else {
+      slicedChallengeName = challengeName;
+    }
+    const rightPart = `${ansiColors.dim("in")} ${ansiColors.yellow(`/srv/${slicedChallengeName}`)}${
+      this.code === 0 ? "" : ansiColors.redBright(` [${this.code}]`)
+    } [${DateTime.now().toFormat("HH:mm:ss")}]`;
+    // console.log(this.stdio.termWidth());
+    // console.log(unicodeStrDisplayLength(leftPart));
+    // console.log(unicodeStrDisplayLength(rightPart));
+    const padding = ansiColors.dim(
+      "─".repeat(
+        Math.max(2, this.stdio.termWidth() - unicodeStrDisplayLength(leftPart) - unicodeStrDisplayLength(rightPart)) - 2
+      )
+    );
+    return `${leftPart} ${padding} ${rightPart}\n${this.code === 0 ? ansiColors.greenBright.bold("$") : ansiColors.redBright.bold("$")} `;
   }
 }

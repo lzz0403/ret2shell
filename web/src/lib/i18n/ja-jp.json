@@ -686,6 +686,13 @@
       "man": "",
       "success": "",
       "usage": ""
+    },
+    "cat": {
+      "man": "",
+      "noFileSpecified": "",
+      "tooManyFiles": "パラメータが多すぎます。",
+      "error": "ファイルの読み取り中にエラーが発生しました。",
+      "fileNotFound": "ファイルが存在しません。"
     }
   },
   "theme": {

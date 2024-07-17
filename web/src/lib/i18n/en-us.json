@@ -686,6 +686,13 @@
       "man": "",
       "success": "",
       "usage": ""
+    },
+    "cat": {
+      "man": "",
+      "noFileSpecified": "",
+      "tooManyFiles": "Too many arguments.",
+      "error": "An error occurred while reading the file.",
+      "fileNotFound": "No such file or directory."
     }
   },
   "theme": {

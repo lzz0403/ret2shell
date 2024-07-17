@@ -686,6 +686,13 @@
       "man": "下載指定的檔案。",
       "success": "下載成功，請在瀏覽器彈出視窗儲存檔案。",
       "usage": "使用方法： wget \"<檔名>\""
+    },
+    "cat": {
+      "man": "查看文件內容。",
+      "noFileSpecified": "沒有指定文件。",
+      "tooManyFiles": "參數過多。",
+      "error": "讀取文件出錯。",
+      "fileNotFound": "文件不存在。"
     }
   },
   "theme": {

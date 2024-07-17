@@ -14,7 +14,7 @@ import {
   eraseDown,
   home,
 } from "./escapes";
-import { TerminalCursor, offsetToColRow, stringWidth } from "./pty";
+import { TerminalCursor, offsetToColRow, unicodeStrDisplayLength } from "./pty";
 
 export class Stdio {
   private userBuffer = "";
@@ -47,19 +47,19 @@ export class Stdio {
   }
 
   public error(text: string) {
-    this.println(ansiColors.red(`[!] ${ansiColors.bold(text)}`));
+    this.println(ansiColors.red(`[!] ${ansiColors.bold(text)}\n`));
   }
 
   public warning(text: string) {
-    this.println(ansiColors.yellow(`[!] ${ansiColors.bold(text)}`));
+    this.println(ansiColors.yellow(`[!] ${ansiColors.bold(text)}\n`));
   }
 
   public success(text: string) {
-    this.println(ansiColors.green(`[+] ${ansiColors.bold(text)}`));
+    this.println(ansiColors.green(`[+] ${ansiColors.bold(text)}\n`));
   }
 
   public info(text: string) {
-    this.println(ansiColors.blue("[*] ") + text);
+    this.println(`${ansiColors.blue("[*]")} ${text}\n`);
   }
 
   public termWidth() {
@@ -176,7 +176,7 @@ export class Stdio {
 
   private getTermCursorOffset(input: string, offset: number): number {
     const newInput = input.slice(0, offset);
-    return stringWidth(newInput) + this.prefixX;
+    return unicodeStrDisplayLength(newInput) + this.prefixX;
   }
 
   private moveInputCursor(offset: number) {
@@ -209,7 +209,7 @@ export class Stdio {
   private insertInput(text: string) {
     // console.log(`cursor pos ${this.termCursor.x} ${this.termCursor.y}`)
     this.displayBuffer += text + cursorSavePosition + this.userBuffer.slice(this.inputCursor) + cursorRestorePosition;
-    if (this.termCursor.x + stringWidth(text) === this.termCursor.cols()) {
+    if (this.termCursor.x + unicodeStrDisplayLength(text) === this.termCursor.cols()) {
       this.displayBuffer += cursorNextLine;
     }
     this.userBuffer = this.userBuffer.slice(0, this.inputCursor) + text + this.userBuffer.slice(this.inputCursor);

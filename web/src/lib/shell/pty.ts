@@ -273,7 +273,9 @@ function stringToArray(str: string) {
 }
 
 export function unicodeStrDisplayLength(str: string) {
-  const characters = stringToArray(str);
+  let strippedStr = stripAnsi(str);
+  strippedStr = strippedStr.replace(emojiRegex(), "  ");
+  const characters = stringToArray(strippedStr);
   let len = 0;
   for (let i = 0; i < characters.length; i++) {
     len = len + characterLength(characters[i]);
@@ -307,49 +309,6 @@ export function slice(text: string, start: number | null, end: number | null) {
     eawLen += charLen;
   }
   return result;
-}
-
-export function stringWidth(s: string, ignoreReturn?: boolean) {
-  if (s.length === 0) {
-    return 0;
-  }
-
-  let str = stripAnsi(s);
-
-  if (str.length === 0) {
-    return 0;
-  }
-
-  str = str.replace(emojiRegex(), "  ");
-  const ambiguousCharacterWidth = 1;
-  let width = 0;
-
-  for (const character of str) {
-    const codePoint = character.codePointAt(0) as number;
-
-    // Ignore control characters, if code is '\n', do not ignore it so that we can count it as a new line.
-    if ((codePoint <= 0x1f && codePoint !== 0x0a) || (codePoint >= 0x7f && codePoint <= 0x9f)) continue;
-
-    if (ignoreReturn && codePoint === 0x0a) continue;
-
-    // Ignore combining characters
-    if (codePoint >= 0x300 && codePoint <= 0x36f) continue;
-
-    const code = eastAsianWidth(character);
-    switch (code) {
-      case "F":
-      case "W":
-        width += 2;
-        break;
-      case "A":
-        width += ambiguousCharacterWidth;
-        break;
-      default:
-        width += 1;
-    }
-  }
-
-  return width;
 }
 
 export class TerminalCursor {
@@ -389,7 +348,7 @@ export class TerminalCursor {
   }
 }
 export function countLines(input: string, maxCols: number): number {
-  return offsetToColRow(input, stringWidth(input), maxCols).row + 1;
+  return offsetToColRow(input, unicodeStrDisplayLength(input), maxCols).row + 1;
 }
 
 export function offsetToColRow(input: string, offset: number, maxCols: number): { col: number; row: number } {
@@ -405,14 +364,14 @@ export function offsetToColRow(input: string, offset: number, maxCols: number): 
       col = 0;
       row += 1;
     } else {
-      col += stringWidth(chr);
+      col += unicodeStrDisplayLength(chr);
       if (col >= maxCols) {
         col = 0;
         row += 1;
       }
       // col += 1
     }
-    currentOffset += stringWidth(chr);
+    currentOffset += unicodeStrDisplayLength(chr);
     // console.log(i, chr, col, row)
   }
 
