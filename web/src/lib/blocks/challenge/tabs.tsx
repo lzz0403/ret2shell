@@ -1,13 +1,13 @@
-import Link from "@widgets/link";
-import { useSearchParams } from "@solidjs/router";
-import { fullTheme, t } from "@storage/theme";
-import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { createEffect, createMemo, createSignal, For, Show, untrack } from "solid-js";
-import { TransitionGroup } from "solid-transition-group";
 import type { Challenge } from "@models/challenge";
-import { accountStore } from "@storage/account";
 import { Permission } from "@models/user";
+import { useSearchParams } from "@solidjs/router";
+import { accountStore } from "@storage/account";
+import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
+import Link from "@widgets/link";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
+import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { TransitionGroup } from "solid-transition-group";
 
 export default function Tabs(props: {
   baseUrl: string;
@@ -20,6 +20,7 @@ export default function Tabs(props: {
   const [challengeHistory, setChallengeHistory] = createSignal<{ id: number; name: string }[]>([]);
   const inCreate = createMemo(() => searchParams.create === "true");
   const inEditGame = createMemo(() => searchParams.edit === "true");
+  const inStatistics = createMemo(() => searchParams.statistics === "true");
   function appendChallengeHistory(challenge: Challenge) {
     if (challengeHistory().find((c) => c.id === challenge.id)) {
       setTimeout(() => {
@@ -63,7 +64,12 @@ export default function Tabs(props: {
               square={challengeHistory().length > 0}
               ghost
               class="transition-all duration-300 overflow-hidden"
-              active={selectedChallengeId() === null && inCreate() === false && inEditGame() === false}
+              active={
+                selectedChallengeId() === null &&
+                inCreate() === false &&
+                inEditGame() === false &&
+                inStatistics() === false
+              }
             >
               <span class="icon-[fluent--home-20-regular] w-5 h-5" />
               <Show when={challengeHistory().length === 0}>
@@ -72,6 +78,19 @@ export default function Tabs(props: {
             </Link>
             <Show when={accountStore.permissions.includes(Permission.Game)}>
               <Show when={!props.inGame}>
+                <Link
+                  active={inStatistics()}
+                  title={t("game.admin.statistics.title")}
+                  square={challengeHistory().length > 0}
+                  ghost
+                  class="transition-all duration-300 overflow-hidden"
+                  href={`${props.baseUrl}?statistics=true`}
+                >
+                  <span class="icon-[fluent--data-pie-20-regular] w-5 h-5" />
+                  <Show when={challengeHistory().length === 0}>
+                    <span>{t("game.admin.statistics.title")}</span>
+                  </Show>
+                </Link>
                 <Link
                   active={inEditGame()}
                   title={t("game.admin.edit.title")}

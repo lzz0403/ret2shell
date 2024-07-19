@@ -15,6 +15,7 @@ import { addToast } from "@storage/toast";
 import Tabs from "@blocks/challenge/tabs";
 import GameEdit, { type GameForm } from "@blocks/game/form";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
+import GameStatistics from "@/lib/blocks/game/statistics";
 
 export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -68,6 +69,7 @@ export default function () {
   }
   const selectedChallengeId = createMemo(() => Number.parseInt(searchParams.challenge || "NaN") || null);
   const inEdit = createMemo(() => searchParams.edit === "true");
+  const inStatistics = createMemo(() => searchParams.statistics === "true");
   const [selectedChallenge, setSelectedChallenge] = createSignal(null as null | ChallengeModel);
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
@@ -152,6 +154,26 @@ export default function () {
               >
                 <div class="w-full flex flex-col p-3 lg:p-6 items-center">
                   <GameEdit onDone={onEditGame} loading={editing()} editSource={gameStore.current || undefined} />
+                </div>
+              </OverlayScrollbarsComponent>
+            </div>
+          </div>
+        </Match>
+        <Match when={inStatistics()}>
+          <div class="flex-1 w-full relative">
+            <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+              <OverlayScrollbarsComponent
+                options={{
+                  scrollbars: {
+                    theme: `os-theme-${fullTheme()}`,
+                    autoHide: "scroll",
+                  },
+                }}
+                class="relative w-full h-full print:h-auto print:overflow-auto"
+                defer
+              >
+                <div class="w-full flex flex-col p-3 lg:p-6 items-center">
+                  <GameStatistics />
                 </div>
               </OverlayScrollbarsComponent>
             </div>
