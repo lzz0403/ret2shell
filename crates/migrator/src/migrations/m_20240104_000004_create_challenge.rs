@@ -23,6 +23,7 @@ pub enum Challenge {
   ScoreRule,
   Score,
   Bucket,
+  RefId,
 }
 
 #[async_trait::async_trait]
@@ -77,6 +78,14 @@ impl MigrationTrait for Migration {
               .default(CurrentTimestamp),
           )
           .col(ColumnDef::new(Challenge::Bucket).string_len(127).not_null())
+          .col(ColumnDef::new(Challenge::RefId).big_integer())
+          .foreign_key(
+            ForeignKey::create()
+              .from(Challenge::Table, Challenge::RefId)
+              .to(Challenge::Table, Challenge::Id)
+              .on_update(ForeignKeyAction::Cascade)
+              .on_delete(ForeignKeyAction::Restrict),
+          )
           .to_owned(),
       )
       .await

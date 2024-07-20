@@ -1,9 +1,11 @@
 use std::path::PathBuf;
 
+use deunicode::deunicode_with_tofu;
 use game::GameConfig;
+use heck::ToSnakeCase;
 use r2s_config::bucket;
 use serde_json::Value;
-use tokio::fs::remove_dir_all;
+use tokio::fs::{create_dir_all, remove_dir_all};
 use tracing::error;
 pub use traits::BucketError;
 
@@ -12,7 +14,6 @@ pub mod game;
 pub mod git;
 pub mod traits;
 pub use challenge::Hint;
-mod util;
 
 #[derive(Clone, Debug)]
 pub struct Bucket {
@@ -26,7 +27,10 @@ impl Bucket {
 
   pub async fn create(&self, game: Value) -> Result<game::GameBucket, BucketError> {
     let game_config: GameConfig = serde_json::from_value(game)?;
-    let game_name = util::deunicode_str(&game_config.name);
+    let game_name = deunicode_with_tofu(&game_config.name.as_ref(), "_")
+      .trim()
+      .to_owned()
+      .to_snake_case();
     let game_name = if game_name.len() > 72 {
       game_name[..72].to_owned()
     } else {
@@ -68,7 +72,7 @@ pub async fn initialize(config: &Option<bucket::Config>) -> Result<Bucket, Bucke
   if let Some(config) = config {
     let path: PathBuf = config.path.clone().into();
     if !path.exists() {
-      return Err(BucketError::PathDoesNotExist(format!("{}", path.display())));
+      create_dir_all(&path).await.map_err(BucketError::IoError)?;
     }
     Ok(Bucket::open(path))
   } else {
@@ -80,10 +84,13 @@ pub async fn down(config: &Option<bucket::Config>) -> Result<(), BucketError> {
   if let Some(config) = config {
     let path: PathBuf = config.path.clone().into();
     if !path.exists() {
-      return Err(BucketError::PathDoesNotExist(format!("{}", path.display())));
+      Ok(())
+    } else {
+      remove_dir_all(path)
+        .await
+        .map(|_| ())
+        .map_err(BucketError::IoError)
     }
-    remove_dir_all(path).await?;
-    Ok(())
   } else {
     Err(BucketError::ConfigNotFound)
   }

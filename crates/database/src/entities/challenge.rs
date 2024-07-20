@@ -43,6 +43,7 @@ pub struct Model {
   pub score_rule: ScoreRule,
   pub score: i32,
   pub bucket: Option<String>,
+  pub ref_id: Option<i64>,
 }
 
 impl Model {
@@ -74,6 +75,8 @@ pub enum Relation {
   Instance,
   #[sea_orm(has_many = "super::submission::Entity")]
   Submission,
+  #[sea_orm(belongs_to = "Entity", from = "Column::RefId", to = "Column::Id")]
+  Original,
 }
 
 impl Related<super::audit::Entity> for Entity {
@@ -112,11 +115,24 @@ impl Related<super::submission::Entity> for Entity {
   }
 }
 
+pub struct OriginalLink;
+
+impl Linked for OriginalLink {
+  type FromEntity = Entity;
+
+  type ToEntity = Entity;
+
+  fn link(&self) -> Vec<RelationDef> {
+    vec![Relation::Original.def()]
+  }
+}
+
 impl ActiveModelBehavior for ActiveModel {}
 
 pub async fn get<C>(db: &C, id: i64) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(id).one(db).await
 }
 
@@ -124,7 +140,8 @@ pub async fn get_page<C>(
   db: &C, page: u64, page_size: u64, game_id: i64, with_hidden: bool,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let mut sql = Entity::find()
     .filter(Column::GameId.eq(game_id))
     .select_only()
@@ -143,7 +160,8 @@ where
 
 pub async fn get_list<C>(db: &C, game_id: i64, with_hidden: bool) -> Result<Vec<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let mut sql = Entity::find()
     .filter(Column::GameId.eq(game_id))
     .select_only()
@@ -158,7 +176,8 @@ pub async fn count<C>(
   db: &C, game_id: Option<i64>, game_type: Option<game::HostType>, with_hidden: bool,
 ) -> Result<u64, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let mut sql = Entity::find();
   if let Some(game_id) = game_id {
     sql = sql.filter(Column::GameId.eq(game_id));
@@ -176,7 +195,8 @@ where
 
 pub async fn create<C>(db: &C, challenge: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let challenge = ActiveModel {
     id: ActiveValue::NotSet,
     updated_at: ActiveValue::Set(Utc::now()),
@@ -188,13 +208,15 @@ where
 
 pub async fn update<C>(db: &C, challenge: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let challenge = ActiveModel {
     id: ActiveValue::Unchanged(challenge.id),
     updated_at: ActiveValue::Set(Utc::now()),
     score: ActiveValue::NotSet,
     bucket: ActiveValue::NotSet,
     game_id: ActiveValue::NotSet,
+    ref_id: ActiveValue::NotSet,
     ..challenge.into_active_model().reset_all()
   };
   challenge.update(db).await
@@ -202,6 +224,7 @@ where
 
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::delete_by_id(id).exec(db).await.map(|_| ())
 }

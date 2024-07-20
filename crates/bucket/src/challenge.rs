@@ -1,6 +1,8 @@
 use std::path::{Path, PathBuf};
 
+use deunicode::deunicode_with_tofu;
 use r2s_config::cluster::ChallengeEnv;
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use tokio::{
@@ -37,7 +39,6 @@ pub struct TagList(pub Vec<Tag>);
 #[derive(Serialize, Deserialize)]
 pub struct ChallengeConfig {
   pub name: String,
-  pub hidden: bool,
   pub tag: TagList,
   pub score_rule: ScoreRule,
 }
@@ -174,6 +175,26 @@ impl ChallengeBucket {
     Ok(read_to_string(&path).await?)
   }
 
+  pub async fn set_checker(&self, checker: String) -> Result<(), BucketError> {
+    if !self.locked {
+      return Err(BucketError::NeedLocking);
+    }
+    write(
+      &self.path.join("checker").join("main.rx"),
+      checker.as_bytes(),
+    )
+    .await?;
+    Ok(())
+  }
+
+  pub async fn checker(&self) -> Result<String, BucketError> {
+    let path = self.path.join("checker").join("main.rx");
+    if !path.exists() {
+      return Ok("".to_owned());
+    }
+    Ok(read_to_string(&path).await?)
+  }
+
   async fn upload_file(
     &self, dest: impl AsRef<str>, name: impl AsRef<str>, mut stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), BucketError> {
@@ -182,14 +203,32 @@ impl ChallengeBucket {
     }
     if !matches!(
       dest.as_ref(),
-      "images" | "mapped" | "scripts" | "src" | "static"
+      "images" | "mapped" | "checker" | "src" | "static"
+    ) {
+      return Err(BucketError::PathDoesNotExist(dest.as_ref().to_owned()));
+    }
+    let name = to_file_name(name.as_ref());
+    let dest_path = self.path.join(dest.as_ref()).join(&name);
+    let mut file = tokio::fs::File::create(&dest_path).await?;
+    tokio::io::copy(&mut stdin, &mut file).await?;
+
+    Ok(())
+  }
+
+  async fn delete_file(
+    &self, dest: impl AsRef<str>, name: impl AsRef<str>,
+  ) -> Result<(), BucketError> {
+    if !self.locked {
+      return Err(BucketError::NeedLocking);
+    }
+    if !matches!(
+      dest.as_ref(),
+      "images" | "mapped" | "checker" | "src" | "static"
     ) {
       return Err(BucketError::PathDoesNotExist(dest.as_ref().to_owned()));
     }
     let dest_path = self.path.join(dest.as_ref()).join(name.as_ref());
-    let mut file = tokio::fs::File::create(&dest_path).await?;
-    tokio::io::copy(&mut stdin, &mut file).await?;
-
+    tokio::fs::remove_file(dest_path).await?;
     Ok(())
   }
 
@@ -199,22 +238,38 @@ impl ChallengeBucket {
     self.upload_file("static", name, stdin).await
   }
 
+  pub async fn delete_static(&self, name: impl AsRef<str>) -> Result<(), BucketError> {
+    self.delete_file("static", name).await
+  }
+
   pub async fn upload_mapped(
     &self, name: impl AsRef<str>, stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), BucketError> {
     self.upload_file("mapped", name, stdin).await
   }
 
-  pub async fn upload_scripts(
+  pub async fn delete_mapped(&self, name: impl AsRef<str>) -> Result<(), BucketError> {
+    self.delete_file("mapped", name).await
+  }
+
+  pub async fn upload_checker(
     &self, name: impl AsRef<str>, stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), BucketError> {
-    self.upload_file("scripts", name, stdin).await
+    self.upload_file("checker", name, stdin).await
+  }
+
+  pub async fn delete_checker(&self, name: impl AsRef<str>) -> Result<(), BucketError> {
+    self.delete_file("checker", name).await
   }
 
   pub async fn upload_src(
     &self, name: impl AsRef<str>, stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), BucketError> {
     self.upload_file("src", name, stdin).await
+  }
+
+  pub async fn delete_src(&self, name: impl AsRef<str>) -> Result<(), BucketError> {
+    self.delete_file("src", name).await
   }
 
   pub async fn get_static_files(&self) -> Result<Vec<String>, BucketError> {
@@ -250,6 +305,19 @@ impl ChallengeBucket {
     }
     let file_index = requested_id as usize % files.len();
     Ok(Some(files[file_index].clone()))
+  }
+
+  pub async fn get_checker_files(&self) -> Result<Vec<String>, BucketError> {
+    let mut files = vec![];
+    let mut dir = read_dir(&self.path.join("checker")).await?;
+    while let Some(entry) = dir.next_entry().await? {
+      let entry_file = entry.file_name().to_string_lossy().to_string();
+      if entry_file.starts_with('.') {
+        continue;
+      }
+      files.push(entry_file);
+    }
+    Ok(files)
   }
 
   pub async fn download_file(&self, path: impl AsRef<Path>) -> Result<File, BucketError> {
@@ -296,5 +364,36 @@ impl ChallengeBucket {
       })
     // .map(|b| format!("{:02x}", b))
     // .collect::<String>()
+  }
+}
+
+fn to_file_name(file: &str) -> String {
+  let file = deunicode_with_tofu(file, "_").trim().to_owned();
+  let escape_filesystem = Regex::new(r#"[\\\/:\*\?\"<>\|\ ]"#).unwrap();
+  let escape_printable = Regex::new(r#"[^[:print:]]"#).unwrap();
+  let file = escape_filesystem.replace_all(&file, "_").to_string();
+  escape_printable.replace_all(&file, "").to_string()
+}
+
+#[cfg(test)]
+mod tests {
+  use super::*;
+
+  #[test]
+  fn test_to_file_name() {
+    assert_eq!(to_file_name("hello world"), "hello_world");
+    assert_eq!(to_file_name("hello:world"), "hello_world");
+    assert_eq!(to_file_name("hello/world"), "hello_world");
+    assert_eq!(to_file_name("hello*world"), "hello_world");
+    assert_eq!(to_file_name("hello?world"), "hello_world");
+    assert_eq!(to_file_name("hello\"world"), "hello_world");
+    assert_eq!(to_file_name("hello<world"), "hello_world");
+    assert_eq!(to_file_name("hello>world"), "hello_world");
+    assert_eq!(to_file_name("hello|world"), "hello_world");
+    assert_eq!(to_file_name("hello world\n"), "hello_world");
+    assert_eq!(to_file_name("hello world\t"), "hello_world");
+    assert_eq!(to_file_name("hello world\r"), "hello_world");
+    assert_eq!(to_file_name("hello world\x7f"), "hello_world");
+    assert_eq!(to_file_name("hello world.zip"), "hello_world.zip");
   }
 }

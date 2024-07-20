@@ -2,15 +2,14 @@ use std::{collections::HashMap, sync::Arc};
 
 use chrono::{DateTime, Utc};
 use r2s_bucket::challenge::ChallengeBucket;
-use r2s_database::{submission, team, user};
+use r2s_database::{challenge, submission, team, user};
 use rune::{
   alloc,
   runtime::{Object, RuntimeContext},
-  Context, Source, Sources, Unit, Value, Vm,
+  Context, Diagnostics, Source, Sources, Unit, Value, Vm,
 };
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
-use tracing::{debug, error};
 use traits::CheckerError;
 
 pub mod traits;
@@ -52,47 +51,64 @@ impl Checker {
       contexts: Arc::new(RwLock::new(HashMap::new())),
     }
   }
-  pub async fn preload(&mut self, bucket: ChallengeBucket) -> Result<(), CheckerError> {
-    let script_folder = bucket.path().to_path_buf().join("checker");
-    if !script_folder.exists() {
-      error!(
-        "Missing checker script: {}: {}",
-        bucket.name,
-        script_folder.display()
-      );
-      Err(CheckerError::MissingCheckerScript(format!(
-        "{}: {}",
-        bucket.name,
-        script_folder.display()
-      )))
-    } else {
-      let key = bucket.path().to_path_buf().display().to_string();
-      if self.contexts.read().await.contains_key(key.as_str()) {
-        return Ok(());
-      }
-      let mut context = Context::with_default_modules()?;
-      context.install(rune_modules::http::module(true)?)?;
-      context.install(rune_modules::json::module(true)?)?;
-      context.install(rune_modules::toml::module(true)?)?;
-      context.install(rune_modules::process::module(true)?)?;
-      context.install(ret2script::modules::crypto::module(true)?)?;
-      context.install(ret2script::modules::bucket::module(true)?)?;
-      context.install(ret2script::modules::audit::module(true)?)?;
-      context.install(ret2script::modules::utils::module(true)?)?;
-      context.install(ret2script::modules::regex::module(true)?)?;
-      let mut sources = Sources::new();
-      sources.insert(Source::from_path(script_folder.join("main.rx"))?)?;
-      debug!("Preloading checker script: {}", script_folder.display());
 
-      let unit = rune::prepare(&mut sources).with_context(&context).build()?;
-      let runtime = context.runtime()?;
+  async fn context() -> Result<Context, CheckerError> {
+    let mut context = Context::with_default_modules()?;
+    context.install(rune_modules::http::module(true)?)?;
+    context.install(rune_modules::json::module(true)?)?;
+    context.install(rune_modules::toml::module(true)?)?;
+    context.install(rune_modules::process::module(true)?)?;
+    context.install(ret2script::modules::crypto::module(true)?)?;
+    context.install(ret2script::modules::bucket::module(true)?)?;
+    context.install(ret2script::modules::audit::module(true)?)?;
+    context.install(ret2script::modules::utils::module(true)?)?;
+    context.install(ret2script::modules::regex::module(true)?)?;
+    Ok(context)
+  }
 
-      self.contexts.write().await.insert(
-        bucket.name.clone(),
-        (Arc::new(unit), Arc::new(runtime), Utc::now()),
-      );
-      Ok(())
+  async fn sources(bucket: &ChallengeBucket) -> Result<Sources, CheckerError> {
+    let mut sources = Sources::new();
+    sources.insert(Source::memory(
+      bucket
+        .checker()
+        .await
+        .map_err(|e| CheckerError::MissingCheckerScript(e.to_string()))?,
+    )?)?;
+    Ok(sources)
+  }
+
+  pub async fn lint(&self, bucket: &ChallengeBucket) -> Result<(), CheckerError> {
+    let context = Self::context().await?;
+    let mut sources = Self::sources(bucket).await?;
+    let mut diagnostics = Diagnostics::new();
+    let _ = rune::prepare(&mut sources)
+      .with_context(&context)
+      .with_diagnostics(&mut diagnostics)
+      .build();
+    if !diagnostics.is_empty() {
+      return Err(CheckerError::CompileError(format!("{diagnostics:?}")));
     }
+    Ok(())
+  }
+
+  pub async fn preload(
+    &mut self, challenge: challenge::Model, bucket: &ChallengeBucket,
+  ) -> Result<(), CheckerError> {
+    let contexts = self.contexts.write().await;
+    if contexts.contains_key(&bucket.hash()) && challenge.updated_at < contexts[&bucket.hash()].2 {
+      return Ok(());
+    }
+    let context = Self::context().await?;
+    let mut sources = Self::sources(&bucket).await?;
+
+    let unit = rune::prepare(&mut sources).with_context(&context).build()?;
+    let runtime = context.runtime()?;
+
+    self.contexts.write().await.insert(
+      bucket.hash(),
+      (Arc::new(unit), Arc::new(runtime), Utc::now()),
+    );
+    Ok(())
   }
 
   /// Check the flag and return results and audit messages.
@@ -107,7 +123,7 @@ impl Checker {
   ) -> Result<(bool, String, Option<AuditMessage>), CheckerError> {
     let contexts = self.contexts.read().await;
     let (unit, runtime, _) = contexts
-      .get(bucket.name.as_str())
+      .get(&bucket.hash())
       .ok_or(CheckerError::MissingCheckerScript(bucket.name.clone()))?;
     let mut vm = Vm::new(runtime.clone(), unit.clone());
     let user_object = to_rune_object!(user, id, account, institute_id);
@@ -161,7 +177,7 @@ impl Checker {
   ) -> Result<HashMap<String, String>, CheckerError> {
     let contexts = self.contexts.read().await;
     let (unit, runtime, _) = contexts
-      .get(bucket.name.as_str())
+      .get(&bucket.hash())
       .ok_or(CheckerError::MissingCheckerScript(bucket.name.clone()))?;
     let mut vm = Vm::new(runtime.clone(), unit.clone());
     let user_object = to_rune_object!(user, id, account, institute_id);

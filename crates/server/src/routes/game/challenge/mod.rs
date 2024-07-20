@@ -1,6 +1,6 @@
 use axum::{
   body::Body,
-  extract::{Query, State},
+  extract::{Multipart, Query, State},
   http::{HeaderMap, StatusCode},
   middleware,
   response::{IntoResponse, Response},
@@ -8,6 +8,7 @@ use axum::{
   Extension, Json, Router,
 };
 use chrono::Utc;
+use futures::TryStreamExt;
 use r2s_bucket::{challenge::ChallengeBucket, Bucket};
 use r2s_database::{
   challenge, extra, game, hint, submission, team,
@@ -21,7 +22,7 @@ use r2s_migrator::Database;
 use r2s_queue::Queue;
 use sea_orm::{DatabaseTransaction, TransactionTrait};
 use serde::{Deserialize, Serialize};
-use tokio_util::io::ReaderStream;
+use tokio_util::io::{ReaderStream, StreamReader};
 use tracing::{debug, warn};
 
 use crate::{
@@ -43,6 +44,17 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     .nest(
       "/:challenge",
       Router::new()
+        .route(
+          "/files",
+          post(upload_challenge_attachment).delete(delete_challenge_attachment),
+        )
+        .route(
+          "/checkers",
+          get(get_challenge_checker)
+            .post(upload_checker_file)
+            .patch(update_checker_script)
+            .delete(delete_checker_file),
+        )
         .route(
           "/hint",
           post(create_challenge_hint).delete(delete_challenge_hint),
@@ -126,6 +138,19 @@ macro_rules! get_challenge_bucket_mut {
     (game_bucket, challenge_bucket)
   }};
 }
+
+// macro_rules! check_const_columns {
+//   ($prev_model:expr, $current_model:expr, $($columns:tt), *) => {{
+//     $(
+//       if $prev_model.$columns != $current_model.$columns {
+//         return Err(ResponseError::PreconditionFailed(format!(
+//           "column {} is not allowed to change",
+//           stringify!($columns)
+//         )));
+//       }
+//     )*
+//   }};
+// }
 
 async fn update_team_state(db: &Database, team: team::Model) {
   let score = team::calc_score(&db.conn, team.id).await;
@@ -254,17 +279,23 @@ async fn update_challenge(
       "please hidden challenge before update it".to_owned(),
     ));
   }
+
+  // refuse to change some columns when challenge is cloned from another challenge.
+  // if prev_challenge.ref_id.is_some() {
+  //   check_const_columns!(
+  //     prev_challenge,
+  //     challenge,
+  //     bucket,
+  //     ref_id,
+  //     name,
+  //     tag,
+  //     score_rule,
+  //     content
+  //   );
+  // }
   let txn = db.conn.begin().await?;
-  let challenge = challenge::update(
-    &txn,
-    challenge::Model {
-      id: prev_challenge.id,
-      game_id: prev_challenge.game_id,
-      bucket: prev_challenge.bucket,
-      ..challenge
-    },
-  )
-  .await?;
+  let challenge = challenge::update(&txn, challenge).await?;
+  // if challenge.ref_id.is_none() {
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   challenge_bucket
     .set_config(serde_json::to_value(&challenge)?)
@@ -280,6 +311,7 @@ async fn update_challenge(
       format!("{}@private.ret.sh.cn", token.account),
     )
     .await?;
+  // }
   txn.commit().await?;
   if prev_challenge.hidden != challenge.hidden {
     let event = EventContainer {
@@ -311,6 +343,7 @@ async fn delete_challenge(
 ) -> Result<impl IntoResponse, ResponseError> {
   let txn = db.conn.begin().await?;
   challenge::delete(&txn, challenge.id).await?;
+  // if challenge.ref_id.is_none() {
   let game_bucket = bucket
     .at_mut(
       game
@@ -339,6 +372,7 @@ async fn delete_challenge(
       format!("{}@private.ret.sh.cn", token.account),
     )
     .await?;
+  // }
   txn.commit().await?;
 
   Ok(())
@@ -403,11 +437,11 @@ async fn submit_flag(
   let submission = submission::create(&db.conn, submission).await?;
   queue.publish("check", submission).await?;
   Ok(())
-
-  // TODO: publish solved event
-  // TODO: update scoreboard
-  // TODO: check flag
 }
+
+// TODO: publish solved event
+// TODO: update scoreboard
+// TODO: check flag
 
 #[derive(Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "snake_case")]
@@ -509,6 +543,76 @@ async fn get_files(bucket: &ChallengeBucket, id: i64) -> Result<Vec<FileResponse
   Ok(files)
 }
 
+#[derive(Deserialize)]
+struct UploadChallengeAttachmentQuery {
+  pub folder: FileType,
+}
+
+async fn upload_challenge_attachment(
+  State(bucket): State<Bucket>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  Query(query): Query<UploadChallengeAttachmentQuery>, mut multipart: Multipart,
+) -> Result<impl IntoResponse, ResponseError> {
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+  if let Some(field) = multipart
+    .next_field()
+    .await
+    .map_err(|err| ResponseError::BadRequest(err.to_string()))?
+  {
+    let file_name = field
+      .file_name()
+      .ok_or(ResponseError::BadRequest(
+        "file name is required".to_owned(),
+      ))?
+      .to_owned();
+    let reader =
+      StreamReader::new(field.map_err(|multipart_error| {
+        std::io::Error::new(std::io::ErrorKind::Other, multipart_error)
+      }));
+    match query.folder {
+      FileType::Static => challenge_bucket.upload_static(&file_name, reader).await?,
+      FileType::Mapped => challenge_bucket.upload_mapped(&file_name, reader).await?,
+    }
+    game_bucket
+      .commit(
+        format!("upload file {} for challenge {}", file_name, challenge.name),
+        &token.account,
+        format!("{}@private.ret.sh.cn", token.account),
+      )
+      .await?;
+    Ok(())
+  } else {
+    Err(ResponseError::BadRequest("file is required".to_owned()))
+  }
+}
+
+async fn delete_challenge_attachment(
+  State(bucket): State<Bucket>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  Query(query): Query<FileRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+  let file = query
+    .file
+    .clone()
+    .ok_or(ResponseError::BadRequest("file is required".to_owned()))?;
+  match query.folder {
+    Some(FileType::Static) => challenge_bucket.delete_static(&file).await?,
+    Some(FileType::Mapped) => challenge_bucket.delete_mapped(&file).await?,
+    None => {
+      return Err(ResponseError::BadRequest("folder is required".to_owned()));
+    }
+  };
+  game_bucket
+    .commit(
+      format!("delete file {} for challenge {}", file, challenge.name),
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
+    )
+    .await?;
+  Ok(())
+}
+
 async fn get_challenge_hints(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
@@ -587,6 +691,11 @@ async fn create_challenge_hint(
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Json(hint): Json<hint::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  // if challenge.ref_id.is_some() {
+  //   return Err(ResponseError::PreconditionFailed(
+  //     "cannot create hint for cloned challenge".to_owned(),
+  //   ));
+  // }
   let txn = db.conn.begin().await?;
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
 
@@ -620,6 +729,11 @@ async fn delete_challenge_hint(
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Query(query): Query<DeleteHintQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  // if challenge.ref_id.is_some() {
+  //   return Err(ResponseError::PreconditionFailed(
+  //     "cannot delete hint for cloned challenge".to_owned(),
+  //   ));
+  // }
   let txn = db.conn.begin().await?;
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   hint::delete(&txn, query.id).await?;
@@ -676,4 +790,107 @@ async fn start_challenge_env(
       "challenge does not have online environment".to_owned(),
     ))
   }
+}
+
+#[derive(Serialize)]
+struct CheckerResponse {
+  pub script: String,
+  pub files: Vec<String>,
+}
+
+async fn get_challenge_checker(
+  State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
+  Extension(challenge): Extension<challenge::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let challenge_bucket = get_challenge_bucket!(bucket, game, challenge);
+
+  Ok(Json(CheckerResponse {
+    script: challenge_bucket.checker().await?,
+    files: challenge_bucket.get_checker_files().await?,
+  }))
+}
+
+async fn upload_checker_file(
+  State(bucket): State<Bucket>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  mut multipart: Multipart,
+) -> Result<impl IntoResponse, ResponseError> {
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+  if let Some(field) = multipart
+    .next_field()
+    .await
+    .map_err(|err| ResponseError::BadRequest(err.to_string()))?
+  {
+    let file_name = field
+      .file_name()
+      .ok_or(ResponseError::BadRequest(
+        "file name is required".to_owned(),
+      ))?
+      .to_owned();
+    let reader =
+      StreamReader::new(field.map_err(|multipart_error| {
+        std::io::Error::new(std::io::ErrorKind::Other, multipart_error)
+      }));
+    challenge_bucket.upload_checker(&file_name, reader).await?;
+    game_bucket
+      .commit(
+        format!(
+          "upload checker file {} for challenge {}",
+          file_name, challenge.name
+        ),
+        &token.account,
+        format!("{}@private.ret.sh.cn", token.account),
+      )
+      .await?;
+    Ok(())
+  } else {
+    Err(ResponseError::BadRequest("file is required".to_owned()))
+  }
+}
+
+#[derive(Deserialize)]
+struct UpdateCheckerScriptRequest {
+  pub content: String,
+}
+
+async fn update_checker_script(
+  State(bucket): State<Bucket>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  Json(req): Json<UpdateCheckerScriptRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+  challenge_bucket.set_checker(req.content).await?;
+  game_bucket
+    .commit(
+      format!("update checker script for challenge {}", challenge.name),
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
+    )
+    .await?;
+  Ok(())
+}
+
+#[derive(Deserialize)]
+struct DeleteCheckerFileRequest {
+  pub file: String,
+}
+
+async fn delete_checker_file(
+  State(bucket): State<Bucket>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  Query(query): Query<DeleteCheckerFileRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
+  challenge_bucket.delete_checker(&query.file).await?;
+  game_bucket
+    .commit(
+      format!(
+        "delete checker file {} for challenge {}",
+        query.file, challenge.name
+      ),
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
+    )
+    .await?;
+  Ok(())
 }

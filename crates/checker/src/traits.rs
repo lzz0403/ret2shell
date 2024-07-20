@@ -20,4 +20,6 @@ pub enum CheckerError {
   MissingResultField(String),
   #[error("Script error: {0}")]
   ScriptError(String),
+  #[error("Compile error: {0}")]
+  CompileError(String),
 }

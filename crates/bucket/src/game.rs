@@ -1,6 +1,8 @@
 use std::path::{Path, PathBuf};
 
 use chrono::{serde::ts_seconds, DateTime, Utc};
+use deunicode::deunicode_with_tofu;
+use heck::ToSnakeCase;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use serde_repr::{Deserialize_repr, Serialize_repr};
@@ -11,7 +13,6 @@ use crate::{
   challenge,
   git::Git,
   traits::{init_dir, BucketError},
-  util,
 };
 
 #[derive(Debug)]
@@ -163,7 +164,10 @@ impl GameBucket {
       return Err(BucketError::NeedLocking);
     }
     let challenge_config: challenge::ChallengeConfig = serde_json::from_value(challenge)?;
-    let challenge_name = util::deunicode_str(&challenge_config.name);
+    let challenge_name = deunicode_with_tofu(&challenge_config.name.as_ref(), "_")
+      .trim()
+      .to_owned()
+      .to_snake_case();
     let challenge_name = if challenge_name.len() > 72 {
       challenge_name[..72].to_owned()
     } else {

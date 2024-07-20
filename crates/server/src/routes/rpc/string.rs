@@ -1,9 +1,11 @@
 use axum::{extract::Query, response::IntoResponse, routing::get, Router};
+use deunicode::deunicode_with_tofu;
+use heck::ToSnakeCase;
 use serde::Deserialize;
 
 use crate::{
   traits::{GlobalState, ResponseError},
-  utility::string::{deunicode_str, leet_str},
+  utility::string::leet_str,
 };
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
@@ -20,7 +22,12 @@ struct GenericQuery {
 async fn generate_deunicode(
   Query(query): Query<GenericQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  Ok(deunicode_str(query.text))
+  Ok(
+    deunicode_with_tofu(&query.text, "_")
+      .trim()
+      .to_owned()
+      .to_snake_case(),
+  )
 }
 
 async fn generate_leet(

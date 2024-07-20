@@ -361,6 +361,9 @@ async fn register(
   if user::get_by_account_or_email(&db.conn, &body.email)
     .await?
     .is_some()
+    || user::get_by_account_or_email(&db.conn, &body.account)
+      .await?
+      .is_some()
   {
     return Err(ResponseError::Conflict("account already exists".to_owned()));
   }
