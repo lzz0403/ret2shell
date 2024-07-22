@@ -89,7 +89,7 @@ impl ChallengeBucket {
     Ok(Self {
       name: name.as_ref().to_owned(),
       path: challenge_path,
-      locked: false,
+      locked: true,
     })
   }
 
