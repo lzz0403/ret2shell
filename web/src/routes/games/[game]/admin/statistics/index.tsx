@@ -1,4 +1,4 @@
-import GameStatistics from "@/lib/blocks/game/statistics";
+import GameStatistics from "@blocks/game/statistics";
 
 export default function () {
   return (

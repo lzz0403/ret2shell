@@ -395,7 +395,10 @@
       "teams": {
         "title": "参加チーム"
       },
-      "title": "管理"
+      "title": "管理",
+      "answer": {
+        "notAccessableWhenInGame": "試合終了前に問題解説を公開できません"
+      }
     },
     "adminCanNotTakePartIn": "管理者は参加できません。",
     "adminMode": "管理者モード",
@@ -453,7 +456,8 @@
       "title": "問題",
       "unknownTag": "未知",
       "unlockHintFailed": "ヒントのロック解除に失敗しました",
-      "welcome": "参加を歓迎します"
+      "welcome": "参加を歓迎します",
+      "checker": "評価"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

@@ -1,5 +1,5 @@
-import type { Challenge } from "@/lib/models/challenge";
-import { t } from "@/lib/storage/theme";
+import type { Challenge } from "@models/challenge";
+import { t } from "@storage/theme";
 import type { ParseEntry } from "shell-quote";
 import type { Stdio } from "../stdio";
 import type { Command } from "./interface";

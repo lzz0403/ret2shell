@@ -15,6 +15,7 @@ import Hammer from "./hammer";
 import Hints from "./hints";
 import Instances from "./instances";
 import Intro from "./intro";
+import Checker from "./checker";
 import Settings from "./settings";
 import Statistics from "./statistics";
 import Terminal from "./terminal";
@@ -25,7 +26,7 @@ function BottomPanel(props: {
   inGame: boolean;
 }) {
   const [page, setPage] = createSignal(0);
-  const pages = [Terminal, Hints, Files, Hammer, Answer, Statistics, Instances, Settings];
+  const pages = [Terminal, Hints, Files, Hammer, Answer, Statistics, Instances, Checker, Settings];
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
       <OverlayScrollbarsComponent
@@ -87,6 +88,10 @@ function BottomPanel(props: {
               <span>{t("game.challenge.instances")}</span>
             </Button>
             <Button onClick={() => setPage(7)} ghost={page() !== 7}>
+              <span class="icon-[fluent--production-20-regular] w-5 h-5" />
+              <span>{t("game.challenge.checker")}</span>
+            </Button>
+            <Button onClick={() => setPage(8)} ghost={page() !== 8}>
               <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
               <span>{t("game.challenge.settings")}</span>
             </Button>

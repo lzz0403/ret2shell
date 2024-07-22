@@ -8,7 +8,16 @@ import type { Article as ArticleModel } from "@models/article";
 import { TeamState, stringifyState } from "@models/team";
 import { Permission } from "@models/user";
 import { accountStore, refreshInstitutes } from "@storage/account";
-import { canParticipate, gameStore, isGameAdmin, setGameStore } from "@storage/game";
+import {
+  canParticipate,
+  gameStore,
+  inArchived,
+  inArchiving,
+  inProgress,
+  inRegister,
+  isGameAdmin,
+  setGameStore,
+} from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -32,19 +41,16 @@ export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
   const inEdit = () => searchParams.edit === "true";
   const period = () => {
-    if (gameStore.current?.register_at && gameStore.current.register_at > DateTime.now()) {
-      return t("game.register")!;
-    }
-    if (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()) {
+    if (inProgress()) {
       return t("game.start")!;
     }
-    if (gameStore.current?.end_at && gameStore.current.end_at > DateTime.now()) {
-      return t("game.end")!;
+    if (inRegister()) {
+      return t("game.register")!;
     }
-    if (gameStore.current?.archive_at && gameStore.current.archive_at > DateTime.now()) {
+    if (inArchiving()) {
       return t("game.archive")!;
     }
-    return "";
+    return t("game.end")!;
   };
 
   const timeEnd = () => {
@@ -66,7 +72,7 @@ export default function () {
   const [showTimer, setShowTimer] = createSignal(true);
 
   const updateTimer = setInterval(() => {
-    setShowTimer(!!(gameStore.current?.archive_at && gameStore.current.archive_at > DateTime.now()));
+    setShowTimer(!inArchived());
   }, 1000);
 
   onCleanup(() => clearInterval(updateTimer));
@@ -423,13 +429,12 @@ export default function () {
                   class="flex-1"
                   level="success"
                   disabled={
-                    (gameStore.current?.archive_at && gameStore.current.archive_at < DateTime.now()) ||
-                    (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now())
+                    inArchived() || (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now())
                   }
                 >
                   <span class="icon-[fluent--people-team-20-regular] w-5 h-5" />
                   <Switch>
-                    <Match when={gameStore.current?.archive_at && gameStore.current.archive_at < DateTime.now()}>
+                    <Match when={inArchived()}>
                       <span class="flex-1 text-start">{t("game.archivedGotoTraining")}</span>
                     </Match>
                     <Match when={gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()}>

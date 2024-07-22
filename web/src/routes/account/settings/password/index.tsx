@@ -1,11 +1,11 @@
-import { changePassword } from "@/lib/api/account";
-import { resetUser } from "@/lib/storage/account";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
-import Button from "@/lib/widgets/button";
-import Input from "@/lib/widgets/input";
+import { changePassword } from "@api/account";
 import { createForm, custom, getValue, minLength, pattern, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
+import { resetUser } from "@storage/account";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
+import Button from "@widgets/button";
+import Input from "@widgets/input";
 import type { HTTPError } from "ky";
 import { createSignal } from "solid-js";
 

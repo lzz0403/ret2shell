@@ -1,9 +1,9 @@
-import { verifyEmail } from "@/lib/api/account";
-import Spin from "@/lib/assets/animates/spin";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
+import { verifyEmail } from "@api/account";
+import Spin from "@assets/animates/spin";
 import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
 import { useNavigate, useSearchParams } from "@solidjs/router";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import type { HTTPError } from "ky";
 import { onMount } from "solid-js";
 

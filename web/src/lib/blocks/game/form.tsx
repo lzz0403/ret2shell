@@ -1,12 +1,12 @@
 import type { Game } from "@models/game";
+import { createForm, maxRange, minRange, required, setValues } from "@modular-forms/solid";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
-import { createForm, maxRange, minRange, required, setValues } from "@modular-forms/solid";
+import Checkbox from "@widgets/checkbox";
 import Input from "@widgets/input";
+import Slider from "@widgets/slider";
 import TimePicker from "@widgets/timepicker";
 import { DateTime } from "luxon";
-import Checkbox from "@/lib/widgets/checkbox";
-import Slider from "@/lib/widgets/slider";
 import { createEffect, untrack } from "solid-js";
 
 export type GameForm = {

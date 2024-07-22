@@ -1,5 +1,4 @@
-import { createTeam } from "@/lib/api/game";
-import Link from "@/lib/widgets/link";
+import { createTeam } from "@api/game";
 import { generateRandomName } from "@lib/utils/random-names";
 import { createForm, maxLength, required, setValue } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
@@ -13,6 +12,7 @@ import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Dialog from "@widgets/dialog";
 import Input from "@widgets/input";
+import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import type { HTTPError } from "ky";
 import { Show, createEffect, createSignal, untrack } from "solid-js";

@@ -1,10 +1,10 @@
-import { accountStore } from "@/lib/storage/account";
-import { gameStore, setGameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import { mediaPath } from "@/lib/utils/media";
-import Divider from "@/lib/widgets/divider";
 import LogoAnimate from "@assets/animates/logo-animate";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
+import { mediaPath } from "@lib/utils/media";
+import { accountStore } from "@storage/account";
+import { gameStore, setGameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import Divider from "@widgets/divider";
 import { type ComponentProps, Show, createEffect, untrack } from "solid-js";
 
 export default function TeamCover(props: ComponentProps<"div">) {

@@ -7,7 +7,7 @@ import { HostType } from "@models/game";
 import { Permission } from "@models/user";
 import { useLocation, useNavigate, useParams, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import { canAccessChallenges, gameStore, isGameAdmin } from "@storage/game";
+import { canAccessChallenges, gameStore, inProgress, isGameAdmin } from "@storage/game";
 import { setupTitleResolver } from "@storage/header";
 import { frontendCompatVersion, platformStore, setPlatformStore } from "@storage/platform";
 import { t } from "@storage/theme";
@@ -339,13 +339,7 @@ function TitleBar() {
                       />
                     </div>
                   </Match>
-                  <Match
-                    when={
-                      gameStore.current &&
-                      gameStore.current.start_at < DateTime.now() &&
-                      gameStore.current.end_at > DateTime.now()
-                    }
-                  >
+                  <Match when={inProgress()}>
                     <div class="flex flex-col items-center justify-center px-4 relative">
                       <Timer end={gameStore.current!.end_at} />
                       <TimeProgress

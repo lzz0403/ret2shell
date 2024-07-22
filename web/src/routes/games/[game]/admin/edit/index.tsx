@@ -1,8 +1,8 @@
-import { updateGame } from "@/lib/api/game";
-import { gameStore, setGameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
-import { addToast } from "@/lib/storage/toast";
+import { updateGame } from "@api/game";
 import GameEdit, { type GameForm } from "@blocks/game/form";
+import { gameStore, setGameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";

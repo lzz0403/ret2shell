@@ -1,4 +1,4 @@
-import { t } from "@/lib/storage/theme";
+import { t } from "@storage/theme";
 import type { Stdio } from "../stdio";
 import type { Command } from "./interface";
 

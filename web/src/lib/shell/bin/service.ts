@@ -1,6 +1,6 @@
-import { getChallengeEnv } from "@/lib/api/game";
-import type { Challenge } from "@/lib/models/challenge";
-import { t } from "@/lib/storage/theme";
+import { getChallengeEnv } from "@api/game";
+import type { Challenge } from "@models/challenge";
+import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
 import { HTTPError } from "ky";
 import type { ParseEntry } from "shell-quote";

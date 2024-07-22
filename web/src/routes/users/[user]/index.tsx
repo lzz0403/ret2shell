@@ -1,12 +1,12 @@
-import type { Team } from "@/lib/models/team";
-import { addToast } from "@/lib/storage/toast";
 import { getUser, getUserTeams } from "@api/user";
 import SidebarLayout from "@blocks/sidebar-layout";
+import type { Team } from "@models/team";
 import type { User } from "@models/user";
 import { useNavigate, useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import LoadingTips from "@widgets/loading-tips";
 import type { HTTPError } from "ky";

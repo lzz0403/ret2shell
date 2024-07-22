@@ -88,6 +88,13 @@ impl Checker {
     if !diagnostics.is_empty() {
       return Err(CheckerError::CompileError(format!("{diagnostics:?}")));
     }
+    let unit = rune::prepare(&mut sources).with_context(&context).build()?;
+    let runtime = context.runtime()?;
+    let vm = Vm::new(Arc::new(runtime), Arc::new(unit));
+    vm.lookup_function(["check"])
+      .map_err(|_| CheckerError::MissingFunction("check".to_owned()))?;
+    vm.lookup_function(["environ"])
+      .map_err(|_| CheckerError::MissingFunction("environ".to_owned()))?;
     Ok(())
   }
 

@@ -1,18 +1,18 @@
-import Button from "@/lib/widgets/button";
-import Checkbox from "@/lib/widgets/checkbox";
-import Divider from "@widgets/divider";
-import Editor from "@widgets/editor";
-import Input from "@widgets/input";
-import Select from "@widgets/select";
 import { getPlatformConfig, updatePlatformConfig } from "@api/platform";
 import type { Config, EmailConfig } from "@models/config";
 import { createForm, custom, getValue, setValue, setValues } from "@modular-forms/solid";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
-import { createSignal, onMount } from "solid-js";
-import { addToast } from "@/lib/storage/toast";
+import { addToast } from "@storage/toast";
+import Button from "@widgets/button";
+import Checkbox from "@widgets/checkbox";
+import Divider from "@widgets/divider";
+import Editor from "@widgets/editor";
+import Input from "@widgets/input";
+import Select from "@widgets/select";
 import type { HTTPError } from "ky";
+import { createSignal, onMount } from "solid-js";
 
 export default function () {
   const [form, { Form, Field }] = createForm<EmailConfig>();

@@ -33,6 +33,52 @@ export function appendGames(games: Game[]) {
   });
 }
 
+export function inProgress() {
+  if (
+    gameStore.current?.start_at &&
+    gameStore.current?.start_at < DateTime.now() &&
+    gameStore.current?.end_at &&
+    gameStore.current?.end_at > DateTime.now()
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function inRegister() {
+  const register_end = gameStore.current?.can_register_after_started
+    ? gameStore.current?.end_at
+    : gameStore.current?.start_at;
+  if (
+    gameStore.current?.register_at &&
+    gameStore.current?.register_at < DateTime.now() &&
+    register_end &&
+    register_end > DateTime.now()
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function inArchiving() {
+  if (
+    gameStore.current?.end_at &&
+    gameStore.current?.end_at < DateTime.now() &&
+    gameStore.current?.archive_at &&
+    gameStore.current?.archive_at > DateTime.now()
+  ) {
+    return true;
+  }
+  return false;
+}
+
+export function inArchived() {
+  if (gameStore.current?.archive_at && gameStore.current.archive_at < DateTime.now()) {
+    return true;
+  }
+  return false;
+}
+
 export const canParticipate = () => {
   if (
     !gameStore.current?.can_register_after_started &&
@@ -78,15 +124,10 @@ export function canAccessChallenges(): [boolean, string] {
   if (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()) {
     return [false, t("game.challenge.notStarted")!];
   }
-  if (gameStore.current?.archive_at && gameStore.current.archive_at < DateTime.now()) {
+  if (inArchived()) {
     return [false, t("game.ended")!];
   }
-  if (
-    gameStore.current?.start_at &&
-    gameStore.current.start_at < DateTime.now() &&
-    gameStore.current.archive_at &&
-    gameStore.current.archive_at > DateTime.now()
-  ) {
+  if (inProgress() || inArchiving()) {
     if (gameStore.team) {
       return [true, ""];
     }
@@ -110,11 +151,7 @@ export function gameParticipateState() {
   if (gameStore.current?.register_at && gameStore.current.register_at > DateTime.now()) {
     return [false, t("game.registerNotStarted")!];
   }
-  if (
-    gameStore.current?.start_at &&
-    gameStore.current.start_at < DateTime.now() &&
-    !gameStore.current.can_register_after_started
-  ) {
+  if (!inRegister()) {
     return [false, t("game.registerEnded")!];
   }
   return [true, ""];

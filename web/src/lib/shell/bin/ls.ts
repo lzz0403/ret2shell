@@ -1,7 +1,7 @@
-import { getChallengeAttachments } from "@/lib/api/game";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
+import { getChallengeAttachments } from "@api/game";
 import type { Challenge } from "@models/challenge";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
 import type { ParseEntry } from "shell-quote";
 import { link } from "../escapes";

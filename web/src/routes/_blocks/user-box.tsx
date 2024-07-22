@@ -1,4 +1,5 @@
 import { logout } from "@api/account";
+import { mediaPath } from "@lib/utils/media";
 import { HostType } from "@models/game";
 import { Permission } from "@models/user";
 import { useNavigate } from "@solidjs/router";
@@ -13,7 +14,6 @@ import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import { Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
 import UserCodeDialog from "./user-code-dialog";
-import { mediaPath } from "@/lib/utils/media";
 
 export default function UserBox() {
   createEffect(() => {

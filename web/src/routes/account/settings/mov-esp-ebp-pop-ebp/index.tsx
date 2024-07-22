@@ -1,10 +1,10 @@
-import { deleteSelf } from "@/lib/api/account";
-import { accountStore, resetUser } from "@/lib/storage/account";
-import Button from "@/lib/widgets/button";
-import Input from "@/lib/widgets/input";
+import { deleteSelf } from "@api/account";
 import { useNavigate } from "@solidjs/router";
+import { accountStore, resetUser } from "@storage/account";
 import { t } from "@storage/theme";
+import Button from "@widgets/button";
 import Divider from "@widgets/divider";
+import Input from "@widgets/input";
 import { createSignal } from "solid-js";
 
 export default function () {

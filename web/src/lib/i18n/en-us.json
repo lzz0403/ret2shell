@@ -456,7 +456,10 @@
       "teams": {
         "title": "Participating Teams"
       },
-      "title": "Management"
+      "title": "Management",
+      "answer": {
+        "notAccessableWhenInGame": "Solutions cannot be released before the end of the game."
+      }
     },
     "adminCanNotTakePartIn": "Administrators are not allowed to participate.",
     "adminMode": "Administrator Mode",
@@ -514,7 +517,8 @@
       "title": "Title",
       "unknownTag": "Unknown",
       "unlockHintFailed": "Unlock Hint Failed",
-      "welcome": "Welcome to participate"
+      "welcome": "Welcome to participate",
+      "checker": "Evaluation"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

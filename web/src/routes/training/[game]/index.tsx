@@ -1,21 +1,21 @@
+import Challenge from "@blocks/challenge";
 import type { Challenge as ChallengeModel } from "@models/challenge";
+import { useSearchParams } from "@solidjs/router";
 import { gameStore, refreshChallenges, setGameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import LoadingTips from "@widgets/loading-tips";
-import Challenge from "@blocks/challenge";
-import { useSearchParams } from "@solidjs/router";
 import { Match, Switch, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 import Intro from "../_blocks/intro";
 
-import Form, { type ChallengeForm } from "@blocks/challenge/form";
-import { DateTime } from "luxon";
 import { createChallenge, getChallenge, updateGame } from "@api/game";
-import type { HTTPError } from "ky";
-import { addToast } from "@storage/toast";
+import Form, { type ChallengeForm } from "@blocks/challenge/form";
 import Tabs from "@blocks/challenge/tabs";
 import GameEdit, { type GameForm } from "@blocks/game/form";
+import GameStatistics from "@blocks/game/statistics";
+import { addToast } from "@storage/toast";
+import type { HTTPError } from "ky";
+import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import GameStatistics from "@/lib/blocks/game/statistics";
 
 export default function () {
   const [searchParams, setSearchParams] = useSearchParams();

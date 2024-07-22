@@ -1,9 +1,9 @@
-import { api_root } from "@/lib/api";
-import { downloadFile } from "@/lib/api/file";
-import { getChallengeAttachments } from "@/lib/api/game";
-import type { Challenge } from "@/lib/models/challenge";
-import { gameStore } from "@/lib/storage/game";
-import { t } from "@/lib/storage/theme";
+import { api_root } from "@api";
+import { downloadFile } from "@api/file";
+import { getChallengeAttachments } from "@api/game";
+import type { Challenge } from "@models/challenge";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
 import { HTTPError } from "ky";
 import type { ParseEntry } from "shell-quote";
 import { cursorTo } from "../escapes";

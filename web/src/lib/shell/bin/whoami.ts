@@ -1,6 +1,6 @@
-import type { Challenge } from "@/lib/models/challenge";
-import { accountStore } from "@/lib/storage/account";
-import { t } from "@/lib/storage/theme";
+import type { Challenge } from "@models/challenge";
+import { accountStore } from "@storage/account";
+import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
 import type { ParseEntry } from "shell-quote";
 import { link } from "../escapes";

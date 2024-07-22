@@ -22,4 +22,6 @@ pub enum CheckerError {
   ScriptError(String),
   #[error("Compile error: {0}")]
   CompileError(String),
+  #[error("Missing function: {0}")]
+  MissingFunction(String),
 }

@@ -10,6 +10,7 @@ use axum::{
 use chrono::Utc;
 use futures::TryStreamExt;
 use r2s_bucket::{challenge::ChallengeBucket, Bucket};
+use r2s_checker::Checker;
 use r2s_database::{
   challenge, extra, game, hint, submission, team,
   user::{self, Permission},
@@ -49,7 +50,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           post(upload_challenge_attachment).delete(delete_challenge_attachment),
         )
         .route(
-          "/checkers",
+          "/checker",
           get(get_challenge_checker)
             .post(upload_checker_file)
             .patch(update_checker_script)
@@ -60,6 +61,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           post(create_challenge_hint).delete(delete_challenge_hint),
         )
         .route("/", patch(update_challenge).delete(delete_challenge))
+        .route("/publish", post(up_challenge).delete(down_challenge))
         .route_layer(middleware::from_fn_with_state(
           state.clone(),
           auth::game_admin_required,
@@ -270,11 +272,11 @@ async fn create_challenge(
 }
 
 async fn update_challenge(
-  State(ref db): State<Database>, State(bucket): State<Bucket>, State(ref queue): State<Queue>,
-  Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
-  Extension(prev_challenge): Extension<challenge::Model>, Json(challenge): Json<challenge::Model>,
+  State(ref db): State<Database>, State(bucket): State<Bucket>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(prev_challenge): Extension<challenge::Model>,
+  Json(challenge): Json<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if !prev_challenge.hidden && !challenge.hidden {
+  if !prev_challenge.hidden {
     return Err(ResponseError::PreconditionFailed(
       "please hidden challenge before update it".to_owned(),
     ));
@@ -294,7 +296,14 @@ async fn update_challenge(
   //   );
   // }
   let txn = db.conn.begin().await?;
-  let challenge = challenge::update(&txn, challenge).await?;
+  let challenge = challenge::update(
+    &txn,
+    challenge::Model {
+      hidden: prev_challenge.hidden,
+      ..challenge
+    },
+  )
+  .await?;
   // if challenge.ref_id.is_none() {
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   challenge_bucket
@@ -313,27 +322,77 @@ async fn update_challenge(
     .await?;
   // }
   txn.commit().await?;
-  if prev_challenge.hidden != challenge.hidden {
-    let event = EventContainer {
-      game_id: game.id,
-      event: Event::Challenge(ChallengeEvent {
-        event_type: if prev_challenge.hidden {
-          ChallengeEventType::Up
-        } else {
-          ChallengeEventType::Down
-        },
-        challenge: challenge.clone(),
-        operator: user::Model {
-          id: token.id,
-          nickname: token.nickname.clone(),
-          account: token.account.clone(),
-          ..Default::default()
-        },
-      }),
-    };
-    queue.publish("event", event).await.ok();
-  }
 
+  Ok(Json(challenge))
+}
+
+async fn up_challenge(
+  State(ref db): State<Database>, State(bucket): State<Bucket>, State(ref queue): State<Queue>,
+  State(checker): State<Checker>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let txn = db.conn.begin().await?;
+  let challenge_bucket = get_challenge_bucket!(bucket, game, challenge.clone());
+  let challenge = challenge::update(
+    &txn,
+    challenge::Model {
+      hidden: false,
+      ..challenge
+    },
+  )
+  .await?;
+  match checker.lint(&challenge_bucket).await {
+    Ok(_) => {}
+    Err(e) => {
+      return Err(ResponseError::PreconditionFailed(e.to_string()));
+    }
+  }
+  txn.commit().await?;
+  let event = EventContainer {
+    game_id: challenge.game_id,
+    event: Event::Challenge(ChallengeEvent {
+      event_type: ChallengeEventType::Up,
+      challenge: challenge.clone(),
+      operator: user::Model {
+        id: token.id,
+        nickname: token.nickname.clone(),
+        account: token.account.clone(),
+        ..Default::default()
+      },
+    }),
+  };
+  queue.publish("event", event).await.ok();
+  Ok(Json(challenge))
+}
+
+async fn down_challenge(
+  State(ref db): State<Database>, State(ref queue): State<Queue>,
+  Extension(token): Extension<Token>, Extension(challenge): Extension<challenge::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let txn = db.conn.begin().await?;
+  let challenge = challenge::update(
+    &txn,
+    challenge::Model {
+      hidden: true,
+      ..challenge.clone()
+    },
+  )
+  .await?;
+  txn.commit().await?;
+  let event = EventContainer {
+    game_id: challenge.game_id,
+    event: Event::Challenge(ChallengeEvent {
+      event_type: ChallengeEventType::Down,
+      challenge: challenge.clone(),
+      operator: user::Model {
+        id: token.id,
+        nickname: token.nickname.clone(),
+        account: token.account.clone(),
+        ..Default::default()
+      },
+    }),
+  };
+  queue.publish("event", event).await.ok();
   Ok(Json(challenge))
 }
 
@@ -796,16 +855,36 @@ async fn start_challenge_env(
 struct CheckerResponse {
   pub script: String,
   pub files: Vec<String>,
+  pub lint: Option<String>,
+}
+
+#[derive(Deserialize)]
+struct CheckerRequest {
+  pub lint: Option<bool>,
 }
 
 async fn get_challenge_checker(
-  State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
-  Extension(challenge): Extension<challenge::Model>,
+  State(ref bucket): State<Bucket>, State(checker): State<Checker>,
+  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  Query(query): Query<CheckerRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let challenge_bucket = get_challenge_bucket!(bucket, game, challenge);
+  let lint = if let Some(true) = query.lint {
+    let lint = checker.lint(&challenge_bucket).await;
+    if lint.is_err() {
+      let err = format!("{:?}", lint.err().unwrap());
+      warn!("lint checker script failed: {:?}", err);
+      Some(err)
+    } else {
+      None
+    }
+  } else {
+    None
+  };
 
   Ok(Json(CheckerResponse {
     script: challenge_bucket.checker().await?,
+    lint,
     files: challenge_bucket.get_checker_files().await?,
   }))
 }

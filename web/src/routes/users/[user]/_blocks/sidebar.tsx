@@ -1,9 +1,9 @@
-import { mediaPath } from "@/lib/utils/media";
-import Tag from "@/lib/widgets/tag";
+import { mediaPath } from "@lib/utils/media";
 import { type User, permissionToString } from "@models/user";
 import { fullTheme, t } from "@storage/theme";
 import Avatar from "@widgets/avatar";
 import Divider from "@widgets/divider";
+import Tag from "@widgets/tag";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For } from "solid-js";
 

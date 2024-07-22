@@ -456,7 +456,10 @@
       "teams": {
         "title": "參賽隊伍"
       },
-      "title": "管理"
+      "title": "管理",
+      "answer": {
+        "notAccessableWhenInGame": "比賽結束前無法發布題解"
+      }
     },
     "adminCanNotTakePartIn": "管理員不能參賽",
     "adminMode": "管理員模式",
@@ -514,7 +517,8 @@
       "title": "題目",
       "unknownTag": "未知的",
       "unlockHintFailed": "解鎖提示失敗",
-      "welcome": "歡迎參賽"
+      "welcome": "歡迎參賽",
+      "checker": "評測"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",
