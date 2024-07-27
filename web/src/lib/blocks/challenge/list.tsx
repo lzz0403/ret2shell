@@ -1,8 +1,9 @@
+import { useSearchParams } from "@solidjs/router";
+import { challengeStore, refreshChallenges } from "@storage/challenge";
+import { gameStore } from "@storage/game";
+import { fullTheme, t } from "@storage/theme";
 import LoadingTips from "@widgets/loading-tips";
 import TreeView, { type TreeNode } from "@widgets/treeview";
-import { useSearchParams } from "@solidjs/router";
-import { gameStore, refreshChallenges } from "@storage/game";
-import { fullTheme, t } from "@storage/theme";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { Match, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 
@@ -12,16 +13,16 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
     return Number.parseInt(searchParams.challenge || "") ?? null;
   });
   const [loading, setLoading] = createSignal(false);
-  const selectedChallenge = createMemo(() => gameStore.challenges.find((c) => c.id === selectedChallengeId()));
+  const selectedChallenge = createMemo(() => challengeStore.challenges.find((c) => c.id === selectedChallengeId()));
   const challengesEx = createMemo(() => {
     const result = [];
-    for (const challenge of gameStore.challenges) {
+    for (const challenge of challengeStore.challenges) {
       const submission = gameStore.solves.find((s) => s.challenge_id === challenge.id);
       result.push({ challenge, solved: !!submission });
     }
     const tree = [] as TreeNode[];
     const tags = new Set(
-      gameStore.challenges.flatMap((c) => c.tag.find((t) => t.primary)?.name ?? t("game.challenge.unknownTag")!)
+      challengeStore.challenges.flatMap((c) => c.tag.find((t) => t.primary)?.name ?? t("game.challenge.unknownTag")!)
     );
     for (const tag of tags) {
       const taggedChallenges = result
@@ -98,7 +99,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
                 </div>
               </Match>
 
-              <Match when={gameStore.challenges.length > 0}>
+              <Match when={challengeStore.challenges.length > 0}>
                 <TreeView
                   tree={challengesEx()}
                   activeSearchParams="challenge"

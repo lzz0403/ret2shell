@@ -354,7 +354,11 @@
     "print": "印刷",
     "save": "保存",
     "saveFailed": "保存失敗",
-    "saveSuccess": "保存成功"
+    "saveSuccess": "保存成功",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -463,7 +467,13 @@
       "publishTips": "この問題を公開してもよろしいですか？公開すると、選手は競技開始時に問題を解くことができます。公開期間中は問題を修正することができません。",
       "withdraw": "オフライン",
       "withdrawTips": "この問題をオフラインにしてもよろしいですか？オフラインにすると、問題の内容を修正して再びオンラインにすることができます。",
-      "calmDownBeforeStartEnv": "貨箱を再整理しています"
+      "calmDownBeforeStartEnv": "貨箱を再整理しています",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

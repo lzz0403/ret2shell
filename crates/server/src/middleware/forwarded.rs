@@ -306,10 +306,13 @@ pub struct IpRecord {
 }
 
 pub async fn ip_record(
-  State(queue): State<Queue>, Extension(token): Extension<Token>, req: Request, next: Next,
+  State(queue): State<Queue>, Extension(token): Extension<Token>, mut req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
   let ip = match get_client_ip(&req) {
-    Some(ip) => ip.to_string(),
+    Some(ip) => {
+      req.extensions_mut().insert::<IpAddr>(ip);
+      ip.to_string()
+    }
     None => {
       warn!("Unable to get client IP address from request");
       return Ok(next.run(req).await);

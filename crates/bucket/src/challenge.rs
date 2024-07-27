@@ -218,6 +218,7 @@ impl ChallengeBucket {
     let name = to_file_name(name.as_ref());
     let dest_path = self.path.join(dest.as_ref()).join(&name);
     let mut file = tokio::fs::File::create(&dest_path).await?;
+    debug!("uploading file to path: {:?}", dest_path);
     tokio::io::copy(&mut stdin, &mut file).await?;
 
     Ok(())

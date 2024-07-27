@@ -1,15 +1,19 @@
+import { publishChallenge, withdrawChallenge } from "@api/game";
 import type { Challenge } from "@models/challenge";
 import { Permission } from "@models/user";
 import { accountStore } from "@storage/account";
+import { challengeStore, setChallengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
 import Popover from "@widgets/popover";
 import Splitter from "@widgets/splitter";
+import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { Show, createSignal } from "solid-js";
+import { Show, createSignal, onCleanup } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import Answer from "./answer";
 import Checker from "./checker";
@@ -23,12 +27,51 @@ import Statistics from "./statistics";
 import Terminal from "./terminal";
 
 function BottomPanel(props: {
-  challenge?: Challenge;
   onStateChange?: (challenge: Challenge) => void;
   inGame: boolean;
 }) {
   const [page, setPage] = createSignal(0);
   const pages = [Terminal, Hints, Files, Hammer, Answer, Statistics, Instances, Checker, Settings];
+  const [publishing, setPublishing] = createSignal(false);
+
+  function handlePublishChallenge() {
+    setPublishing(true);
+    if (challengeStore.current?.hidden) {
+      publishChallenge(challengeStore.current.game_id, challengeStore.current.id)
+        .then((resp) => {
+          props.onStateChange?.(resp);
+        })
+        .catch((err: HTTPError) => {
+          void err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.challenge.publishChallengeFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        })
+        .finally(() => {
+          setPublishing(false);
+        });
+    } else {
+      withdrawChallenge(challengeStore.current!.game_id, challengeStore.current!.id)
+        .then((resp) => {
+          props.onStateChange?.(resp);
+        })
+        .catch((err: HTTPError) => {
+          void err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.challenge.withdrawChallengeFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        })
+        .finally(() => {
+          setPublishing(false);
+        });
+    }
+  }
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
       <OverlayScrollbarsComponent
@@ -90,7 +133,7 @@ function BottomPanel(props: {
               <span>{t("game.challenge.instances")}</span>
             </Button>
             <Button onClick={() => setPage(7)} ghost={page() !== 7}>
-              <span class="icon-[fluent--production-20-regular] w-5 h-5" />
+              <span class="icon-[fluent--flash-play-20-regular] w-5 h-5" />
               <span>{t("game.challenge.checker")}</span>
             </Button>
             <Button onClick={() => setPage(8)} ghost={page() !== 8}>
@@ -98,11 +141,10 @@ function BottomPanel(props: {
               <span>{t("game.challenge.settings")}</span>
             </Button>
             <Popover
-              onClick={() => {}}
               ghost
               btnContent={
                 <Show
-                  when={props.challenge?.hidden}
+                  when={challengeStore.current?.hidden}
                   fallback={
                     <>
                       <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5 text-warning" />
@@ -119,7 +161,7 @@ function BottomPanel(props: {
                 <span class="inline-block space-x-2">
                   <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary align-middle" />
                   <Show
-                    when={props.challenge?.hidden}
+                    when={challengeStore.current?.hidden}
                     fallback={
                       <>
                         <span>{t("game.challenge.withdrawTips")}</span>
@@ -129,7 +171,13 @@ function BottomPanel(props: {
                     <span>{t("game.challenge.publishTips")}</span>
                   </Show>
                 </span>
-                <Button level="primary" size="sm" class="self-end">
+                <Button
+                  level="primary"
+                  size="sm"
+                  class="self-end"
+                  onClick={handlePublishChallenge}
+                  loading={publishing()}
+                >
                   {t("platform.accept")}
                 </Button>
               </Card>
@@ -147,24 +195,24 @@ function BottomPanel(props: {
         class="relative w-full flex-1 print:h-auto print:overflow-auto"
         defer
       >
-        <Dynamic component={pages[page()]} challenge={props.challenge} />
+        <Dynamic component={pages[page()]} />
       </OverlayScrollbarsComponent>
     </div>
   );
 }
 
 export default function (props: {
-  challenge?: Challenge;
   onStateChange?: (challenge: Challenge) => void;
   inGame?: boolean;
 }) {
+  onCleanup(() => {
+    setChallengeStore({ current: null, env: null, files: [], allFiles: [] });
+  });
   return (
     <div class="flex-1">
       <Splitter
-        startPanel={() => <Intro challenge={props.challenge} inGame={props.inGame} />}
-        endPanel={() => (
-          <BottomPanel inGame={props.inGame ?? false} challenge={props.challenge} onStateChange={props.onStateChange} />
-        )}
+        startPanel={() => <Intro inGame={props.inGame} />}
+        endPanel={() => <BottomPanel inGame={props.inGame ?? false} onStateChange={props.onStateChange} />}
         orientation="vertical"
         size={[
           { id: "a", size: 64, minSize: 24 },

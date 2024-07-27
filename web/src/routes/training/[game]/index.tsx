@@ -1,7 +1,7 @@
 import Challenge from "@blocks/challenge";
 import type { Challenge as ChallengeModel } from "@models/challenge";
 import { useSearchParams } from "@solidjs/router";
-import { gameStore, refreshChallenges, setGameStore } from "@storage/game";
+import { gameStore, setGameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import LoadingTips from "@widgets/loading-tips";
 import { Match, Switch, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
@@ -12,6 +12,7 @@ import Form, { type ChallengeForm } from "@blocks/challenge/form";
 import Tabs from "@blocks/challenge/tabs";
 import GameEdit, { type GameForm } from "@blocks/game/form";
 import GameStatistics from "@blocks/game/statistics";
+import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallengeStore } from "@storage/challenge";
 import { addToast } from "@storage/toast";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
@@ -52,7 +53,7 @@ export default function () {
           create: null,
           challenge: result.id,
         });
-        refreshChallenges();
+        void refreshChallenges();
       })
       .catch((e: HTTPError) => {
         e.response.text().then((text) => {
@@ -70,14 +71,14 @@ export default function () {
   const selectedChallengeId = createMemo(() => Number.parseInt(searchParams.challenge || "NaN") || null);
   const inEdit = createMemo(() => searchParams.edit === "true");
   const inStatistics = createMemo(() => searchParams.statistics === "true");
-  const [selectedChallenge, setSelectedChallenge] = createSignal(null as null | ChallengeModel);
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
       untrack(() => {
         setLoadingChallenge(true);
         getChallenge(gameStore.current!.id, selectedChallengeId()!)
           .then((resp) => {
-            setSelectedChallenge(resp);
+            setChallengeStore({ current: resp });
+            refreshChallengeAssets();
           })
           .catch((e: HTTPError) => {
             e.response.text().then((text) => {
@@ -94,7 +95,7 @@ export default function () {
           });
       });
     } else {
-      setSelectedChallenge(null);
+      setChallengeStore({ current: null });
     }
   });
   onCleanup(() => {
@@ -137,7 +138,7 @@ export default function () {
 
   return (
     <div class="flex-1 flex flex-col w-0">
-      <Tabs baseUrl={`/training/${gameStore.current?.id}`} current={selectedChallenge()} loading={loadingChallenge()} />
+      <Tabs baseUrl={`/training/${gameStore.current?.id}`} loading={loadingChallenge()} />
       <Switch fallback={<Intro />}>
         <Match when={inEdit()}>
           <div class="flex-1 w-full relative">
@@ -187,8 +188,8 @@ export default function () {
         <Match when={inCreate()}>
           <Form onDone={onCreateChallenge} loading={creating()} />
         </Match>
-        <Match when={selectedChallenge()}>
-          <Challenge challenge={selectedChallenge()!} />
+        <Match when={challengeStore.current}>
+          <Challenge />
         </Match>
       </Switch>
     </div>

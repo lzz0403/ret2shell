@@ -1,5 +1,4 @@
 import type { ParseEntry } from "shell-quote";
-import type { Challenge } from "../models/challenge";
 import { t } from "../storage/theme";
 import * as commands from "./bin";
 // This module provides a unique command execution solution for the shell.
@@ -17,7 +16,7 @@ export class Exec {
     }
   }
 
-  public async exec(io: Stdio, challenge: Challenge | null, args: ParseEntry[], origin: string) {
+  public async exec(io: Stdio, args: ParseEntry[], origin: string) {
     let cmd = args[0];
     if (typeof cmd !== "string") {
       io.error(t("shell.commandInvalid")!);
@@ -30,7 +29,7 @@ export class Exec {
       return { cmd, code: -127 };
     }
     if (this.commands.has(cmd)) {
-      return { cmd, code: await this.commands.get(cmd)!.func(io, challenge, args.slice(1), origin) };
+      return { cmd, code: await this.commands.get(cmd)!.func(io, args.slice(1), origin) };
     }
 
     io.error(t("shell.commandNotFound", { command: cmd })!);

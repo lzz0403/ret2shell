@@ -1,5 +1,4 @@
-import { getChallengeAttachments } from "@api/game";
-import type { Challenge } from "@models/challenge";
+import { challengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
@@ -11,9 +10,9 @@ import type { Command } from "./interface";
 export class Ls implements Command {
   name = "ls";
   man = t("shell.ls.man")!;
-  func = async (io: Stdio, challenge: Challenge | null, args: ParseEntry[], _origin: string) => {
-    console.log(args);
-    if (!gameStore.current || !challenge) {
+  func = async (io: Stdio, args: ParseEntry[], _origin: string) => {
+    // console.log(args);
+    if (!gameStore.current || !challengeStore.current) {
       io.error(t("shell.noGameSpecifiedTips")!);
       return 1;
     }
@@ -47,8 +46,7 @@ export class Ls implements Command {
       io.println(
         `.rw${ansiColors.dim("-")}r${ansiColors.dim("--")}r${ansiColors.dim("--")} ${ansiColors.red("root")} ${ansiColors.yellow(link("README.md\t", "rnix://command/cat README.md"))}`
       );
-      const files = await getChallengeAttachments(gameStore.current!.id, challenge.id);
-      for (const file of files) {
+      for (const file of challengeStore.files) {
         io.println(
           `.rw-r--r-- ${ansiColors.red("root")} ${ansiColors.bold(link(`${file.file}\t`, `rnix://command/wget "${file.file}"`))}`
         );

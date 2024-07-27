@@ -1,6 +1,5 @@
 import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
 import xdsecMascotUnsee from "@assets/imgs/xdsec-mascot-unsee.webp";
-import type { Challenge } from "@models/challenge";
 import { Permission } from "@models/user";
 import { A } from "@solidjs/router";
 import { accountStore } from "@storage/account";
@@ -11,7 +10,7 @@ import Card from "@widgets/card";
 import Input from "@widgets/input";
 import { Show } from "solid-js";
 
-export default function (props: { challenge?: Challenge }) {
+export default function () {
   return (
     <div class="flex flex-col min-h-full relative">
       <div class="flex flex-col flex-1 p-3 lg:p-6 space-y-4">

@@ -1,10 +1,9 @@
-import type { Challenge } from "@models/challenge";
 import { HostType } from "@models/game";
 import { gameStore, inArchived, inArchiving } from "@storage/game";
 import { t } from "@storage/theme";
 import { Show } from "solid-js";
 
-export default function (props: { challenge?: Challenge }) {
+export default function () {
   return (
     <div class="flex flex-col p-3 lg:p-6">
       <Show

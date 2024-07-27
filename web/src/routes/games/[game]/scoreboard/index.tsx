@@ -3,7 +3,8 @@ import type { Team } from "@models/team";
 import { type Size, createElementSize } from "@solid-primitives/resize-observer";
 import { useSearchParams } from "@solidjs/router";
 import { accountStore, refreshInstitutes } from "@storage/account";
-import { gameStore, refreshChallenges } from "@storage/game";
+import { challengeStore, refreshChallenges } from "@storage/challenge";
+import { gameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -173,7 +174,7 @@ export default function () {
   createEffect(() => {
     if (gameStore.current) {
       untrack(() => {
-        if (gameStore.challenges.length === 0) {
+        if (challengeStore.challenges.length === 0) {
           void refreshChallenges();
         }
       });
@@ -312,7 +313,7 @@ export default function () {
             </Show>
             <Switch>
               <Match when={!showChallengeDetail() && !showLargePanel()}>
-                <TeamDetails topTeams={topTeams().slice(0, 3)} challenges={gameStore.challenges} />
+                <TeamDetails topTeams={topTeams().slice(0, 3)} challenges={challengeStore.challenges} />
               </Match>
               <Match when={showChallengeDetail()}>
                 <TeamRanks

@@ -5,12 +5,12 @@ import {
   getTeamExtras,
   unlockChallengeHint,
 } from "@api/game";
-import type { Challenge } from "@models/challenge";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
 import { Permission } from "@models/user";
 import { createForm, required, setValue, setValues } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
+import { challengeStore } from "@storage/challenge";
 import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -28,7 +28,7 @@ type CreateHintForm = {
   cost: number;
 };
 
-export default function (props: { challenge?: Challenge }) {
+export default function () {
   const [hints, setHints] = createSignal([] as Hint[]);
   const [extras, setExtras] = createSignal([] as Extra[]);
   const lorem = new LoremIpsum({
@@ -44,11 +44,11 @@ export default function (props: { challenge?: Challenge }) {
     const hint = {
       id: 0,
       created_at: DateTime.now(),
-      challenge_id: props.challenge!.id,
+      challenge_id: challengeStore.current!.id,
       content: result.content,
       cost: result.cost || 0,
     } as Hint;
-    createChallengeHint(props.challenge!.game_id, props.challenge!.id, hint)
+    createChallengeHint(challengeStore.current!.game_id, challengeStore.current!.id, hint)
       .then(() => {
         addToast({
           level: "success",
@@ -73,7 +73,7 @@ export default function (props: { challenge?: Challenge }) {
   }
   function refreshHint() {
     setLoading(true);
-    getChallengeHint(props.challenge!.game_id, props.challenge!.id)
+    getChallengeHint(challengeStore.current!.game_id, challengeStore.current!.id)
       .then((resp) => {
         setHints(resp);
       })
@@ -106,7 +106,7 @@ export default function (props: { challenge?: Challenge }) {
     }
   }
   createEffect(() => {
-    if (props.challenge) {
+    if (challengeStore.current) {
       untrack(() => {
         refreshHint();
       });
@@ -114,7 +114,7 @@ export default function (props: { challenge?: Challenge }) {
   });
 
   function handleDeleteHint(id: number) {
-    deleteChallengeHint(gameStore.current!.id, props.challenge!.id, id)
+    deleteChallengeHint(gameStore.current!.id, challengeStore.current!.id, id)
       .then(() => {
         refreshHint();
       })
@@ -129,7 +129,7 @@ export default function (props: { challenge?: Challenge }) {
   }
 
   function handleUnlockHint(id: number) {
-    unlockChallengeHint(gameStore.current!.id, props.challenge!.id, id)
+    unlockChallengeHint(gameStore.current!.id, challengeStore.current!.id, id)
       .then(() => {
         refreshHint();
       })

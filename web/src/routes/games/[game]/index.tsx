@@ -277,7 +277,7 @@ export default function () {
                     square
                     size="sm"
                     class="bg-layer/50 print:hidden"
-                    onClick={() => (coverSet() ? handleUploadCover() : handleSelectCover())}
+                    onClick={coverSet() ? handleUploadCover : handleSelectCover}
                     loading={coverUploading()}
                     disabled={logoSet()}
                   >
@@ -290,7 +290,7 @@ export default function () {
                     square
                     size="sm"
                     class="bg-layer/50 print:hidden"
-                    onClick={() => (logoSet() ? handleUploadLogo() : handleSelectLogo())}
+                    onClick={logoSet() ? handleUploadLogo : handleSelectLogo}
                     loading={logoUploading()}
                     disabled={coverSet()}
                   >

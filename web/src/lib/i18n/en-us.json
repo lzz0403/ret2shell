@@ -419,7 +419,11 @@
     "print": "Print",
     "save": "Save",
     "saveFailed": "Save Failed",
-    "saveSuccess": "Save Successful"
+    "saveSuccess": "Save Successful",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -528,7 +532,13 @@
       "withdrawTips": "Are you sure you want to take this question offline? After taking it offline, you can modify the content of the question and put it online again.",
       "publishTips": "Are you sure you want to publish this question? Once published, contestants can solve it at the start of the competition, and the question cannot be modified during the publishing period.",
       "noHints": "The problem setter hasn't released any hints yet, let's think about it some more.",
-      "calmDownBeforeStartEnv": "Reorganizing cargo crates"
+      "calmDownBeforeStartEnv": "Reorganizing cargo crates",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

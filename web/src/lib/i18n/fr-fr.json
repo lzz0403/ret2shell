@@ -354,7 +354,11 @@
     "print": "Imprimer",
     "save": "Sauvegarder",
     "saveFailed": "Échec de la sauvegarde",
-    "saveSuccess": "Enregistrement réussi"
+    "saveSuccess": "Enregistrement réussi",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -463,7 +467,13 @@
       "unlockHintFailed": "Échec de déverrouillage de l'indice",
       "welcome": "Bienvenue à la compétition",
       "withdraw": "déconnecter",
-      "withdrawTips": "Êtes-vous sûr de vouloir retirer cette question ? Après l'avoir retirée, vous pourrez modifier son contenu et la remettre en ligne."
+      "withdrawTips": "Êtes-vous sûr de vouloir retirer cette question ? Après l'avoir retirée, vous pourrez modifier son contenu et la remettre en ligne.",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

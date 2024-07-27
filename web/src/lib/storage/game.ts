@@ -1,15 +1,11 @@
-import type { Challenge } from "@models/challenge";
 import type { Game } from "@models/game";
 import type { Submission } from "@models/submission";
 import type { Team } from "@models/team";
 import { Permission, type User } from "@models/user";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createStore } from "solid-js/store";
-import { getChallengeList } from "../api/game";
 import { accountStore } from "./account";
 import { t } from "./theme";
-import { addToast } from "./toast";
 
 export const [gameStore, setGameStore] = createStore({
   games: [] as Game[],
@@ -19,7 +15,6 @@ export const [gameStore, setGameStore] = createStore({
   rank: null as number | null,
   score: null as number | null,
   members: [] as User[],
-  challenges: [] as Challenge[],
   solves: [] as Submission[],
   showTeamCover: false,
 });
@@ -155,19 +150,4 @@ export function gameParticipateState() {
     return [false, t("game.registerEnded")!];
   }
   return [true, ""];
-}
-
-export async function refreshChallenges() {
-  try {
-    const result = await getChallengeList(gameStore.current!.id);
-    setGameStore({ challenges: result[0] });
-  } catch (e) {
-    const err = e as HTTPError;
-    const text = await err.response.text();
-    addToast({
-      level: "error",
-      description: `${t("game.challenge.fetchFailed")}: ${text}`,
-      duration: 5000,
-    });
-  }
 }

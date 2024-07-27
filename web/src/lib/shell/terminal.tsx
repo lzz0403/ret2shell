@@ -2,18 +2,13 @@ import { CanvasAddon } from "@xterm/addon-canvas";
 import { FitAddon } from "@xterm/addon-fit";
 import { WebLinksAddon } from "@xterm/addon-web-links";
 import { type ITerminalOptions, Terminal } from "@xterm/xterm";
-import { type ComponentProps, createEffect, onCleanup, onMount, splitProps, untrack } from "solid-js";
-import type { Challenge } from "../models/challenge";
+import { type ComponentProps, createEffect, onCleanup, onMount, untrack } from "solid-js";
 import { colorPalette } from "../storage/theme";
 import { Shell } from "./shell";
 import "@xterm/xterm/css/xterm.css";
+import { challengeStore } from "@storage/challenge";
 
-export default function (
-  props: ComponentProps<"div"> & {
-    challenge?: Challenge;
-  }
-) {
-  const [shellProps, others] = splitProps(props, ["challenge"]);
+export default function (props: ComponentProps<"div">) {
   let terminal: HTMLDivElement;
   const linkHandler = {
     activate(_event: MouseEvent, text: string) {
@@ -82,8 +77,8 @@ export default function (
   });
 
   createEffect(() => {
-    if (shellProps.challenge) {
-      untrack(() => shell?.setChallenge(shellProps.challenge || null));
+    if (challengeStore.current) {
+      untrack(() => shell?.setChallenge(challengeStore.current || null));
     }
   });
 
@@ -92,7 +87,7 @@ export default function (
   });
 
   return (
-    <div {...others} class={`flex-1 relative overflow-hidden h-full backdrop-blur p-3 lg:p-6 ${others.class}`.trim()}>
+    <div {...props} class={`flex-1 relative overflow-hidden h-full backdrop-blur p-3 lg:p-6 ${props.class}`.trim()}>
       <div class="w-full h-full overflow-hidden" ref={terminal!} id="terminal" />
     </div>
   );

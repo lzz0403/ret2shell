@@ -1,8 +1,10 @@
+use std::net::IpAddr;
+
 use axum::{
   extract::{Query, State, WebSocketUpgrade},
   response::IntoResponse,
   routing::get,
-  Router,
+  Extension, Router,
 };
 use r2s_database::game;
 use r2s_event::EventManager;
@@ -18,18 +20,32 @@ pub fn router(_state: &GlobalState) -> Router<GlobalState> {
 #[derive(Deserialize)]
 struct ConnectQuery {
   pub game_id: i64,
+  pub client: Option<String>,
   pub token: String,
 }
 
 async fn connect_game(
   State(ref db): State<Database>, State(event): State<EventManager>,
-  Query(ConnectQuery { game_id, token }): Query<ConnectQuery>, ws: WebSocketUpgrade,
+  Extension(ip): Extension<IpAddr>,
+  Query(ConnectQuery {
+    game_id,
+    token,
+    client,
+  }): Query<ConnectQuery>,
+  ws: WebSocketUpgrade,
 ) -> Result<impl IntoResponse, ResponseError> {
   let game = game::get(&db.conn, game_id).await?;
   if let Some(game) = game {
     if game.token.is_some_and(|t| t == token) {
       return Ok(ws.on_upgrade(move |ws| async move {
-        event.subscribe(game_id, ws).await;
+        event
+          .subscribe(
+            game_id,
+            ip,
+            client.unwrap_or("Unspecified v0.0.0".to_owned()),
+            ws,
+          )
+          .await;
       }));
     }
   }

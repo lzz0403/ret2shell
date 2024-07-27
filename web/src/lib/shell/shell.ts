@@ -142,7 +142,7 @@ export class Shell {
       if (this.inputBuffer.trim() === "exit") break;
       this.history.push(stripAnsi(this.inputBuffer));
       const args = parse(this.inputBuffer);
-      const result = await this.exec.exec(this.stdio, this.challenge, args, this.inputBuffer);
+      const result = await this.exec.exec(this.stdio, args, this.inputBuffer);
       this.onExecuted?.(result.cmd, result.code);
       this.code = result.code;
     }

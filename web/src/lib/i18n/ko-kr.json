@@ -354,7 +354,11 @@
     "print": "인쇄",
     "save": "저장",
     "saveFailed": "저장 실패",
-    "saveSuccess": "저장 성공"
+    "saveSuccess": "저장 성공",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -463,7 +467,13 @@
       "unlockHintFailed": "잠금 해제 힌트 실패",
       "welcome": "참가를 환영합니다",
       "withdraw": "오프라인",
-      "withdrawTips": "이 문제를 오프라인으로 전환하시겠습니까? 오프라인으로 전환한 후에는 문제 내용을 수정하고 다시 온라인으로 전환할 수 있습니다."
+      "withdrawTips": "이 문제를 오프라인으로 전환하시겠습니까? 오프라인으로 전환한 후에는 문제 내용을 수정하고 다시 온라인으로 전환할 수 있습니다.",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",

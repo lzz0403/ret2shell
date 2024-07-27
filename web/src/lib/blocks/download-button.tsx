@@ -11,10 +11,11 @@ export default function DownloadButton(
     icon: string;
     file: string;
     url: string;
+    withFileName?: boolean;
     searchParams?: { [key: string]: string };
   }
 ) {
-  const [downloadProps, btnProps] = splitProps(props, ["icon", "file", "url", "searchParams"]);
+  const [downloadProps, btnProps] = splitProps(props, ["icon", "file", "url", "searchParams", "withFileName"]);
   const [downloading, setDownloading] = createSignal(false);
   const [downloadComplete, setDownloadComplete] = createSignal(false);
   const [progress, setProgress] = createSignal(null as DownloadProgress | null);
@@ -45,6 +46,7 @@ export default function DownloadButton(
   return (
     <Button
       {...btnProps}
+      square={btnProps.square && !downloading() && !downloadComplete()}
       class={`relative ${btnProps.class}`.trim()}
       loading={downloading()}
       onClick={handleDownload}
@@ -62,7 +64,9 @@ export default function DownloadButton(
           />
         </Match>
       </Switch>
-      <span>{downloadProps.file}</span>
+      <Show when={downloadProps.withFileName}>
+        <span>{downloadProps.file}</span>
+      </Show>
       <Show when={downloading()}>
         <span class="mx-2 text-primary">
           {humanFileSize(progress()?.transferredBytes ?? 0, true)}/{humanFileSize(progress()?.totalBytes ?? 0, true)}

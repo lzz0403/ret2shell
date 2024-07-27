@@ -354,7 +354,11 @@
     "print": "imprimir",
     "save": "Guardar",
     "saveFailed": "Error al guardar",
-    "saveSuccess": "Guardado con éxito"
+    "saveSuccess": "Guardado con éxito",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -463,7 +467,13 @@
       "unlockHintFailed": "Fallo al desbloquear la pista",
       "welcome": "Bienvenido al concurso",
       "withdraw": "Desconectar",
-      "withdrawTips": "¿Estás seguro de que deseas desactivar esta pregunta? Después de desactivarla, puedes modificar su contenido y volver a activarla."
+      "withdrawTips": "¿Estás seguro de que deseas desactivar esta pregunta? Después de desactivarla, puedes modificar su contenido y volver a activarla.",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

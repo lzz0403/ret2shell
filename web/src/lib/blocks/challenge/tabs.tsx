@@ -2,6 +2,7 @@ import type { Challenge } from "@models/challenge";
 import { Permission } from "@models/user";
 import { useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
+import { challengeStore } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
 import Link from "@widgets/link";
@@ -11,7 +12,6 @@ import { TransitionGroup } from "solid-transition-group";
 
 export default function Tabs(props: {
   baseUrl: string;
-  current: Challenge | null;
   loading?: boolean;
   inGame?: boolean;
 }) {
@@ -38,9 +38,9 @@ export default function Tabs(props: {
     }, 100);
   }
   createEffect(() => {
-    if (props.current) {
+    if (challengeStore.current) {
       untrack(() => {
-        appendChallengeHistory(props.current!);
+        appendChallengeHistory(challengeStore.current!);
       });
     }
   });

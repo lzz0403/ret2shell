@@ -1,19 +1,16 @@
 import { api_root } from "@api";
-import { type ChallengeEnv, getChallengeAttachments, getChallengeEnv } from "@api/game";
 import { wsrx } from "@lib/wsrx";
-import type { Challenge } from "@models/challenge";
 import { accountStore } from "@storage/account";
+import { challengeStore } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Tag from "@widgets/tag";
 import TimeProgress from "@widgets/time-progress";
-import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
-import { For, Match, Show, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Match, Show, Switch, createMemo } from "solid-js";
 import DownloadButton from "../download-button";
 
 passiveSupport({
@@ -26,46 +23,10 @@ passiveSupport({
   ],
 });
 
-export default function (props: { challenge?: Challenge; solved?: boolean; solves?: number; inGame?: boolean }) {
-  const [files, setFiles] = createSignal([] as { folder: "mapped" | "static"; file: string }[]);
-  const [env, setEnv] = createSignal(null as ChallengeEnv | null);
-  let cachedChallengeId = 0;
-  createEffect(() => {
-    if (props.challenge && props.challenge.id !== cachedChallengeId) {
-      cachedChallengeId = props.challenge.id;
-      untrack(() => {
-        getChallengeAttachments(props.challenge!.game_id, props.challenge!.id)
-          .then((resp) => {
-            setFiles(resp);
-          })
-          .catch((e: HTTPError) => {
-            e.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchFilesFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          });
-        getChallengeEnv(props.challenge!.game_id, props.challenge!.id)
-          .then((resp) => {
-            setEnv(resp);
-          })
-          .catch((e: HTTPError) => {
-            e.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchEnvFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          });
-      });
-    }
-  });
+export default function (props: { solved?: boolean; solves?: number; inGame?: boolean }) {
   const instance = createMemo(() => {
-    if (env() && props.challenge) {
-      return wsrx.instances().find((s) => s.challenge_id === props.challenge!.id) ?? null;
+    if (challengeStore.current && challengeStore.env) {
+      return wsrx.instances().find((s) => s.challenge_id === challengeStore.current!.id) ?? null;
     }
     return null;
   });
@@ -76,7 +37,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
     return null;
   });
   const userExplicitInstance = createMemo(() => {
-    if (env() && props.challenge) {
+    if (challengeStore.current && challengeStore.env) {
       return wsrx.instances().find((s) => s.user_id === accountStore.id) ?? null;
     }
     return null;
@@ -98,7 +59,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
             <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6 font-bold">
               <span class="flex flex-row space-x-2 items-center flex-1 overflow-hidden">
                 <span class="icon-[fluent--info-20-regular] w-5 h-5" />
-                <span class="flex-1 truncate">{props.challenge?.name}</span>
+                <span class="flex-1 truncate">{challengeStore.current?.name}</span>
               </span>
               <Show when={props.inGame}>
                 <span
@@ -111,7 +72,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                         : "icon-[fluent--flag-20-regular] w-5 h-5"
                     }
                   />
-                  <span>{props.challenge?.score} pts</span>
+                  <span>{challengeStore.current?.score} pts</span>
                 </span>
               </Show>
               <span class="font-bold flex flex-row space-x-2 items-center">
@@ -121,28 +82,29 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                 </span>
               </span>
             </header>
-            <Show when={files().length > 0}>
+            <Show when={challengeStore.files.length > 0}>
               <section class="inline-flex flex-row items-center flex-wrap min-h-12 border-b border-b-layer-content/15">
                 <h3 class="font-bold flex space-x-2 items-center">
                   <span class="icon-[fluent--folder-zip-20-regular] w-5 h-5" />
                   <span>{t("game.challenge.files")}:</span>
                 </h3>
                 <div class="w-4" />
-                <For each={files()}>
+                <For each={challengeStore.files}>
                   {(file) => (
                     <DownloadButton
                       class="m-1"
                       size="sm"
                       file={file.file}
+                      withFileName
                       icon="icon-[fluent--arrow-download-20-regular]"
-                      url={`${api_root}/game/${props.challenge!.game_id}/challenge/${props.challenge!.id}/files`}
+                      url={`${api_root}/game/${challengeStore.current!.game_id}/challenge/${challengeStore.current!.id}/file`}
                       searchParams={{ file: file.file, folder: file.folder }}
                     />
                   )}
                 </For>
               </section>
             </Show>
-            <Show when={env()}>
+            <Show when={challengeStore.env}>
               <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6 relative">
                 <Show when={instance()}>
                   <TimeProgress
@@ -179,7 +141,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                     }
                   >
                     <Match when={instance()}>
-                      <For each={env()?.images}>
+                      <For each={challengeStore.env?.images}>
                         {(image) => (
                           <Show when={image.port}>
                             <Button ghost size="sm" title={image.description}>
@@ -213,9 +175,9 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                 </div>
               </section>
             </Show>
-            <Show when={props.challenge}>
+            <Show when={challengeStore.current}>
               <div class="flex flex-row-reverse flex-wrap py-2">
-                <For each={props.challenge!.tag}>
+                <For each={challengeStore.current!.tag}>
                   {(tag) => (
                     <Tag level={tag.primary ? "success" : "info"} class="m-1">
                       <span>{tag.name}</span>
@@ -224,7 +186,7 @@ export default function (props: { challenge?: Challenge; solved?: boolean; solve
                 </For>
               </div>
             </Show>
-            <Article content={props.challenge?.content ?? ""} extra />
+            <Article content={challengeStore.current?.content ?? ""} extra />
           </div>
         </div>
       </OverlayScrollbarsComponent>

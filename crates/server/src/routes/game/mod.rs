@@ -16,7 +16,7 @@ use r2s_database::{
 };
 use r2s_event::{
   events::{EventContainer, GameEvent, GameEventType},
-  Event,
+  Event, EventManager,
 };
 use r2s_migrator::Database;
 use r2s_queue::Queue;
@@ -47,11 +47,12 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       "/:game",
       Router::new()
         .route(
-          "/envs",
+          "/env",
           get(get_self_envs)
             .patch(delay_self_env)
             .delete(stop_self_env),
         )
+        .route("/device", get(get_connected_devices))
         .route("/introduction", patch(update_game_intro))
         .route("/", patch(update_game).delete(delete_game))
         .route_layer(middleware::from_fn(auth::game_admin_required))
@@ -432,4 +433,27 @@ async fn stop_self_env(
     .stop_challenge_env(token.id)
     .await?;
   Ok(())
+}
+
+#[derive(Serialize)]
+struct ConnectedDevice {
+  client: String,
+  address: String,
+  connected_at: DateTime<Utc>,
+}
+
+async fn get_connected_devices(
+  State(event): State<EventManager>, Extension(game): Extension<game::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let clients = event.clients.read().await;
+  let clients = clients
+    .iter()
+    .filter(|(id, _, _, _)| game.id == *id)
+    .map(|(_, c, a, d)| ConnectedDevice {
+      client: c.clone(),
+      address: a.to_string(),
+      connected_at: d.clone(),
+    })
+    .collect::<Vec<_>>();
+  Ok(Json(clients))
 }

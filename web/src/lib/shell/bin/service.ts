@@ -1,8 +1,8 @@
-import { type ChallengeEnv, getChallengeEnv } from "@api/game";
+import { getChallengeEnv } from "@api/game";
 import { deunicode } from "@api/rpc";
 import { wsrx } from "@lib/wsrx";
-import type { Challenge } from "@models/challenge";
 import { accountStore } from "@storage/account";
+import { challengeStore } from "@storage/challenge";
 import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
 import { HTTPError } from "ky";
@@ -14,7 +14,7 @@ import type { Command } from "./interface";
 export class Service implements Command {
   name = "service";
   man = t("shell.service.man")!;
-  func = async (io: Stdio, challenge: Challenge, args: ParseEntry[], _origin: string) => {
+  func = async (io: Stdio, args: ParseEntry[], _origin: string) => {
     const action = {
       start: this.start,
       stop: this.stop,
@@ -36,13 +36,12 @@ export class Service implements Command {
       io.info(`\t${ansiColors.green(link("delay", "rnix://command/service delay"))}\t${t("shell.service.delayTips")}`);
       return 1;
     }
-    const env = await this.getEnv(io, challenge);
-    return action[args[0].toString().trim() as "start" | "stop" | "restart" | "status" | "delay"](io, challenge, env);
+    return action[args[0].toString().trim() as "start" | "stop" | "restart" | "status" | "delay"](io);
   };
 
-  async getEnv(io: Stdio, challenge: Challenge) {
+  async getEnv(io: Stdio) {
     try {
-      const env = await getChallengeEnv(challenge.game_id, challenge.id);
+      const env = await getChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id);
       return env;
     } catch (e) {
       if (e instanceof HTTPError) {
@@ -55,15 +54,15 @@ export class Service implements Command {
     }
   }
 
-  async start(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
-    if (!env) {
+  async start(io: Stdio) {
+    if (!challengeStore.env) {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
     const inst = wsrx.instances().find((instance) => instance.user_id === accountStore.id);
     if (inst) {
-      if (inst.challenge_id === challenge.id) {
-        this.status(io, challenge, env);
+      if (inst.challenge_id === challengeStore.current!.id) {
+        this.status(io);
       } else {
         io.warning(t("shell.service.onlyOneInstancePersist")!);
         io.info(
@@ -85,38 +84,38 @@ export class Service implements Command {
     return 0;
   }
 
-  async stop(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
-    if (!env) {
+  async stop(io: Stdio) {
+    if (!challengeStore.env) {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
     return 0;
   }
 
-  async restart(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
-    if (!env) {
+  async restart(io: Stdio) {
+    if (!challengeStore.env) {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
     return 0;
   }
 
-  async status(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
-    if (!env) {
+  async status(io: Stdio) {
+    if (!challengeStore.env) {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }
-    const inst = wsrx.instances().find((instance) => instance.challenge_id === challenge.id);
-    const d_service_name = await deunicode(challenge.name);
+    const inst = wsrx.instances().find((instance) => instance.challenge_id === challengeStore.current?.id);
+    const d_service_name = await deunicode(challengeStore.current!.name);
     io.println(`${inst ? ansiColors.greenBright("●") : ansiColors.dim("○")} ${d_service_name}.service`);
     io.println(
-      `     Loaded: loaded (~/${challenge.name}/checkers/${d_service_name}.service; ${ansiColors.yellow("disabled")}; preset: ${ansiColors.green("enabled")})`
+      `     Loaded: loaded (~/${challengeStore.current?.name}/checkers/${d_service_name}.service; ${ansiColors.yellow("disabled")}; preset: ${ansiColors.green("enabled")})`
     );
     io.println(
       `     Active: ${inst ? `${ansiColors.greenBright.bold("active (running)")} since ${inst.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}` : ansiColors.red.bold("inactive (dead)")}`
     );
     if (inst) {
-      for (const image of env.images) {
+      for (const image of challengeStore.env.images) {
         io.println(
           `       ${ansiColors.dim("└─")} ${image.name}.service: ${ansiColors.greenBright.bold("active (running)")} - ${image.description}`
         );
@@ -129,8 +128,8 @@ export class Service implements Command {
     return 0;
   }
 
-  async delay(io: Stdio, challenge: Challenge, env: ChallengeEnv | null) {
-    if (!env) {
+  async delay(io: Stdio) {
+    if (!challengeStore.env) {
       io.error(t("shell.service.noEnv")!);
       return 1;
     }

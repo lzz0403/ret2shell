@@ -1,8 +1,6 @@
-import type { Challenge } from "@models/challenge";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import ansiColors from "ansi-colors";
-import type { ParseEntry } from "shell-quote";
 import { link } from "../escapes";
 import type { Stdio } from "../stdio";
 import type { Command } from "./interface";
@@ -10,7 +8,7 @@ import type { Command } from "./interface";
 export class Whoami implements Command {
   name = "whoami";
   man = t("shell.whoami.man")!;
-  func = async (io: Stdio, _challenge: Challenge, _args: ParseEntry[], _origin: string) => {
+  func = async (io: Stdio) => {
     const email = ansiColors.dim(
       link(accountStore.info?.email || "guest@private.ret.sh.cn", `mailto:${accountStore.info?.email}`)
     );

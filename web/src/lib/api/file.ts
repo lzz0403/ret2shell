@@ -21,10 +21,11 @@ export async function uploadFile(
   file: File,
   onUploadProgress?: (progress: DownloadProgress) => void
 ) {
+  // console.log("uploadFile");
   const formData = new FormData();
   formData.append(name, file);
   const xhr = new XMLHttpRequest();
-  const resp = await new Promise((resolve: (_: object) => void, reject: (_: string) => void) => {
+  const resp = await new Promise((resolve: (_: string) => void, reject: (_: string) => void) => {
     xhr.upload.addEventListener("progress", (e) => {
       if (e.lengthComputable) {
         onUploadProgress?.({
@@ -36,13 +37,12 @@ export async function uploadFile(
     });
     xhr.addEventListener("loadend", () => {
       if (xhr.readyState === 4 && xhr.status === 200) {
-        resolve(JSON.parse(xhr.responseText));
+        resolve(xhr.responseText);
       } else {
         reject(xhr.responseText);
       }
     });
     xhr.open("POST", url, true);
-    xhr.setRequestHeader("Content-Type", "application/octet-stream");
     const token = accountStore.token;
     if (token) {
       xhr.setRequestHeader("Authorization", `Bearer ${token}`);

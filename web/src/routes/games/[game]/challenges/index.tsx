@@ -1,26 +1,27 @@
-import Form, { type ChallengeForm } from "@blocks/challenge/form";
-import LoadingTips from "@widgets/loading-tips";
 import Challenge from "@blocks/challenge";
+import Form, { type ChallengeForm } from "@blocks/challenge/form";
 import ChallengeList from "@blocks/challenge/list";
 import SidebarLayout from "@blocks/sidebar-layout";
 import type { Challenge as ChallengeModel } from "@models/challenge";
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import { gameStore, refreshChallenges } from "@storage/game";
+import { gameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import Link from "@widgets/link";
+import LoadingTips from "@widgets/loading-tips";
 
+import { createChallenge, getChallenge } from "@api/game";
+import { addToast } from "@storage/toast";
+import type { HTTPError } from "ky";
+import { DateTime } from "luxon";
 import { Match, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import Notifications from "./_blocks/notifications";
 import Team from "./_blocks/team";
 import Welcome from "./_blocks/welcome";
-import { DateTime } from "luxon";
-import { createChallenge, getChallenge } from "@api/game";
-import type { HTTPError } from "ky";
-import { addToast } from "@storage/toast";
 
 import Tabs from "@blocks/challenge/tabs";
+import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallengeStore } from "@storage/challenge";
 
 export default function () {
   const navigate = useNavigate();
@@ -31,14 +32,14 @@ export default function () {
   const [loadingChallenge, setLoadingChallenge] = createSignal(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedChallengeId = createMemo(() => Number.parseInt(searchParams.challenge || "NaN") || null);
-  const [selectedChallenge, setSelectedChallenge] = createSignal(null as null | ChallengeModel);
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
       untrack(() => {
         setLoadingChallenge(true);
         getChallenge(gameStore.current!.id, selectedChallengeId()!)
           .then((resp) => {
-            setSelectedChallenge(resp);
+            setChallengeStore({ current: resp });
+            refreshChallengeAssets();
           })
           .catch((e: HTTPError) => {
             e.response.text().then((text) => {
@@ -55,7 +56,7 @@ export default function () {
           });
       });
     } else {
-      setSelectedChallenge(null);
+      setChallengeStore({ current: null });
     }
   });
 
@@ -130,12 +131,7 @@ export default function () {
         )}
       >
         <div class="flex-1 flex flex-col w-0">
-          <Tabs
-            baseUrl={`/games/${gameStore.current?.id}/challenges`}
-            current={selectedChallenge()}
-            loading={loadingChallenge()}
-            inGame
-          />
+          <Tabs baseUrl={`/games/${gameStore.current?.id}/challenges`} loading={loadingChallenge()} inGame />
           <Switch fallback={<Welcome />}>
             <Match when={loadingChallenge()}>
               <div class="flex-1 flex flex-row space-x-2 items-center justify-center">
@@ -145,8 +141,8 @@ export default function () {
             <Match when={inCreate()}>
               <Form onDone={onCreateChallenge} loading={creating()} inGame />
             </Match>
-            <Match when={selectedChallenge()}>
-              <Challenge inGame challenge={selectedChallenge()!} />
+            <Match when={challengeStore.current}>
+              <Challenge inGame />
             </Match>
           </Switch>
         </div>

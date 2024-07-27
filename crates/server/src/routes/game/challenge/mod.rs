@@ -1,6 +1,6 @@
 use axum::{
   body::Body,
-  extract::{Multipart, Query, State},
+  extract::{DefaultBodyLimit, Multipart, Query, State},
   http::{HeaderMap, StatusCode},
   middleware,
   response::{IntoResponse, Response},
@@ -49,9 +49,14 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     .nest(
       "/:challenge",
       Router::new()
-        .route(
-          "/files",
-          post(upload_challenge_attachment).delete(delete_challenge_attachment),
+        .nest(
+          "/file",
+          Router::new()
+            .route(
+              "/",
+              post(upload_challenge_attachment).delete(delete_challenge_attachment),
+            )
+            .route_layer(DefaultBodyLimit::max(1024 * 1024 * 1024)),
         )
         .route(
           "/env",
@@ -74,7 +79,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           state.clone(),
           auth::game_admin_required,
         ))
-        .route("/files", get(get_player_attachment))
+        .route("/file", get(get_player_attachment))
         .route("/env", get(get_challenge_env).post(start_challenge_env))
         .route("/hint", get(get_challenge_hints))
         .route("/hint/unlock", post(unlock_hint))
@@ -520,6 +525,7 @@ enum FileType {
 struct FileRequest {
   pub folder: Option<FileType>,
   pub file: Option<String>,
+  pub all: Option<bool>,
 }
 
 #[derive(Serialize)]
@@ -533,27 +539,26 @@ async fn get_player_attachment(
   Extension(challenge): Extension<challenge::Model>, Extension(token): Extension<Token>,
   team_ext: Option<Extension<team::Model>>, Query(query): Query<FileRequest>,
 ) -> Result<Response, ResponseError> {
-  let challenge_bucket = bucket
-    .at(
-      &game
-        .bucket
-        .clone()
-        .ok_or(ResponseError::PreconditionFailed(format!(
-          "game {}:'{}' does not have a valid bucket",
-          game.id, game.name
-        )))?,
-    )
-    .await?
-    .at(
-      &challenge
-        .bucket
-        .clone()
-        .ok_or(ResponseError::PreconditionFailed(format!(
-          "game {}:'{}' does not have a valid bucket",
-          game.id, game.name
-        )))?,
-    )
-    .await?;
+  let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge);
+  if query.all == Some(true)
+    && token.permissions.0.contains(&Permission::Game)
+    && game.admins.0.contains(&token.id)
+  {
+    let static_files = challenge_bucket.get_static_files().await?;
+    let mapped_files = challenge_bucket.get_mapped_files().await?;
+    let files: Vec<FileResponse> = static_files
+      .into_iter()
+      .map(|file| FileResponse {
+        folder: FileType::Static,
+        file,
+      })
+      .chain(mapped_files.into_iter().map(|file| FileResponse {
+        folder: FileType::Mapped,
+        file,
+      }))
+      .collect();
+    return Ok(Json(files).into_response());
+  }
   let team = extract_team!(game, team_ext, token);
   let files = get_files(
     &challenge_bucket,

@@ -96,6 +96,14 @@ export async function updateChallenge(game_id: number, challenge: Challenge) {
     .json<Challenge>();
 }
 
+export async function publishChallenge(game_id: number, challenge_id: number) {
+  return await api.post(`${api_root}/game/${game_id}/challenge/${challenge_id}/publish`).json<Challenge>();
+}
+
+export async function withdrawChallenge(game_id: number, challenge_id: number) {
+  return await api.delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/publish`).json<Challenge>();
+}
+
 export async function deleteChallenge(game_id: number, challenge_id: number) {
   return await api.delete(`${api_root}/game/${game_id}/challenge/${challenge_id}`).json<void>();
 }
@@ -132,10 +140,32 @@ export async function deleteChallengeHint(game_id: number, challenge_id: number,
     .json<void>();
 }
 
-export async function getChallengeAttachments(game_id: number, challenge_id: number) {
+export async function getChallengeAttachments(game_id: number, challenge_id: number, all?: boolean) {
   return await api
-    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/files`)
+    .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          all,
+        })
+      ) as SearchParamsOption,
+    })
     .json<{ folder: "static" | "mapped"; file: string }[]>();
+}
+
+export async function deleteChallengeAttachment(
+  game_id: number,
+  challenge_id: number,
+  folder: "static" | "mapped",
+  file: string
+) {
+  return await api
+    .delete(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
+      searchParams: {
+        folder,
+        file,
+      },
+    })
+    .json<void>();
 }
 
 export type ChallengeEnv = {

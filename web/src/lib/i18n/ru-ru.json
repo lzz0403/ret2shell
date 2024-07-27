@@ -354,7 +354,11 @@
     "print": "Печать",
     "save": "Сохранить",
     "saveFailed": "Сохранение не удалось",
-    "saveSuccess": "Сохранение успешно"
+    "saveSuccess": "Сохранение успешно",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -463,7 +467,13 @@
       "unlockHintFailed": "Ошибка разблокировки подсказки",
       "welcome": "Добро пожаловать на соревнование",
       "withdraw": "Оффлайн",
-      "withdrawTips": "Вы уверены, что хотите снять этот вопрос? После снятия вы сможете изменить содержание вопроса и опубликовать его снова."
+      "withdrawTips": "Вы уверены, что хотите снять этот вопрос? После снятия вы сможете изменить содержание вопроса и опубликовать его снова.",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "Обложка не загружена",

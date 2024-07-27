@@ -1,7 +1,6 @@
 import { api_root } from "@api";
 import { downloadFile } from "@api/file";
-import { getChallengeAttachments } from "@api/game";
-import type { Challenge } from "@models/challenge";
+import { challengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import { HTTPError } from "ky";
@@ -13,13 +12,13 @@ import type { Command } from "./interface";
 export class Wget implements Command {
   name = "wget";
   man = t("shell.wget.man")!;
-  func = async (io: Stdio, challenge: Challenge | null, args: ParseEntry[], _origin: string) => {
+  func = async (io: Stdio, args: ParseEntry[], _origin: string) => {
     if (!gameStore.current) {
       io.error(t("shell.noGameSpecified")!);
       io.info(t("shell.noGameSpecifiedTips")!);
       return 1;
     }
-    if (!challenge) {
+    if (!challengeStore.current) {
       io.error(t("shell.noChallengeSpecified")!);
       io.info(t("shell.noChallengeSpecifiedTips")!);
       return 1;
@@ -29,15 +28,14 @@ export class Wget implements Command {
       return 1;
     }
     const file = args[0].toString().trim();
-    const files = await getChallengeAttachments(gameStore.current!.id, challenge.id);
-    const found = files.find((f) => f.file === file);
+    const found = challengeStore.files.find((f) => f.file === file);
     if (!found) {
       io.error(t("shell.wget.fileNotFound")!);
       return 1;
     }
     try {
       const blob = await downloadFile(
-        `${api_root}/game/${gameStore.current.id}/challenge/${challenge.id}/files`,
+        `${api_root}/game/${gameStore.current.id}/challenge/${challengeStore.current.id}/file`,
         { file: found.file, folder: found.folder },
         (progress) => {
           io.print(

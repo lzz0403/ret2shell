@@ -354,7 +354,11 @@
     "print": "Drucken",
     "save": "speichern",
     "saveFailed": "Speichern fehlgeschlagen",
-    "saveSuccess": "Speichern erfolgreich"
+    "saveSuccess": "Speichern erfolgreich",
+    "selectFile": "",
+    "uploading": "",
+    "uploadFailed": "",
+    "download": ""
   },
   "game": {
     "accessPolicy": {
@@ -463,7 +467,13 @@
       "unlockHintFailed": "Entsperrhinweis fehlgeschlagen",
       "welcome": "Willkommen beim Wettbewerb",
       "withdraw": "Ausfahrt",
-      "withdrawTips": "Möchten Sie diese Frage wirklich offline schalten? Nach dem Offline-Schalten können Sie den Inhalt der Frage ändern und sie erneut online stellen."
+      "withdrawTips": "Möchten Sie diese Frage wirklich offline schalten? Nach dem Offline-Schalten können Sie den Inhalt der Frage ändern und sie erneut online stellen.",
+      "uploadStaticAttachment": "",
+      "uploadDynamicAttachment": "",
+      "deleteFileFailed": "",
+      "fetchAssetsFailed": "",
+      "publishChallengeFailed": "",
+      "withdrawChallengeFailed": ""
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",
