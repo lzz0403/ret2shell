@@ -1,4 +1,4 @@
-import { loginWithOAuth } from "@api/account";
+import { bindWithOAuth } from "@api/account";
 import LogoAnimate from "@assets/animates/logo-animate";
 import xdu from "@assets/brands/xdu.svg";
 import xmu from "@assets/brands/xmu.svg";
@@ -20,7 +20,7 @@ export default function () {
       setAnimate(true);
     }, 100);
     setTimeout(() => {
-      handleLoginWithOAuth();
+      handleBindWithOAuth();
     }, 2000);
   });
   const brand = () => {
@@ -35,27 +35,20 @@ export default function () {
     }
   };
 
-  function handleLoginWithOAuth() {
-    loginWithOAuth(location.search)
-      .then(() => {
-        navigate("/", { replace: true });
-        addToast({
-          level: "success",
-          description: t("account.login.success")!,
-          duration: 5000,
-          img: xdsecMascotHappy,
-        });
-      })
+  function handleBindWithOAuth() {
+    bindWithOAuth(location.search)
       .catch((err: HTTPError) => {
         err.response.text().then((text) => {
           addToast({
             level: "error",
-            description: `${t("account.oauth.failedToLogin")}: ${text}`,
+            description: `${t("account.oauth.failedToBind")}: ${text}`,
             duration: 5000,
           });
-          setTimeout(() => {
-            navigate("/account/login", { replace: true });
-          });
+        });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          navigate("/account/settings/oauth", { replace: true });
         });
       });
   }

@@ -15,6 +15,7 @@ use r2s_event::EventManager;
 use r2s_license::License;
 use r2s_media::Media;
 use r2s_migrator::Database;
+use r2s_oauth::OAuth;
 use r2s_queue::Queue;
 use thiserror::Error;
 use tracing::{error, warn};
@@ -27,6 +28,7 @@ pub struct GlobalState {
   pub auditor: Auditor,
   pub bucket: Bucket,
   pub queue: Queue,
+  pub oauth: OAuth,
   pub cluster: Cluster,
   pub license: License,
   pub media: Media,
@@ -75,6 +77,8 @@ pub enum ResponseError {
   FileIoError(#[from] std::io::Error),
   #[error("cluster error: {0}")]
   ClusterError(#[from] r2s_cluster::ClusterError),
+  #[error("OAuth error: {0}")]
+  OAuthError(#[from] r2s_oauth::OAuthError),
 }
 
 macro_rules! log_with_resp {
@@ -246,6 +250,20 @@ impl IntoResponse for ResponseError {
         _ => log_with_resp!(
           StatusCode::INTERNAL_SERVER_ERROR,
           "cluster internal error".to_owned(),
+          e.to_string()
+        ),
+      },
+      ResponseError::OAuthError(e) => match e {
+        r2s_oauth::OAuthError::NetworkError(_) => {
+          log_with_resp!(
+            StatusCode::INTERNAL_SERVER_ERROR,
+            "missing OAuth config".to_owned(),
+            "OAuth config is not set yet"
+          )
+        }
+        _ => log_with_resp!(
+          StatusCode::FORBIDDEN,
+          "failed to login with 3rd account".to_owned(),
           e.to_string()
         ),
       },

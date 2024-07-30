@@ -154,7 +154,7 @@ export default function () {
   let pageHeight: Readonly<Size>;
 
   const teamChartSeries = () => {
-    return teams().map((t) => ({
+    return topTeams().map((t) => ({
       name: t.name,
       type: "line",
       step: "end",
@@ -167,8 +167,14 @@ export default function () {
   });
 
   createEffect(() => {
-    const p = Math.floor(pageHeight.height / 56);
-    setPageSize(p);
+    if (pageHeight?.height) {
+      const p = Math.floor(pageHeight.height / 56);
+      untrack(() => {
+        setTimeout(() => {
+          setPageSize(p);
+        }, 300);
+      });
+    }
   });
 
   createEffect(() => {

@@ -1,6 +1,6 @@
 import type { DateTime } from "luxon";
 
-export type Oauth = {
+export type OAuth = {
   id: number;
   user_id: number;
   user_name?: string;

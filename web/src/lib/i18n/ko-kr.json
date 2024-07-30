@@ -53,7 +53,16 @@
     "oauth": {
       "xdu": {
         "title": "서전통일신원인증"
-      }
+      },
+      "xmu": {
+        "title": ""
+      },
+      "failedToLogin": "",
+      "failedToBind": "",
+      "notBind": "",
+      "bind": "",
+      "unbind": "",
+      "failedToUnbind": ""
     },
     "register": {
       "accountMaxLength": "사용자 이름은 최대 32자까지 가능합니다.",
@@ -97,7 +106,8 @@
         "title": "조직 기관"
       },
       "oauth": {
-        "title": "제3자 인증"
+        "title": "제3자 인증",
+        "failedToGetOAuthStatus": ""
       },
       "password": {
         "confirmPassword": "새 비밀번호를 다시 입력하세요",

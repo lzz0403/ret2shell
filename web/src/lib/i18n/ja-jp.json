@@ -53,7 +53,16 @@
     "oauth": {
       "xdu": {
         "title": "西電統一認証"
-      }
+      },
+      "xmu": {
+        "title": ""
+      },
+      "failedToLogin": "",
+      "failedToBind": "",
+      "notBind": "",
+      "bind": "",
+      "unbind": "",
+      "failedToUnbind": ""
     },
     "register": {
       "accountMaxLength": "ユーザー名は最大32文字まで",
@@ -97,7 +106,8 @@
         "title": "組織機構"
       },
       "oauth": {
-        "title": "第三者認証"
+        "title": "第三者認証",
+        "failedToGetOAuthStatus": ""
       },
       "password": {
         "confirmPassword": "新しいパスワードを再入力",

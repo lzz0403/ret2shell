@@ -72,6 +72,8 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   let bucket = r2s_bucket::initialize(&config.bucket).await?;
   info!("Loading module: < Message Queue >");
   let queue = r2s_queue::initialize(&config.queue).await?;
+  info!("Loading module: < OAuth >");
+  let oauth = r2s_oauth::initialize(&config.auth).await;
   info!("Loading module: < Cluster >");
   let cluster = r2s_cluster::initialize(&config.cluster).await?;
   info!("Loading module: < Email Worker >");
@@ -91,6 +93,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     bucket,
     event,
     queue,
+    oauth,
     license,
     cluster,
     checker,

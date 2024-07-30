@@ -53,7 +53,16 @@
     "oauth": {
       "xdu": {
         "title": "Система единого идентификационного аутентификации Xidian"
-      }
+      },
+      "xmu": {
+        "title": ""
+      },
+      "failedToLogin": "",
+      "failedToBind": "",
+      "notBind": "",
+      "bind": "",
+      "unbind": "",
+      "failedToUnbind": ""
     },
     "register": {
       "accountMaxLength": "Имя пользователя может содержать до 32 символов",
@@ -97,7 +106,8 @@
         "title": "организации"
       },
       "oauth": {
-        "title": "третья сторона аттестации"
+        "title": "третья сторона аттестации",
+        "failedToGetOAuthStatus": ""
       },
       "password": {
         "confirmPassword": "снова введите новый пароль",

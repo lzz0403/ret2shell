@@ -570,7 +570,8 @@
         "emailNotVerified": "你的邮箱尚未通过验证，部分功能受限制。"
       },
       "oauth": {
-        "title": "第三方认证"
+        "title": "第三方认证",
+        "failedToGetOAuthStatus": "获取第三方账户信息失败"
       },
       "institute": {
         "title": "组织机构"
@@ -616,7 +617,16 @@
     "oauth": {
       "xdu": {
         "title": "西电统一身份认证"
-      }
+      },
+      "xmu": {
+        "title": "厦门大学统一身份认证"
+      },
+      "failedToLogin": "登录失败",
+      "failedToBind": "绑定失败",
+      "notBind": "未绑定",
+      "bind": "绑定",
+      "unbind": "解绑",
+      "failedToUnbind": "解绑失败"
     },
     "institute": {
       "none": "无从属组织机构"

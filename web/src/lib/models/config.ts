@@ -2,15 +2,16 @@ export type AuditorConfig = {
   sensitive_word_list: string;
 };
 export type OAuthKey = {
-  service: string;
-  client_key: string | null;
-  secret: string | null;
+  id: string;
+  key: string;
 };
 export type AuthConfig = {
   signing_key: string;
   buffer_time: number;
   expires_time: number;
-  oauth_keys: Array<OAuthKey> | null;
+  oauth_keys: {
+    [key: string]: OAuthKey;
+  };
 };
 export type AutomateConfig = {
   enabled: boolean;

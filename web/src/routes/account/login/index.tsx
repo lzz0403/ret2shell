@@ -1,9 +1,8 @@
 import { login } from "@api/account";
 import { getAuthConfig } from "@api/platform";
 import LogoAnimate from "@assets/animates/logo-animate";
-import Github from "@assets/brands/github";
-import Gitlab from "@assets/brands/gitlab";
-import Google from "@assets/brands/google";
+import xdu from "@assets/brands/xdu.svg";
+import xmu from "@assets/brands/xmu.svg";
 import xdsecMascotCrying from "@assets/imgs/xdsec-mascot-crying.webp";
 import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
 import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
@@ -24,7 +23,7 @@ import Input from "@widgets/input";
 import Link from "@widgets/link";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
-import { Match, Show, Switch, createSignal } from "solid-js";
+import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
 
 type LoginForm = {
   account: string;
@@ -45,11 +44,12 @@ export default function () {
     signing_key: "",
     buffer_time: 0,
     expires_time: 0,
-    oauth_keys: null,
+    oauth_keys: {},
   } as AuthConfig);
   getAuthConfig()
     .then((config) => setAuthConfig(config))
     .catch(() => {});
+  const oauthServices = createMemo(() => Object.keys(authConfig().oauth_keys || {}));
   const [mascot, setMascot] = createSignal(null as string | null);
   const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
@@ -229,14 +229,29 @@ export default function () {
             <Link class="w-full" href="/account/register">
               {t("account.register.tips")}
             </Link>
-            <Show when={authConfig().oauth_keys !== null && (authConfig().oauth_keys?.length || 0) > 0}>
+            <Show when={authConfig().oauth_keys !== null && (oauthServices().length || 0) > 0}>
               <div class="flex flex-row flex-wrap space-x-2 items-start w-full">
-                <Show when={(authConfig().oauth_keys || []).find((s) => s.service === "xdu")}>
-                  <Link href="/account/oauth?type=redirect&service=xdu" class="flex-1">
-                    <span>{t("account.oauth.xdu.title")}</span>
+                <Show when={oauthServices().find((s) => s === "xdu")}>
+                  <Link
+                    class="flex-1"
+                    href={`https://ids.xidian.edu.cn/authserver/login?service=${window.location.origin}/account/oauth?service=xdu`}
+                    title={t("account.oauth.xdu.title")}
+                  >
+                    <img src={xdu} alt="XDU" width={24} height={24} />
+                    <span>XDU</span>
                   </Link>
                 </Show>
-                <Show when={(authConfig().oauth_keys || []).find((s) => s.service === "google")}>
+                <Show when={oauthServices().find((s) => s === "xmu")}>
+                  <Link
+                    class="flex-1"
+                    href={`https://ids.xmu.edu.cn/authserver/login?service=${window.location.origin}/account/oauth?service=xmu`}
+                    title={t("account.oauth.xmu.title")}
+                  >
+                    <img src={xmu} alt="XMU" width={24} height={24} />
+                    <span>XMU</span>
+                  </Link>
+                </Show>
+                {/* <Show when={(authConfig().oauth_keys || []).find((s) => s.service === "google")}>
                   <Link href="/account/oauth?type=redirect&service=google" square>
                     <Google width={24} height={24} />
                   </Link>
@@ -250,7 +265,7 @@ export default function () {
                   <Link href="/account/oauth?type=redirect&service=gitlab" square>
                     <Gitlab width={24} height={24} />
                   </Link>
-                </Show>
+                </Show> */}
               </div>
             </Show>
           </div>

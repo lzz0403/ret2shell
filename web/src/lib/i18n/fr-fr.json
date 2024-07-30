@@ -53,7 +53,16 @@
     "oauth": {
       "xdu": {
         "title": "Authentification unique de l'université de Xidian"
-      }
+      },
+      "xmu": {
+        "title": ""
+      },
+      "failedToLogin": "",
+      "failedToBind": "",
+      "notBind": "",
+      "bind": "",
+      "unbind": "",
+      "failedToUnbind": ""
     },
     "register": {
       "accountMaxLength": "Le nom d'utilisateur peut comporter jusqu'à 32 caractères.",
@@ -97,7 +106,8 @@
         "title": "organisation"
       },
       "oauth": {
-        "title": "certification par un tiers"
+        "title": "certification par un tiers",
+        "failedToGetOAuthStatus": ""
       },
       "password": {
         "confirmPassword": "Ré-entrer le nouveau mot de passe",

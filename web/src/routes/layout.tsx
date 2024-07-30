@@ -466,7 +466,7 @@ export default function (props: { children?: JSX.Element }) {
   function loadVersion() {
     getVersion()
       .then((version) => {
-        setPlatformStore({ version });
+        setPlatformStore({ version, under_maintenance: false, backend_online: true });
         if (!version.startsWith(import.meta.env.VITE_COMPAT_VERSION)) {
           addToast({
             level: "warning",

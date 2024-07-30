@@ -53,7 +53,16 @@
     "oauth": {
       "xdu": {
         "title": "West-Elektro Einheitliche Identitätsauthentifizierung"
-      }
+      },
+      "xmu": {
+        "title": ""
+      },
+      "failedToLogin": "",
+      "failedToBind": "",
+      "notBind": "",
+      "bind": "",
+      "unbind": "",
+      "failedToUnbind": ""
     },
     "register": {
       "accountMaxLength": "Benutzername maximal 32 Zeichen",
@@ -97,7 +106,8 @@
         "title": "Organisation"
       },
       "oauth": {
-        "title": "Drittpartei-Zertifizierung"
+        "title": "Drittpartei-Zertifizierung",
+        "failedToGetOAuthStatus": ""
       },
       "password": {
         "confirmPassword": "Erneut neues Passwort eingeben",

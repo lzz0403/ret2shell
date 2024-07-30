@@ -118,7 +118,16 @@
     "oauth": {
       "xdu": {
         "title": "西電統一身份認證"
-      }
+      },
+      "xmu": {
+        "title": ""
+      },
+      "failedToLogin": "",
+      "failedToBind": "",
+      "notBind": "",
+      "bind": "",
+      "unbind": "",
+      "failedToUnbind": ""
     },
     "register": {
       "accountMaxLength": "使用者名稱最多32個字元",
@@ -162,7 +171,8 @@
         "title": "組織機構"
       },
       "oauth": {
-        "title": "第三方驗證"
+        "title": "第三方驗證",
+        "failedToGetOAuthStatus": ""
       },
       "password": {
         "confirmPassword": "再次輸入新密碼",

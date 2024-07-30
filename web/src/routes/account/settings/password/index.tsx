@@ -50,80 +50,82 @@ export default function () {
       });
   }
   return (
-    <div class="flex flex-col p-3 lg:p-6 w-full items-center">
-      <Form onSubmit={onSubmit} class="flex flex-col w-full max-w-5xl space-y-2 relative">
-        <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
-          <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
-          <span>{t("account.settings.password.title")}</span>
-        </h3>
-        <Field name="old_password" validate={[required(t("account.settings.password.oldPasswordRequired")!)]}>
-          {(field, props) => (
-            <Input
-              icon={<span class="icon-[fluent--password-20-regular] w-5 h-5" />}
-              title={t("account.settings.password.oldPassword")}
-              placeholder={t("account.settings.password.oldPassword")}
-              {...props}
-              value={field.value}
-              error={field.error}
-              required
-              type="password"
-            />
-          )}
-        </Field>
-        <Field
-          name="new_password"
-          validate={[
-            required(t("account.settings.password.newPasswordRequired")!),
-            minLength(8, t("account.register.passwordMinLength")!),
-            pattern(
-              // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
-              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
-              t("account.register.passwordTooWeak")!
-            ),
-          ]}
-        >
-          {(field, props) => (
-            <Input
-              icon={<span class="icon-[fluent--password-20-regular] w-5 h-5" />}
-              title={t("account.settings.password.newPassword")}
-              placeholder={t("account.settings.password.newPassword")}
-              {...props}
-              value={field.value}
-              error={field.error}
-              required
-              type="password"
-            />
-          )}
-        </Field>
-        <Field
-          name="confirm_password"
-          validate={[
-            required(t("account.settings.password.confirmPasswordRequired")!),
-            custom((v) => {
-              if (v !== getValue(form, "new_password")) {
-                return false;
-              }
-              return true;
-            }, t("account.settings.password.confirmPasswordMismatch")!),
-          ]}
-        >
-          {(field, props) => (
-            <Input
-              icon={<span class="icon-[fluent--password-20-regular] w-5 h-5" />}
-              title={t("account.settings.password.confirmPassword")}
-              placeholder={t("account.settings.password.confirmPassword")}
-              {...props}
-              value={field.value}
-              error={field.error}
-              required
-              type="password"
-            />
-          )}
-        </Field>
-        <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
-          {t("form.save")}
-        </Button>
-      </Form>
-    </div>
+    <>
+      <div class="flex flex-col p-3 lg:p-6 w-full items-center">
+        <Form onSubmit={onSubmit} class="flex flex-col w-full max-w-5xl space-y-2 relative">
+          <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
+            <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
+            <span>{t("account.settings.password.title")}</span>
+          </h3>
+          <Field name="old_password" validate={[required(t("account.settings.password.oldPasswordRequired")!)]}>
+            {(field, props) => (
+              <Input
+                icon={<span class="icon-[fluent--password-20-regular] w-5 h-5" />}
+                title={t("account.settings.password.oldPassword")}
+                placeholder={t("account.settings.password.oldPassword")}
+                {...props}
+                value={field.value}
+                error={field.error}
+                required
+                type="password"
+              />
+            )}
+          </Field>
+          <Field
+            name="new_password"
+            validate={[
+              required(t("account.settings.password.newPasswordRequired")!),
+              minLength(8, t("account.register.passwordMinLength")!),
+              pattern(
+                // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
+                t("account.register.passwordTooWeak")!
+              ),
+            ]}
+          >
+            {(field, props) => (
+              <Input
+                icon={<span class="icon-[fluent--password-20-regular] w-5 h-5" />}
+                title={t("account.settings.password.newPassword")}
+                placeholder={t("account.settings.password.newPassword")}
+                {...props}
+                value={field.value}
+                error={field.error}
+                required
+                type="password"
+              />
+            )}
+          </Field>
+          <Field
+            name="confirm_password"
+            validate={[
+              required(t("account.settings.password.confirmPasswordRequired")!),
+              custom((v) => {
+                if (v !== getValue(form, "new_password")) {
+                  return false;
+                }
+                return true;
+              }, t("account.settings.password.confirmPasswordMismatch")!),
+            ]}
+          >
+            {(field, props) => (
+              <Input
+                icon={<span class="icon-[fluent--password-20-regular] w-5 h-5" />}
+                title={t("account.settings.password.confirmPassword")}
+                placeholder={t("account.settings.password.confirmPassword")}
+                {...props}
+                value={field.value}
+                error={field.error}
+                required
+                type="password"
+              />
+            )}
+          </Field>
+          <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+            {t("form.save")}
+          </Button>
+        </Form>
+      </div>
+    </>
   );
 }

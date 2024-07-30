@@ -1,8 +1,9 @@
 import type { Captcha } from "@models/captcha";
-import type { User } from "@models/user";
-import api, { api_root } from ".";
 import type { Institute } from "@models/institute";
+import type { User } from "@models/user";
 import type { DateTime } from "luxon";
+import api, { api_root } from ".";
+import type { OAuth } from "@models/oauth";
 
 export async function getCaptcha() {
   return await api.get(`${api_root}/account/captcha`).json<Captcha>();
@@ -84,4 +85,26 @@ export async function generateAccountCode() {
 
 export async function changePassword(req: { old_password: string; new_password: string }) {
   return await api.patch(`${api_root}/account/password`, { json: req }).json();
+}
+
+export async function loginWithOAuth(query: string) {
+  return await api.post(`${api_root}/account/oauth${query}`).json();
+}
+
+export async function bindWithOAuth(query: string) {
+  return await api.post(`${api_root}/account/bind${query}`).json();
+}
+
+export async function unbindWithOAuth(id: number) {
+  return await api
+    .delete(`${api_root}/account/bind`, {
+      searchParams: {
+        id,
+      },
+    })
+    .json();
+}
+
+export async function getOAuthStatus() {
+  return await api.get(`${api_root}/account/bind`).json<OAuth[]>();
 }

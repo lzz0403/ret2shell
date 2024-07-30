@@ -23,12 +23,6 @@ export default function SideBar() {
           <span>{t("account.settings.oauth.title")}</span>
         </Link>
       </li>
-      <li class="w-full">
-        <Link activeMatch="exact" class="w-full" ghost href="/account/settings/institute" justify="start">
-          <span class="icon-[fluent--hat-graduation-20-regular] w-5 h-5" />
-          <span>{t("account.settings.institute.title")}</span>
-        </Link>
-      </li>
       <Divider />
       <li class="w-full">
         <Link
