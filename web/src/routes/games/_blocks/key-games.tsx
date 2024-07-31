@@ -43,8 +43,8 @@ export default function () {
   const keyGames = createMemo(() => {
     return gameStore.games
       .filter((game) => game.weight >= 3 && game.host_type === HostType.CTFGame)
-      .sort((a, b) => b.start_at.diff(a.start_at).seconds)
-      .slice((page() - 1) * pageSize, page() * pageSize + 1);
+      .sort((a, b) => b.start_at.toSeconds() - a.start_at.toSeconds())
+      .slice((page() - 1) * pageSize, page() * pageSize);
   });
 
   const selectedGame = createMemo(() => {

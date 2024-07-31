@@ -42,15 +42,15 @@ export default function () {
   const inEdit = () => searchParams.edit === "true";
   const period = () => {
     if (inProgress()) {
-      return t("game.start")!;
+      return t("game.end")!;
     }
     if (inRegister()) {
-      return t("game.register")!;
+      return t("game.start")!;
     }
     if (inArchiving()) {
       return t("game.archive")!;
     }
-    return t("game.end")!;
+    return t("game.register")!;
   };
 
   const timeEnd = () => {

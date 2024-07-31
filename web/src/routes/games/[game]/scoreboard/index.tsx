@@ -4,7 +4,7 @@ import { type Size, createElementSize } from "@solid-primitives/resize-observer"
 import { useSearchParams } from "@solidjs/router";
 import { accountStore, refreshInstitutes } from "@storage/account";
 import { challengeStore, refreshChallenges } from "@storage/challenge";
-import { gameStore } from "@storage/game";
+import { canAccessChallenges, gameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -180,7 +180,7 @@ export default function () {
   createEffect(() => {
     if (gameStore.current) {
       untrack(() => {
-        if (challengeStore.challenges.length === 0) {
+        if (challengeStore.challenges.length === 0 && canAccessChallenges()[0]) {
           void refreshChallenges();
         }
       });

@@ -109,11 +109,7 @@ export const canParticipate = () => {
 
 export function canAccessChallenges(): [boolean, string] {
   if (!accountStore.id) return [false, t("game.team.loginThenBack")!];
-  if (
-    gameStore.current?.admins &&
-    (accountStore.permissions.includes(Permission.Host) ||
-      (gameStore.current.admins.includes(accountStore.id) && accountStore.permissions.includes(Permission.Game)))
-  ) {
+  if (gameStore.current?.admins.includes(accountStore.id) && accountStore.permissions.includes(Permission.Game)) {
     return [true, ""];
   }
   if (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()) {
@@ -132,11 +128,7 @@ export function canAccessChallenges(): [boolean, string] {
 
 export function isGameAdmin() {
   if (!accountStore.id) return false;
-  if (
-    gameStore.current?.admins &&
-    (accountStore.permissions.includes(Permission.Host) ||
-      (gameStore.current.admins.includes(accountStore.id) && accountStore.permissions.includes(Permission.Game)))
-  ) {
+  if (gameStore.current?.admins.includes(accountStore.id) && accountStore.permissions.includes(Permission.Game)) {
     return true;
   }
   return false;

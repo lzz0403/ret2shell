@@ -60,5 +60,6 @@ export const refreshInstitutes = async () => {
     setAccountStore({ institutes });
   } catch {
     // make eslint happy
+    setAccountStore({ institutes: [] });
   }
 };
