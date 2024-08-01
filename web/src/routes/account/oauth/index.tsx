@@ -9,7 +9,7 @@ import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import LoadingTips from "@widgets/loading-tips";
 import type { HTTPError } from "ky";
-import { createSignal, onMount } from "solid-js";
+import { createMemo, createSignal, onMount } from "solid-js";
 
 export default function () {
   const [animate, setAnimate] = createSignal(false);
@@ -24,8 +24,9 @@ export default function () {
       handleLoginWithOAuth();
     }, 2000);
   });
-  const brand = () => {
+  const brand = createMemo(() => {
     const service = searchParams.service;
+    // console.log(service);
     switch (service) {
       case "xdu":
         return xdu;
@@ -36,7 +37,7 @@ export default function () {
       default:
         return xdu;
     }
-  };
+  });
 
   function handleLoginWithOAuth() {
     loginWithOAuth(location.search)
@@ -69,21 +70,21 @@ export default function () {
         <LogoAnimate
           width={128}
           height={128}
-          class={`transition-all duration-700 ${animate() ? "" : "translate-x-10 opacity-0"}`}
+          class={`transition-all duration-700 ${animate() ? "" : "translate-x-16 opacity-0"}`}
         />
-        <span class={`transition-all duration-700 ${animate() ? "opacity-60" : "translate-x-6 opacity-0"}`}>-*-</span>
+        <span class={`transition-all duration-700 ${animate() ? "opacity-60" : "translate-x-8 opacity-0"}`}>-*-</span>
 
         <img
           src={xdsecMascotHappy}
           alt="Broken"
           class={`w-24 h-24 animate-bounce transition-all duration-700 ${animate() ? "" : "translate-y-6 opacity-0"}`}
         />
-        <span class={`transition-all duration-700 ${animate() ? "opacity-60" : "-translate-x-6 opacity-0"}`}>-*-</span>
+        <span class={`transition-all duration-700 ${animate() ? "opacity-60" : "-translate-x-8 opacity-0"}`}>-*-</span>
 
         <img
           src={brand()}
           alt="Brand"
-          class={`w-32 h-32 transition-all duration-700 ${animate() ? "" : "-translate-x-10 opacity-0"}`}
+          class={`w-32 h-32 transition-all duration-700 ${animate() ? "" : "-translate-x-16 opacity-0"}`}
         />
       </div>
       <LoadingTips />

@@ -1,5 +1,8 @@
 import { getInstitutes, getOAuthStatus, unbindWithOAuth } from "@api/account";
 import { getAuthConfig } from "@api/platform";
+import jiangnan from "@assets/brands/jiangnan.svg";
+import xdu from "@assets/brands/xdu.svg";
+import xmu from "@assets/brands/xmu.svg";
 import type { AuthConfig } from "@models/config";
 import type { Institute } from "@models/institute";
 import type { OAuth } from "@models/oauth";
@@ -48,7 +51,15 @@ export default function () {
       });
     }
   });
-  const oauthServices = createMemo(() => Object.keys(authConfig().oauth_keys || {}));
+  const oauthServices = createMemo(() => {
+    const result = [];
+    const keys = Object.keys(authConfig().oauth_keys || {});
+    // console.log(keys);
+    for (const key of keys) {
+      if (authConfig().oauth_keys[key] !== null) result.push(key);
+    }
+    return result;
+  });
 
   function handleUnbind(id: number) {
     unbindWithOAuth(id)
@@ -74,7 +85,7 @@ export default function () {
         </h3>
         <Show when={oauthServices().find((service) => service === "xdu")}>
           <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-            <span class="text-error">XDU</span>
+            <img src={xdu} alt="XDU" class="w-6 h-6" />
             <h4 class="font-bold text-start flex-1">
               <span>{t("account.oauth.xdu.title")}</span>
             </h4>
@@ -109,7 +120,7 @@ export default function () {
         </Show>
         <Show when={oauthServices().find((service) => service === "xmu")}>
           <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-            <span class="text-info">XMU</span>
+            <img src={xmu} alt="XMU" class="w-6 h-6" />
             <h4 class="font-bold text-start flex-1">
               <span>{t("account.oauth.xmu.title")}</span>
             </h4>
@@ -144,7 +155,7 @@ export default function () {
         </Show>
         <Show when={oauthServices().find((service) => service === "jiangnan")}>
           <div class="h-12 flex flex-row items-center border-b border-b-layer-content/10 space-x-2">
-            <span class="text-info">JIANGNAN</span>
+            <img src={jiangnan} alt="Jiangnan" class="w-6 h-6" />
             <h4 class="font-bold text-start flex-1">
               <span>{t("account.oauth.jiangnan.title")}</span>
             </h4>
@@ -165,8 +176,7 @@ export default function () {
               }
             >
               <span class="opacity-60">
-                {selfOAuthItems().find((v) => v.provider === "jiangnan")?.data.name ?? "UNKNOWN"} (
-                {selfOAuthItems().find((v) => v.provider === "jiangnan")?.data.id ?? "UNKNOWN"})
+                {selfOAuthItems().find((v) => v.provider === "jiangnan")?.data.email ?? "UNKNOWN"}
               </span>
               <Button
                 size="sm"

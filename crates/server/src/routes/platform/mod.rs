@@ -84,7 +84,7 @@ async fn get_platform_info(
 }
 
 async fn get_auth_config(
-  Extension(config): Extension<config::Model>,
+  State(config): State<GlobalConfig>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let auth_config = config.auth.ok_or(ResponseError::InternalServerError(
     "missing auth config".to_owned(),
