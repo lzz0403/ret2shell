@@ -199,7 +199,9 @@
       },
       "title": "使用者設定"
     },
-    "verifyingEmail": "正在驗證你的郵箱"
+    "verifyingEmail": "正在驗證你的郵箱",
+    "resendVerifyEmailSuccess": "驗證郵件已重新發送至信箱，請查收",
+    "resendVerifyEmailFailed": "郵件發送失敗"
   },
   "admin": {
     "about": {

@@ -134,7 +134,9 @@
       },
       "title": "Paramètres de l'utilisateur"
     },
-    "verifyingEmail": "Vérification de votre adresse e-mail en cours."
+    "verifyingEmail": "Vérification de votre adresse e-mail en cours.",
+    "resendVerifyEmailSuccess": "L'e-mail de vérification a été renvoyé à votre boîte aux lettres, veuillez le consulter.",
+    "resendVerifyEmailFailed": "Échec de l'envoi de l'e-mail"
   },
   "admin": {
     "about": {

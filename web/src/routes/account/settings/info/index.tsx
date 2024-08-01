@@ -1,4 +1,4 @@
-import { changeProfile } from "@api/account";
+import { changeProfile, resendEmail } from "@api/account";
 import { uploadMedia } from "@api/media";
 import { mediaPath } from "@lib/utils/media";
 import { Permission } from "@models/user";
@@ -82,6 +82,25 @@ export default function () {
           setAvatarUploading(false);
         });
     }
+  }
+  function handleResendVerifyEmail() {
+    resendEmail()
+      .then(() => {
+        addToast({
+          level: "success",
+          description: t("account.resendVerifyEmailSuccess")!,
+          duration: 5000,
+        });
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("account.resendVerifyEmailFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      });
   }
   function onSubmit(result: UserForm) {
     setLoading(true);
@@ -209,7 +228,7 @@ export default function () {
           <Card level="warning" contentClass="p-2 flex flex-row space-x-2 items-center pl-4">
             <span class="icon-[fluent--warning-20-filled] w-5 h-5 text-warning" />
             <span class="flex-1 text-start">{t("account.settings.info.emailNotVerified")}</span>
-            <Button size="sm" type="button">
+            <Button size="sm" type="button" onClick={handleResendVerifyEmail}>
               <span>{t("account.resendVerifyEmail")}</span>
             </Button>
           </Card>

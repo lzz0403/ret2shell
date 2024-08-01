@@ -673,7 +673,7 @@ async fn get_profile(
 async fn change_profile(
   State(ref cache): State<Cache>, State(ref queue): State<Queue>, State(ref db): State<Database>,
   Extension(config): Extension<config::Model>, Extension(user): Extension<user::Model>,
-  Json(body): Json<user::Model>,
+  Extension(token_tracker): Extension<TokenTracker>, Json(body): Json<user::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let email_changed = body.email != user.email;
   let email = match body.email.clone() {
@@ -700,7 +700,7 @@ async fn change_profile(
     ..user
   };
 
-  user::update(&db.conn, user).await?;
+  let user = user::update(&db.conn, user).await?;
   if email_changed {
     send_email(
       cache,
@@ -711,6 +711,18 @@ async fn change_profile(
       EmailType::Verify,
     )
     .await?;
+
+    // renew token
+    *(token_tracker.token.lock().await) = Token {
+      id: user.id,
+      account: user.account.clone(),
+      nickname: user.nickname.clone(),
+      permissions: user.permissions,
+      ..Default::default()
+    };
+    token_tracker
+      .renew_requested
+      .store(true, std::sync::atomic::Ordering::Relaxed);
   }
   Ok(StatusCode::OK)
 }

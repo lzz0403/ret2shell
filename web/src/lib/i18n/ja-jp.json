@@ -134,7 +134,9 @@
       },
       "title": "ユーザー設定"
     },
-    "verifyingEmail": "メールアドレスを確認中"
+    "verifyingEmail": "メールアドレスを確認中",
+    "resendVerifyEmailSuccess": "認証メールが再送信されましたので、メールボックスを確認してください。",
+    "resendVerifyEmailFailed": "メール送信失敗"
   },
   "admin": {
     "about": {

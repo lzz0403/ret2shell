@@ -1,6 +1,5 @@
 import { loginWithOAuth } from "@api/account";
 import LogoAnimate from "@assets/animates/logo-animate";
-import jiangnan from "@assets/brands/jiangnan.svg";
 import xdu from "@assets/brands/xdu.svg";
 import xmu from "@assets/brands/xmu.svg";
 import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
@@ -26,14 +25,11 @@ export default function () {
   });
   const brand = createMemo(() => {
     const service = searchParams.service;
-    // console.log(service);
     switch (service) {
       case "xdu":
         return xdu;
       case "xmu":
         return xmu;
-      case "jiangnan":
-        return jiangnan;
       default:
         return xdu;
     }

@@ -675,7 +675,9 @@
     "emailVerifyFailed": "邮箱验证失败",
     "forgot": {
       "title": "忘记密码"
-    }
+    },
+    "resendVerifyEmailSuccess": "验证邮件已重新发送至邮箱，请查收",
+    "resendVerifyEmailFailed": "邮件发送失败"
   },
   "instance": {
     "disconnected": "WSRX 未连接",

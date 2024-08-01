@@ -199,7 +199,9 @@
       },
       "title": "User Settings"
     },
-    "verifyingEmail": "Verifying your email"
+    "verifyingEmail": "Verifying your email",
+    "resendVerifyEmailSuccess": "The verification email has been resent to your mailbox, please check it.",
+    "resendVerifyEmailFailed": "Email sending failed"
   },
   "admin": {
     "about": {

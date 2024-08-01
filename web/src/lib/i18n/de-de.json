@@ -134,7 +134,9 @@
       },
       "title": "Benutzereinstellungen"
     },
-    "verifyingEmail": "E-Mail-Adresse wird überprüft"
+    "verifyingEmail": "E-Mail-Adresse wird überprüft",
+    "resendVerifyEmailSuccess": "Bestätigungsmail wurde erneut an die E-Mail-Adresse gesendet, bitte überprüfen.",
+    "resendVerifyEmailFailed": "E-Mail-Versand fehlgeschlagen"
   },
   "admin": {
     "about": {

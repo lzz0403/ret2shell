@@ -134,7 +134,9 @@
       },
       "title": "Configuración del usuario"
     },
-    "verifyingEmail": "Validando tu correo electrónico"
+    "verifyingEmail": "Validando tu correo electrónico",
+    "resendVerifyEmailSuccess": "El correo de verificación ha sido reenviado a tu bandeja de entrada, por favor revísalo.",
+    "resendVerifyEmailFailed": "Fallo en el envío del correo"
   },
   "admin": {
     "about": {
