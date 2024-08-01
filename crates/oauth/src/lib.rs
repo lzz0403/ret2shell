@@ -8,6 +8,9 @@ pub use traits::OAuthError;
 pub struct OAuth {
   pub xdu: Option<adapters::xdu::OAuthProvider>,
   pub xmu: Option<adapters::xmu::OAuthProvider>,
+  pub jiangnan: Option<adapters::jiangnan::OAuthProvider>,
+  pub nwnu: Option<adapters::nwnu::OAuthProvider>,
+  pub taru: Option<adapters::taru::OAuthProvider>,
 }
 
 impl OAuth {
@@ -35,6 +38,39 @@ impl OAuth {
       } else {
         None
       },
+      jiangnan: if let Some(key) = &config
+        .oauth_keys
+        .as_ref()
+        .and_then(|keys| keys.jiangnan.as_ref())
+      {
+        Some(adapters::jiangnan::OAuthProvider {
+          key: key.to_owned().clone(),
+        })
+      } else {
+        None
+      },
+      nwnu: if let Some(key) = &config
+        .oauth_keys
+        .as_ref()
+        .and_then(|keys| keys.nwnu.as_ref())
+      {
+        Some(adapters::nwnu::OAuthProvider {
+          key: key.to_owned().clone(),
+        })
+      } else {
+        None
+      },
+      taru: if let Some(key) = &config
+        .oauth_keys
+        .as_ref()
+        .and_then(|keys| keys.taru.as_ref())
+      {
+        Some(adapters::taru::OAuthProvider {
+          key: key.to_owned().clone(),
+        })
+      } else {
+        None
+      },
     }
   }
 
@@ -48,6 +84,18 @@ impl OAuth {
         .xmu
         .as_ref()
         .map(|xmu| xmu as &dyn traits::OAuthProvider),
+      "jiangnan" => self
+        .jiangnan
+        .as_ref()
+        .map(|jiangnan| jiangnan as &dyn traits::OAuthProvider),
+      "nwnu" => self
+        .nwnu
+        .as_ref()
+        .map(|nwnu| nwnu as &dyn traits::OAuthProvider),
+      "taru" => self
+        .taru
+        .as_ref()
+        .map(|taru| taru as &dyn traits::OAuthProvider),
       _ => None,
     }
   }
@@ -60,6 +108,9 @@ pub async fn initialize(config: &Option<Config>) -> OAuth {
     OAuth {
       xdu: None,
       xmu: None,
+      jiangnan: None,
+      nwnu: None,
+      taru: None,
     }
   }
 }
