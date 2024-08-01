@@ -372,7 +372,7 @@ export default function () {
             <Chart
               option={{
                 grid: {
-                  left: "32px",
+                  left: "64px",
                   right: "32px",
                   bottom: "32px",
                   top: "48px",
@@ -380,6 +380,17 @@ export default function () {
                 title: {
                   text: t("admin.statistics.instituteUsers"),
                   right: "center",
+                },
+                tooltip: {
+                  trigger: "axis",
+                  axisPointer: {
+                    type: "line",
+                    label: {
+                      precision: 0,
+                    },
+                    snap: true,
+                  },
+                  borderColor: "transparent",
                 },
                 toolbox: {},
                 xAxis: {

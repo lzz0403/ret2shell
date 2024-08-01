@@ -63,15 +63,24 @@ async fn process_message(message: jetstream::Message) -> Result<(), EmailError> 
   let mut retry_count = 3;
   while retry_count > 0 {
     if let Err(err) = send_email_impl(&req.config, &req.email).await {
-      warn!("Failed to send email: {:?}", err);
+      warn!(
+        "Failed to send email '{}' to <{}>, error with: {:?}, retrying...",
+        req.email.subject, req.email.email, err
+      );
       retry_count -= 1;
     } else {
-      info!("Successfully sent email: {:?}", req);
+      info!(
+        "Successfully sent email: '{}' to <{}>",
+        req.email.subject, req.email.email
+      );
       message.ack_with(AckKind::Ack).await.ok();
       return Ok(());
     }
   }
-  error!("Failed to send email {req:?} after 3 retries, dropped.");
+  error!(
+    "Failed to send email '{}' to <{}> after 3 retries, dropped.",
+    req.email.subject, req.email.email
+  );
   message.ack_with(AckKind::Term).await.ok();
   Ok(())
 }
