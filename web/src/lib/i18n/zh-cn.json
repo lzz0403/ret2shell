@@ -674,10 +674,25 @@
     "emailVerifyBroken": "验证链接存在问题，请确保邮件链接正确",
     "emailVerifyFailed": "邮箱验证失败",
     "forgot": {
-      "title": "忘记密码"
+      "title": "忘记密码",
+      "sendResetEmail": "发送找回邮件",
+      "success": "重置邮件已发送，请查收",
+      "rateLimit": "发送频率超过限制，请15分钟后再试"
     },
     "resendVerifyEmailSuccess": "验证邮件已重新发送至邮箱，请查收",
-    "resendVerifyEmailFailed": "邮件发送失败"
+    "resendVerifyEmailFailed": "邮件发送失败",
+    "bind": {
+      "title": "绑定第三方账户"
+    },
+    "reset": {
+      "success": "重置成功，请使用新密码登录平台",
+      "failed": "重置失败",
+      "title": "重置密码",
+      "tokenRequired": "请填写 token",
+      "tokenPlaceholder": "重置 Token",
+      "invalidLink": "链接无效，请检查邮箱重置链接是否一致",
+      "confirm": "重置"
+    }
   },
   "instance": {
     "disconnected": "WSRX 未连接",

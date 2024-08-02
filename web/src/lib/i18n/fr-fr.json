@@ -28,7 +28,10 @@
     "emailVerifyBroken": "Le lien de vérification présente un problème, veuillez vous assurer que le lien dans l'e-mail est correct.",
     "emailVerifyFailed": "Échec de la vérification de l'adresse e-mail",
     "forgot": {
-      "title": "Mot de passe oublié"
+      "title": "Mot de passe oublié",
+      "sendResetEmail": "Envoyer un e-mail de récupération",
+      "success": "Le courriel de réinitialisation a été envoyé, veuillez le vérifier.",
+      "rateLimit": "La fréquence d'envoi dépasse la limite, veuillez réessayer dans 15 minutes."
     },
     "institute": {
       "none": "sans organisation ou institution affiliée"
@@ -136,7 +139,19 @@
     },
     "verifyingEmail": "Vérification de votre adresse e-mail en cours.",
     "resendVerifyEmailSuccess": "L'e-mail de vérification a été renvoyé à votre boîte aux lettres, veuillez le consulter.",
-    "resendVerifyEmailFailed": "Échec de l'envoi de l'e-mail"
+    "resendVerifyEmailFailed": "Échec de l'envoi de l'e-mail",
+    "bind": {
+      "title": "Lier un compte tiers"
+    },
+    "reset": {
+      "success": "Réinitialisation réussie, veuillez vous connecter à la plateforme avec votre nouveau mot de passe.",
+      "failed": "Échec de la réinitialisation",
+      "title": "Réinitialiser le mot de passe",
+      "tokenRequired": "veuillez remplir le token",
+      "tokenPlaceholder": "Réinitialiser le Token",
+      "invalidLink": "Le lien est invalide, veuillez vérifier si le lien de réinitialisation du mot de passe est identique.",
+      "confirm": "Réinitialiser"
+    }
   },
   "admin": {
     "about": {

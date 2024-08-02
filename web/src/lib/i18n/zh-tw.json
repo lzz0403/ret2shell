@@ -93,7 +93,10 @@
     "emailVerifyBroken": "驗證連結存在問題，請確保郵件連結正確",
     "emailVerifyFailed": "郵箱驗證失敗",
     "forgot": {
-      "title": "忘記密碼"
+      "title": "忘記密碼",
+      "sendResetEmail": "發送找回郵件",
+      "success": "重置郵件已發送，請查收",
+      "rateLimit": "發送頻率超過限制，請15分鐘後再試"
     },
     "institute": {
       "none": "無從屬組織機構"
@@ -201,7 +204,19 @@
     },
     "verifyingEmail": "正在驗證你的郵箱",
     "resendVerifyEmailSuccess": "驗證郵件已重新發送至信箱，請查收",
-    "resendVerifyEmailFailed": "郵件發送失敗"
+    "resendVerifyEmailFailed": "郵件發送失敗",
+    "bind": {
+      "title": "綁定第三方帳戶"
+    },
+    "reset": {
+      "success": "重置成功，請使用新密碼登入平台",
+      "failed": "重設失敗",
+      "title": "重設密碼",
+      "tokenRequired": "請填寫 token",
+      "tokenPlaceholder": "重置 Token",
+      "invalidLink": "連結無效，請檢查郵箱重置連結是否一致",
+      "confirm": "重設"
+    }
   },
   "admin": {
     "about": {

@@ -28,7 +28,10 @@
     "emailVerifyBroken": "リンクの検証に問題があります。メールのリンクが正しいことを確認してください。",
     "emailVerifyFailed": "メール認証失敗",
     "forgot": {
-      "title": "パスワードを忘れた"
+      "title": "パスワードを忘れた",
+      "sendResetEmail": "パスワード再設定メールを送信",
+      "success": "リセットメールが送信されましたので、ご確認ください。",
+      "rateLimit": "送信頻度が制限を超えています。15分後に再試行してください。"
     },
     "institute": {
       "none": "無所属組織機構"
@@ -136,7 +139,19 @@
     },
     "verifyingEmail": "メールアドレスを確認中",
     "resendVerifyEmailSuccess": "認証メールが再送信されましたので、メールボックスを確認してください。",
-    "resendVerifyEmailFailed": "メール送信失敗"
+    "resendVerifyEmailFailed": "メール送信失敗",
+    "bind": {
+      "title": "サードパーティアカウントの連携"
+    },
+    "reset": {
+      "success": "リセットが成功しました。新しいパスワードを使用してプラットフォームにログインしてください。",
+      "failed": "リセット失敗",
+      "title": "パスワードをリセット",
+      "tokenRequired": "トークンを入力してください",
+      "tokenPlaceholder": "トークンのリセット",
+      "invalidLink": "リンクが無効です。メールアドレスのリセットリンクが一致しているか確認してください。",
+      "confirm": "リセット"
+    }
   },
   "admin": {
     "about": {

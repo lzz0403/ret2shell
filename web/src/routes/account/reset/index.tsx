@@ -1,3 +1,169 @@
+import { resetPassword } from "@api/account";
+import Captcha from "@blocks/captcha";
+import { createForm, email, minLength, pattern, required, setValue } from "@modular-forms/solid";
+import { useNavigate, useSearchParams } from "@solidjs/router";
+import { Title } from "@storage/header";
+import { platformStore } from "@storage/platform";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
+import Button from "@widgets/button";
+import Card from "@widgets/card";
+import Input from "@widgets/input";
+import type { HTTPError } from "ky";
+import { DateTime } from "luxon";
+import { createSignal } from "solid-js";
+
+type ResetForm = {
+  email: string;
+  token: string;
+  password: string;
+  captcha_id: string;
+  captcha_answer: string;
+};
+
 export default function () {
-  return <></>;
+  const [form, { Form, Field }] = createForm<ResetForm>();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const emailPredef = searchParams.email;
+  const tokenPredef = searchParams.token;
+  if (!emailPredef || !tokenPredef) {
+    addToast({
+      level: "error",
+      description: t("account.reset.invalidLink")!,
+      duration: 5000,
+    });
+    navigate("/sigtrap/403", { replace: true });
+    return null;
+  }
+  setValue(form, "email", emailPredef);
+  setValue(form, "token", tokenPredef);
+  const [loading, setLoading] = createSignal(false);
+  const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
+  function handleSubmit(data: ResetForm) {
+    setLoading(true);
+    setTimeout(() => {
+      resetPassword(data)
+        .then(() => {
+          addToast({
+            level: "success",
+            description: t("account.reset.success")!,
+            duration: 5000,
+          });
+          navigate("/", { replace: true });
+        })
+        .catch((err: HTTPError) => {
+          void err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("account.reset.failed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+          setTimestamp(DateTime.now().toMillis());
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }, 500);
+  }
+  return (
+    <div class="flex-1 flex flex-col items-center md:justify-center p-3 md:p-6">
+      <Title title={`${t("account.reset.title")} - ${platformStore.config.name || t("platform.name")}`} />
+      <Card
+        class="w-full max-w-md"
+        contentClass="p-6 flex flex-col md:flex-row space-y-2 space-x-0 md:space-x-6 md:space-y-0"
+      >
+        <Form onSubmit={handleSubmit} class="md:w-0 flex-1 flex-shrink-0 flex flex-col space-y-2">
+          <h2 class="font-bold text-center">{t("account.reset.title")}</h2>
+          <Field
+            name="email"
+            validate={[required(t("account.register.emailRequired")!), email(t("account.register.emailInvalid")!)]}
+          >
+            {(field, props) => (
+              <Input
+                icon={<span class="icon-[fluent--mail-20-regular] w-5 h-5" />}
+                placeholder={t("account.register.emailPlaceholder")}
+                disabled
+                title={t("account.register.emailPlaceholder")}
+                autocomplete="email"
+                {...props}
+                value={field.value}
+                error={field.error}
+                class="flex-1"
+                required
+              />
+            )}
+          </Field>
+          <Field name="token" validate={[required(t("account.reset.tokenRequired")!)]}>
+            {(field, props) => (
+              <Input
+                icon={<span class="icon-[fluent--key-20-regular] w-5 h-5" />}
+                placeholder={t("account.reset.tokenPlaceholder")}
+                disabled
+                title={t("account.reset.tokenPlaceholder")}
+                autocomplete="off"
+                {...props}
+                value={field.value}
+                error={field.error}
+                class="flex-1"
+                required
+              />
+            )}
+          </Field>
+          <Field
+            name="password"
+            validate={[
+              required(t("account.register.passwordRequired")!),
+              minLength(8, t("account.register.passwordMinLength")!),
+              pattern(
+                // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
+                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
+                t("account.register.passwordTooWeak")!
+              ),
+            ]}
+          >
+            {(field, props) => (
+              <Input
+                icon={<span class="icon-[fluent--lock-20-regular] w-5 h-5" />}
+                placeholder={t("account.register.passwordPlaceholder")}
+                title={t("account.register.passwordPlaceholder")}
+                autocomplete="password"
+                type="password"
+                {...props}
+                value={field.value}
+                error={field.error}
+                class="flex-1"
+                required
+              />
+            )}
+          </Field>
+          <Field name="captcha_id">
+            {(idField) => (
+              <Field
+                name="captcha_answer"
+                validate={[required(t("captcha.required")!), minLength(4, t("captcha.minLength")!)]}
+              >
+                {(answerField, props) => (
+                  <Captcha
+                    {...props}
+                    captchaForm={form}
+                    class="flex-1"
+                    idFieldValue={idField.value}
+                    idFieldError={idField.error}
+                    answerFieldValue={answerField.value}
+                    answerFieldError={answerField.error}
+                    timestamp={timestamp()}
+                  />
+                )}
+              </Field>
+            )}
+          </Field>
+          <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+            {t("account.reset.confirm")}
+          </Button>
+        </Form>
+      </Card>
+    </div>
+  );
 }

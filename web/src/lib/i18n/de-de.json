@@ -28,7 +28,10 @@
     "emailVerifyBroken": "Die Überprüfung des Links ist fehlgeschlagen. Bitte stellen Sie sicher, dass der Link in der E-Mail korrekt ist.",
     "emailVerifyFailed": "E-Mail-Verifizierung fehlgeschlagen",
     "forgot": {
-      "title": "Passwort vergessen"
+      "title": "Passwort vergessen",
+      "sendResetEmail": "E-Mail zum Zurücksetzen senden",
+      "success": "Die E-Mail zum Zurücksetzen wurde gesendet, bitte überprüfen Sie Ihren Posteingang.",
+      "rateLimit": "Die Sendefrequenz überschreitet das Limit. Bitte versuchen Sie es in 15 Minuten erneut."
     },
     "institute": {
       "none": "Keine angehörige Organisationseinheit"
@@ -136,7 +139,19 @@
     },
     "verifyingEmail": "E-Mail-Adresse wird überprüft",
     "resendVerifyEmailSuccess": "Bestätigungsmail wurde erneut an die E-Mail-Adresse gesendet, bitte überprüfen.",
-    "resendVerifyEmailFailed": "E-Mail-Versand fehlgeschlagen"
+    "resendVerifyEmailFailed": "E-Mail-Versand fehlgeschlagen",
+    "bind": {
+      "title": "Drittkonten binden"
+    },
+    "reset": {
+      "success": "Zurücksetzung erfolgreich, bitte melden Sie sich mit dem neuen Passwort am Plattform an",
+      "failed": "Reset fehlgeschlagen",
+      "title": "Passwort zurücksetzen",
+      "tokenRequired": "Bitte füllen Sie das Token aus.",
+      "tokenPlaceholder": "Token zurücksetzen",
+      "invalidLink": "Der Link ist ungültig. Bitte überprüfen Sie, ob der Link zum Zurücksetzen der E-Mail-Adresse korrekt ist.",
+      "confirm": "Zurücksetzen"
+    }
   },
   "admin": {
     "about": {

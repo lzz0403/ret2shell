@@ -93,7 +93,10 @@
     "emailVerifyBroken": "The verification link has issues. Please ensure the email link is correct.",
     "emailVerifyFailed": "Email Verification Failed",
     "forgot": {
-      "title": "Forgot Password"
+      "title": "Forgot Password",
+      "sendResetEmail": "Send recovery email",
+      "success": "Reset email has been sent, please check.",
+      "rateLimit": "The sending frequency exceeds the limit, please try again in 15 minutes."
     },
     "institute": {
       "none": "No affiliated organization"
@@ -201,7 +204,19 @@
     },
     "verifyingEmail": "Verifying your email",
     "resendVerifyEmailSuccess": "The verification email has been resent to your mailbox, please check it.",
-    "resendVerifyEmailFailed": "Email sending failed"
+    "resendVerifyEmailFailed": "Email sending failed",
+    "bind": {
+      "title": "Link Third-Party Accounts"
+    },
+    "reset": {
+      "success": "Reset successful, please log in to the platform using your new password.",
+      "failed": "Reset failed",
+      "title": "Reset Password",
+      "tokenRequired": "Please fill in the token.",
+      "tokenPlaceholder": "Reset Token",
+      "invalidLink": "The link is invalid, please check if the password reset link in your email is consistent.",
+      "confirm": "Reset"
+    }
   },
   "admin": {
     "about": {

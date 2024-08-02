@@ -28,7 +28,10 @@
     "emailVerifyBroken": "Hay un problema con el enlace de verificación, asegúrese de que el enlace del correo electrónico sea correcto.",
     "emailVerifyFailed": "Fallo en la verificación del correo electrónico",
     "forgot": {
-      "title": "olvidar la contraseña"
+      "title": "olvidar la contraseña",
+      "sendResetEmail": "Enviar correo de recuperación",
+      "success": "Correo de restablecimiento enviado, por favor revíselo.",
+      "rateLimit": "La frecuencia de envío ha superado el límite, por favor inténtelo de nuevo en 15 minutos."
     },
     "institute": {
       "none": "sin organización afiliada"
@@ -136,7 +139,19 @@
     },
     "verifyingEmail": "Validando tu correo electrónico",
     "resendVerifyEmailSuccess": "El correo de verificación ha sido reenviado a tu bandeja de entrada, por favor revísalo.",
-    "resendVerifyEmailFailed": "Fallo en el envío del correo"
+    "resendVerifyEmailFailed": "Fallo en el envío del correo",
+    "bind": {
+      "title": "Vincular cuentas de terceros"
+    },
+    "reset": {
+      "success": "Restablecimiento exitoso, por favor inicie sesión en la plataforma con su nueva contraseña",
+      "failed": "Reinicio fallido",
+      "title": "Restablecer la contraseña",
+      "tokenRequired": "por favor, rellena el token",
+      "tokenPlaceholder": "Restablecer Token",
+      "invalidLink": "El enlace no es válido, por favor verifique si el enlace de restablecimiento del correo electrónico es consistente",
+      "confirm": "Restablecer"
+    }
   },
   "admin": {
     "about": {

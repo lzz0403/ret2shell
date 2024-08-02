@@ -5,6 +5,8 @@ import xdu from "@assets/brands/xdu.svg";
 import xmu from "@assets/brands/xmu.svg";
 import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
 import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
+import { Title } from "@storage/header";
+import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import LoadingTips from "@widgets/loading-tips";
@@ -58,6 +60,7 @@ export default function () {
 
   return (
     <div class="flex-1 w-full flex flex-col space-y-8 items-center justify-center">
+      <Title title={`${t("account.bind.title")} - ${platformStore.config.name || t("platform.name")}`} />
       <div class="flex flex-row space-x-8 items-center">
         <LogoAnimate
           width={128}
