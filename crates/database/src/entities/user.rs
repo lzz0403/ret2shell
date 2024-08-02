@@ -265,6 +265,7 @@ where
     sql = sql.filter(Column::InstituteId.eq(institute_id));
   }
   let sql = filter_and_order(sql, order, filter)?;
+  let sql = sql.group_by(Column::Id);
   let paginator = sql.into_model().paginate(db, page_size);
   let total = paginator.num_items().await?;
   let users: Vec<Model> = paginator.fetch_page(page - 1).await?;
