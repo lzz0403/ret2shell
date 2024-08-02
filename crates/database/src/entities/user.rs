@@ -286,8 +286,8 @@ fn filter_and_order(
     cond = cond.add(Expr::expr(Func::lower(Expr::col(Column::Email))).like(&filter_like));
     cond = cond.add(Expr::expr(Func::lower(Expr::col(super::ip::Column::Address))).eq(&filter));
     sql = sql
-      .join(JoinType::InnerJoin, Relation::User2Ip.def())
-      .join(JoinType::InnerJoin, super::user2_ip::Relation::Ip.def())
+      .join(JoinType::LeftJoin, Relation::User2Ip.def())
+      .join(JoinType::LeftJoin, super::user2_ip::Relation::Ip.def())
       .filter(cond);
   };
   if let Some(order) = order {
