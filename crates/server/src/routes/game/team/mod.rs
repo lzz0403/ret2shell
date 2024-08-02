@@ -56,17 +56,21 @@ struct TeamInfoQuery {
 }
 
 async fn get_team_info(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Extension(team): Extension<team::Model>, Extension(token): Extension<Token>,
   Query(query): Query<TeamInfoQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if query.ex.unwrap_or(false) {
-    Ok(Json(team.into()))
+  let result = if query.ex.unwrap_or(false) {
+    team.into()
   } else {
-    Ok(Json(
-      team::get_ex(&db.conn, team.id)
-        .await?
-        .ok_or(ResponseError::NotFound("team".to_string()))?,
-    ))
+    team::get_ex(&db.conn, team.id)
+      .await?
+      .ok_or(ResponseError::NotFound("team".to_string()))?
+  };
+  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+    Ok(Json(result))
+  } else {
+    Ok(Json(result.desensitize()))
   }
 }
 
