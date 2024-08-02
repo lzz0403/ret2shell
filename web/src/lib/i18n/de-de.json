@@ -12,7 +12,8 @@
       "null": "Keine temporäre Identifikationsnummer",
       "refresh": "Generieren / Aktualisieren",
       "title": "Temporäre Benutzerkennung",
-      "warn": "Dieser Bestätigungscode dient dazu, deine vollständigen Kontoinformationen an eine Drittpartei zu übermitteln, einschließlich deiner E-Mail-Adresse, Organisationszertifizierungsinformationen usw. Der Veranstalter des Wettbewerbs könnte diesen Bestätigungscode verwenden, um deine Identität zu bestätigen. Bitte geben Sie diesen Bestätigungscode nicht ohne bekannten Zweck willkürlich weiter!"
+      "warn": "Dieser Bestätigungscode dient dazu, deine vollständigen Kontoinformationen an eine Drittpartei zu übermitteln, einschließlich deiner E-Mail-Adresse, Organisationszertifizierungsinformationen usw. Der Veranstalter des Wettbewerbs könnte diesen Bestätigungscode verwenden, um deine Identität zu bestätigen. Bitte geben Sie diesen Bestätigungscode nicht ohne bekannten Zweck willkürlich weiter!",
+      "verify": "Diese Funktion steht nur zur Verfügung, nachdem du die E-Mail-Bestätigung abgeschlossen hast."
     },
     "deleteAccountFailed": "Konto-Deaktivierung fehlgeschlagen",
     "deleteAccountTips1": "Bitte beachten Sie, dass Ihr Konto nicht wirklich gelöscht wurde, sondern in einen deaktivierten und nicht wiederherstellbaren Zustand versetzt wurde. Folgende Maßnahmen werden durchgeführt:",
@@ -151,7 +152,9 @@
       "tokenPlaceholder": "Token zurücksetzen",
       "invalidLink": "Der Link ist ungültig. Bitte überprüfen Sie, ob der Link zum Zurücksetzen der E-Mail-Adresse korrekt ist.",
       "confirm": "Zurücksetzen"
-    }
+    },
+    "verifyEmail": "E-Mail-Verifizierung",
+    "emailNotVerified": "Deine Konto-E-Mail wurde noch nicht verifiziert, Funktionen sind eingeschränkt."
   },
   "admin": {
     "about": {
@@ -417,7 +420,8 @@
     "uploadFailed": "Datei-Upload fehlgeschlagen",
     "download": "Herunterladen",
     "confirm": "Bestätigen",
-    "deleteSuccess": "Löschung erfolgreich"
+    "deleteSuccess": "Löschung erfolgreich",
+    "goto": "Gehen"
   },
   "game": {
     "accessPolicy": {

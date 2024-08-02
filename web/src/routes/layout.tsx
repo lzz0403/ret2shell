@@ -22,7 +22,7 @@ import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
-import { type JSX, Match, Show, Switch, createSignal } from "solid-js";
+import { type JSX, Match, Show, Switch, createSignal, onMount } from "solid-js";
 import { Transition } from "solid-transition-group";
 import DiyBox, { DiyBoxContent } from "./_blocks/diy-box";
 import InstanceBox, { InstanceBoxContent } from "./_blocks/instance-box";
@@ -416,6 +416,18 @@ export default function (props: { children?: JSX.Element }) {
   const location = useLocation();
   const inDocs = () => location.pathname.startsWith("/docs");
   setupTitleResolver();
+  function checkEmailVerification() {
+    if (accountStore.token && !accountStore.permissions.includes(Permission.Verified)) {
+      addToast({
+        level: "warning",
+        description: t("account.emailNotVerified")!,
+        accept: () => {
+          navigate("/account/info");
+        },
+        acceptLabel: t("form.goto"),
+      });
+    }
+  }
   getPlatformInfo()
     .then((res) => {
       setPlatformStore({
@@ -520,6 +532,9 @@ export default function (props: { children?: JSX.Element }) {
         }
       });
   }
+  onMount(() => {
+    checkEmailVerification();
+  });
 
   return (
     <>

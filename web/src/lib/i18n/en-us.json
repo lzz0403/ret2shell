@@ -77,7 +77,8 @@
       "null": "No temporary identification code",
       "refresh": "Generate / Refresh",
       "title": "Temporary User Identification Code",
-      "warn": "This verification code is used to provide your complete account information, including your email and organization certification information, to third-party services. The competition organizers may use this verification code to confirm your identity. Do not provide this verification code randomly for unknown purposes!"
+      "warn": "This verification code is used to provide your complete account information, including your email and organization certification information, to third-party services. The competition organizers may use this verification code to confirm your identity. Do not provide this verification code randomly for unknown purposes!",
+      "verify": "This feature is only available after you have verified your email."
     },
     "deleteAccountFailed": "Account Deactivation Failed",
     "deleteAccountTips1": "Please be clear that your account has not been truly deleted, but has been deactivated and cannot be restored. The following actions will be taken:",
@@ -216,7 +217,9 @@
       "tokenPlaceholder": "Reset Token",
       "invalidLink": "The link is invalid, please check if the password reset link in your email is consistent.",
       "confirm": "Reset"
-    }
+    },
+    "verifyEmail": "Verify Email",
+    "emailNotVerified": "Your account email has not been verified, and certain features are restricted."
   },
   "admin": {
     "about": {
@@ -482,7 +485,8 @@
     "uploadFailed": "File upload failed",
     "download": "Download",
     "confirm": "Confirm",
-    "deleteSuccess": "Deletion successful"
+    "deleteSuccess": "Deletion successful",
+    "goto": "Go"
   },
   "game": {
     "accessPolicy": {

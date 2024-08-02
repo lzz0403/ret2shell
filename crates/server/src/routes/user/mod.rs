@@ -2,9 +2,10 @@ use axum::{
   extract::{Query, State},
   middleware,
   response::IntoResponse,
-  routing::get,
+  routing::{get, patch},
   Extension, Json, Router,
 };
+use r2s_cache::Cache;
 use r2s_database::{
   team,
   user::{self, Permission},
@@ -13,7 +14,10 @@ use r2s_migrator::Database;
 use serde::Deserialize;
 
 use crate::{
-  middleware::{auth::Token, data},
+  middleware::{
+    auth::{self, Token},
+    data,
+  },
   traits::{GlobalState, ResponseError},
 };
 
@@ -22,6 +26,10 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     .nest(
       "/:user",
       Router::new()
+        .route("/", patch(update_user).delete(delete_user))
+        .route_layer(middleware::from_fn(auth::permission_required_all!(
+          Permission::User
+        )))
         .route("/", get(get_user))
         .route("/team", get(get_teams))
         .route_layer(middleware::from_fn_with_state(
@@ -87,4 +95,49 @@ async fn get_teams(
       .map(|t| t.desensitize())
       .collect::<Vec<_>>(),
   ))
+}
+
+async fn logout_user(cache: &Cache, user_id: i64) -> Result<(), ResponseError> {
+  while let Some(token) = cache
+    .at("token")
+    .pop::<String>(format!("user-{user_id}"))
+    .await?
+  {
+    cache.at("token").del(&token).await.ok();
+  }
+  cache.del(format!("user-{user_id}")).await.ok();
+  Ok(())
+}
+
+async fn update_user(
+  State(ref db): State<Database>, State(ref cache): State<Cache>,
+  Extension(user): Extension<user::Model>, Json(data): Json<user::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let user = user::update(
+    &db.conn,
+    user::Model {
+      account: data.account,
+      nickname: data.nickname,
+      email: data.email,
+      description: data.description,
+      avatar: data.avatar,
+      institute_id: data.institute_id,
+      permissions: data.permissions,
+      hidden: data.hidden,
+      banned: data.banned,
+      ..user
+    },
+  )
+  .await?;
+  logout_user(cache, user.id).await?;
+  Ok(Json(user))
+}
+
+async fn delete_user(
+  State(ref db): State<Database>, State(ref cache): State<Cache>,
+  Extension(user): Extension<user::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  user::delete(&db.conn, user.id).await?;
+  logout_user(cache, user.id).await?;
+  Ok(Json(user))
 }

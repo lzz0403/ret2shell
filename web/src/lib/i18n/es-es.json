@@ -12,7 +12,8 @@
       "null": "sin código de identificación temporal",
       "refresh": "Generar / Refrescar",
       "title": "Código de identificación temporal de usuario",
-      "warn": "Este código de verificación se utiliza para proporcionar a un servicio de terceros tu información completa de la cuenta, incluyendo tu correo electrónico, información de certificación organizativa, etc. El organizador del concurso podría utilizar este código de verificación para confirmar tu identidad. ¡No proporciones este código de verificación al azar en usos desconocidos!"
+      "warn": "Este código de verificación se utiliza para proporcionar a un servicio de terceros tu información completa de la cuenta, incluyendo tu correo electrónico, información de certificación organizativa, etc. El organizador del concurso podría utilizar este código de verificación para confirmar tu identidad. ¡No proporciones este código de verificación al azar en usos desconocidos!",
+      "verify": "Esta función solo está disponible después de que hayas verificado tu correo electrónico."
     },
     "deleteAccountFailed": "Fallo al desactivar la cuenta",
     "deleteAccountTips1": "Por favor, aclara que tu cuenta no ha sido realmente eliminada, sino que ha sido puesta en estado de desactivación y no puede ser restaurada. Se llevarán a cabo las siguientes acciones:",
@@ -151,7 +152,9 @@
       "tokenPlaceholder": "Restablecer Token",
       "invalidLink": "El enlace no es válido, por favor verifique si el enlace de restablecimiento del correo electrónico es consistente",
       "confirm": "Restablecer"
-    }
+    },
+    "verifyEmail": "Verificar correo electrónico",
+    "emailNotVerified": "Tu cuenta de correo electrónico aún no ha sido verificada, las funciones están limitadas."
   },
   "admin": {
     "about": {
@@ -417,7 +420,8 @@
     "uploadFailed": "Error al subir el archivo",
     "download": "Descargar",
     "confirm": "Confirmar",
-    "deleteSuccess": "Eliminación exitosa"
+    "deleteSuccess": "Eliminación exitosa",
+    "goto": "前往"
   },
   "game": {
     "accessPolicy": {

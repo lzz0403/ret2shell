@@ -12,7 +12,8 @@
       "null": "Pas de code d'identification temporaire",
       "refresh": "Générer / Actualiser",
       "title": "Code d'identification utilisateur temporaire",
-      "warn": "Ce code de vérification est utilisé pour fournir à un service tiers des informations complètes sur votre compte, y compris votre adresse e-mail, les informations d'authentification de votre organisation, etc. L'organisateur du concours peut utiliser ce code de vérification pour confirmer votre identité. Ne fournissez pas ce code de vérification n'importe comment sans connaître son utilisation exacte !"
+      "warn": "Ce code de vérification est utilisé pour fournir à un service tiers des informations complètes sur votre compte, y compris votre adresse e-mail, les informations d'authentification de votre organisation, etc. L'organisateur du concours peut utiliser ce code de vérification pour confirmer votre identité. Ne fournissez pas ce code de vérification n'importe comment sans connaître son utilisation exacte !",
+      "verify": "Cette fonctionnalité n'est disponible que lorsque vous avez validé votre adresse e-mail."
     },
     "deleteAccountFailed": "Échec de la désactivation du compte",
     "deleteAccountTips1": "Veuillez noter que votre compte n'a pas été réellement supprimé, mais qu'il a été désactivé et ne peut être restauré. Les actions suivantes seront effectuées :",
@@ -151,7 +152,9 @@
       "tokenPlaceholder": "Réinitialiser le Token",
       "invalidLink": "Le lien est invalide, veuillez vérifier si le lien de réinitialisation du mot de passe est identique.",
       "confirm": "Réinitialiser"
-    }
+    },
+    "verifyEmail": "Vérifier l'adresse e-mail",
+    "emailNotVerified": "Votre adresse e-mail de compte n'a pas encore été vérifiée, les fonctionnalités sont limitées."
   },
   "admin": {
     "about": {
@@ -417,7 +420,8 @@
     "uploadFailed": "Le téléchargement du fichier a échoué.",
     "download": "Télécharger",
     "confirm": "Confirmation",
-    "deleteSuccess": "Suppression réussie"
+    "deleteSuccess": "Suppression réussie",
+    "goto": "Aller"
   },
   "game": {
     "accessPolicy": {

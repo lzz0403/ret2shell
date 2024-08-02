@@ -190,7 +190,6 @@ export default function () {
                     class="hidden"
                     id={field.name}
                     {...props}
-                    value={field.value}
                     ref={avatarInput!}
                     onChange={handleSelectedAvatar}
                   />

@@ -1,4 +1,6 @@
 import { generateAccountCode, getAccountCode } from "@api/account";
+import { Permission } from "@models/user";
+import { A } from "@solidjs/router";
 import { accountStore, setAccountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -19,6 +21,7 @@ export default function UserCodeDialog() {
       .catch(() => setCode(null))
       .finally(() => setLoadingCode(false));
   }
+  const verified = () => accountStore.permissions.includes(Permission.Verified);
   function refreshCode() {
     if (!accountStore.warnedCodeGeneration) {
       setAccountStore({ warnedCodeGeneration: true });
@@ -62,6 +65,16 @@ export default function UserCodeDialog() {
       <div class="flex flex-col w-64 space-y-2">
         <div class="w-full min-h-36 flex flex-col items-center justify-center space-y-2">
           <Switch>
+            <Match when={!verified()}>
+              <span class="icon-[fluent--person-link-20-regular] w-10 h-10 flex-shrink-0 text-warning" />
+              <span class="text-warning inline-block align-middle">
+                <span>{t("account.code.verify")}</span>
+              </span>
+              <A href="/account/info" class="flex items-center space-x-2">
+                <span class="icon-[fluent--open-20-regular] w-5 h-5" />
+                <span>{t("account.verifyEmail")}</span>
+              </A>
+            </Match>
             <Match when={!accountStore.warnedCodeGeneration}>
               <span class="icon-[fluent--warning-20-regular] w-10 h-10 flex-shrink-0 text-warning" />
               <span class="text-warning">{t("account.code.warn")}</span>
@@ -84,7 +97,7 @@ export default function UserCodeDialog() {
           title={t("account.code.refresh")}
           onClick={refreshCode}
           loading={loadingCode()}
-          disabled={loadingCode()}
+          disabled={loadingCode() || !verified()}
         >
           <Switch>
             <Match when={!accountStore.warnedCodeGeneration}>

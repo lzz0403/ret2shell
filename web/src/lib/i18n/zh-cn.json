@@ -666,7 +666,8 @@
       "null": "没有临时识别码",
       "title": "临时用户识别码",
       "warn": "此验证码用于向第三方服务提供你的完整账户信息，包括你的邮箱、组织认证信息等，比赛主办方可能会使用此验证码来确认你的身份。请勿在未知用途的情况下随意提供此验证码！",
-      "confirmWarn": "我已知晓，继续"
+      "confirmWarn": "我已知晓，继续",
+      "verify": "此功能仅在你通过邮箱验证之后才可以使用"
     },
     "resendVerifyEmail": "重新发送验证邮件",
     "verifyingEmail": "正在验证你的邮箱",
@@ -692,7 +693,9 @@
       "tokenPlaceholder": "重置 Token",
       "invalidLink": "链接无效，请检查邮箱重置链接是否一致",
       "confirm": "重置"
-    }
+    },
+    "verifyEmail": "验证邮箱",
+    "emailNotVerified": "你的账户邮箱尚未通过验证，功能受限"
   },
   "instance": {
     "disconnected": "WSRX 未连接",
@@ -757,7 +760,8 @@
     "uploadFailed": "文件上传失败",
     "download": "下载",
     "confirm": "确认",
-    "deleteSuccess": "删除成功"
+    "deleteSuccess": "删除成功",
+    "goto": "前往"
   },
   "docs": {
     "titleTips": "回归终端 - 开发者文档",
