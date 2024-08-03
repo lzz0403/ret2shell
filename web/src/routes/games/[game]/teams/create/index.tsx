@@ -162,6 +162,7 @@ export default function () {
                   <Dialog
                     justify="start"
                     ghost
+                    stretched
                     level={field.error ? "error" : null}
                     btnContent={
                       <>
@@ -175,7 +176,7 @@ export default function () {
                       </>
                     }
                   >
-                    <div class="w-[calc(100vw-3rem)] max-w-5xl max-h-[calc(100vh-3rem)] overflow-scroll">
+                    <div class="w-full">
                       <h2 class="text-center text-3xl font-bold p-4 pb-0">{t("game.team.create.rulesTitle")}</h2>
                       <Article class="self-center" content={content() || ""} noExtraPaddings />
                     </div>
@@ -211,10 +212,12 @@ export default function () {
               >
                 {gameParticipateState()[0] ? t("form.create") : gameParticipateState()[1]}
               </Button>
-              <Link href={`/games/${gameStore.current?.id}/teams/join`}>
-                <span>{t("game.team.join.title")}</span>
-                <span class="icon-[fluent--arrow-right-20-regular] w-5 h-5" />
-              </Link>
+              <Show when={(gameStore.current?.team_size || 0) > 1}>
+                <Link href={`/games/${gameStore.current?.id}/teams/join`}>
+                  <span>{t("game.team.join.title")}</span>
+                  <span class="icon-[fluent--arrow-right-20-regular] w-5 h-5" />
+                </Link>
+              </Show>
             </div>
           </Form>
         </Card>

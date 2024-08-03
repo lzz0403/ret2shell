@@ -14,6 +14,7 @@ import Divider from "@widgets/divider";
 import Editor from "@widgets/editor";
 import Input from "@widgets/input";
 import Link from "@widgets/link";
+import Tag from "@widgets/tag";
 import TimePicker from "@widgets/timepicker";
 import type { HTTPError } from "ky";
 import { DateTime, type MonthNumbers } from "luxon";
@@ -72,6 +73,15 @@ function EventDetail(props: {
             <span>{t("form.delete")}</span>
           </button>
         </Show>
+      </div>
+      <div class="flex flex-row space-x-2 self-center">
+        <Tag level="success">
+          <span>{props.event.start_at.toFormat("yyyy-MM-dd HH:mm")}</span>
+        </Tag>
+        <span class="opacity-60">=&gt;</span>
+        <Tag level="error">
+          <span>{props.event.end_at.toFormat("yyyy-MM-dd HH:mm")}</span>
+        </Tag>
       </div>
       <Article content={props.event.intro || ""} extra headingAnchors />
     </>
@@ -321,7 +331,7 @@ export default function () {
   function getEvents(startTime: DateTime, endTime: DateTime) {
     getCalendarList(startTime, endTime)
       .then((resp) => {
-        setEvents(resp);
+        setEvents(resp.sort((a, b) => a.start_at.toMillis() - b.start_at.toMillis()));
       })
       .catch((err: HTTPError) => {
         void err.response.text().then((resp) => {
@@ -418,8 +428,8 @@ export default function () {
   }
   return (
     <div class="w-full h-full overflow-hidden flex flex-col lg:flex-row">
-      <div class="flex-none flex flex-col p-3 lg:p-6 backdrop-blur sticky top-0 border-r border-r-layer-content/10">
-        <Card contentClass="p-2 flex flex-col space-y-2">
+      <div class="flex-none flex flex-col py-3 lg:py-6 w-1/4 min-w-[24rem] max-w-[32rem] backdrop-blur sticky top-0 border-r border-r-layer-content/10">
+        <Card contentClass="p-2 flex flex-col space-y-2" class="mx-3 lg:mx-6">
           <div class="flex flex-row space-x-2">
             <Button
               class="hidden md:inline-flex"
@@ -538,53 +548,66 @@ export default function () {
             ))}
           </div>
         </Card>
-        <Divider class="mt-3 mb-1 lg:mt-6 lg:mb-4" />
-        <For
-          each={events()}
-          fallback={
-            <div class="mt-2 flex-1 flex flex-row items-center justify-center space-x-2 opacity-60 p-3">
-              <span class="icon-[fluent--person-walking-20-regular] w-5 h-5" />
-              <span>{t("calendar.noGames")}</span>
-            </div>
-          }
+        <Divider class="mt-3 mb-1 lg:mt-6 lg:mb-4 mx-3 lg:mx-6" />
+        <OverlayScrollbarsComponent
+          options={{
+            scrollbars: {
+              theme: `os-theme-${fullTheme()}`,
+              autoHide: "scroll",
+            },
+          }}
+          class="flex-1 relative"
+          defer
         >
-          {(item) => (
-            <Link
-              ghost
-              justify="start"
-              class={`mt-2 ${item.id === selectedEventId() ? "btn-active" : ""}`.trim()}
-              href={`/?event=${item.id}`}
-              onClick={() => {
-                setSelectedDay(null);
-                setInEdit(false);
-              }}
-              disabled={selectedEventId() === item.id && selectedEvent()?.id !== item.id}
+          <div class="p-3 lg:p-6 flex flex-col">
+            <For
+              each={events()}
+              fallback={
+                <div class="mt-2 flex-1 flex flex-row items-center justify-center space-x-2 opacity-60 p-3">
+                  <span class="icon-[fluent--person-walking-20-regular] w-5 h-5" />
+                  <span>{t("calendar.noGames")}</span>
+                </div>
+              }
             >
-              {/* icon-[fluent--flag-20-regular] icon-[fluent--flag-20-filled] */}
-              <Show
-                when={selectedEventId() === item.id && selectedEvent()?.id !== item.id}
-                fallback={
-                  // text-primary text-base-content
-                  <span
-                    class={`icon-[fluent--flag-20-${
-                      selectedDayMappedEvents().find((s) => s.id === item.id) || selectedEventId() === item.id
-                        ? "filled"
-                        : "regular"
-                    }] w-5 h-5 text-${
-                      selectedDayMappedEvents().find((s) => s.id === item.id) || selectedEventId() === item.id
-                        ? "primary"
-                        : "layer-content"
-                    }`}
-                  />
-                }
-              >
-                <Spin width={20} height={20} />
-              </Show>
-              <span class="flex-1 text-start">{item.name}</span>
-              <span class="opacity-60">{item.start_at.toFormat("MM-dd")}</span>
-            </Link>
-          )}
-        </For>
+              {(item) => (
+                <Link
+                  ghost
+                  justify="start"
+                  class={`mt-2 ${item.id === selectedEventId() ? "btn-active" : ""}`.trim()}
+                  href={`/?event=${item.id}`}
+                  onClick={() => {
+                    setSelectedDay(null);
+                    setInEdit(false);
+                  }}
+                  disabled={selectedEventId() === item.id && selectedEvent()?.id !== item.id}
+                >
+                  {/* icon-[fluent--flag-20-regular] icon-[fluent--flag-20-filled] */}
+                  <Show
+                    when={selectedEventId() === item.id && selectedEvent()?.id !== item.id}
+                    fallback={
+                      // text-primary text-base-content
+                      <span
+                        class={`icon-[fluent--flag-20-${
+                          selectedDayMappedEvents().find((s) => s.id === item.id) || selectedEventId() === item.id
+                            ? "filled"
+                            : "regular"
+                        }] w-5 h-5 text-${
+                          selectedDayMappedEvents().find((s) => s.id === item.id) || selectedEventId() === item.id
+                            ? "primary"
+                            : "layer-content"
+                        }`}
+                      />
+                    }
+                  >
+                    <Spin width={20} height={20} />
+                  </Show>
+                  <span class="flex-1 text-start truncate">{item.name}</span>
+                  <span class="opacity-60">{item.start_at.toFormat("MM-dd")}</span>
+                </Link>
+              )}
+            </For>
+          </div>
+        </OverlayScrollbarsComponent>
       </div>
       <OverlayScrollbarsComponent
         options={{
