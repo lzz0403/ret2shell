@@ -22,7 +22,7 @@ import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
-import { type JSX, Match, Show, Switch, createSignal, onMount } from "solid-js";
+import { type JSX, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
 import { Transition } from "solid-transition-group";
 import DiyBox, { DiyBoxContent } from "./_blocks/diy-box";
 import InstanceBox, { InstanceBoxContent } from "./_blocks/instance-box";
@@ -422,7 +422,7 @@ export default function (props: { children?: JSX.Element }) {
         level: "warning",
         description: t("account.emailNotVerified")!,
         accept: () => {
-          navigate("/account/info");
+          navigate("/account/settings");
         },
         acceptLabel: t("form.goto"),
       });
@@ -532,8 +532,15 @@ export default function (props: { children?: JSX.Element }) {
         }
       });
   }
-  onMount(() => {
-    checkEmailVerification();
+
+  createEffect(() => {
+    if (accountStore.token) {
+      untrack(() => {
+        setTimeout(() => {
+          checkEmailVerification();
+        }, 1000);
+      });
+    }
   });
 
   return (

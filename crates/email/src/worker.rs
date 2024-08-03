@@ -15,21 +15,17 @@ use super::traits::{EmailCtx, EmailError, EmailRequest};
 
 fn construct_email(
   email: &EmailCtx, sender_name: impl AsRef<str>, sender_email: impl AsRef<str>,
-) -> Message {
-  Message::builder()
-    .from(
-      format!("{} <{}>", sender_name.as_ref(), sender_email.as_ref())
-        .parse()
-        .unwrap(),
-    )
-    .to(format!("{} <{}>", email.name, email.email).parse().unwrap())
+) -> Result<Message, EmailError> {
+  let envelope = Message::builder()
+    .from(format!("{} <{}>", sender_name.as_ref(), sender_email.as_ref()).parse()?)
+    .to(format!("{} <{}>", email.name, email.email).parse()?)
     .subject(&email.subject)
     .singlepart(
       SinglePart::builder()
         .header(header::ContentType::TEXT_HTML)
         .body(String::from(&email.content)),
-    )
-    .unwrap()
+    )?;
+  Ok(envelope)
 }
 
 async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(), EmailError> {
@@ -52,7 +48,7 @@ async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(),
   .credentials(smtp_credentials)
   .build();
   debug!("mailer: {:?}", mailer);
-  let email = construct_email(email, &config.sender, &config.username);
+  let email = construct_email(email, &config.sender, &config.username)?;
   debug!("email: {:?}", email);
   mailer.send(email).await?;
   debug!("email sent");

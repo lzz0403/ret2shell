@@ -26,4 +26,8 @@ pub enum EmailError {
   SerdeError(#[from] serde_json::Error),
   #[error("utf8 error: {0}")]
   Utf8Error(#[from] std::string::FromUtf8Error),
+  #[error("lettre error: {0}")]
+  LettreError(#[from] lettre::error::Error),
+  #[error("address error: {0}")]
+  AddressError(#[from] lettre::address::AddressError),
 }
