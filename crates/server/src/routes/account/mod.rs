@@ -276,7 +276,7 @@ enum EmailType {
 }
 
 async fn send_email(
-  cache: &Cache, queue: &Queue, config: &config::Model, nickname: &str, email: &str,
+  cache: &Cache, queue: &Queue, config: &config::Model, account: &str, email: &str,
   email_type: EmailType,
 ) -> Result<(), ResponseError> {
   let email_config = match config.email.clone() {
@@ -332,10 +332,10 @@ async fn send_email(
 
   let email_req = EmailRequest {
     email: EmailCtx {
-      name: nickname.to_owned(),
+      name: account.to_owned(),
       email: email.to_owned(),
       subject,
-      content: body.replace("%LINK%", &link).replace("%USER%", nickname),
+      content: body.replace("%LINK%", &link).replace("%USER%", account),
     },
     // unwrap is safe here because we have checked the config in the previous if statement
     config: config.email.as_ref().unwrap().to_owned(),
@@ -420,7 +420,7 @@ async fn register(
     &cache,
     queue,
     &config,
-    &user.nickname,
+    &user.account,
     &email,
     EmailType::Verify,
   )
@@ -511,7 +511,7 @@ async fn resend_verify_email(
     &cache,
     queue,
     &config,
-    &user.nickname,
+    &user.account,
     &email,
     EmailType::Verify,
   )
@@ -551,7 +551,7 @@ async fn forgot_password(
     &cache,
     queue,
     &config,
-    &user.nickname,
+    &user.account,
     &body.email,
     EmailType::Reset,
   )
@@ -706,7 +706,7 @@ async fn change_profile(
       cache,
       queue,
       &config,
-      &body.nickname,
+      &body.account,
       &email,
       EmailType::Verify,
     )
