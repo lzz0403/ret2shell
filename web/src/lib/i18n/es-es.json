@@ -486,7 +486,10 @@
       "teams": {
         "title": "equipo participante"
       },
-      "title": "administración"
+      "title": "administración",
+      "organize": {
+        "title": "Gestión de organización"
+      }
     },
     "adminCanNotTakePartIn": "El administrador no puede participar en la competición.",
     "adminMode": "Modo de administrador",

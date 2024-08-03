@@ -70,6 +70,18 @@ export default function SideBar() {
           activeMatch="exact"
           class="w-full"
           ghost
+          href={`/games/${gameStore.current?.id}/admin/organize`}
+          justify="start"
+        >
+          <span class="icon-[fluent--person-passkey-20-regular] w-5 h-5" />
+          <span>{t("game.admin.organize.title")}</span>
+        </Link>
+      </li>
+      <li class="w-full">
+        <Link
+          activeMatch="exact"
+          class="w-full"
+          ghost
           href={`/games/${gameStore.current?.id}/admin/events`}
           justify="start"
         >

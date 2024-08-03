@@ -1,10 +1,9 @@
 import { createNotification, deleteNotification, getNotifications } from "@api/notification";
 import type { Notification } from "@models/notification";
-import { Permission } from "@models/user";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { A } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import { gameStore } from "@storage/game";
+import { gameStore, isGameAdmin } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
@@ -120,13 +119,7 @@ export default function () {
         defer
       >
         <div class="flex flex-col space-y-2 p-3 lg:p-6">
-          <Show
-            when={
-              accountStore.id &&
-              gameStore.current?.admins.includes(accountStore.id) &&
-              accountStore.permissions.includes(Permission.Game)
-            }
-          >
+          <Show when={isGameAdmin()}>
             <Form onSubmit={onSubmit} class="flex flex-col space-y-2">
               <Show when={createFormExpanded()}>
                 <Field name="title" validate={[required(t("game.notification.titleRequired")!)]}>
@@ -214,13 +207,7 @@ export default function () {
                     <A class="flex-shrink-0 flex items-center" href={`/users/${notification.publisher_id}`}>
                       <span class="icon-[fluent--person-20-regular] w-5 h-5" />
                     </A>
-                    <Show
-                      when={
-                        accountStore.id &&
-                        gameStore.current?.admins.includes(accountStore.id) &&
-                        accountStore.permissions.includes(Permission.Game)
-                      }
-                    >
+                    <Show when={isGameAdmin()}>
                       <button
                         class="flex-shrink-0 flex items-center"
                         type="button"

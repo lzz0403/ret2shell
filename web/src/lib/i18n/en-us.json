@@ -551,6 +551,9 @@
       "title": "Management",
       "answer": {
         "notAccessableWhenInGame": "Solutions cannot be released before the end of the game."
+      },
+      "organize": {
+        "title": "Organization Management"
       }
     },
     "adminCanNotTakePartIn": "Administrators are not allowed to participate.",

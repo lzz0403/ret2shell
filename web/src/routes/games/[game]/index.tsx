@@ -6,7 +6,6 @@ import { randomTips } from "@lib/utils/loading-tips";
 import { mediaPath } from "@lib/utils/media";
 import type { Article as ArticleModel } from "@models/article";
 import { TeamState, stringifyState } from "@models/team";
-import { Permission } from "@models/user";
 import { accountStore, refreshInstitutes } from "@storage/account";
 import {
   canParticipate,
@@ -398,26 +397,12 @@ export default function () {
             </Card>
           </Show>
           <div class="flex flex-row space-x-2 print:hidden">
-            <Show
-              when={
-                accountStore.id &&
-                ((gameStore.current?.admins.includes(accountStore.id) &&
-                  accountStore.permissions.includes(Permission.Game)) ||
-                  accountStore.permissions.includes(Permission.Host))
-              }
-            >
+            <Show when={isGameAdmin()}>
               <Link href={`/games/${gameStore.current?.id}?edit=true`} square level="primary">
                 <span class="icon-[fluent--edit-20-regular] w-5 h-5" />
               </Link>
             </Show>
-            <Show
-              when={
-                accountStore.id &&
-                ((gameStore.current?.admins.includes(accountStore.id) &&
-                  accountStore.permissions.includes(Permission.Game)) ||
-                  accountStore.permissions.includes(Permission.Host))
-              }
-            >
+            <Show when={isGameAdmin()}>
               <Link href={`/games/${gameStore.current?.id}/admin`} square level="primary">
                 <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
               </Link>
@@ -447,13 +432,7 @@ export default function () {
                   <span class="icon-[fluent--chevron-double-right-20-regular] w-5 h-5" />
                 </Link>
               </Match>
-              <Match
-                when={
-                  accountStore.id &&
-                  accountStore.permissions.includes(Permission.Game) &&
-                  gameStore.current?.admins.includes(accountStore.id)
-                }
-              >
+              <Match when={isGameAdmin()}>
                 <Link
                   level="success"
                   class="flex-1"

@@ -222,6 +222,9 @@
       },
       "answer": {
         "notAccessableWhenInGame": "比赛结束前无法发布题解"
+      },
+      "organize": {
+        "title": "组织管理"
       }
     },
     "exit": "退出",

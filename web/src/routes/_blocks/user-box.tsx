@@ -1,10 +1,9 @@
 import { logout } from "@api/account";
 import { mediaPath } from "@lib/utils/media";
 import { HostType } from "@models/game";
-import { Permission } from "@models/user";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, refreshUser, resetUser } from "@storage/account";
-import { canParticipate, gameParticipateState, gameStore } from "@storage/game";
+import { canParticipate, gameParticipateState, gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
 import { clearToasts } from "@storage/toast";
 import Avatar from "@widgets/avatar";
@@ -101,13 +100,7 @@ export default function UserBox() {
           <Show when={gameStore.current && gameStore.current.host_type === HostType.CTFGame}>
             <Card contentClass="p-2 flex flex-row space-x-2">
               <Switch>
-                <Match
-                  when={
-                    accountStore.permissions.includes(Permission.Host) ||
-                    (accountStore.permissions.includes(Permission.Game) &&
-                      gameStore.current?.admins.includes(accountStore.id!))
-                  }
-                >
+                <Match when={isGameAdmin()}>
                   <Button
                     size="sm"
                     justify="start"

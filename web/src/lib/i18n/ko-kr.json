@@ -486,7 +486,10 @@
       "teams": {
         "title": "참가팀"
       },
-      "title": "관리"
+      "title": "관리",
+      "organize": {
+        "title": "조직 관리"
+      }
     },
     "adminCanNotTakePartIn": "관리자는 참가할 수 없습니다.",
     "adminMode": "관리자 모드",

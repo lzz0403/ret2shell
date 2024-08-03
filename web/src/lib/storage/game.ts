@@ -85,11 +85,7 @@ export const canParticipate = () => {
   if (gameStore.current?.end_at && gameStore.current.end_at < DateTime.now()) {
     return false;
   }
-  if (
-    accountStore.id &&
-    accountStore.permissions.includes(Permission.Game) &&
-    gameStore.current?.admins.includes(accountStore.id)
-  ) {
+  if (isGameAdmin()) {
     return false;
   }
   if (accountStore.permissions.includes(Permission.Host)) {
@@ -109,7 +105,7 @@ export const canParticipate = () => {
 
 export function canAccessChallenges(): [boolean, string] {
   if (!accountStore.id) return [false, t("game.team.loginThenBack")!];
-  if (gameStore.current?.admins.includes(accountStore.id) && accountStore.permissions.includes(Permission.Game)) {
+  if (isGameAdmin()) {
     return [true, ""];
   }
   if (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()) {

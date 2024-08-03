@@ -486,6 +486,9 @@
       "title": "管理",
       "answer": {
         "notAccessableWhenInGame": "試合終了前に問題解説を公開できません"
+      },
+      "organize": {
+        "title": "組織管理"
       }
     },
     "adminCanNotTakePartIn": "管理者は参加できません。",

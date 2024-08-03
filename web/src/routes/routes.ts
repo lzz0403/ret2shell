@@ -169,6 +169,10 @@ export const routes = {
                   component: lazy(() => import("./games/[game]/admin/edit/index")),
                 },
                 {
+                  path: "/organize",
+                  component: lazy(() => import("./games/[game]/admin/organize/index")),
+                },
+                {
                   path: "/hammers",
                   component: lazy(() => import("./games/[game]/admin/hammers/index")),
                 },
