@@ -23,14 +23,14 @@ export default function (props: { user: User | null; loading?: boolean }) {
         <div class="flex flex-col min-h-full space-y-2 p-3 lg:p-6">
           <div class="flex flex-row space-x-4 lg:space-x-6 p-2 lg:p-4 items-center">
             <Avatar
-              class="w-12 h-12"
+              class="w-12 h-12 flex-shrink-0"
               src={(props.user?.avatar && mediaPath(props.user?.avatar)) || undefined}
               fallback={props.user?.nickname}
               loading={props.loading}
             />
-            <div class="flex-1 flex flex-col space-y-1 justify-center">
-              <h2 class="font-bold">{props.user?.nickname}</h2>
-              <p class="opacity-60">
+            <div class="flex-1 flex flex-col space-y-1 justify-center overflow-hidden">
+              <h2 class="font-bold w-full text-start truncate">{props.user?.nickname}</h2>
+              <p class="opacity-60 w-full text-start truncate">
                 <span>{props.user?.account}</span>
                 <span>#</span>
                 <span>{props.user?.id.toString(16).padStart(6, "0")}</span>
