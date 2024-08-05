@@ -575,7 +575,14 @@
       "deleteFileFailed": "Échec de la suppression des pièces jointes",
       "fetchAssetsFailed": "Échec de l'obtention des informations détaillées sur le sujet",
       "publishChallengeFailed": "Échec de la publication du sujet",
-      "withdrawChallengeFailed": "Échec de la mise hors ligne du sujet"
+      "withdrawChallengeFailed": "Échec de la mise hors ligne du sujet",
+      "uploadFiles": "Télécharger une pièce jointe",
+      "staticAttachment": "Pièces jointes statiques",
+      "mappedAttachment": "Pièce jointe dynamique",
+      "checkerAttachment": "Fichier d'évaluation",
+      "staticAttachmentTips": "Les fichiers ici seront fournis tels quels aux participants de la compétition.",
+      "mappedAttachmentTips": "Les fichiers ici seront attribués à l'un des participants sous forme de mappage de hachage. Si vous avez besoin de distribuer dynamiquement plusieurs pièces jointes, veuillez les regrouper dans une archive compressée.",
+      "checkerAttachmentTips": "Les fichiers ici sont utilisés pour l'évaluation et ne seront jamais accessibles aux participants."
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

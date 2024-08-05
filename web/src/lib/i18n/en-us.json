@@ -640,7 +640,14 @@
       "deleteFileFailed": "Failed to delete attachment",
       "fetchAssetsFailed": "Failed to get detailed information about the question",
       "publishChallengeFailed": "Failed to Publish the Question",
-      "withdrawChallengeFailed": "Failed to generate offline questions"
+      "withdrawChallengeFailed": "Failed to generate offline questions",
+      "uploadFiles": "Upload Attachment",
+      "staticAttachment": "Static Attachment",
+      "mappedAttachment": "Dynamic Attachment",
+      "checkerAttachment": "Evaluation Document",
+      "staticAttachmentTips": "The files here will be provided to the competition participants exactly as they are.",
+      "mappedAttachmentTips": "The files here will be assigned to one of the contestants in the form of a hash map. If multiple attachments need to be distributed dynamically, please pack them into a compressed package.",
+      "checkerAttachmentTips": "The files here are used for evaluation and will never be accessed by contestants."
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

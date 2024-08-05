@@ -575,7 +575,14 @@
       "deleteFileFailed": "Error al eliminar el archivo adjunto",
       "fetchAssetsFailed": "Fallo al obtener información detallada del tema",
       "publishChallengeFailed": "Fallo al publicar el problema",
-      "withdrawChallengeFailed": "Fallo al desactivar el tema"
+      "withdrawChallengeFailed": "Fallo al desactivar el tema",
+      "uploadFiles": "Subir archivo adjunto",
+      "staticAttachment": "Archivos adjuntos estáticos",
+      "mappedAttachment": "adjunto dinámico",
+      "checkerAttachment": "Archivo de evaluación",
+      "staticAttachmentTips": "Los archivos aquí se proporcionarán tal cual a los participantes del concurso.",
+      "mappedAttachmentTips": "Los archivos aquí se asignarán a uno de los participantes en forma de mapa hash, y si es necesario distribuir dinámicamente múltiples archivos adjuntos, por favor empaquetarlos en un archivo comprimido.",
+      "checkerAttachmentTips": "Los archivos aquí se utilizan para la evaluación y nunca serán accedidos por los participantes."
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

@@ -26,7 +26,7 @@ use tracing::warn;
 
 use crate::{
   middleware::{
-    auth::{self, Token},
+    auth::{self, is_game_admin, Token},
     data::{self, extract_team},
   },
   traits::{GlobalState, ResponseError},
@@ -133,16 +133,14 @@ async fn get_game_list(
 async fn get_game(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if game.hidden
-    && !(token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id))
-  {
+  if game.hidden && !is_game_admin!(token, game) {
     warn!(
       "unauthorized user {}:'{}' ({}) trying to get a hidden game {}:'{}'",
       token.id, token.account, token.nickname, game.id, game.name
     );
     return Err(ResponseError::NotFound("game not found".to_owned()));
   }
-  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+  if is_game_admin!(token, game) {
     Ok(Json(game))
   } else {
     Ok(Json(game.desensitize()))

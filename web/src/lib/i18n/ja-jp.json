@@ -575,7 +575,14 @@
       "deleteFileFailed": "添付ファイルの削除に失敗しました",
       "fetchAssetsFailed": "問題の詳細情報の取得に失敗しました",
       "publishChallengeFailed": "题目の公開に失敗しました",
-      "withdrawChallengeFailed": "下線問題失敗"
+      "withdrawChallengeFailed": "下線問題失敗",
+      "uploadFiles": "添付ファイルをアップロード",
+      "staticAttachment": "静的添付",
+      "mappedAttachment": "動的添付",
+      "checkerAttachment": "評価ファイル",
+      "staticAttachmentTips": "ここのファイルはすべて、そのまま競技者に提供されます。",
+      "mappedAttachmentTips": "ここのファイルは、ハッシュマップの形式で選手に割り当てられます。複数の添付ファイルを動的に配布する必要がある場合は、圧縮ファイルにまとめてください。",
+      "checkerAttachmentTips": "ここのファイルは評価用であり、決して選手によってアクセスされることはありません。"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

@@ -575,7 +575,14 @@
       "deleteFileFailed": "첨부 파일 삭제 실패",
       "fetchAssetsFailed": "문제 상세 정보를 가져오지 못했습니다.",
       "publishChallengeFailed": "문제 발행 실패",
-      "withdrawChallengeFailed": "오프라인 문제 실패"
+      "withdrawChallengeFailed": "오프라인 문제 실패",
+      "uploadFiles": "첨부 파일 업로드",
+      "staticAttachment": "정적 첨부파일",
+      "mappedAttachment": "동적 첨부",
+      "checkerAttachment": "평가 파일",
+      "staticAttachmentTips": "여기의 파일은 모두 그대로 경기 참가자에게 제공됩니다.",
+      "mappedAttachmentTips": "여기의 파일은 해시 맵 형식으로 선수에게 그중 하나를 할당할 것입니다. 동적으로 여러 첨부파일을 배포해야하는 경우, ZIP과같은  압축파일에  넣어주세요.",
+      "checkerAttachmentTips": "여기의 파일은 평가를 위해 사용되며, 결코 참가자들이 접근하지 않습니다."
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",

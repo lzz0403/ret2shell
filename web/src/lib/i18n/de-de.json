@@ -575,7 +575,14 @@
       "deleteFileFailed": "Anhang-Löschung fehlgeschlagen",
       "fetchAssetsFailed": "Fehler beim Abrufen der detaillierten Informationen zum Thema",
       "publishChallengeFailed": "Veröffentlichung der Aufgabe fehlgeschlagen",
-      "withdrawChallengeFailed": "Die Aufgabe konnte nicht abgeschlossen werden."
+      "withdrawChallengeFailed": "Die Aufgabe konnte nicht abgeschlossen werden.",
+      "uploadFiles": "Anhang hochladen",
+      "staticAttachment": "Statische Anhänge",
+      "mappedAttachment": "Dynamische Anhänge",
+      "checkerAttachment": "Bewertungsdatei",
+      "staticAttachmentTips": "Hier werden alle Dateien unverändert an die Wettbewerbsteilnehmer zur Verfügung gestellt.",
+      "mappedAttachmentTips": "Die Dateien hier werden in Form einer Hash-Map einem Teilnehmer zugewiesen. Wenn mehrere Anhänge dynamisch verteilt werden müssen, packen Sie sie bitte in eine ZIP-Datei.",
+      "checkerAttachmentTips": "Die hier vorliegenden Dateien dienen der Bewertung und werden niemals von den Teilnehmern eingesehen."
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

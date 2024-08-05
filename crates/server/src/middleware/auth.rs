@@ -249,11 +249,19 @@ pub(crate) use permission_required_any;
 
 use super::data::extract_team;
 
+macro_rules! is_game_admin {
+  ($token:expr, $game:expr) => {{
+    $token.permissions.0.contains(&Permission::Game) && $game.admins.0.contains(&$token.id)
+  }};
+}
+
+pub(crate) use is_game_admin;
+
 pub async fn game_admin_required(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>, req: Request,
   next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+  if is_game_admin!(token, game) {
     Ok(next.run(req).await)
   } else {
     Err(ResponseError::Forbidden(
@@ -270,7 +278,7 @@ pub async fn game_access_required(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
   team_ext: Option<Extension<team::Model>>, req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+  if is_game_admin!(token, game) {
     return Ok(next.run(req).await);
   }
   if game.hidden {
@@ -312,7 +320,7 @@ pub async fn challenge_access_required(
   Extension(challenge): Extension<challenge::Model>, team_ext: Option<Extension<team::Model>>,
   req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+  if is_game_admin!(token, game) {
     return Ok(next.run(req).await);
   }
   if game.hidden || challenge.hidden {

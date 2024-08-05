@@ -55,7 +55,10 @@ macro_rules! check_enabled {
 
 impl Cluster {
   pub fn new(client: Option<Client>, config: &Config) -> Self {
-    let registry = config.registry.as_ref().map(|registry| Registry::new(registry.clone()));
+    let registry = config
+      .registry
+      .as_ref()
+      .map(|registry| Registry::new(registry.clone()));
     Self {
       client,
       registry,
@@ -334,6 +337,7 @@ impl Cluster {
           .map(|image| Container {
             name: image.name.clone(),
             image: Some(image.tag.clone()),
+            image_pull_policy: Some(String::from("Always")),
             ports: image.port.map(|port| {
               vec![ContainerPort {
                 container_port: port as i32,

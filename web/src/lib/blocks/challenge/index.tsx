@@ -206,7 +206,7 @@ export default function (props: {
   inGame?: boolean;
 }) {
   onCleanup(() => {
-    setChallengeStore({ current: null, env: null, files: [], allFiles: [] });
+    setChallengeStore({ current: null, env: null, files: [], adminFiles: [] });
   });
   return (
     <div class="flex-1">

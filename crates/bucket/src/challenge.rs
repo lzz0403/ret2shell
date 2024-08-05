@@ -230,10 +230,7 @@ impl ChallengeBucket {
     if !self.locked {
       return Err(BucketError::NeedLocking);
     }
-    if !matches!(
-      dest.as_ref(),
-      "images" | "mapped" | "checker" | "src" | "static"
-    ) {
+    if !matches!(dest.as_ref(), "mapped" | "checker" | "static") {
       return Err(BucketError::PathDoesNotExist(dest.as_ref().to_owned()));
     }
     let dest_path = self.path.join(dest.as_ref()).join(name.as_ref());
@@ -357,6 +354,13 @@ impl ChallengeBucket {
     debug!("downloading mapped file {}", name.as_ref());
     self
       .download_file(&self.ensure_prefix("mapped", format!("mapped/{}", name.as_ref()))?)
+      .await
+  }
+
+  pub async fn download_checker(&self, name: impl AsRef<str>) -> Result<File, BucketError> {
+    debug!("downloading checker file {}", name.as_ref());
+    self
+      .download_file(&self.ensure_prefix("checker", format!("checker/{}", name.as_ref()))?)
       .await
   }
 

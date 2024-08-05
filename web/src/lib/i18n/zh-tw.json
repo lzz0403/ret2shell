@@ -640,7 +640,14 @@
       "deleteFileFailed": "刪除附件失敗",
       "fetchAssetsFailed": "獲取題目詳細資訊失敗",
       "publishChallengeFailed": "發布題目失敗",
-      "withdrawChallengeFailed": "下線題目失敗"
+      "withdrawChallengeFailed": "下線題目失敗",
+      "uploadFiles": "上傳附件",
+      "staticAttachment": "靜態附件",
+      "mappedAttachment": "動態附件",
+      "checkerAttachment": "評測文件",
+      "staticAttachmentTips": "這裡的文件會全部原樣提供給比賽選手。",
+      "mappedAttachmentTips": "這裡的檔案將會以雜湊映射的形式為選手分配其中一個，如若需要動態分發多個附件，請打包進壓縮包裡。",
+      "checkerAttachmentTips": "這裡的檔案用於評測，永遠不會被選手訪問到。"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

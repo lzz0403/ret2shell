@@ -32,7 +32,7 @@ use tracing::{debug, warn};
 
 use crate::{
   middleware::{
-    auth::{self, Token},
+    auth::{self, is_game_admin, Token},
     data::{self, extract_team},
   },
   traits::{GlobalState, ResponseError},
@@ -213,8 +213,7 @@ async fn get_challenge_list(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Query(query): Query<ChallengeQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let with_hidden =
-    game.admins.0.contains(&token.id) && token.permissions.0.contains(&Permission::Game);
+  let with_hidden = is_game_admin!(token, game);
   if query.page.is_none() || query.page_size.is_none() {
     let challenges = challenge::get_list(&db.conn, game.id, with_hidden).await?;
     return Ok(Json((challenges, 1)));
@@ -230,7 +229,7 @@ async fn get_challenge(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
   Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+  if is_game_admin!(token, game) {
     return Ok(Json(challenge));
   }
   if challenge.hidden {
@@ -514,11 +513,12 @@ async fn submit_flag(
 // TODO: update scoreboard
 // TODO: check flag
 
-#[derive(Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Serialize, Deserialize, PartialEq, Eq, Clone, Debug)]
 #[serde(rename_all = "snake_case")]
 enum FileType {
   Static,
   Mapped,
+  Checker,
 }
 
 #[derive(Deserialize)]
@@ -540,22 +540,32 @@ async fn get_player_attachment(
   team_ext: Option<Extension<team::Model>>, Query(query): Query<FileRequest>,
 ) -> Result<Response, ResponseError> {
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge);
-  if query.all == Some(true)
-    && token.permissions.0.contains(&Permission::Game)
-    && game.admins.0.contains(&token.id)
+  if !is_game_admin!(token, game)
+    && (query.all == Some(true) || query.folder == Some(FileType::Checker))
   {
-    let static_files = challenge_bucket.get_static_files().await?;
-    let mapped_files = challenge_bucket.get_mapped_files().await?;
-    let files: Vec<FileResponse> = static_files
+    return Err(ResponseError::Forbidden(
+      "permission denied".to_owned(),
+      format!(
+        "user {}:'{}' ({}) want to access checker files",
+        token.id, token.account, token.nickname
+      ),
+    ));
+  }
+  if query.all == Some(true) && is_game_admin!(token, game) {
+    let files = match query.folder {
+      Some(FileType::Static) => challenge_bucket.get_static_files().await?,
+      Some(FileType::Mapped) => challenge_bucket.get_mapped_files().await?,
+      Some(FileType::Checker) => challenge_bucket.get_checker_files().await?,
+      None => {
+        return Err(ResponseError::BadRequest("folder is required".to_owned()));
+      }
+    };
+    let files: Vec<FileResponse> = files
       .into_iter()
       .map(|file| FileResponse {
-        folder: FileType::Static,
+        folder: query.folder.clone().unwrap(),
         file,
       })
-      .chain(mapped_files.into_iter().map(|file| FileResponse {
-        folder: FileType::Mapped,
-        file,
-      }))
       .collect();
     return Ok(Json(files).into_response());
   }
@@ -583,6 +593,7 @@ async fn get_player_attachment(
     let file = match folder {
       FileType::Static => challenge_bucket.download_static(&file).await?,
       FileType::Mapped => challenge_bucket.download_mapped(&file).await?,
+      FileType::Checker => challenge_bucket.download_checker(&file).await?,
     };
 
     let mut header = HeaderMap::new();
@@ -625,7 +636,7 @@ async fn upload_challenge_attachment(
   Query(query): Query<UploadChallengeAttachmentQuery>, mut multipart: Multipart,
 ) -> Result<impl IntoResponse, ResponseError> {
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
-  if let Some(field) = multipart
+  while let Some(field) = multipart
     .next_field()
     .await
     .map_err(|err| ResponseError::BadRequest(err.to_string()))?
@@ -643,18 +654,17 @@ async fn upload_challenge_attachment(
     match query.folder {
       FileType::Static => challenge_bucket.upload_static(&file_name, reader).await?,
       FileType::Mapped => challenge_bucket.upload_mapped(&file_name, reader).await?,
+      FileType::Checker => challenge_bucket.upload_checker(&file_name, reader).await?,
     }
-    game_bucket
-      .commit(
-        format!("upload file {} for challenge {}", file_name, challenge.name),
-        &token.account,
-        format!("{}@private.ret.sh.cn", token.account),
-      )
-      .await?;
-    Ok(())
-  } else {
-    Err(ResponseError::BadRequest("file is required".to_owned()))
   }
+  game_bucket
+    .commit(
+      format!("upload files for challenge {}", challenge.name),
+      &token.account,
+      format!("{}@private.ret.sh.cn", token.account),
+    )
+    .await?;
+  Ok(())
 }
 
 async fn delete_challenge_attachment(
@@ -670,6 +680,7 @@ async fn delete_challenge_attachment(
   match query.folder {
     Some(FileType::Static) => challenge_bucket.delete_static(&file).await?,
     Some(FileType::Mapped) => challenge_bucket.delete_mapped(&file).await?,
+    Some(FileType::Checker) => challenge_bucket.delete_checker(&file).await?,
     None => {
       return Err(ResponseError::BadRequest("folder is required".to_owned()));
     }
@@ -844,7 +855,7 @@ async fn get_challenge_env(
 ) -> Result<impl IntoResponse, ResponseError> {
   let challenge_bucket = get_challenge_bucket!(bucket, game, challenge);
   let env_config = challenge_bucket.env().await?;
-  if game.admins.0.contains(&token.id) && token.permissions.0.contains(&Permission::Game) {
+  if is_game_admin!(token, game) {
     Ok(Json(env_config))
   } else {
     Ok(Json(env_config.map(|c| c.desensitize())))

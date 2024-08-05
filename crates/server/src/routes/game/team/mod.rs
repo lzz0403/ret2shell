@@ -18,7 +18,7 @@ use serde::Deserialize;
 
 use crate::{
   middleware::{
-    auth::{self, Token},
+    auth::{self, is_game_admin, Token},
     data,
   },
   traits::{GlobalState, ResponseError},
@@ -71,7 +71,7 @@ async fn get_team_info(
       .await?
       .ok_or(ResponseError::NotFound("team".to_string()))?
   };
-  if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
+  if is_game_admin!(token, game) {
     Ok(Json(result))
   } else {
     Ok(Json(result.desensitize()))
@@ -97,7 +97,7 @@ async fn get_team_list(
     .min_state
     .clone()
     .is_some_and(|s| s < team::State::Hidden)
-    && !(token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id))
+    && !is_game_admin!(token, game)
   {
     Some(team::State::Hidden)
   } else {
@@ -115,12 +115,11 @@ async fn get_team_list(
     query.asc.unwrap_or(true),
   )
   .await?;
-  let teams =
-    if token.permissions.0.contains(&Permission::Game) && game.admins.0.contains(&token.id) {
-      teams
-    } else {
-      teams.into_iter().map(|t| t.desensitize()).collect()
-    };
+  let teams = if is_game_admin!(token, game) {
+    teams
+  } else {
+    teams.into_iter().map(|t| t.desensitize()).collect()
+  };
   Ok(Json((teams, total)))
 }
 

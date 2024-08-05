@@ -11,12 +11,13 @@ import { Match, Show, Switch, createEffect, createSignal, splitProps, untrack } 
 export default function UploadButton(
   props: ButtonProps & {
     url: string;
+    multiple?: boolean;
     onDone?: () => void;
   }
 ) {
   const [uploadProps, nativeProps] = splitProps(props, ["url", "onDone"]);
   const [uploading, setUploading] = createSignal(false);
-  const [selectedFile, setSelectedFile] = createSignal<File | null>(null);
+  const [selectedFile, setSelectedFile] = createSignal<File[]>([]);
   const [progress, setProgress] = createSignal(null as DownloadProgress | null);
   const [uploadComplete, setUploadComplete] = createSignal(false);
   let hiddenInput: HTMLInputElement;
@@ -28,7 +29,7 @@ export default function UploadButton(
   function handleSelectedFile(event: Event) {
     const files = (event.target as HTMLInputElement).files;
     if (files && files.length > 0) {
-      setSelectedFile(files[0]);
+      setSelectedFile(Array.from(files));
     }
   }
 
@@ -37,11 +38,11 @@ export default function UploadButton(
       return;
     }
     setUploading(true);
-    uploadFile(uploadProps.url, selectedFile()?.name || "file", selectedFile()!, (progress) => {
+    uploadFile(uploadProps.url, selectedFile()!, (progress) => {
       setProgress(progress);
     })
       .then(() => {
-        setSelectedFile(null);
+        setSelectedFile([]);
         setUploadComplete(true);
         uploadProps.onDone?.();
       })
@@ -68,7 +69,7 @@ export default function UploadButton(
   });
 
   return (
-    <Button {...nativeProps} onClick={selectedFile() ? handleUploadFile : handleSelectFile}>
+    <Button {...nativeProps} onClick={selectedFile().length > 0 ? handleUploadFile : handleSelectFile}>
       <Switch>
         <Match when={uploading()}>
           <Spin width={20} height={20} />
@@ -77,9 +78,14 @@ export default function UploadButton(
             {humanFileSize(progress()?.transferredBytes || 0, true)}/{humanFileSize(progress()?.totalBytes || 0, true)}
           </span>
         </Match>
-        <Match when={selectedFile()}>
+        <Match when={selectedFile().length > 0}>
           <span class="icon-[fluent--cloud-arrow-up-20-regular] w-5 h-5" />
-          <span>{selectedFile()?.name}</span>
+          <span>{selectedFile()[0].name}</span>
+          <Show when={props.multiple}>
+            <Show when={selectedFile().length > 1}>
+              <span class="text-info">+{selectedFile().length - 1}</span>
+            </Show>
+          </Show>
         </Match>
         <Match when={true}>
           <span class="icon-[fluent--folder-open-20-regular] w-5 h-5" />
@@ -98,7 +104,14 @@ export default function UploadButton(
       <Show when={uploadComplete()}>
         <span class="text-success font-bold">DONE</span>
       </Show>
-      <input class="hidden" hidden ref={hiddenInput!} type="file" onChange={handleSelectedFile} />
+      <input
+        class="hidden"
+        hidden
+        ref={hiddenInput!}
+        type="file"
+        onChange={handleSelectedFile}
+        multiple={props.multiple}
+      />
     </Button>
   );
 }

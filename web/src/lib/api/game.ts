@@ -142,22 +142,28 @@ export async function deleteChallengeHint(game_id: number, challenge_id: number,
     .json<void>();
 }
 
-export async function getChallengeAttachments(game_id: number, challenge_id: number, all?: boolean) {
+export async function getChallengeAttachments(
+  game_id: number,
+  challenge_id: number,
+  all?: boolean,
+  folder?: "static" | "mapped" | "checker"
+) {
   return await api
     .get(`${api_root}/game/${game_id}/challenge/${challenge_id}/file`, {
       searchParams: JSON.parse(
         JSON.stringify({
           all,
+          folder,
         })
       ) as SearchParamsOption,
     })
-    .json<{ folder: "static" | "mapped"; file: string }[]>();
+    .json<{ folder: "static" | "mapped" | "checker"; file: string }[]>();
 }
 
 export async function deleteChallengeAttachment(
   game_id: number,
   challenge_id: number,
-  folder: "static" | "mapped",
+  folder: "static" | "mapped" | "checker",
   file: string
 ) {
   return await api

@@ -15,15 +15,12 @@ export async function downloadFile(
     .blob();
 }
 
-export async function uploadFile(
-  url: string,
-  name: string,
-  file: File,
-  onUploadProgress?: (progress: DownloadProgress) => void
-) {
+export async function uploadFile(url: string, file: File[], onUploadProgress?: (progress: DownloadProgress) => void) {
   // console.log("uploadFile");
   const formData = new FormData();
-  formData.append(name, file);
+  for (const f of file) {
+    formData.append(f.name, f);
+  }
   const xhr = new XMLHttpRequest();
   const resp = await new Promise((resolve: (_: string) => void, reject: (_: string) => void) => {
     xhr.upload.addEventListener("progress", (e) => {

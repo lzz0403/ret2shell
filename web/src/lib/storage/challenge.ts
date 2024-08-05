@@ -6,11 +6,14 @@ import { gameStore } from "./game";
 import { t } from "./theme";
 import { addToast } from "./toast";
 
+type FileType = "static" | "mapped" | "checker";
+type Attachment = { file: string; folder: FileType };
+
 export const [challengeStore, setChallengeStore] = createStore({
   current: null as Challenge | null,
   challenges: [] as Challenge[],
-  files: [] as { folder: "static" | "mapped"; file: string }[],
-  allFiles: [] as { folder: "static" | "mapped"; file: string }[],
+  files: [] as Attachment[],
+  adminFiles: [] as Attachment[],
   env: null as ChallengeEnv | null,
 });
 
