@@ -109,8 +109,9 @@ export default function () {
               }
             >
               <span class="opacity-60">
-                {selfOAuthItems().find((v) => v.provider === "xdu")?.data.name ?? "UNKNOWN"} (
-                {selfOAuthItems().find((v) => v.provider === "xdu")?.data.id ?? "UNKNOWN"})
+                <span>{selfOAuthItems().find((v) => v.provider === "xdu")?.data.name ?? "UNKNOWN"}</span>
+                &nbsp;
+                <span>({selfOAuthItems().find((v) => v.provider === "xdu")?.data.id ?? "UNKNOWN"})</span>
               </span>
               <Button size="sm" onClick={() => handleUnbind(selfOAuthItems().find((v) => v.provider === "xdu")!.id)}>
                 {t("account.oauth.unbind")}
