@@ -13,10 +13,14 @@ import { Show, createEffect, createMemo, createSignal, untrack } from "solid-js"
 import dynamicChecker from "./scripts/dynamic.rx";
 import mappedChecker from "./scripts/mapped.rx";
 import simpleChecker from "./scripts/simple.rx";
+import type { Challenge } from "@models/challenge";
 
 type PresetChecker = "simple" | "mapped" | "dynamic";
 
-export default function () {
+export default function (_props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
   const [preset, setPreset] = createSignal(null as PresetChecker | null);
   const presetChecker = createMemo(() => {
     switch (preset()) {

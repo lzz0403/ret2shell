@@ -692,7 +692,8 @@
       "selectPresetScripts": "選擇預設腳本...",
       "simpleCheckerScriptPreset": "靜態評測",
       "dynamicCheckerScriptPreset": "動態環境評測",
-      "mappedCheckerScriptPreset": "動態附件評測"
+      "mappedCheckerScriptPreset": "動態附件評測",
+      "deleteTips": "是否確認刪除此題目？相關提交記錄與分數將一併刪除。"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

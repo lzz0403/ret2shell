@@ -1,16 +1,18 @@
 import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
 import xdsecMascotUnsee from "@assets/imgs/xdsec-mascot-unsee.webp";
-import { Permission } from "@models/user";
+import type { Challenge } from "@models/challenge";
 import { A } from "@solidjs/router";
-import { accountStore } from "@storage/account";
-import { gameStore } from "@storage/game";
+import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
 import { Show } from "solid-js";
 
-export default function () {
+export default function (_props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
   return (
     <div class="flex flex-col min-h-full relative">
       <div class="flex flex-col flex-1 p-3 lg:p-6 space-y-4">
@@ -39,13 +41,7 @@ export default function () {
           }
         />
       </div>
-      <Show
-        when={
-          accountStore.id &&
-          accountStore.permissions.includes(Permission.Game) &&
-          gameStore.current?.admins.includes(accountStore.id)
-        }
-      >
+      <Show when={isGameAdmin()}>
         <div class="absolute top-0 left-0 w-full h-full bg-layer/60 backdrop-blur flex items-center justify-center">
           <A
             class="font-bold hover:underline hover:text-primary flex items-center space-x-2"

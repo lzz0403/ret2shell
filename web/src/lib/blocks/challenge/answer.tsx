@@ -1,9 +1,13 @@
+import type { Challenge } from "@models/challenge";
 import { HostType } from "@models/game";
 import { gameStore, inArchived, inArchiving } from "@storage/game";
 import { t } from "@storage/theme";
 import { Show } from "solid-js";
 
-export default function () {
+export default function (_props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
   return (
     <div class="flex flex-col p-3 lg:p-6">
       <Show

@@ -189,7 +189,7 @@ export default function () {
           <Form onDone={onCreateChallenge} loading={creating()} />
         </Match>
         <Match when={challengeStore.current}>
-          <Challenge />
+          <Challenge onStateChange={refreshChallenges} />
         </Match>
       </Switch>
     </div>

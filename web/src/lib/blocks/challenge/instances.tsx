@@ -3,7 +3,7 @@ import { getRegistryConfig, getRegistryImageTags, getRegistryRepositories } from
 import { deleteChallengeEnv, getChallengeInstance, updateChallengeEnv } from "@api/game";
 import { Popover as ArkPopover } from "@ark-ui/solid";
 import UploadButton from "@blocks/upload-button";
-import type { ChallengeImage } from "@models/challenge";
+import type { Challenge, ChallengeImage } from "@models/challenge";
 import type { RegistryConfig } from "@models/config";
 import { createForm, required, setValue, setValues } from "@modular-forms/solid";
 import { challengeStore, refreshChallengeAssets } from "@storage/challenge";
@@ -327,7 +327,10 @@ function InstanceList() {
   );
 }
 
-export default function () {
+export default function (_props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
   const [repos, setRepos] = createSignal<string[]>([]);
   function fetchRepos() {
     getRegistryRepositories()

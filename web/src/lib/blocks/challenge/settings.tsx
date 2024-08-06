@@ -1,3 +1,74 @@
-export default function () {
-  return <></>;
+import { updateChallenge } from "@api/game";
+import type { Challenge } from "@models/challenge";
+import { challengeStore, setChallengeStore } from "@storage/challenge";
+import { gameStore } from "@storage/game";
+import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
+import type { HTTPError } from "ky";
+import { DateTime } from "luxon";
+import { createSignal } from "solid-js";
+import { type ChallengeForm, FormBare } from "./form";
+
+export default function (props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
+  const [loading, setLoading] = createSignal(false);
+  function handleUpdateChallenge(result: ChallengeForm) {
+    setLoading(true);
+    const tags = result.tag.split("/").map((t) => {
+      return { name: t, primary: false };
+    });
+    tags[0].primary = true;
+
+    const challenge: Challenge = {
+      ...challengeStore.current,
+      id: challengeStore.current!.id,
+      name: result.name,
+      updated_at: DateTime.now(),
+      content: result.content,
+      game_id: gameStore.current!.id,
+      tag: tags,
+      hidden: challengeStore.current?.hidden ?? false,
+      score: challengeStore.current?.score ?? result.initial,
+      bucket: challengeStore.current!.bucket!,
+      score_rule: {
+        initial: result.initial,
+        minimum: result.minimum,
+        decay: result.decay,
+      },
+    };
+    updateChallenge(gameStore.current!.id, challenge)
+      .then((result) => {
+        props.onStateChange?.(result);
+        setChallengeStore({ current: result });
+        addToast({
+          level: "success",
+          description: t("form.saveSuccess")!,
+          duration: 5000,
+        });
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("form.saveFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+  return (
+    <div class="flex flex-col p-3 lg:p-6 w-full items-center">
+      <FormBare
+        onDone={handleUpdateChallenge}
+        editSource={challengeStore.current || undefined}
+        inGame={props.inGame}
+        loading={loading()}
+      />
+    </div>
+  );
 }

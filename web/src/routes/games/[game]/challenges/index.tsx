@@ -142,7 +142,7 @@ export default function () {
               <Form onDone={onCreateChallenge} loading={creating()} inGame />
             </Match>
             <Match when={challengeStore.current}>
-              <Challenge inGame />
+              <Challenge inGame onStateChange={refreshChallenges} />
             </Match>
           </Switch>
         </div>

@@ -627,7 +627,8 @@
       "selectPresetScripts": "Vorlagen-Skript auswählen...",
       "simpleCheckerScriptPreset": "Statische Bewertung",
       "dynamicCheckerScriptPreset": "Dynamische Umweltbewertung",
-      "mappedCheckerScriptPreset": "Dynamische Anhänge Bewertung"
+      "mappedCheckerScriptPreset": "Dynamische Anhänge Bewertung",
+      "deleteTips": "Möchten Sie diese Frage wirklich löschen? Alle damit verbundenen Einsendungen und Punkte werden ebenfalls gelöscht."
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

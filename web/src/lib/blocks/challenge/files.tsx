@@ -2,6 +2,7 @@ import { api_root } from "@api";
 import { deleteChallengeAttachment, getChallengeAttachments } from "@api/game";
 import DownloadButton from "@blocks/download-button";
 import UploadButton from "@blocks/upload-button";
+import type { Challenge } from "@models/challenge";
 import { challengeStore, refreshChallengeAssets, setChallengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
@@ -15,7 +16,10 @@ import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 type FileType = "static" | "mapped" | "checker";
 
-export default function () {
+export default function (_props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
   const [folder, setFolder] = createSignal<FileType>("static");
   const [loading, setLoading] = createSignal(false);
   function fetchAttachments() {

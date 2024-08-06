@@ -627,7 +627,8 @@
       "selectPresetScripts": "Sélectionner un script prédéfini...",
       "simpleCheckerScriptPreset": "Évaluation statique",
       "dynamicCheckerScriptPreset": "Évaluation de l'environnement dynamique",
-      "mappedCheckerScriptPreset": "Évaluation des pièces jointes dynamiques"
+      "mappedCheckerScriptPreset": "Évaluation des pièces jointes dynamiques",
+      "deleteTips": "Êtes-vous sûr de vouloir supprimer cette question ? Toutes les soumissions et les scores associés seront également supprimés."
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

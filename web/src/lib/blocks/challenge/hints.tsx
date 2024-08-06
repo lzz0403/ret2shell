@@ -5,6 +5,7 @@ import {
   getTeamExtras,
   unlockChallengeHint,
 } from "@api/game";
+import type { Challenge } from "@models/challenge";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
 import { Permission } from "@models/user";
@@ -28,7 +29,10 @@ type CreateHintForm = {
   cost: number;
 };
 
-export default function () {
+export default function (_props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+}) {
   const [hints, setHints] = createSignal([] as Hint[]);
   const [extras, setExtras] = createSignal([] as Extra[]);
   const lorem = new LoremIpsum({

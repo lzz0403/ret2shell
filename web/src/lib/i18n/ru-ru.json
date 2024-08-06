@@ -627,7 +627,8 @@
       "selectPresetScripts": "Выберите предустановленный скрипт...",
       "simpleCheckerScriptPreset": "Статическая оценка",
       "dynamicCheckerScriptPreset": "Динамическая оценка окружающей среды",
-      "mappedCheckerScriptPreset": "Динамическая оценка вложений"
+      "mappedCheckerScriptPreset": "Динамическая оценка вложений",
+      "deleteTips": "Вы уверены, что хотите удалить этот вопрос? Все связанные записи и оценки также будут удалены."
     },
     "cover": {
       "uploadFailed": "Обложка не загружена",

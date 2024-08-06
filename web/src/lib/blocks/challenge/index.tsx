@@ -1,6 +1,7 @@
-import { publishChallenge, withdrawChallenge } from "@api/game";
+import { deleteChallenge, publishChallenge, withdrawChallenge } from "@api/game";
 import type { Challenge } from "@models/challenge";
 import { Permission } from "@models/user";
+import { useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { challengeStore, setChallengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
@@ -27,11 +28,38 @@ import Statistics from "./statistics";
 import Terminal from "./terminal";
 
 function BottomPanel(props: {
-  onStateChange?: (challenge: Challenge) => void;
+  onStateChange?: (challenge?: Challenge) => void;
   inGame: boolean;
 }) {
+  const [_, setSearchParams] = useSearchParams();
   const [page, setPage] = createSignal(0);
   const pages = [Terminal, Hints, Files, Hammer, Answer, Statistics, Instances, Checker, Settings];
+  const [deleting, setDeleting] = createSignal(false);
+  function handleDeleteChallenge() {
+    if (challengeStore.current) {
+      setDeleting(true);
+      deleteChallenge(challengeStore.current.game_id, challengeStore.current.id)
+        .then(() => {
+          setSearchParams({ challenge: null });
+          addToast({
+            level: "success",
+            description: t("form.deleteSuccess")!,
+            duration: 5000,
+          });
+          props.onStateChange?.();
+        })
+        .catch((err: HTTPError) => {
+          void err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("form.deleteFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        })
+        .finally(() => setDeleting(false));
+    }
+  }
   const [publishing, setPublishing] = createSignal(false);
 
   function handlePublishChallenge() {
@@ -40,6 +68,7 @@ function BottomPanel(props: {
       publishChallenge(challengeStore.current.game_id, challengeStore.current.id)
         .then((resp) => {
           props.onStateChange?.(resp);
+          setChallengeStore({ current: resp });
         })
         .catch((err: HTTPError) => {
           void err.response.text().then((text) => {
@@ -57,6 +86,7 @@ function BottomPanel(props: {
       withdrawChallenge(challengeStore.current!.game_id, challengeStore.current!.id)
         .then((resp) => {
           props.onStateChange?.(resp);
+          setChallengeStore({ current: resp });
         })
         .catch((err: HTTPError) => {
           void err.response.text().then((text) => {
@@ -144,7 +174,7 @@ function BottomPanel(props: {
               ghost
               btnContent={
                 <Show
-                  when={challengeStore.current?.hidden}
+                  when={challengeStore.current?.hidden === true}
                   fallback={
                     <>
                       <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5 text-warning" />
@@ -161,7 +191,7 @@ function BottomPanel(props: {
                 <span class="inline-block space-x-2">
                   <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary align-middle" />
                   <Show
-                    when={challengeStore.current?.hidden}
+                    when={challengeStore.current?.hidden === true}
                     fallback={
                       <>
                         <span>{t("game.challenge.withdrawTips")}</span>
@@ -182,6 +212,25 @@ function BottomPanel(props: {
                 </Button>
               </Card>
             </Popover>
+            <Popover
+              ghost
+              btnContent={
+                <>
+                  <span class="icon-[fluent--delete-20-regular] w-5 h-5 text-error" />
+                  <span class="text-error">{t("form.delete")}</span>
+                </>
+              }
+            >
+              <Card contentClass="p-2 flex flex-col space-x-2 max-w-96">
+                <span class="inline-block space-x-2">
+                  <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
+                  <span>{t("game.challenge.deleteTips")}</span>
+                </span>
+                <Button level="primary" size="sm" class="self-end" onClick={handleDeleteChallenge} loading={deleting()}>
+                  {t("platform.ok")}
+                </Button>
+              </Card>
+            </Popover>
           </Show>
         </div>
       </OverlayScrollbarsComponent>
@@ -195,14 +244,14 @@ function BottomPanel(props: {
         class="relative w-full flex-1 print:h-auto print:overflow-auto"
         defer
       >
-        <Dynamic component={pages[page()]} />
+        <Dynamic component={pages[page()]} {...props} />
       </OverlayScrollbarsComponent>
     </div>
   );
 }
 
 export default function (props: {
-  onStateChange?: (challenge: Challenge) => void;
+  onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
   onCleanup(() => {

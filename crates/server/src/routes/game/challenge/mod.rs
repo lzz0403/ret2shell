@@ -157,6 +157,16 @@ macro_rules! get_challenge_bucket_mut {
   }};
 }
 
+macro_rules! check_challenge_publishing {
+  ($prev:expr) => {{
+    if !$prev.hidden {
+      return Err(ResponseError::PreconditionFailed(
+        "please hidden challenge before update it".to_owned(),
+      ));
+    }
+  }};
+}
+
 // macro_rules! check_const_columns {
 //   ($prev_model:expr, $current_model:expr, $($columns:tt), *) => {{
 //     $(
@@ -287,9 +297,9 @@ async fn create_challenge(
 }
 
 async fn update_challenge(
-  State(ref db): State<Database>, State(bucket): State<Bucket>, Extension(token): Extension<Token>,
-  Extension(game): Extension<game::Model>, Extension(prev_challenge): Extension<challenge::Model>,
-  Json(challenge): Json<challenge::Model>,
+  State(ref db): State<Database>, State(cache): State<Cache>, State(bucket): State<Bucket>,
+  Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
+  Extension(prev_challenge): Extension<challenge::Model>, Json(challenge): Json<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   // refuse to change some columns when challenge is cloned from another challenge.
   // if prev_challenge.ref_id.is_some() {
@@ -304,6 +314,7 @@ async fn update_challenge(
   //     content
   //   );
   // }
+  check_challenge_publishing!(prev_challenge);
   let txn = db.conn.begin().await?;
   let challenge = challenge::update(
     &txn,
@@ -331,14 +342,16 @@ async fn update_challenge(
     .await?;
   // }
   txn.commit().await?;
+  cache.at("challenge").del(challenge.id).await.ok();
 
   Ok(Json(challenge))
 }
 
 async fn up_challenge(
-  State(ref db): State<Database>, State(bucket): State<Bucket>, State(ref queue): State<Queue>,
-  State(checker): State<Checker>, Extension(token): Extension<Token>,
-  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  State(ref db): State<Database>, State(cache): State<Cache>, State(bucket): State<Bucket>,
+  State(ref queue): State<Queue>, State(checker): State<Checker>,
+  Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
+  Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let txn = db.conn.begin().await?;
   let challenge_bucket = get_challenge_bucket!(bucket, game, challenge.clone());
@@ -350,12 +363,7 @@ async fn up_challenge(
     },
   )
   .await?;
-  match checker.lint(&challenge_bucket).await {
-    Ok(_) => {}
-    Err(e) => {
-      return Err(ResponseError::PreconditionFailed(e.to_string()));
-    }
-  }
+  checker.lint(&challenge_bucket).await?;
   txn.commit().await?;
   let event = EventContainer {
     game_id: challenge.game_id,
@@ -370,12 +378,13 @@ async fn up_challenge(
       },
     }),
   };
+  cache.at("challenge").del(challenge.id).await.ok();
   queue.publish("event", event).await.ok();
   Ok(Json(challenge))
 }
 
 async fn down_challenge(
-  State(ref db): State<Database>, State(ref queue): State<Queue>,
+  State(ref db): State<Database>, State(cache): State<Cache>, State(ref queue): State<Queue>,
   Extension(token): Extension<Token>, Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let txn = db.conn.begin().await?;
@@ -401,13 +410,15 @@ async fn down_challenge(
       },
     }),
   };
+  cache.at("challenge").del(challenge.id).await.ok();
   queue.publish("event", event).await.ok();
   Ok(Json(challenge))
 }
 
 async fn delete_challenge(
-  State(ref db): State<Database>, State(bucket): State<Bucket>, Extension(token): Extension<Token>,
-  Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
+  State(ref db): State<Database>, State(cache): State<Cache>, State(bucket): State<Bucket>,
+  Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
+  Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let txn = db.conn.begin().await?;
   challenge::delete(&txn, challenge.id).await?;
@@ -442,6 +453,7 @@ async fn delete_challenge(
     .await?;
   // }
   txn.commit().await?;
+  cache.at("challenge").del(challenge.id).await.ok();
 
   Ok(())
 }
@@ -585,7 +597,7 @@ async fn get_player_attachment(
     let checked_file = files
       .into_iter()
       .find(|f| f.folder == folder && f.file == file);
-    if checked_file.is_none() {
+    if checked_file.is_none() && !is_game_admin!(token, game) {
       return Err(ResponseError::NotFound("file".to_string()));
     }
     let file = match folder {
@@ -633,6 +645,7 @@ async fn upload_challenge_attachment(
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Query(query): Query<UploadChallengeAttachmentQuery>, mut multipart: Multipart,
 ) -> Result<impl IntoResponse, ResponseError> {
+  check_challenge_publishing!(challenge);
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   while let Some(field) = multipart
     .next_field()
@@ -670,6 +683,7 @@ async fn delete_challenge_attachment(
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Query(query): Query<FileRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  check_challenge_publishing!(challenge);
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   let file = query
     .file
@@ -861,7 +875,6 @@ async fn get_challenge_env(
 }
 
 #[allow(clippy::too_many_arguments)]
-#[axum::debug_handler(state = GlobalState)]
 async fn start_challenge_env(
   State(config): State<GlobalConfig>, State(bucket): State<Bucket>, State(cluster): State<Cluster>,
   State(cache): State<Cache>, State(mut checker): State<Checker>,
@@ -951,6 +964,7 @@ async fn update_challenge_env(
   Extension(token): Extension<Token>, Extension(challenge): Extension<challenge::Model>,
   Json(env): Json<ChallengeEnv>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  check_challenge_publishing!(challenge);
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   challenge_bucket
     .set_env(serde_json::to_value(&env)?)
@@ -970,6 +984,7 @@ async fn delete_challenge_env(
   State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
   Extension(token): Extension<Token>, Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  check_challenge_publishing!(challenge);
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   challenge_bucket.delete_env().await?;
   game_bucket
@@ -1032,6 +1047,7 @@ async fn update_checker_script(
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Json(req): Json<UpdateCheckerScriptRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  check_challenge_publishing!(challenge);
   let (game_bucket, challenge_bucket) = get_challenge_bucket_mut!(bucket, game, challenge);
   challenge_bucket.set_checker(req.content).await?;
   game_bucket

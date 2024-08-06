@@ -627,7 +627,8 @@
       "selectPresetScripts": "Seleccionar script preestablecido...",
       "simpleCheckerScriptPreset": "Evaluación estática",
       "dynamicCheckerScriptPreset": "Evaluación del entorno dinámico",
-      "mappedCheckerScriptPreset": "Evaluación de accesorios dinámicos"
+      "mappedCheckerScriptPreset": "Evaluación de accesorios dinámicos",
+      "deleteTips": "¿Estás seguro de eliminar esta pregunta? Se eliminarán también todas las entradas y puntuaciones relacionadas."
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

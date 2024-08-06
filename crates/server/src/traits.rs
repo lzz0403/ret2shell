@@ -284,6 +284,13 @@ impl IntoResponse for ResponseError {
             e.to_string()
           )
         }
+        r2s_checker::traits::CheckerError::CompileError(_) => {
+          log_with_resp!(
+            StatusCode::PRECONDITION_FAILED,
+            "failed to compile checker script".to_owned(),
+            "please check the script syntax"
+          )
+        }
         _ => {
           log_with_resp!(
             StatusCode::INTERNAL_SERVER_ERROR,
