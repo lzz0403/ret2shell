@@ -697,7 +697,9 @@
       "delayEnvFailed": "Environmental delay failure",
       "stopEnvFailed": "Environment stop failure",
       "startEnvFailed": "Failed to start the environment",
-      "stopEnvSuccess": "Stop command has been sent"
+      "stopEnvSuccess": "Stop command has been sent",
+      "delayEnv": "Environment extended by 1 hour",
+      "stopEnv": "Stop Environment"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

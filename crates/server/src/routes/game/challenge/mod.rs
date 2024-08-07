@@ -41,6 +41,13 @@ use crate::{
   traits::{GlobalState, ResponseError},
 };
 
+const LABEL_ALPHABET: [char; 62] = [
+  '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
+  'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B',
+  'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U',
+  'V', 'W', 'X', 'Y', 'Z',
+];
+
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()
     .route("/", post(create_challenge))
@@ -130,11 +137,6 @@ macro_rules! get_challenge_bucket {
 
 macro_rules! get_challenge_bucket_mut {
   ($bucket:expr, $game:expr, $challenge:expr) => {{
-    if !$challenge.hidden {
-      return Err(ResponseError::PreconditionFailed(
-        "please hidden challenge before update it".to_owned(),
-      ));
-    }
     let game_bucket = $bucket
       .at_mut(
         $game
@@ -957,7 +959,7 @@ async fn start_challenge_env(
           ),
           ("ret.sh.cn/game", game.id.to_string()),
           ("ret.sh.cn/user", token.id.to_string()),
-          ("ret.sh.cn/wsrx", nanoid!()),
+          ("ret.sh.cn/wsrx", nanoid!(21, &LABEL_ALPHABET)),
           ("ret.sh.cn/internet", env_config.internet.to_string()),
         ]
         .iter()
@@ -988,7 +990,7 @@ async fn start_challenge_env(
       .await?;
     cache
       .at("cluster")
-      .set_ex(token.id.to_string(), Utc::now().timestamp(), 5 * 60)
+      .set_ex(token.id.to_string(), Utc::now().timestamp(), 60)
       .await?;
     Ok(())
   } else {

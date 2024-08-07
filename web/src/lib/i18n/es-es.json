@@ -632,7 +632,9 @@
       "delayEnvFailed": "Fallo en la demora ambiental",
       "stopEnvFailed": "Detener el fracaso ambiental",
       "startEnvFailed": "Fallo al iniciar el entorno",
-      "stopEnvSuccess": "Instrucción de detención enviada"
+      "stopEnvSuccess": "Instrucción de detención enviada",
+      "delayEnv": "Entorno prolongado 1 hora",
+      "stopEnv": "detener el medio ambiente"
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

@@ -697,7 +697,9 @@
       "delayEnvFailed": "環境延時失敗",
       "stopEnvFailed": "停止環境失敗",
       "startEnvFailed": "啟動環境失敗",
-      "stopEnvSuccess": "已發送停止指令"
+      "stopEnvSuccess": "已發送停止指令",
+      "delayEnv": "環境延長 1 小時",
+      "stopEnv": "停止環境"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

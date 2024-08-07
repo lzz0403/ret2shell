@@ -632,7 +632,9 @@
       "delayEnvFailed": "Échec du délai d'attente de l'environnement",
       "stopEnvFailed": "Échec de l'arrêt de l'environnement",
       "startEnvFailed": "Échec du démarrage de l'environnement",
-      "stopEnvSuccess": ""
+      "stopEnvSuccess": "Instruction d'arrêt envoyée",
+      "delayEnv": "Environnement prolongé de 1 heure",
+      "stopEnv": "Arrêt de l'environnement"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

@@ -109,12 +109,13 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
       stopGameSelfEnv(challengeStore.current!.game_id)
         .then(() => {
           addToast({
-            level: "error",
+            level: "success",
             description: t("game.challenge.stopEnvSuccess")!,
             duration: 5000,
           });
           setTimeout(() => {
             wsrx.refreshInstances();
+            refreshCalmdown();
           }, 500);
         })
         .catch((err: HTTPError) => {
@@ -225,7 +226,7 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                         size="sm"
                         onClick={handleStartChallengeEnv}
                         loading={starting()}
-                        disabled={starting()}
+                        disabled={starting() || calmdownStart() !== null}
                       >
                         <Show
                           when={calmdownStart()}
@@ -239,9 +240,11 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                           <span class="icon-[fluent--history-20-regular] w-5 h-5" />
                           <span class="opacity-60">{t("game.challenge.calmDownBeforeStartEnv")}</span>
                           <Timer
-                            end={calmdownStart()!.plus({ minutes: 5 })}
+                            end={calmdownStart()!.plus({ minutes: 1 })}
                             onTimeout={() => {
-                              refreshCalmdown();
+                              setTimeout(() => {
+                                refreshCalmdown();
+                              }, 500);
                             }}
                           />
                         </Show>
@@ -283,22 +286,28 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                       <Button
                         ghost
                         size="sm"
+                        title={t("game.challenge.delayEnv")}
                         square
                         onClick={handleDelaySelfEnv}
                         loading={delaying()}
                         disabled={delaying()}
                       >
-                        <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />
+                        <Show when={!delaying()}>
+                          <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />
+                        </Show>
                       </Button>
                       <Button
                         ghost
                         size="sm"
+                        title={t("game.challenge.stopEnv")}
                         square
                         onClick={handleStopSelfEnv}
                         loading={stopping()}
                         disabled={stopping()}
                       >
-                        <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-primary" />
+                        <Show when={!stopping()}>
+                          <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-error" />
+                        </Show>
                       </Button>
                     </Match>
                     <Match when={userExplicitInstance()}>

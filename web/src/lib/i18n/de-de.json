@@ -632,7 +632,9 @@
       "delayEnvFailed": "Umgebungsverzögerung fehlgeschlagen",
       "stopEnvFailed": "Umgebungstopp fehlgeschlagen",
       "startEnvFailed": "Umgebung konnte nicht gestartet werden",
-      "stopEnvSuccess": "Stopp-Befehl wurde gesendet"
+      "stopEnvSuccess": "Stopp-Befehl wurde gesendet",
+      "delayEnv": "Umweltverlängerung um 1 Stunde",
+      "stopEnv": "Umweltstopp"
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

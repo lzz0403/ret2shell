@@ -228,7 +228,9 @@
       "delayEnvFailed": "环境延时失败",
       "stopEnvFailed": "停止环境失败",
       "startEnvFailed": "启动环境失败",
-      "stopEnvSuccess": "已发送停止指令"
+      "stopEnvSuccess": "已发送停止指令",
+      "delayEnv": "环境延长 1 小时",
+      "stopEnv": "停止环境"
     },
     "scoreboard": {
       "title": "积分板",

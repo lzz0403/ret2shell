@@ -632,7 +632,9 @@
       "delayEnvFailed": "環境遅延失敗",
       "stopEnvFailed": "環境停止に失敗",
       "startEnvFailed": "環境の起動に失敗しました",
-      "stopEnvSuccess": "停止指令を送信しました"
+      "stopEnvSuccess": "停止指令を送信しました",
+      "delayEnv": "環境延長 1 時間",
+      "stopEnv": "環境停止"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

@@ -632,7 +632,9 @@
       "delayEnvFailed": "환경 지연 실패",
       "stopEnvFailed": "환경 중지 실패",
       "startEnvFailed": "환경 시작 실패",
-      "stopEnvSuccess": "정지 명령이 전송되었습니다."
+      "stopEnvSuccess": "정지 명령이 전송되었습니다.",
+      "delayEnv": "환경 연장 1시간",
+      "stopEnv": "환경 중지"
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",
