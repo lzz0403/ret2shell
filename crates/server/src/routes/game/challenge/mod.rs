@@ -28,7 +28,7 @@ use r2s_queue::Queue;
 use sea_orm::{DatabaseTransaction, TransactionTrait};
 use serde::{Deserialize, Serialize};
 use tokio_util::io::{ReaderStream, StreamReader};
-use tracing::{debug, warn};
+use tracing::{debug, info, warn};
 
 use crate::{
   middleware::{
@@ -909,7 +909,13 @@ async fn start_challenge_env(
   }
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge.clone());
   let team = extract_team!(game, team_ext, token);
+
   if let Some(env_config) = challenge_bucket.env().await? {
+    info!(
+      "starting challenge env {}:'{}' for user {}:'{}' ({})",
+      challenge.id, challenge.name, token.id, token.account, token.nickname
+    );
+    debug!("env_config: {:?}", env_config);
     let ports = env_config
       .clone()
       .images
@@ -920,6 +926,7 @@ async fn start_challenge_env(
       .collect::<Vec<_>>()
       .join(",");
     checker.preload(&challenge, &challenge_bucket).await?;
+    debug!("checker preloaded.");
     let env_map = checker
       .environ(
         &challenge_bucket,
@@ -932,6 +939,7 @@ async fn start_challenge_env(
         &team,
       )
       .await?;
+    debug!("env_map: {:?}", env_map);
     cluster
       .at(CHALLENGE_NS)
       .create_challenge_env(

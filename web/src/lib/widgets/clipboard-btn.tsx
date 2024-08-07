@@ -18,7 +18,7 @@ export default function ClipboardBtn(
         {/* btn-sm btn-md */}
         <Clipboard.Trigger
           class={`btn btn-${btnProps.size || "md"} flex items-center space-x-2 justify-center ${btnProps.square ? "btn-square" : ""}`.trim()}
-          title={t("form.copy")}
+          title={others.title ?? t("form.copy")}
         >
           <Clipboard.Indicator
             class="flex items-center justify-center"

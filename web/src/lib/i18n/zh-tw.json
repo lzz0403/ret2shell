@@ -693,7 +693,10 @@
       "simpleCheckerScriptPreset": "靜態評測",
       "dynamicCheckerScriptPreset": "動態環境評測",
       "mappedCheckerScriptPreset": "動態附件評測",
-      "deleteTips": "是否確認刪除此題目？相關提交記錄與分數將一併刪除。"
+      "deleteTips": "是否確認刪除此題目？相關提交記錄與分數將一併刪除。",
+      "delayEnvFailed": "環境延時失敗",
+      "stopEnvFailed": "停止環境失敗",
+      "startEnvFailed": "啟動環境失敗"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

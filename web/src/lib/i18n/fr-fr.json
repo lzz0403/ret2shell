@@ -628,7 +628,10 @@
       "simpleCheckerScriptPreset": "Évaluation statique",
       "dynamicCheckerScriptPreset": "Évaluation de l'environnement dynamique",
       "mappedCheckerScriptPreset": "Évaluation des pièces jointes dynamiques",
-      "deleteTips": "Êtes-vous sûr de vouloir supprimer cette question ? Toutes les soumissions et les scores associés seront également supprimés."
+      "deleteTips": "Êtes-vous sûr de vouloir supprimer cette question ? Toutes les soumissions et les scores associés seront également supprimés.",
+      "delayEnvFailed": "Échec du délai d'attente de l'environnement",
+      "stopEnvFailed": "Échec de l'arrêt de l'environnement",
+      "startEnvFailed": "Échec du démarrage de l'environnement"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",
@@ -738,7 +741,7 @@
       "scoreChart": "Courbe de fraction",
       "solves": "Situation de résolution de problèmes",
       "fetchTeamExtrasFailed": "Échec de l'obtention des points supplémentaires de l'équipe",
-      "fetchTeamSubmissionsFailed": "Échec de la récupération des informations sur la résolution des problèmes de l'équipe",
+      "fetchTeamSubmissionsFailed": "Échec de l'obtention des informations sur la résolution des problèmes de l'équipe",
       "solvesJournal": "Membre {{user}} a résolu le défi {{challenge}}.",
       "noSolves": "Je n'ai encore résolu aucun problème.",
       "extras": "Variation des points supplémentaires",

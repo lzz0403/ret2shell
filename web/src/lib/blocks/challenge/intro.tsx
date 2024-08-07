@@ -1,15 +1,18 @@
 import { api_root } from "@api";
 import { getCalmdownStatus } from "@api/cluster";
+import { delayGameSelfEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
 import { wsrx } from "@lib/wsrx";
 import { accountStore } from "@storage/account";
 import { challengeStore } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Tag from "@widgets/tag";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
+import type { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
@@ -50,6 +53,74 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
     }
     return null;
   });
+
+  const [starting, setStarting] = createSignal(false);
+  function handleStartChallengeEnv() {
+    setStarting(true);
+    startChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id)
+      .then(() => {
+        setTimeout(() => {
+          wsrx.refreshInstances();
+        }, 500);
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("game.challenge.startEnvFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setStarting(false);
+      });
+  }
+
+  const [delaying, setDelaying] = createSignal(false);
+  function handleDelaySelfEnv() {
+    setDelaying(true);
+    delayGameSelfEnv(challengeStore.current!.game_id)
+      .then(() => {
+        setTimeout(() => {
+          wsrx.refreshInstances();
+        }, 500);
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("game.challenge.delayEnvFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setDelaying(false);
+      });
+  }
+  const [stopping, setStopping] = createSignal(false);
+  function handleStopSelfEnv() {
+    setStopping(true);
+    stopGameSelfEnv(challengeStore.current!.game_id)
+      .then(() => {
+        setTimeout(() => {
+          wsrx.refreshInstances();
+        }, 500);
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("game.challenge.stopEnvFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setStopping(false);
+      });
+  }
   return (
     <div class="w-full h-full overflow-hidden flex flex-col">
       <OverlayScrollbarsComponent
@@ -139,7 +210,13 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                 <div class="flex flex-row space-x-2">
                   <Switch
                     fallback={
-                      <Button ghost size="sm">
+                      <Button
+                        ghost
+                        size="sm"
+                        onClick={handleStartChallengeEnv}
+                        loading={starting()}
+                        disabled={starting()}
+                      >
                         <Show
                           when={calmdownStart()}
                           fallback={
@@ -162,10 +239,14 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                     }
                   >
                     <Match when={instance()}>
-                      <For each={challengeStore.env?.images}>
+                      {/* <For each={challengeStore.env?.images}>
                         {(image) => (
                           <Show when={image.port}>
-                            <Button ghost size="sm" title={image.description!}>
+                            <ClipboardBtn
+                              size="sm"
+                              title={image.description!}
+                              value={getWsrxLink(instance()!.wsrx, image.port!)}
+                            >
                               <Switch>
                                 <Match when={image.service_type === "http"}>
                                   <span class="text-info">HTTP</span>
@@ -175,15 +256,29 @@ export default function (props: { solved?: boolean; solves?: number; inGame?: bo
                                 </Match>
                               </Switch>
                               <span>{image.port}</span>
-                            </Button>
+                            </ClipboardBtn>
                           </Show>
                         )}
-                      </For>
+                      </For> */}
                       <Divider class="h-8" direction="horizontal" />
-                      <Button ghost size="sm" square>
+                      <Button
+                        ghost
+                        size="sm"
+                        square
+                        onClick={handleDelaySelfEnv}
+                        loading={delaying()}
+                        disabled={delaying()}
+                      >
                         <span class="icon-[fluent--clock-alarm-20-regular] w-5 h-5 text-primary" />
                       </Button>
-                      <Button ghost size="sm" square>
+                      <Button
+                        ghost
+                        size="sm"
+                        square
+                        onClick={handleStopSelfEnv}
+                        loading={stopping()}
+                        disabled={stopping()}
+                      >
                         <span class="icon-[fluent--record-stop-20-regular] w-5 h-5 text-primary" />
                       </Button>
                     </Match>

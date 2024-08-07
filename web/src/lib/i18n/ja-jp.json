@@ -628,7 +628,10 @@
       "simpleCheckerScriptPreset": "静的評価",
       "dynamicCheckerScriptPreset": "動的環境評価",
       "mappedCheckerScriptPreset": "動的添付評価",
-      "deleteTips": "この問題を削除してもよろしいですか？関連する提出記録とスコアも一緒に削除されます。"
+      "deleteTips": "この問題を削除してもよろしいですか？関連する提出記録とスコアも一緒に削除されます。",
+      "delayEnvFailed": "環境遅延失敗",
+      "stopEnvFailed": "環境停止に失敗",
+      "startEnvFailed": "環境の起動に失敗しました"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

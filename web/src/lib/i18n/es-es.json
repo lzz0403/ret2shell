@@ -628,7 +628,10 @@
       "simpleCheckerScriptPreset": "Evaluación estática",
       "dynamicCheckerScriptPreset": "Evaluación del entorno dinámico",
       "mappedCheckerScriptPreset": "Evaluación de accesorios dinámicos",
-      "deleteTips": "¿Estás seguro de eliminar esta pregunta? Se eliminarán también todas las entradas y puntuaciones relacionadas."
+      "deleteTips": "¿Estás seguro de eliminar esta pregunta? Se eliminarán también todas las entradas y puntuaciones relacionadas.",
+      "delayEnvFailed": "Fallo en la demora ambiental",
+      "stopEnvFailed": "Detener el fracaso ambiental",
+      "startEnvFailed": "Fallo al iniciar el entorno"
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

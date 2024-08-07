@@ -628,7 +628,10 @@
       "simpleCheckerScriptPreset": "Statische Bewertung",
       "dynamicCheckerScriptPreset": "Dynamische Umweltbewertung",
       "mappedCheckerScriptPreset": "Dynamische Anhänge Bewertung",
-      "deleteTips": "Möchten Sie diese Frage wirklich löschen? Alle damit verbundenen Einsendungen und Punkte werden ebenfalls gelöscht."
+      "deleteTips": "Möchten Sie diese Frage wirklich löschen? Alle damit verbundenen Einsendungen und Punkte werden ebenfalls gelöscht.",
+      "delayEnvFailed": "Umgebungsverzögerung fehlgeschlagen",
+      "stopEnvFailed": "Umgebungstopp fehlgeschlagen",
+      "startEnvFailed": "Umgebung konnte nicht gestartet werden"
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

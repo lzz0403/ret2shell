@@ -628,7 +628,10 @@
       "simpleCheckerScriptPreset": "정적 평가",
       "dynamicCheckerScriptPreset": "동적 환경 평가",
       "mappedCheckerScriptPreset": "동적 첨부파일 평가",
-      "deleteTips": "이 문제를 삭제하시겠습니까? 관련된 제출 기록과 점수도 함께 삭제됩니다."
+      "deleteTips": "이 문제를 삭제하시겠습니까? 관련된 제출 기록과 점수도 함께 삭제됩니다.",
+      "delayEnvFailed": "환경 지연 실패",
+      "stopEnvFailed": "환경 중지 실패",
+      "startEnvFailed": "환경 시작 실패"
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",

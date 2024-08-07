@@ -11,6 +11,7 @@ use rune::{
 };
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
+use tracing::debug;
 use traits::CheckerError;
 
 pub mod traits;
@@ -186,6 +187,7 @@ impl Checker {
   pub async fn environ(
     &self, bucket: &ChallengeBucket, user: &user::Model, team: &Option<team::Model>,
   ) -> Result<HashMap<String, String>, CheckerError> {
+    debug!("entering checker environ");
     let contexts = self.contexts.read().await;
     let (unit, runtime, _) = contexts
       .get(&bucket.hash())
@@ -197,7 +199,9 @@ impl Checker {
       None => Object::new(),
     };
     let bucket = ret2script::modules::bucket::Bucket::try_new(bucket.path())?;
+    debug!("calling environ");
     let output = vm.call(["environ"], (bucket, user_object, team_object))?;
+    debug!("environ output: {:?}", output);
     let object: Result<Object, Value> = rune::from_value(output)?;
     if let Ok(object) = object {
       let mut environ = HashMap::new();

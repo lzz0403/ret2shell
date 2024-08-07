@@ -154,7 +154,7 @@ export default function () {
   const [extras, setExtras] = createSignal([] as Extra[]);
   const params = useParams();
   const teamId = () => Number.parseInt(params.team) || null;
-  const isSelfTeam = () => team()?.id === gameStore.team?.id;
+  const isSelfTeam = () => team() && team()?.id === gameStore.team?.id;
   const navigate = useNavigate();
   createEffect(() => {
     if (gameStore.current && teamId()) {
