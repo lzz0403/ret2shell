@@ -375,6 +375,7 @@ fn filter_sql(mut sql: Select<Entity>, filter: Option<String>) -> Result<Select<
     }
     let filter = format!("%{}%", filter.to_ascii_lowercase());
     cond = cond.add(Expr::expr(Func::lower(Expr::col(Column::Name))).like(filter.clone()));
+    cond = cond.add(Column::Token.like(filter.clone()));
     sql = sql.filter(cond);
   };
   Ok(sql)

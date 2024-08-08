@@ -562,7 +562,17 @@
       },
       "teamSizePlaceholder": "Team Maximum Capacity",
       "teams": {
-        "title": "Participating Teams"
+        "title": "Participating Teams",
+        "banned": "Banned",
+        "fetchFailed": "Failed to retrieve team list",
+        "filterPlaceholder": "Search team name, token",
+        "hidden": "Hidden",
+        "institute": "Organization",
+        "name": "Team Name",
+        "pending": "Under Review",
+        "selectInstitute": "Select Organization...",
+        "sortBy": "Sort by",
+        "state": "status"
       },
       "title": "Management",
       "answer": {
@@ -585,6 +595,13 @@
         "deleteFailed": "Deletion failed",
         "warningDelete": "Confirm deletion of the administrator?",
         "noAdmins": "No users found matching the search criteria"
+      },
+      "chat": {
+        "noSession": "No team has sent feedback...",
+        "selectToShow": "Select a conversation to view and reply",
+        "sendPlaceholder": "Send reply...",
+        "title": "Feedback",
+        "unread": "Unread"
       }
     },
     "adminCanNotTakePartIn": "Administrators are not allowed to participate.",
@@ -718,7 +735,14 @@
       "envHasError": "An error occurred. Please try restarting the environment after 1 minute or contact the administrator...",
       "fetchSolvesFailed": "Failed to retrieve problem-solving records",
       "fetchSolveStatusFailed": "Failed to retrieve problem-solving status",
-      "filterNameOrLabel": "Filter by name or tag..."
+      "filterNameOrLabel": "Filter by name or tag...",
+      "adminHammerTips": "Here are the questions and team information provided by the participants:",
+      "chatAdminRole": "Administrator",
+      "chatPlayerRole": "Player",
+      "fetchChatError": "Failed to retrieve message",
+      "fetchChatSessionError": "Failed to retrieve feedback list",
+      "hammerInputAlreadySend": "The issue has been sent, please wait for feedback...",
+      "sendChatError": "Send failed"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",
@@ -838,7 +862,19 @@
       "name": "Team Name",
       "pendingTips": "Your team needs to be reviewed, and if it has not passed the review after a long time, please contact the administrator.",
       "pending": "The team needs to review.",
-      "banned": "The team has been banned."
+      "banned": "The team has been banned.",
+      "createExtraFailed": "Failed to create additional score change",
+      "createExtraReason": "Reason for change...",
+      "extraReasonRequired": "Please fill in the reason for the change.",
+      "extraScore": "Extra points",
+      "extraScoreRequired": "Please fill in the score",
+      "state": {
+        "banned": "Banned",
+        "hidden": "Hidden",
+        "passed": "normal",
+        "pending": "Pending Review",
+        "title": "Team Status"
+      }
     },
     "teamSizePlaceholder": "Team Size Limit",
     "timerTips": "There are {{ period }} left",

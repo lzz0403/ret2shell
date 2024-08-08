@@ -119,6 +119,7 @@ export class Service implements Command {
         io.error(`${t("shell.service.stopEnvError")!}: ${text}`);
       }
     }
+    await new Promise((r) => setTimeout(r, 500));
     await wsrx.refreshInstances();
     await wsrx.deleteOutdatedTraffic();
     return 0;

@@ -180,12 +180,12 @@ async fn get_team_members(
 
 #[derive(Deserialize)]
 struct TeamListQuery {
-  pub filter: Option<String>,
-  pub institute_id: Option<i64>,
-  pub order_by: Option<String>,
-  pub asc: Option<bool>,
   pub page: Option<u64>,
   pub page_size: Option<u64>,
+  pub order: Option<String>,
+  pub filter: Option<String>,
+  pub institute_id: Option<i64>,
+  pub asc: Option<bool>,
   pub min_state: Option<team::State>,
 }
 
@@ -211,7 +211,7 @@ async fn get_team_list(
     min_state,
     query.institute_id,
     query.filter,
-    query.order_by,
+    query.order,
     query.asc.unwrap_or(true),
   )
   .await?;

@@ -69,10 +69,10 @@ export default function (props: { inGame?: boolean }) {
       });
     }
     instanceStateIter++;
-    instanceStateIter = instanceStateIter % 10;
+    instanceStateIter = instanceStateIter % 20;
     return maintainInstances;
   }
-  const timer = setInterval(maintainInstances(), 3000);
+  const timer = setInterval(maintainInstances(), 1000);
   onCleanup(() => {
     clearInterval(timer);
   });

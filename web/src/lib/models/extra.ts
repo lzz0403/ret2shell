@@ -5,9 +5,9 @@ export type Extra = {
   created_at: DateTime;
   reason: string;
   score: number;
-  hint_id: number;
+  hint_id: number | null;
   team_id: number;
   team_name?: string;
-  challenge_id: number;
+  challenge_id: number | null;
   challenge_name?: string;
 };

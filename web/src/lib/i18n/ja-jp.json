@@ -483,7 +483,17 @@
       },
       "teamSizePlaceholder": "チーム最大人数",
       "teams": {
-        "title": "参加チーム"
+        "title": "参加チーム",
+        "sortBy": "並べ替え方法",
+        "selectInstitute": "組織を選択...",
+        "filterPlaceholder": "検索チーム名、トークン",
+        "fetchFailed": "チームリストの取得に失敗しました",
+        "institute": "組織",
+        "name": "チーム名",
+        "state": "状態",
+        "banned": "禁止済み",
+        "pending": "審査待ち",
+        "hidden": "非表示"
       },
       "title": "管理",
       "answer": {
@@ -506,6 +516,13 @@
         "deleteFailed": "削除失敗",
         "warningDelete": "管理者を削除してもよろしいですか？",
         "noAdmins": "検索条件に一致するユーザーが見つかりませんでした"
+      },
+      "chat": {
+        "selectToShow": "会話を選択して表示と返信",
+        "sendPlaceholder": "送信返信...",
+        "unread": "未読",
+        "title": "フィードバック",
+        "noSession": "フィードバックが送信されていません..."
       }
     },
     "adminCanNotTakePartIn": "管理者は参加できません。",
@@ -639,7 +656,14 @@
       "envHasError": "エラーが発生しました。1 分後に環境を再起動するか、管理者に連絡してください...",
       "fetchSolvesFailed": "解題記録の取得に失敗しました",
       "fetchSolveStatusFailed": "解題状況の取得に失敗しました",
-      "filterNameOrLabel": "フィルター名またはタグ..."
+      "filterNameOrLabel": "フィルター名またはタグ...",
+      "sendChatError": "送信失敗",
+      "fetchChatError": "メッセージの取得に失敗しました",
+      "chatAdminRole": "管理者",
+      "chatPlayerRole": "選手",
+      "hammerInputAlreadySend": "問題は送信されました、フィードバックをお待ちください...",
+      "fetchChatSessionError": "フィードバックリストの取得に失敗しました",
+      "adminHammerTips": "これは選手からのフィードバックの課題とチーム情報です："
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",
@@ -759,7 +783,19 @@
       "name": "チーム名",
       "pendingTips": "チームの審査が必要です。長時間審査が通過しない場合は、管理者に連絡してください。",
       "pending": "チームは審査が必要です",
-      "banned": "チームは禁止されました"
+      "banned": "チームは禁止されました",
+      "state": {
+        "title": "チームの状態",
+        "banned": "禁止済み",
+        "pending": "審査待ち",
+        "hidden": "非表示",
+        "passed": "正常"
+      },
+      "createExtraFailed": "追加スコア変動の作成に失敗しました",
+      "extraReasonRequired": "変更理由をご記入ください",
+      "createExtraReason": "変更理由...",
+      "extraScoreRequired": "点数を入力してください",
+      "extraScore": "追加点数"
     },
     "teamSizePlaceholder": "チーム人数制限",
     "timerTips": "あと {{ period }}",

@@ -1,4 +1,12 @@
-import { getTeamExtras, getTeamInfo, getTeamMembers, getTeamSolves, updateSelfteam } from "@api/game";
+import {
+  createTeamExtra,
+  getTeamExtras,
+  getTeamInfo,
+  getTeamMembers,
+  getTeamSolves,
+  updateSelfteam,
+  updateTeamInfo,
+} from "@api/game";
 import SidebarLayout from "@blocks/sidebar-layout";
 import type { Extra } from "@models/extra";
 import type { Submission } from "@models/submission";
@@ -7,7 +15,7 @@ import type { User } from "@models/user";
 import { createForm, maxLength, required, setValue, setValues } from "@modular-forms/solid";
 import { A, useNavigate, useParams } from "@solidjs/router";
 import { accountStore, refreshInstitutes } from "@storage/account";
-import { gameStore, setGameStore } from "@storage/game";
+import { gameStore, isGameAdmin, setGameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -17,10 +25,173 @@ import Clipboard from "@widgets/clipboard";
 import Input from "@widgets/input";
 import Select from "@widgets/select";
 import type { HTTPError } from "ky";
+import { DateTime } from "luxon";
 import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import Sidebar from "./_blocks/sidebar";
 
-type TeamUpdateForm = {
+type TeamAdminUpdateForm = {
+  name: string;
+  state: string;
+  institute_id: number;
+};
+
+function AdminManagement(props: {
+  team: Team | null;
+  onDone?: (team: Team) => void;
+}) {
+  const [form, { Form, Field }] = createForm<TeamAdminUpdateForm>();
+  createEffect(() => {
+    if (props.team) {
+      untrack(() => {
+        setValues(form, {
+          name: props.team!.name,
+          institute_id: props.team?.institute_id || 0,
+          state: props.team?.state.toString() || "0",
+        });
+      });
+    }
+  });
+  const institutesSelect = createMemo(() => {
+    const result = [] as { value: string; label: string; icon: string }[];
+    result.push({
+      value: "0",
+      label: t("game.team.noInstitute")!,
+      icon: "icon-[fluent--earth-20-regular] w-5 h-5",
+    });
+    for (const institute of accountStore.institutes) {
+      result.push({
+        value: institute.id.toString(),
+        label: institute.name,
+        icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
+      });
+    }
+    return result;
+  });
+  refreshInstitutes();
+  const [updating, setUpdating] = createSignal(false);
+  function onSubmit(result: TeamAdminUpdateForm) {
+    setUpdating(true);
+    updateTeamInfo(gameStore.current!.id, props.team!.id, {
+      ...props.team!,
+      name: result.name,
+      state: Number.parseInt(result.state),
+      institute_id: result.institute_id || null,
+    })
+      .then((team) => {
+        props.onDone?.(team);
+        addToast({
+          level: "success",
+          description: t("form.saveSuccess")!,
+          duration: 5000,
+        });
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("form.saveFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setUpdating(false);
+      });
+  }
+  return (
+    <>
+      <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
+        <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
+        <span>{t("game.team.selfManagement")}</span>
+      </h3>
+      <section class="flex flex-col space-y-2 mt-2">
+        <div class="flex flex-col space-y-1">
+          <label class="label">{t("game.team.token")}</label>
+          <Clipboard value={props.team?.token || undefined} />
+        </div>
+        <Form class="flex flex-col space-y-2" onSubmit={onSubmit}>
+          <div class="flex flex-row space-x-2">
+            <Field
+              name="name"
+              validate={[
+                required(t("game.team.create.nameRequired")!),
+                maxLength(32, t("game.team.create.nameMaxLength")!),
+              ]}
+            >
+              {(field, props) => (
+                <Input
+                  class="flex-1"
+                  icon={<span class="icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
+                  title={t("game.team.name")}
+                  placeholder={t("game.team.name")}
+                  {...props}
+                  value={field.value}
+                  error={field.error}
+                  required
+                  disabled={gameStore.current?.team_size === 1}
+                />
+              )}
+            </Field>
+            <Field name="institute_id" type="number">
+              {(field) => (
+                <Select
+                  class="flex-1 min-w-0"
+                  label={t("admin.users.institute")}
+                  placeholder={t("admin.users.selectInstitute")}
+                  items={institutesSelect()}
+                  onValueChange={(v) => {
+                    setValue(form, "institute_id", (v.value.at(0) && Number.parseInt(v.value.at(0)!)) || 0);
+                  }}
+                  value={field.value ? [field.value.toString()] : undefined}
+                />
+              )}
+            </Field>
+            <Field name="state">
+              {(field) => (
+                <Select
+                  class="flex-1 min-w-0"
+                  label={t("game.team.state.title")!}
+                  items={[
+                    {
+                      value: "0",
+                      label: t("game.team.state.banned")!,
+                      icon: "icon-[fluent--dismiss-circle-20-regular] w-5 h-5 text-error",
+                    },
+                    {
+                      value: "1",
+                      label: t("game.team.state.pending")!,
+                      icon: "icon-[fluent--question-circle-20-regular] w-5 h-5 text-warning",
+                    },
+                    {
+                      value: "2",
+                      label: t("game.team.state.hidden")!,
+                      icon: "icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning",
+                    },
+                    {
+                      value: "3",
+                      label: t("game.team.state.passed")!,
+                      icon: "icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success",
+                    },
+                  ]}
+                  onValueChange={(v) => {
+                    setValue(form, "state", v.value.at(0) || "0");
+                  }}
+                  value={field.value ? [field.value.toString()] : undefined}
+                />
+              )}
+            </Field>
+          </div>
+          <Button type="submit" level="primary" class="!mt-4" loading={updating()} disabled={updating()}>
+            {t("form.save")}
+          </Button>
+        </Form>
+      </section>
+      <div class="h-16" />
+    </>
+  );
+}
+
+type TeamSelfUpdateForm = {
   name: string;
   institute_id: number;
 };
@@ -28,7 +199,7 @@ type TeamUpdateForm = {
 function SelfManagement(props: {
   members: User[];
 }) {
-  const [form, { Form, Field }] = createForm<TeamUpdateForm>();
+  const [form, { Form, Field }] = createForm<TeamSelfUpdateForm>();
   createEffect(() => {
     if (gameStore.team) {
       untrack(() => {
@@ -62,7 +233,7 @@ function SelfManagement(props: {
   });
   refreshInstitutes();
   const [updating, setUpdating] = createSignal(false);
-  function onSubmit(result: TeamUpdateForm) {
+  function onSubmit(result: TeamSelfUpdateForm) {
     setUpdating(true);
     updateSelfteam(gameStore.current!.id, {
       name: result.name,
@@ -147,6 +318,89 @@ function SelfManagement(props: {
     </>
   );
 }
+type CreateExtraForm = {
+  reason: string;
+  score: number;
+};
+
+function ExtraForm(props: {
+  team: Team | null;
+  onDone?: () => void;
+}) {
+  const [form, { Form, Field }] = createForm<CreateExtraForm>();
+  setValue(form, "score", 0);
+
+  const [loading, setLoading] = createSignal(false);
+  function onSubmit(result: CreateExtraForm) {
+    setLoading(true);
+    createTeamExtra(gameStore.current!.id, props.team!.id, {
+      id: 0,
+      created_at: DateTime.now(),
+      reason: result.reason,
+      score: result.score,
+      hint_id: null,
+      challenge_id: null,
+      team_id: props.team!.id,
+    })
+      .then(() => {
+        props.onDone?.();
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("game.team.createExtraFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  return (
+    <Form onSubmit={onSubmit} class="min-h-12 border-b border-b-layer-content/10 flex flex-1 items-center space-x-2">
+      <span class="icon-[fluent--add-circle-20-regular] w-5 h-5 text-info" />
+      <Field name="reason" validate={[required(t("game.team.extraReasonRequired")!)]}>
+        {(field, props) => (
+          <Input
+            type="text"
+            value={field.value}
+            error={field.error}
+            {...props}
+            required
+            noLabel
+            placeholder={t("game.team.createExtraReason")}
+            class="flex-1"
+            size="sm"
+          />
+        )}
+      </Field>
+      <Field name="score" type="number" validate={[required(t("game.team.extraScoreRequired")!)]}>
+        {(field, props) => (
+          <Input
+            type="number"
+            value={field.value}
+            error={field.error}
+            {...props}
+            noLabel
+            required
+            placeholder={t("game.team.extraScore")}
+            class="w-24"
+            size="sm"
+          />
+        )}
+      </Field>
+      <span class="font-bold opacity-60">pts</span>
+      <span class="w-8" />
+      <Button size="sm" level="primary" type="submit" loading={loading()} disabled={loading()}>
+        <span class="icon-[fluent--add-20-regular] w-5 h-5" />
+        <span>{t("form.create")}</span>
+      </Button>
+    </Form>
+  );
+}
 
 export default function () {
   const [team, setTeam] = createSignal(null as Team | null);
@@ -156,60 +410,69 @@ export default function () {
   const teamId = () => Number.parseInt(params.team) || null;
   const isSelfTeam = () => team() && team()?.id === gameStore.team?.id;
   const navigate = useNavigate();
+  function refreshExtras() {
+    getTeamExtras(gameStore.current!.id, teamId()!)
+      .then((resp) => {
+        setExtras(resp);
+      })
+      .catch((err: HTTPError) => {
+        if (err.response.status === 404) {
+          navigate("/sigtrap/404");
+        } else {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.team.fetchTeamExtrasFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        }
+      });
+  }
+  function refreshInfo() {
+    getTeamInfo(gameStore.current!.id, teamId()!, true)
+      .then((resp) => {
+        setTeam(resp);
+      })
+      .catch((err: HTTPError) => {
+        if (err.response.status === 404) {
+          navigate("/sigtrap/404");
+        } else {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.team.fetchTeamFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        }
+      });
+  }
+  function refreshSolves() {
+    getTeamSolves(gameStore.current!.id, teamId()!)
+      .then((resp) => {
+        setSolves(resp);
+      })
+      .catch((err: HTTPError) => {
+        if (err.response.status === 404) {
+          navigate("/sigtrap/404");
+        } else {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.team.fetchTeamSubmissionsFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        }
+      });
+  }
   createEffect(() => {
     if (gameStore.current && teamId()) {
       untrack(() => {
-        getTeamInfo(gameStore.current!.id, teamId()!, true)
-          .then((resp) => {
-            setTeam(resp);
-          })
-          .catch((err: HTTPError) => {
-            if (err.response.status === 404) {
-              navigate("/sigtrap/404");
-            } else {
-              err.response.text().then((text) => {
-                addToast({
-                  level: "error",
-                  description: `${t("game.team.fetchTeamFailed")}: ${text}`,
-                  duration: 5000,
-                });
-              });
-            }
-          });
-        getTeamExtras(gameStore.current!.id, teamId()!)
-          .then((resp) => {
-            setExtras(resp);
-          })
-          .catch((err: HTTPError) => {
-            if (err.response.status === 404) {
-              navigate("/sigtrap/404");
-            } else {
-              err.response.text().then((text) => {
-                addToast({
-                  level: "error",
-                  description: `${t("game.team.fetchTeamExtrasFailed")}: ${text}`,
-                  duration: 5000,
-                });
-              });
-            }
-          });
-        getTeamSolves(gameStore.current!.id, teamId()!)
-          .then((resp) => {
-            setSolves(resp);
-          })
-          .catch((err: HTTPError) => {
-            if (err.response.status === 404) {
-              navigate("/sigtrap/404");
-            } else {
-              err.response.text().then((text) => {
-                addToast({
-                  level: "error",
-                  description: `${t("game.team.fetchTeamSubmissionsFailed")}: ${text}`,
-                  duration: 5000,
-                });
-              });
-            }
-          });
+        refreshInfo();
+        refreshExtras();
+        refreshSolves();
       });
     }
   });
@@ -244,6 +507,7 @@ export default function () {
       });
     }
   });
+
   return (
     <>
       <Title title={`${team()?.name ?? t("game.team.title")} - ${gameStore.current?.name ?? "CTF"}`} />
@@ -252,6 +516,14 @@ export default function () {
           <div class="flex flex-col w-full max-w-5xl">
             <Show when={isSelfTeam()}>
               <SelfManagement members={members()} />
+            </Show>
+            <Show when={isGameAdmin()}>
+              <AdminManagement
+                team={team()}
+                onDone={(team) => {
+                  setTeam(team);
+                }}
+              />
             </Show>
             <h3 class="h-12 flex items-center border-b border-b-layer-content/15 font-bold space-x-2">
               <span class="icon-[fluent--data-trending-20-regular] w-5 h-5" />
@@ -352,7 +624,14 @@ export default function () {
               >
                 {(extra) => (
                   <div class="h-12 flex items-center border-b border-b-layer-content/10 hover:bg-layer-content/5 space-x-2">
-                    <span class="icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success" />
+                    <Show
+                      when={extra.score > 0}
+                      fallback={
+                        <span class="icon-[fluent--arrow-circle-down-double-20-regular] w-5 h-5 text-warning" />
+                      }
+                    >
+                      <span class="icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success" />
+                    </Show>
                     <span class="flex-1 text-start truncate">{extra.reason}</span>
                     <span class={`font-bold ${extra.score > 0 ? "text-success" : "text-warning"}`}>
                       {extra.score} pts
@@ -361,7 +640,19 @@ export default function () {
                   </div>
                 )}
               </For>
+              <Show when={isGameAdmin()}>
+                <ExtraForm
+                  team={team()}
+                  onDone={() => {
+                    refreshExtras();
+                    setTimeout(() => {
+                      refreshInfo();
+                    }, 500);
+                  }}
+                />
+              </Show>
             </section>
+            <div class="h-24" />
           </div>
         </div>
       </SidebarLayout>

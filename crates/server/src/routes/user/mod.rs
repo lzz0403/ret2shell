@@ -48,7 +48,7 @@ struct UserListQuery {
   page_size: Option<u64>,
   order: Option<String>,
   filter: Option<String>,
-  with_institute_id: Option<i64>,
+  institute_id: Option<i64>,
 }
 
 async fn get_user_list(
@@ -62,7 +62,7 @@ async fn get_user_list(
     query.order,
     query.filter,
     token.permissions.0.contains(&user::Permission::User),
-    query.with_institute_id,
+    query.institute_id,
   )
   .await?;
   if token.permissions.0.contains(&Permission::User) {

@@ -486,7 +486,17 @@
       },
       "teamSizePlaceholder": "número máximo de personas en el equipo",
       "teams": {
-        "title": "equipo participante"
+        "title": "equipo participante",
+        "sortBy": "Ordenar por",
+        "selectInstitute": "Seleccionar organización...",
+        "filterPlaceholder": "Buscar nombre del equipo, token",
+        "fetchFailed": "Error al obtener la lista de equipos",
+        "institute": "organización",
+        "name": "Nombre del equipo",
+        "state": "estado",
+        "banned": "Bloqueado",
+        "pending": "Pendiente de revisión",
+        "hidden": "oculto"
       },
       "title": "administración",
       "organize": {
@@ -506,6 +516,13 @@
         "deleteFailed": "Eliminación fallida",
         "warningDelete": "¿Confirmar la eliminación del administrador?",
         "noAdmins": "No se encontraron usuarios que coincidan con los criterios de búsqueda."
+      },
+      "chat": {
+        "selectToShow": "Selecciona una conversación para ver y responder",
+        "sendPlaceholder": "Enviar respuesta...",
+        "unread": "No leído",
+        "title": "Respuesta",
+        "noSession": "No hay equipos que hayan enviado comentarios..."
       }
     },
     "adminCanNotTakePartIn": "El administrador no puede participar en la competición.",
@@ -639,7 +656,14 @@
       "envHasError": "Ocurrió un error, por favor intente reiniciar el entorno después de 1 minuto o contacte al administrador...",
       "fetchSolvesFailed": "Fallo al obtener el registro de resolución del problema",
       "fetchSolveStatusFailed": "Fallo al obtener el estado de la resolución del problema",
-      "filterNameOrLabel": "Filtrar por nombre o etiqueta..."
+      "filterNameOrLabel": "Filtrar por nombre o etiqueta...",
+      "sendChatError": "Envío fallido",
+      "fetchChatError": "Error al obtener el mensaje",
+      "chatAdminRole": "Administrador",
+      "chatPlayerRole": "participante",
+      "hammerInputAlreadySend": "El problema ha sido enviado, por favor espere la respuesta...",
+      "fetchChatSessionError": "Fallo al obtener la lista de comentarios",
+      "adminHammerTips": "Este es el tema de retroalimentación del participante y la información del equipo:"
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",
@@ -759,7 +783,19 @@
       "name": "Nombre del equipo",
       "pendingTips": "Tu equipo necesita ser revisado, si no pasa la revisión en mucho tiempo, por favor contacta al administrador.",
       "pending": "El equipo necesita una revisión.",
-      "banned": "El equipo ha sido prohibido."
+      "banned": "El equipo ha sido prohibido.",
+      "state": {
+        "title": "Estado del equipo",
+        "banned": "Bloqueado",
+        "pending": "Pendiente de revisión",
+        "hidden": "oculto",
+        "passed": "normal"
+      },
+      "createExtraFailed": "Fallo al crear cambios adicionales en la puntuación",
+      "extraReasonRequired": "Por favor, indique el motivo del cambio.",
+      "createExtraReason": "razones del cambio...",
+      "extraScoreRequired": "Por favor, rellena la puntuación.",
+      "extraScore": "Puntuación adicional"
     },
     "teamSizePlaceholder": "Límite de número de miembros en el equipo",
     "timerTips": "falta {{ period }}",

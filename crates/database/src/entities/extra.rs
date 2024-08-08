@@ -103,8 +103,8 @@ where
   C: ConnectionTrait,
 {
   let sql = Entity::find()
-    .join(JoinType::InnerJoin, Relation::Team.def())
-    .join(JoinType::InnerJoin, Relation::Challenge.def())
+    .join(JoinType::LeftJoin, Relation::Team.def())
+    .join(JoinType::LeftJoin, Relation::Challenge.def())
     .column_as(team::Column::Name, "team_name")
     .column_as(challenge::Column::Name, "challenge_name")
     .filter(Column::TeamId.eq(team_id));

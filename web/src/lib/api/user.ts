@@ -10,7 +10,7 @@ export async function getUserList(
   page_size?: number,
   order?: string,
   filter?: string,
-  with_institute_id?: number
+  institute_id?: number
 ) {
   return await api
     .get(`${api_root}/user`, {
@@ -20,7 +20,7 @@ export async function getUserList(
           page_size,
           order,
           filter,
-          with_institute_id,
+          institute_id,
         })
       ) as SearchParamsOption,
     })

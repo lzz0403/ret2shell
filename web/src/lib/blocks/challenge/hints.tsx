@@ -8,9 +8,7 @@ import {
 import type { Challenge } from "@models/challenge";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
-import { Permission } from "@models/user";
 import { createForm, required, setValue, setValues } from "@modular-forms/solid";
-import { accountStore } from "@storage/account";
 import { challengeStore } from "@storage/challenge";
 import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
@@ -213,11 +211,7 @@ export default function (_props: {
           </div>
         )}
       </For>
-      <Show
-        when={
-          accountStore.permissions.includes(Permission.Game) && gameStore.current?.admins.includes(accountStore.id!)
-        }
-      >
+      <Show when={isGameAdmin()}>
         <Form onSubmit={onSubmit} class="px-2 min-h-12 border-b border-b-layer-content/10 flex items-center space-x-2">
           <span class="icon-[fluent--info-20-regular] w-5 h-5 text-primary flex-shrink-0" />
           <Field name="content" validate={[required(t("game.challenge.hintRequired")!)]}>

@@ -1,5 +1,6 @@
 import type { Article } from "@models/article";
 import type { Challenge, ChallengeEnv } from "@models/challenge";
+import type { Chat, ChatSession } from "@models/chat";
 import type { Game, HostType } from "@models/game";
 import type { Instance } from "@models/instance";
 import type { Submission } from "@models/submission";
@@ -67,7 +68,7 @@ export async function getGameScoreboard(
           page_size,
           institute_id,
           asc: false,
-          order_by: "score",
+          order: "score",
         })
       ) as SearchParamsOption,
     })
@@ -236,6 +237,14 @@ export async function getTeamInfo(game_id: number, team_id: number, ex?: boolean
     .json<Team>();
 }
 
+export async function updateTeamInfo(game_id: number, team_id: number, team: Team) {
+  return await api
+    .patch(`${api_root}/game/${game_id}/team/${team_id}`, {
+      json: team,
+    })
+    .json<Team>();
+}
+
 export async function getTeamMembers(game_id: number, team_id: number) {
   return await api.get(`${api_root}/game/${game_id}/team/${team_id}/member`).json<User[]>();
 }
@@ -256,6 +265,14 @@ export async function updateSelfteam(
 
 export async function getTeamExtras(game_id: number, team_id: number) {
   return await api.get(`${api_root}/game/${game_id}/team/${team_id}/extra`).json<Extra[]>();
+}
+
+export async function createTeamExtra(game_id: number, team_id: number, extra: Extra) {
+  return await api
+    .post(`${api_root}/game/${game_id}/team/${team_id}/extra`, {
+      json: extra,
+    })
+    .json<Extra>();
 }
 
 export async function getTeamSolves(game_id: number, team_id: number) {
@@ -344,4 +361,81 @@ export async function getChallengeSolveStatus(game_id: number, challenge_id: num
     solved: boolean;
     solves: number;
   }>();
+}
+
+export async function getGameAdminChatSessions(game_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/chat/admin`).json<ChatSession[]>();
+}
+
+export async function getGameAdminChatMessages(game_id: number, challenge_id: number, team_id: number) {
+  return await api
+    .get(`${api_root}/game/${game_id}/chat/admin/session`, {
+      searchParams: {
+        challenge_id,
+        team_id,
+      },
+    })
+    .json<Chat[]>();
+}
+
+export async function sendGameAdminChatMessage(
+  game_id: number,
+  challenge_id: number,
+  team_id: number,
+  content: string
+) {
+  return await api
+    .post(`${api_root}/game/${game_id}/chat/admin/session`, {
+      searchParams: {
+        challenge_id,
+        team_id,
+      },
+      json: {
+        content,
+      },
+    })
+    .json<void>();
+}
+
+export async function getGamePlayerChatMessages(game_id: number, challenge_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/chat/${challenge_id}`).json<Chat[]>();
+}
+
+export async function sendGamePlayerChatMessage(game_id: number, challenge_id: number, content: string) {
+  return await api
+    .post(`${api_root}/game/${game_id}/chat/${challenge_id}`, {
+      json: {
+        content,
+      },
+    })
+    .json<void>();
+}
+
+export async function checkUnreadMessages(game_id: number) {
+  return await api.get(`${api_root}/game/${game_id}/chat/unread`).json<Chat[]>();
+}
+
+export async function getTeamList(
+  game_id: number,
+  page?: number,
+  page_size?: number,
+  order?: string,
+  filter?: string,
+  institute_id?: number
+) {
+  return await api
+    .get(`${api_root}/game/${game_id}/team`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          min_state: TeamState.Banned,
+          asc: true,
+          page,
+          page_size,
+          order,
+          filter,
+          institute_id,
+        })
+      ) as SearchParamsOption,
+    })
+    .json<[Team[], number]>();
 }

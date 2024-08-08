@@ -46,11 +46,16 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           data::prepare_data!(challenge, true),
         )),
     )
-    .route("/check", get(check_unread_chats))
+    .route("/unread", get(check_unread_chats))
     .route_layer(middleware::from_fn_with_state(
       state.clone(),
       auth::game_access_required,
     ))
+}
+
+#[derive(Deserialize)]
+struct SendChatRequest {
+  content: String,
 }
 
 async fn admin_get_chat_list(
@@ -76,7 +81,7 @@ async fn player_send_chat(
   State(ref db): State<Database>, State(ref queue): State<Queue>,
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
   Extension(challenge): Extension<challenge::Model>, Extension(team): Extension<team::Model>,
-  Json(chat): Json<chat::Model>,
+  Json(chat): Json<SendChatRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let last_chat = chat::get_last(&db.conn, team.id, challenge.id).await?;
   if let Some(last_chat) = last_chat {
@@ -143,7 +148,7 @@ async fn admin_get_chat_session(
 async fn admin_send_chat(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Query(query): Query<AdminSessionQuery>,
-  Json(chat): Json<chat::Model>,
+  Json(chat): Json<SendChatRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   chat::create(
     &db.conn,

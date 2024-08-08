@@ -1,10 +1,7 @@
 import { deleteChallenge, publishChallenge, withdrawChallenge } from "@api/game";
 import type { Challenge } from "@models/challenge";
-import { Permission } from "@models/user";
 import { useSearchParams } from "@solidjs/router";
-import { accountStore } from "@storage/account";
 import { challengeStore, setChallengeStore } from "@storage/challenge";
-import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
@@ -26,6 +23,7 @@ import Intro from "./intro";
 import Settings from "./settings";
 import Statistics from "./statistics";
 import Terminal from "./terminal";
+import { isGameAdmin } from "@storage/game";
 
 function BottomPanel(props: {
   onStateChange?: (challenge?: Challenge) => void;
@@ -127,28 +125,11 @@ function BottomPanel(props: {
             <span class="icon-[fluent-emoji-flat--hammer] w-5 h-5" />
             <span>{t("game.challenge.hammer")}</span>
           </Button>
-          <Button
-            onClick={() => setPage(4)}
-            ghost={page() !== 4}
-            disabled={
-              props.inGame &&
-              !(
-                !!accountStore.id &&
-                accountStore.permissions.includes(Permission.Game) &&
-                gameStore.current?.admins.includes(accountStore.id)
-              )
-            }
-          >
+          <Button onClick={() => setPage(4)} ghost={page() !== 4} disabled={props.inGame && !isGameAdmin()}>
             <span class="icon-[fluent--checkmark-circle-20-regular] w-5 h-5" />
             <span>{t("game.challenge.answer")}</span>
           </Button>
-          <Show
-            when={
-              !!accountStore.id &&
-              accountStore.permissions.includes(Permission.Game) &&
-              gameStore.current?.admins.includes(accountStore.id)
-            }
-          >
+          <Show when={isGameAdmin()}>
             <Divider direction="vertical" class="h-8" />
             <Button onClick={() => setPage(5)} ghost={page() !== 5}>
               <span class="icon-[fluent--data-pie-20-regular] w-5 h-5" />

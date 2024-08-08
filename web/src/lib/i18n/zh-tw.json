@@ -562,7 +562,17 @@
       },
       "teamSizePlaceholder": "隊伍最大人數",
       "teams": {
-        "title": "參賽隊伍"
+        "title": "參賽隊伍",
+        "sortBy": "排序方式",
+        "selectInstitute": "選擇組織...",
+        "filterPlaceholder": "搜尋隊伍名稱、token",
+        "fetchFailed": "獲取隊伍列表失敗",
+        "institute": "組織",
+        "name": "隊伍名稱",
+        "state": "狀態",
+        "banned": "已封鎖",
+        "pending": "待審核",
+        "hidden": "已隱藏"
       },
       "title": "管理",
       "answer": {
@@ -585,6 +595,13 @@
         "deleteFailed": "刪除失敗",
         "warningDelete": "確認刪除管理員？",
         "noAdmins": "找不到符合搜尋條件的用戶"
+      },
+      "chat": {
+        "selectToShow": "選擇一個對話來查看和回覆",
+        "sendPlaceholder": "發送回覆...",
+        "unread": "未讀",
+        "title": "回饋",
+        "noSession": "沒有隊伍發送過回饋..."
       }
     },
     "adminCanNotTakePartIn": "管理員不能參賽",
@@ -718,7 +735,14 @@
       "envHasError": "發生錯誤，請嘗試 1 分鐘後重新啟動環境或聯繫管理員...",
       "fetchSolvesFailed": "獲取解題記錄失敗",
       "fetchSolveStatusFailed": "獲取解題情況失敗",
-      "filterNameOrLabel": "過濾名稱或標籤..."
+      "filterNameOrLabel": "過濾名稱或標籤...",
+      "sendChatError": "傳送失敗",
+      "fetchChatError": "獲取消息失敗",
+      "chatAdminRole": "管理員",
+      "chatPlayerRole": "選手",
+      "hammerInputAlreadySend": "問題已經發送，請等待回饋...",
+      "fetchChatSessionError": "獲取反饋列表失敗",
+      "adminHammerTips": "這是選手回饋的題目和隊伍資訊："
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",
@@ -838,7 +862,19 @@
       "name": "隊伍名稱",
       "pendingTips": "你的隊伍需要審核，長時間未通過審核請聯繫管理員。",
       "pending": "隊伍需要審核",
-      "banned": "隊伍已被封鎖"
+      "banned": "隊伍已被封鎖",
+      "state": {
+        "title": "隊伍狀態",
+        "banned": "已封鎖",
+        "pending": "待審核",
+        "hidden": "已隱藏",
+        "passed": "正常"
+      },
+      "createExtraFailed": "建立額外分數變動失敗",
+      "extraReasonRequired": "請填寫變動理由",
+      "createExtraReason": "變動理由...",
+      "extraScoreRequired": "請填寫分數",
+      "extraScore": "額外分數"
     },
     "teamSizePlaceholder": "隊伍人數限制",
     "timerTips": "距離 {{ period }} 還有",

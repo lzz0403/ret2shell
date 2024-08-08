@@ -235,7 +235,14 @@
       "envHasError": "发生错误，请尝试 1 分钟后重启环境或者联系管理员...",
       "fetchSolvesFailed": "获取解题记录失败",
       "fetchSolveStatusFailed": "获取解题情况失败",
-      "filterNameOrLabel": "过滤名称或标签..."
+      "filterNameOrLabel": "过滤名称或标签...",
+      "sendChatError": "发送失败",
+      "fetchChatError": "获取消息失败",
+      "chatAdminRole": "管理员",
+      "chatPlayerRole": "选手",
+      "hammerInputAlreadySend": "问题已经发送，请等待反馈...",
+      "fetchChatSessionError": "获取反馈列表失败",
+      "adminHammerTips": "这是选手反馈的题目和队伍信息："
     },
     "scoreboard": {
       "title": "积分板",
@@ -261,7 +268,17 @@
         "title": "统计数据"
       },
       "teams": {
-        "title": "参赛队伍"
+        "title": "参赛队伍",
+        "sortBy": "排序方式",
+        "selectInstitute": "选择组织...",
+        "filterPlaceholder": "搜索队伍名称、token",
+        "fetchFailed": "获取队伍列表失败",
+        "institute": "组织",
+        "name": "队伍名称",
+        "state": "状态",
+        "banned": "已封禁",
+        "pending": "待审核",
+        "hidden": "已隐藏"
       },
       "events": {
         "title": "事件看板"
@@ -302,6 +319,13 @@
         "deleteFailed": "删除失败",
         "warningDelete": "确认删除管理员？",
         "noAdmins": "没有找到符合搜索条件的的用户"
+      },
+      "chat": {
+        "selectToShow": "选择一个会话来查看和回复",
+        "sendPlaceholder": "发送回复...",
+        "unread": "未读",
+        "title": "反馈",
+        "noSession": "没有队伍发送过反馈..."
       }
     },
     "exit": "退出",
@@ -398,7 +422,19 @@
       "name": "队伍名称",
       "pendingTips": "你的队伍需要审核，长时间未通过审核请联系管理员。",
       "pending": "队伍需要审核",
-      "banned": "队伍已被封禁"
+      "banned": "队伍已被封禁",
+      "state": {
+        "title": "队伍状态",
+        "banned": "已封禁",
+        "pending": "待审核",
+        "hidden": "已隐藏",
+        "passed": "正常"
+      },
+      "createExtraFailed": "创建额外分数变动失败",
+      "extraReasonRequired": "请填写变动理由",
+      "createExtraReason": "变动理由...",
+      "extraScoreRequired": "请填写分数",
+      "extraScore": "额外分数"
     },
     "archivedGotoTraining": "已归档，请前往练习场",
     "canNotParticipate": "不符合参与条件",
