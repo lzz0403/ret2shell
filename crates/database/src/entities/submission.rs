@@ -198,7 +198,7 @@ where
   C: ConnectionTrait,
 {
   let mut sql = Entity::find()
-    .join(JoinType::InnerJoin, Relation::Team.def())
+    .join(JoinType::LeftJoin, Relation::Team.def())
     .join(JoinType::InnerJoin, Relation::Challenge.def())
     .join(JoinType::InnerJoin, Relation::User.def())
     .column_as(user::Column::Nickname, "user_name")
@@ -223,9 +223,7 @@ where
   } else if only_solved {
     sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
   }
-  sql = sql
-    .join(JoinType::InnerJoin, Relation::Challenge.def())
-    .column_as(challenge::Column::Score, "score");
+  sql = sql.column_as(challenge::Column::Score, "score");
   if !with_content {
     sql = sql
       .select_only()
