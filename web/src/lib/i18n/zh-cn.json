@@ -395,7 +395,10 @@
       "noExtras": "这里什么也没有...",
       "selfManagement": "队伍管理",
       "token": "队伍 Token",
-      "name": "队伍名称"
+      "name": "队伍名称",
+      "pendingTips": "你的队伍需要审核，长时间未通过审核请联系管理员。",
+      "pending": "队伍需要审核",
+      "banned": "队伍已被封禁"
     },
     "archivedGotoTraining": "已归档，请前往练习场",
     "canNotParticipate": "不符合参与条件",

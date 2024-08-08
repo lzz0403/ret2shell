@@ -1,11 +1,12 @@
 import { getSelfTeam } from "@api/game";
 import type { Game } from "@models/game";
-import type { Team } from "@models/team";
+import { type Team, TeamState } from "@models/team";
 import { Permission, type User } from "@models/user";
 import { DateTime } from "luxon";
 import { createStore } from "solid-js/store";
 import { accountStore } from "./account";
 import { t } from "./theme";
+import { addToast } from "./toast";
 
 export const [gameStore, setGameStore] = createStore({
   games: [] as Game[],
@@ -28,10 +29,17 @@ export function appendGames(games: Game[]) {
 }
 
 export function refreshSelfTeam() {
-  if (gameStore.current) {
+  if (gameStore.current && !isGameAdmin()) {
     getSelfTeam(gameStore.current?.id)
       .then((team) => {
         setGameStore({ team });
+        if (team.state === TeamState.Pending) {
+          addToast({
+            level: "warning",
+            description: t("game.team.pendingTips")!,
+            duration: 5000,
+          });
+        }
       })
       .catch(() => {
         setGameStore({ team: null });
@@ -99,9 +107,6 @@ export const canParticipate = () => {
   if (isGameAdmin()) {
     return false;
   }
-  if (accountStore.permissions.includes(Permission.Host)) {
-    return false;
-  }
   if (gameStore.current?.access_policy.restrict) {
     if (
       accountStore.info?.institute_id &&
@@ -129,6 +134,12 @@ export function canAccessChallenges(): [boolean, string] {
     if (gameStore.team) {
       return [true, ""];
     }
+  }
+  if (gameStore.team?.state === TeamState.Pending) {
+    return [false, t("game.team.pending")!];
+  }
+  if (gameStore.team?.state === TeamState.Banned) {
+    return [false, t("game.team.banned")!];
   }
   return [false, t("game.team.joinFirst")!];
 }

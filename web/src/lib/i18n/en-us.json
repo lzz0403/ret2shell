@@ -835,7 +835,10 @@
       "noExtras": "There's nothing here...",
       "selfManagement": "Team Management",
       "token": "Team Token",
-      "name": "Team Name"
+      "name": "Team Name",
+      "pendingTips": "Your team needs to be reviewed, and if it has not passed the review after a long time, please contact the administrator.",
+      "pending": "The team needs to review.",
+      "banned": "The team has been banned."
     },
     "teamSizePlaceholder": "Team Size Limit",
     "timerTips": "There are {{ period }} left",

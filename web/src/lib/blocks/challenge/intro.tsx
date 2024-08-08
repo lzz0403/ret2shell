@@ -58,16 +58,21 @@ export default function (props: { inGame?: boolean }) {
       untrack(refreshStatus);
     }
   });
+  let instanceStateIter = 0;
   function maintainInstances() {
-    wsrx.refreshInstances().then(() => {
-      wsrx.deleteOutdatedTraffic();
-      wsrx.openAllTraffic().then(() => {
-        wsrx.refreshTraffic();
+    if (instance()?.state === "Pending" || instanceStateIter === 0) {
+      wsrx.refreshInstances().then(() => {
+        wsrx.deleteOutdatedTraffic();
+        wsrx.openAllTraffic().then(() => {
+          wsrx.refreshTraffic();
+        });
       });
-    });
+    }
+    instanceStateIter++;
+    instanceStateIter = instanceStateIter % 10;
     return maintainInstances;
   }
-  const timer = setInterval(maintainInstances(), 30 * 1000);
+  const timer = setInterval(maintainInstances(), 3000);
   onCleanup(() => {
     clearInterval(timer);
   });

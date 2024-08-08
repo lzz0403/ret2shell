@@ -835,7 +835,10 @@
       "noExtras": "這裡什麼也沒有...",
       "selfManagement": "隊伍管理",
       "token": "隊伍 Token",
-      "name": "隊伍名稱"
+      "name": "隊伍名稱",
+      "pendingTips": "你的隊伍需要審核，長時間未通過審核請聯繫管理員。",
+      "pending": "隊伍需要審核",
+      "banned": "隊伍已被封鎖"
     },
     "teamSizePlaceholder": "隊伍人數限制",
     "timerTips": "距離 {{ period }} 還有",

@@ -756,7 +756,10 @@
       "noExtras": "ここには何もない...",
       "selfManagement": "チーム管理",
       "token": "チームトークン",
-      "name": "チーム名"
+      "name": "チーム名",
+      "pendingTips": "チームの審査が必要です。長時間審査が通過しない場合は、管理者に連絡してください。",
+      "pending": "チームは審査が必要です",
+      "banned": "チームは禁止されました"
     },
     "teamSizePlaceholder": "チーム人数制限",
     "timerTips": "あと {{ period }}",

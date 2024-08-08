@@ -145,6 +145,23 @@ macro_rules! extract_team {
           .contains(&r2s_database::user::Permission::Game))
     {
       if let Some(axum::extract::Extension(team)) = $team_ext {
+        if team.state == r2s_database::team::State::Banned {
+          return Err(crate::traits::ResponseError::Forbidden(
+            "you are banned in this game".to_owned(),
+            format!(
+              "user {}:'{}' ({}) with banned team {}:'{}' want to access in-progress game {}:'{}'",
+              $token.id, $token.account, $token.nickname, team.id, team.name, $game.id, $game.name
+            ),
+          ));
+        } else if team.state == r2s_database::team::State::Pending {
+          return Err(crate::traits::ResponseError::Forbidden(
+            "your team is pending, please contact admin".to_owned(),
+            format!(
+              "user {}:'{}' ({}) with pending team {}:'{}' want to access in-progress game {}:'{}'",
+              $token.id, $token.account, $token.nickname, team.id, team.name, $game.id, $game.name
+            ),
+          ));
+        }
         Some(team)
       } else {
         return Err(crate::traits::ResponseError::Forbidden(

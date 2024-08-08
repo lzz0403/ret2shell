@@ -33,9 +33,9 @@ export default function (props: {
       score: challengeStore.current?.score ?? result.initial,
       bucket: challengeStore.current!.bucket!,
       score_rule: {
-        initial: result.initial,
-        minimum: result.minimum,
-        decay: result.decay,
+        initial: result.initial || 1,
+        minimum: result.minimum || 1,
+        decay: result.decay || 1,
       },
     };
     updateChallenge(gameStore.current!.id, challenge)

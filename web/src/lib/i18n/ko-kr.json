@@ -756,7 +756,10 @@
       "noExtras": "여기 아무것도 없어요...",
       "selfManagement": "팀 관리",
       "token": "팀 토큰",
-      "name": "팀 이름"
+      "name": "팀 이름",
+      "pendingTips": "당신의 팀은 심사가 필요합니다. 오랜 시간 동안 심사를 통과하지 못한다면, 관리자에게 연락하세요.",
+      "pending": "팀은 심사가 필요합니다.",
+      "banned": "팀이 정지되었습니다."
     },
     "teamSizePlaceholder": "팀 인원 제한",
     "timerTips": "{{ period }}까지 남은 시간",

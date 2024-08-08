@@ -18,13 +18,11 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
   const selectedChallenge = createMemo(() => challengeStore.challenges.find((c) => c.id === selectedChallengeId()));
   const challengesEx = createMemo(() => {
     const result = [];
+    console.log(search().toLowerCase());
     for (const challenge of challengeStore.challenges.filter(
       (c) =>
         c.name.toLowerCase().includes(search().toLowerCase()) ||
-        c.tag
-          .find((t) => t.primary)
-          ?.name.toLowerCase()
-          .includes(search().toLowerCase())
+        !!c.tag.find((t) => t.name.toLowerCase().includes(search().toLowerCase()))
     )) {
       const submission = challengeStore.solves.find((s) => s.challenge_id === challenge.id);
       result.push({ challenge, solved: !!submission });
@@ -40,6 +38,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
           if (a.challenge.score !== b.challenge.score) return a.challenge.score - b.challenge.score;
           return a.challenge.updated_at < b.challenge.updated_at ? -1 : 1;
         });
+      if (taggedChallenges.length === 0) continue;
       tree.push({
         id: tag,
         name: tag,
@@ -93,7 +92,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
         >
           <div class="flex flex-col space-y-2 p-3 lg:p-6">
             <Input
-              class="sticky top-3 lg:top-6"
+              class="sticky top-3 lg:top-6 z-20"
               icon={<span class="icon-[fluent--filter-20-regular] 2-5 h-5" />}
               placeholder={t("game.challenge.filterNameOrLabel")}
               onInput={(e) => setSearch(e.currentTarget.value)}

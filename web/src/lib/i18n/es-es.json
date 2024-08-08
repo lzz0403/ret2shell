@@ -756,7 +756,10 @@
       "noExtras": "Aquí no hay nada...",
       "selfManagement": "Gestión de equipos",
       "token": "Equipo Token",
-      "name": "Nombre del equipo"
+      "name": "Nombre del equipo",
+      "pendingTips": "Tu equipo necesita ser revisado, si no pasa la revisión en mucho tiempo, por favor contacta al administrador.",
+      "pending": "El equipo necesita una revisión.",
+      "banned": "El equipo ha sido prohibido."
     },
     "teamSizePlaceholder": "Límite de número de miembros en el equipo",
     "timerTips": "falta {{ period }}",

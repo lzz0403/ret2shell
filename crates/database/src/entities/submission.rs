@@ -154,7 +154,10 @@ pub async fn get_list<C>(
 where
   C: ConnectionTrait,
 {
-  let mut sql = Entity::find();
+  let mut sql = Entity::find()
+    .join(JoinType::LeftJoin, Relation::Team.def())
+    .join(JoinType::InnerJoin, Relation::Challenge.def())
+    .join(JoinType::InnerJoin, Relation::User.def());
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }
@@ -170,13 +173,12 @@ where
   if in_game && only_solved {
     sql = sql
       .filter(Column::TeamId.is_not_null())
+      .filter(team::Column::State.gte(team::State::Hidden))
       .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
   } else if only_solved {
     sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
   }
-  sql = sql
-    .join(JoinType::InnerJoin, Relation::Challenge.def())
-    .column_as(challenge::Column::Score, "score");
+  sql = sql.column_as(challenge::Column::Score, "score");
 
   let result = sql.into_model().all(db).await?;
   if !with_content {
@@ -224,6 +226,7 @@ where
   if in_game && only_solved {
     sql = sql
       .filter(Column::TeamId.is_not_null())
+      .filter(team::Column::State.gte(team::State::Hidden))
       .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
   } else if only_solved {
     sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);
@@ -300,7 +303,7 @@ pub async fn count<C>(
 where
   C: ConnectionTrait,
 {
-  let mut sql = Entity::find();
+  let mut sql = Entity::find().join(JoinType::LeftJoin, Relation::Team.def());
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }
@@ -316,6 +319,7 @@ where
   if in_game && only_solved {
     sql = sql
       .filter(Column::TeamId.is_not_null())
+      .filter(team::Column::State.gte(team::State::Hidden))
       .distinct_on([(Entity, Column::ChallengeId), (Entity, Column::TeamId)]);
   } else if only_solved {
     sql = sql.distinct_on([(Entity, Column::ChallengeId), (Entity, Column::UserId)]);

@@ -136,6 +136,11 @@ pub async fn extract_user_info(
         error!("failed to store new token: {:?}", err);
       })
       .ok();
+    cache
+      .at("token")
+      .push(format!("user-{}", token_stored.id), &token_str)
+      .await
+      .ok();
     resp.headers_mut().insert(
       "Set-Token",
       token_str.parse().expect("failed to parse token"),

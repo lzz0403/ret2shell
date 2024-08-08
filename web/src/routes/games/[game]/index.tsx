@@ -386,13 +386,14 @@ export default function () {
                   <span>{stringifyState(gameStore.team?.state || TeamState.Pending)}</span>
                   <span class="opacity-60 text-primary">-</span>
                   <span>{gameStore.team?.institute_name || t("account.institute.none")}</span>
-                  <span class="opacity-60 text-primary">-</span>
-                  <span>{gameStore.team?.score || 0} pts</span>
                 </p>
               </div>
-              <p class="flex items-center justify-center font-bold">
-                <span class="opacity-60">No.</span>
-                <span class="text-primary">{gameStore.rank || "NULL"}</span>
+              <p class="flex flex-col items-start justify-center font-bold">
+                <span>
+                  <span class="opacity-60">No.</span>
+                  <span class="text-primary">{gameStore.rank || "NULL"}</span>
+                </span>
+                <span>{gameStore.team?.score || 0} pts</span>
               </p>
             </Card>
           </Show>
@@ -414,7 +415,10 @@ export default function () {
                   class="flex-1"
                   level="success"
                   disabled={
-                    inArchived() || (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now())
+                    inArchived() ||
+                    (gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()) ||
+                    gameStore.team?.state === TeamState.Pending ||
+                    gameStore.team?.state === TeamState.Banned
                   }
                 >
                   <span class="icon-[fluent--people-team-20-regular] w-5 h-5" />
@@ -424,6 +428,12 @@ export default function () {
                     </Match>
                     <Match when={gameStore.current?.start_at && gameStore.current.start_at > DateTime.now()}>
                       <span class="flex-1 text-start">{t("game.challenge.notStarted")}</span>
+                    </Match>
+                    <Match when={gameStore.team?.state === TeamState.Pending}>
+                      <span class="flex-1 text-start">{t("game.team.pending")}</span>
+                    </Match>
+                    <Match when={gameStore.team?.state === TeamState.Banned}>
+                      <span class="flex-1 text-start">{t("game.team.banned")}</span>
                     </Match>
                     <Match when={true}>
                       <span class="flex-1 text-start">{t("game.challenge.enter")}</span>

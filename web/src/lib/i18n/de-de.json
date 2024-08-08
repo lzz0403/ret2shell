@@ -756,7 +756,10 @@
       "noExtras": "Hier ist nichts...",
       "selfManagement": "Teammanagement",
       "token": "Team Token",
-      "name": "Teamname"
+      "name": "Teamname",
+      "pendingTips": "Dein Team muss überprüft werden. Wenn die Überprüfung nach langer Zeit nicht bestanden wird, wende dich bitte an den Administrator.",
+      "pending": "Team muss überprüft werden.",
+      "banned": "Team wurde gesperrt"
     },
     "teamSizePlaceholder": "Teamgrößenbeschränkung",
     "timerTips": "Es sind noch {{ period }}",

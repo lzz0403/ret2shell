@@ -640,6 +640,7 @@ async fn get_player_attachment(
   Extension(challenge): Extension<challenge::Model>, Extension(token): Extension<Token>,
   team_ext: Option<Extension<team::Model>>, Query(query): Query<FileRequest>,
 ) -> Result<Response, ResponseError> {
+  let team = extract_team!(game, team_ext, token);
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge);
   if !is_game_admin!(token, game)
     && (query.all == Some(true) || query.folder == Some(FileType::Checker))
@@ -670,7 +671,6 @@ async fn get_player_attachment(
       .collect();
     return Ok(Json(files).into_response());
   }
-  let team = extract_team!(game, team_ext, token);
   let files = get_files(
     &challenge_bucket,
     if let Some(team) = team {
@@ -986,6 +986,7 @@ async fn start_challenge_env(
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Extension(token): Extension<Token>, team_ext: Option<Extension<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = extract_team!(game, team_ext, token);
   let config = if let Some(config) = &config.cluster {
     config
   } else {
@@ -1013,7 +1014,6 @@ async fn start_challenge_env(
     ));
   }
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge.clone());
-  let team = extract_team!(game, team_ext, token);
 
   if let Some(env_config) = challenge_bucket.env().await? {
     info!(
