@@ -98,6 +98,6 @@ pub struct EventContainer {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub enum Broadcast {
-  Publish(EventContainer),
+  Publish(Box<EventContainer>),
   Heartbeat,
 }

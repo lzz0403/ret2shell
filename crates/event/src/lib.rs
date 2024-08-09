@@ -48,7 +48,7 @@ impl EventManager {
     let (mut sink, mut stream) = ws.split();
 
     tokio::spawn(async move {
-      while let Some(_) = stream.next().await {
+      while stream.next().await.is_some() {
         continue;
       }
     });
@@ -89,7 +89,7 @@ impl EventManager {
   }
 
   pub async fn broadcast(&self, message: EventContainer) {
-    self.tx.send(Broadcast::Publish(message)).ok();
+    self.tx.send(Broadcast::Publish(Box::new(message))).ok();
   }
 
   pub async fn heartbeat(&self) {

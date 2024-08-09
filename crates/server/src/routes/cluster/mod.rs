@@ -82,7 +82,7 @@ async fn cluster_maintain_worker(cluster: Cluster, queue: Queue) {
             }),
           };
           queue.publish("event", event).await.ok();
-        } else if o == false && overloaded != o {
+        } else if !o && overloaded != o {
           info!("Cluster is recovered");
           let event = EventContainer {
             game_id: 0,
