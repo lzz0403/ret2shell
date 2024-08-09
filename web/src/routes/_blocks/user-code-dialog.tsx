@@ -15,11 +15,13 @@ export default function UserCodeDialog() {
   const [code, setCode] = createSignal(null as { code: number; generate_at: DateTime } | null);
   const [loadingCode, setLoadingCode] = createSignal(true);
   function getCode() {
-    setLoadingCode(true);
-    void getAccountCode()
-      .then(setCode)
-      .catch(() => setCode(null))
-      .finally(() => setLoadingCode(false));
+    if (accountStore.permissions.includes(Permission.Verified)) {
+      setLoadingCode(true);
+      void getAccountCode()
+        .then(setCode)
+        .catch(() => setCode(null))
+        .finally(() => setLoadingCode(false));
+    }
   }
   const verified = () => accountStore.permissions.includes(Permission.Verified);
   function refreshCode() {

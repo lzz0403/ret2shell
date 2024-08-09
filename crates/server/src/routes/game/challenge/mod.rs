@@ -356,6 +356,10 @@ async fn up_challenge(
   .await?;
   checker.lint(&challenge_bucket).await?;
   txn.commit().await?;
+  info!(
+    "challenge {}:'{}' is published by user {}:'{}' ({})",
+    challenge.id, challenge.name, token.id, token.account, token.nickname
+  );
   let event = EventContainer {
     game_id: challenge.game_id,
     event: Event::Challenge(ChallengeEvent {
@@ -388,6 +392,10 @@ async fn down_challenge(
   )
   .await?;
   txn.commit().await?;
+  info!(
+    "challenge {}:'{}' is withdraw by user {}:'{}' ({})",
+    challenge.id, challenge.name, token.id, token.account, token.nickname
+  );
   let event = EventContainer {
     game_id: challenge.game_id,
     event: Event::Challenge(ChallengeEvent {
@@ -549,6 +557,10 @@ async fn submit_flag(
   if !is_game_admin!(token, game) {
     let limit: Option<i32> = cache.at("submission").get(token.id).await?;
     if limit.is_some_and(|v| v > 10) {
+      warn!(
+        "user {}:'{}' ({}) submission frequency limit exceeded",
+        token.id, token.account, token.nickname
+      );
       let event = EventContainer {
         game_id: game.id,
         event: Event::Submission(Box::new(SubmissionEvent {
@@ -863,6 +875,10 @@ async fn create_challenge_hint(
     },
   )
   .await?;
+  info!(
+    "new hint {} for challenge {}:'{}' by user {}:'{}' ({})",
+    hint.id, challenge.id, challenge.name, token.id, token.account, token.nickname
+  );
   let event = EventContainer {
     game_id: game.id,
     event: Event::Challenge(ChallengeEvent {

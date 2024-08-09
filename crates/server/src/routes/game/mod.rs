@@ -22,7 +22,7 @@ use r2s_migrator::Database;
 use r2s_queue::Queue;
 use sea_orm::TransactionTrait;
 use serde::{Deserialize, Serialize};
-use tracing::warn;
+use tracing::{info, warn};
 
 use crate::{
   middleware::{
@@ -210,6 +210,15 @@ async fn update_game(
     .await?;
   txn.commit().await?;
   if game.frozen != model.frozen {
+    info!(
+      "user {}:'{}' ({}) {} the game {}:'{}'",
+      token.id,
+      token.account,
+      token.nickname,
+      if model.frozen { "freeze" } else { "unfreeze" },
+      model.id,
+      model.name
+    );
     let payload = EventContainer {
       game_id: game.id,
       event: Event::Game(GameEvent {

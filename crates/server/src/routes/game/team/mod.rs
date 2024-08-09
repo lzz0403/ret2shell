@@ -15,6 +15,7 @@ use r2s_database::{
 };
 use r2s_migrator::Database;
 use serde::Deserialize;
+use tracing::info;
 
 use crate::{
   middleware::{
@@ -293,6 +294,10 @@ async fn create_team(
   )
   .await?;
   user2_team::user_join_team(&db.conn, token.id, team.id).await?;
+  info!(
+    "team created: {}:'{}' by {}:'{}' ({}) in game {}:'{}'",
+    team.id, team.name, token.id, token.account, token.nickname, game.id, game.name
+  );
   Ok(Json(team))
 }
 
@@ -352,6 +357,10 @@ async fn join_team(
     ));
   }
   user2_team::user_join_team(&db.conn, token.id, team.id).await?;
+  info!(
+    "{}:'{}' ({}) joined team {}:'{}' in game {}:'{}'",
+    token.id, token.account, token.nickname, team.id, team.name, game.id, game.name
+  );
   Ok(Json(team))
 }
 

@@ -29,7 +29,7 @@ export function appendGames(games: Game[]) {
 }
 
 export function refreshSelfTeam() {
-  if (gameStore.current && !isGameAdmin()) {
+  if (gameStore.current && !isGameAdmin() && accountStore.permissions.includes(Permission.Verified)) {
     getSelfTeam(gameStore.current?.id)
       .then((team) => {
         setGameStore({ team });

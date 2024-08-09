@@ -258,6 +258,18 @@ async fn submission_worker_exec(
 
   // stage 3: update team score and create extra or audit if necessary
   if submission.solved.unwrap_or(false) {
+    info!(
+      "Submission {}:'{:?}' by {}:'{}' ({}) for challenge {}:{} in game {}:{} is correct",
+      submission.id,
+      submission.content,
+      user.id,
+      user.account,
+      user.nickname,
+      challenge.id,
+      challenge.name,
+      game.id,
+      game.name
+    );
     // stage 3.1: update challenge score
     let (changed, decay, challenge) =
       challenge::maintain_score(&db.conn, challenge.clone()).await?;
@@ -317,6 +329,19 @@ async fn submission_worker_exec(
       })),
     };
     queue.publish("event", event).await.ok();
+  } else {
+    info!(
+      "Submission {}:'{:?}' by {}:'{}' ({}) for challenge {}:{} in game {}:{} is incorrect",
+      submission.id,
+      submission.content,
+      user.id,
+      user.account,
+      user.nickname,
+      challenge.id,
+      challenge.name,
+      game.id,
+      game.name
+    );
   }
 
   // stage 4: create audit if necessary
@@ -342,6 +367,18 @@ async fn submission_worker_exec(
       state: audit::State::Pending,
     };
     let audit = audit::create(&db.conn, audit).await?;
+    warn!(
+      "Audit {} for submission {} by {}:{} ({}) for challenge {}:{} in game {}:{}",
+      audit.id,
+      submission.id,
+      user.id,
+      user.account,
+      user.nickname,
+      challenge.id,
+      challenge.name,
+      game.id,
+      game.name
+    );
     let event = EventContainer {
       game_id: challenge.game_id,
       event: Event::Submission(Box::new(SubmissionEvent {

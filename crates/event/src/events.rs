@@ -95,3 +95,9 @@ pub struct EventContainer {
   pub game_id: i64,
   pub event: Event,
 }
+
+#[derive(Clone, Debug, Deserialize, Serialize)]
+pub enum Broadcast {
+  Publish(EventContainer),
+  Heartbeat,
+}

@@ -102,7 +102,7 @@ export default function SideBar() {
             justify={expanded() ? "start" : "center"}
           >
             <span class="icon-[fluent--cloud-flow-20-regular] w-5 h-5" />
-            <Show when={expanded()}>{t("game.admin.events.title")}</Show>
+            <Show when={expanded()}>{t("game.admin.automate.title")}</Show>
           </Link>
         </li>
       </ul>
