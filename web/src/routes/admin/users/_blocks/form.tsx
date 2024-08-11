@@ -185,6 +185,9 @@ export default function (compProps: {
       <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2 w-full">
         <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
         <span class="flex-1 text-start">{t("account.settings.info.title")}</span>
+        <Link href={`/users/${compProps.editSource?.id}`} size="sm">
+          {t("admin.users.goToUserDetailPage")}
+        </Link>
         <Link href="/admin/users" size="sm">
           {t("form.backToList")}
         </Link>

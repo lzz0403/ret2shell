@@ -600,7 +600,8 @@
       "ipAddresses": "IP 地址",
       "fetchIpAddressesFailed": "获取 IP 地址失败",
       "oauths": "第三方认证条目",
-      "fetchOAuthsFailed": "获取第三方认证信息失败"
+      "fetchOAuthsFailed": "获取第三方认证信息失败",
+      "goToUserDetailPage": "转到用户主页"
     },
     "oauth": {
       "title": "第三方认证",

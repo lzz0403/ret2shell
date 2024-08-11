@@ -403,7 +403,8 @@
       "ipAddresses": "IP 位址",
       "fetchIpAddressesFailed": "取得 IP 位址失敗",
       "oauths": "第三方認證條目",
-      "fetchOAuthsFailed": "取得第三方認證資訊失敗"
+      "fetchOAuthsFailed": "取得第三方認證資訊失敗",
+      "goToUserDetailPage": "前往用戶主頁"
     },
     "institute": {
       "title": "學校/組織",

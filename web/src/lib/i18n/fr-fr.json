@@ -324,7 +324,8 @@
       "ipAddresses": "Adresse IP",
       "fetchIpAddressesFailed": "Échec de l'obtention de l'adresse IP",
       "oauths": "Élément de certification tiers",
-      "fetchOAuthsFailed": "Échec de l'obtention des informations d'authentification tierce"
+      "fetchOAuthsFailed": "Échec de l'obtention des informations d'authentification tierce",
+      "goToUserDetailPage": "Aller à la page d'accueil de l'utilisateur"
     },
     "institute": {
       "title": "école/organisation",

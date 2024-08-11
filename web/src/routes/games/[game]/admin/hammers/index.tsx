@@ -22,7 +22,7 @@ import Avatar from "@widgets/avatar";
 import Card from "@widgets/card";
 import Editor from "@widgets/editor";
 import Link from "@widgets/link";
-import type { HTTPError } from "ky";
+import { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
@@ -85,29 +85,31 @@ export default function () {
       .finally(() => setSending(false));
   }
   let chatBottomEl: HTMLDivElement;
+  let cachedTeamId: number | null = null;
+  let cachedChallengeId: number | null = null;
 
   function refreshChats() {
     if (gameStore.current && challengeId() && teamId()) {
-      getGameAdminChatMessages(gameStore.current.id, challengeId()!, teamId()!)
-        .then((result) => {
-          if (
-            result.length > chats().length ||
-            chats().some((v, i) => v.challenge_id !== result[i].challenge_id || v.team_id !== result[i].team_id)
-          ) {
-            setChats(result);
-            setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 300);
-          }
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.fetchChatError")}: ${text}`,
-              duration: 5000,
+      getSolveStatus().then(() => {
+        getGameAdminChatMessages(gameStore.current!.id, challengeId()!, teamId()!)
+          .then((result) => {
+            if (cachedTeamId !== teamId() || cachedChallengeId !== challengeId() || result.length > chats().length) {
+              setChats(result);
+              cachedTeamId = teamId();
+              cachedChallengeId = challengeId();
+              setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 300);
+            }
+          })
+          .catch((err: HTTPError) => {
+            err.response.text().then((text) => {
+              addToast({
+                level: "error",
+                description: `${t("game.challenge.fetchChatError")}: ${text}`,
+                duration: 5000,
+              });
             });
           });
-        });
-      getSolveStatus();
+      });
     }
     return refreshChats;
   }
@@ -138,24 +140,26 @@ export default function () {
     return c;
   });
 
-  function getSolveStatus() {
+  async function getSolveStatus() {
     if (gameStore.current?.id && teamId()) {
-      getTeamSolves(gameStore.current.id, teamId()!)
-        .then((resp) => {
-          const s = resp.find((x) => x.challenge_id === challengeId());
-          if (s) {
-            setSolvedAt(s.created_at);
-          }
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.fetchSolveError")}: ${text}`,
-              duration: 5000,
-            });
+      const resp = await getTeamSolves(gameStore.current.id, teamId()!);
+      try {
+        const s = resp.find((x) => x.challenge_id === challengeId());
+        if (s) {
+          setSolvedAt(s.created_at);
+        } else {
+          setSolvedAt(null);
+        }
+      } catch (err) {
+        if (err instanceof HTTPError) {
+          const text = await err.response.text();
+          addToast({
+            level: "error",
+            description: `${t("game.challenge.fetchSolveError")}: ${text}`,
+            duration: 5000,
           });
-        });
+        }
+      }
     }
   }
 
