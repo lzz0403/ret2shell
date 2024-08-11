@@ -742,9 +742,17 @@ async fn change_profile(
   Ok(StatusCode::OK)
 }
 
+#[derive(Debug, Deserialize)]
+struct DeleteSelfRequest {
+  pub captcha_id: String,
+  pub captcha_answer: String,
+}
+
 async fn delete_self(
   State(db): State<Database>, State(cache): State<Cache>, Extension(user): Extension<user::Model>,
+  Json(req): Json<DeleteSelfRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  captcha_protected!(cache, &req.captcha_id, &req.captcha_answer);
   let user_count = user::count(&db.conn, false, None).await?;
 
   if user_count == 1 {

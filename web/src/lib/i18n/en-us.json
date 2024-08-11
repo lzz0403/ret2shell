@@ -255,7 +255,8 @@
       "confirm": "Reset"
     },
     "verifyEmail": "Verify Email",
-    "emailNotVerified": "Your account email has not been verified, and certain features are restricted."
+    "emailNotVerified": "Your account email has not been verified, and certain features are restricted.",
+    "canNotDeleteWhenGameInProgress": "To prevent cheating, your account cannot be deleted while you are participating in an ongoing contest."
   },
   "admin": {
     "about": {
@@ -620,7 +621,7 @@
       "chat": {
         "noSession": "No team has sent feedback...",
         "selectToShow": "Select a conversation to view and reply",
-        "sendPlaceholder": "Send reply...",
+        "sendPlaceholder": "Enter to send, Shift Enter to wrap, supports Markdown syntax",
         "title": "Feedback",
         "unread": "Unread",
         "playerUnread": "Player has not read"
@@ -663,7 +664,7 @@
       "fetchHintFailed": "Failed to get challenge hint information",
       "files": "File",
       "hammer": "Hammer",
-      "hammerInput": "Please enter the issue you want to report...",
+      "hammerInput": "Please enter the question you want to feedback, Enter to send, Shift Enter to change line, supports Markdown syntax",
       "hammerTips": "The message you send here will be forwarded to the challenge setter along with the status of the challenge. The challenge setter may reply here or contact you through other channels.",
       "hammerTips2": "Please note that you can only send one message before the challenge setter replies, so please send your challenge all at once and do not engage in real-time chat here.",
       "hint": "Hint",

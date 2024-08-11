@@ -127,9 +127,11 @@ export default function Editor(props: EditorProps & ComponentProps<"div">) {
     `flex-1 card-field ${editorProps.error ? "card-error" : ""} ${focused() ? "card-focused" : ""}`.trim();
   return (
     <div {...nativeProps} class={`flex flex-col space-y-1 ${nativeProps.class}`.trim()}>
-      <label class="label" for={editorProps.name}>
-        {editorProps.title || editorProps.placeholder}
-      </label>
+      <Show when={editorProps.title}>
+        <label class="label" for={editorProps.name}>
+          {editorProps.title}
+        </label>
+      </Show>
       <Card class={cardClasses()} contentClass="p-2">
         <EditorBare
           {...editorProps}

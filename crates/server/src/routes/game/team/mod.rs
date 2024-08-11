@@ -368,6 +368,7 @@ async fn update_team_info(
   State(ref db): State<Database>, Extension(team): Extension<team::Model>,
   Json(req): Json<team::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  // TODO: update scoreboard when team state changed
   let result = team::update(
     &db.conn,
     team::Model {

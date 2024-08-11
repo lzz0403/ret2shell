@@ -1,21 +1,50 @@
 import { deleteSelf } from "@api/account";
+import Captcha from "@blocks/captcha";
+import { createForm, minLength, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, resetUser } from "@storage/account";
 import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
+import Card from "@widgets/card";
 import Divider from "@widgets/divider";
 import Input from "@widgets/input";
+import type { HTTPError } from "ky";
+import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
+
+type CaptchaForm = {
+  captcha_id: string;
+  captcha_answer: string;
+};
 
 export default function () {
   const [name, setName] = createSignal("");
+  const [form, { Form, Field }] = createForm<CaptchaForm>();
   const navigate = useNavigate();
   const canDelete = () => name() === accountStore.account!;
-  function handleDeactivate() {
-    deleteSelf().then(() => {
-      resetUser();
-      navigate("/");
-    });
+  const [loading, setLoading] = createSignal(false);
+  const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
+  function handleDeactivate(result: CaptchaForm) {
+    setLoading(true);
+    deleteSelf(result)
+      .then(() => {
+        resetUser();
+        navigate("/");
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("account.deleteAccountFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+        setTimestamp(DateTime.now().toMillis());
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
   return (
     <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">
@@ -27,6 +56,10 @@ export default function () {
           </h1>
         </div>
         <Divider class="w-full" />
+        <Card level="warning" contentClass="p-2 flex space-x-2 items-center">
+          <span class="icon-[fluent--warning-20-filled] w-5 h-5 text-warning flex-shrink-0" />
+          <p class="font-bold">{t("account.canNotDeleteWhenGameInProgress")}</p>
+        </Card>
         <article class="article w-full max-w-5xl self-center mt-4">
           <p>
             <strong>{t("account.deleteAccountTips1")}</strong>
@@ -43,11 +76,36 @@ export default function () {
           <p class="text-error">{t("account.deleteAccountTips2", { name: accountStore.account! })}</p>
         </article>
         <Divider class="w-full" />
-        <div class="w-full max-w-5xl self-center flex flex-row items-center justify-center">
+        <Form
+          class="w-full max-w-5xl self-center flex flex-row items-center justify-center space-x-2"
+          onSubmit={handleDeactivate}
+        >
+          <Field name="captcha_id">
+            {(idField) => (
+              <Field
+                name="captcha_answer"
+                validate={[required(t("captcha.required")!), minLength(4, t("captcha.minLength")!)]}
+              >
+                {(answerField, props) => (
+                  <Captcha
+                    {...props}
+                    captchaForm={form}
+                    class="flex-1"
+                    idFieldValue={idField.value}
+                    noLabel
+                    idFieldError={idField.error}
+                    answerFieldValue={answerField.value}
+                    answerFieldError={answerField.error}
+                    timestamp={timestamp()}
+                  />
+                )}
+              </Field>
+            )}
+          </Field>
           <Input
             icon={<span class="icon-[fluent--person-20-regular] w-5 h-5" />}
             extraBtn={
-              <Button class="rounded-l-none text-error" disabled={!canDelete()} onClick={handleDeactivate}>
+              <Button class="rounded-l-none text-error" disabled={!canDelete() || loading()} loading={loading()}>
                 <span class="icon-[fluent--arrow-exit-20-regular] w-5 h-5" />
                 <span class="icon-[fluent--person-walking-20-regular] w-5 h-5" />
                 <span class="hidden md:inline">{t("account.bye")}</span>
@@ -58,7 +116,7 @@ export default function () {
               setName(v.target.value);
             }}
           />
-        </div>
+        </Form>
         <Divider class="w-full" />
       </div>
     </div>

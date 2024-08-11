@@ -14,6 +14,7 @@ export type ArticleProps = {
   headingAnchors?: boolean;
   toc?: boolean;
   noExtraPaddings?: boolean;
+  compact?: boolean;
 };
 
 export default function (props: ComponentProps<"article"> & ArticleProps) {
@@ -23,6 +24,7 @@ export default function (props: ComponentProps<"article"> & ArticleProps) {
     "headingAnchors",
     "toc",
     "noExtraPaddings",
+    "compact",
   ]);
   const [ready, setReady] = createSignal(false);
   const [markdown, setMarkdown] = createSignal(null as Markdown | null);
@@ -81,7 +83,10 @@ export default function (props: ComponentProps<"article"> & ArticleProps) {
     <Show
       when={ready()}
       fallback={
-        <article {...nativeProps} class={`article !max-w-5xl w-full ${nativeProps.class}`.trim()}>
+        <article
+          {...nativeProps}
+          class={`article ${articleProps.compact ? "article-compact" : ""} !max-w-5xl w-full ${nativeProps.class}`.trim()}
+        >
           <p>
             <LoadingTips />
           </p>
@@ -90,7 +95,7 @@ export default function (props: ComponentProps<"article"> & ArticleProps) {
     >
       <article
         {...nativeProps}
-        class={`article !max-w-5xl w-full ${nativeProps.class}`.trim()}
+        class={`article ${articleProps.compact ? "article-compact" : ""} !max-w-5xl w-full ${nativeProps.class ?? ""}`.trim()}
         innerHTML={markdown()?.html()}
       />
       <Show when={!articleProps.noExtraPaddings}>

@@ -1,4 +1,5 @@
 import { getChallenge, getGameAdminChatMessages, getTeamInfo, sendGameAdminChatMessage } from "@api/game";
+import Spin from "@assets/animates/spin";
 import xdsecMascotNormal from "@assets/imgs/xdsec-mascot-normal.webp";
 import { mediaPath } from "@lib/utils/media";
 import type { Challenge } from "@models/challenge";
@@ -9,10 +10,10 @@ import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
+import Article from "@widgets/article";
 import Avatar from "@widgets/avatar";
-import Button from "@widgets/button";
 import Card from "@widgets/card";
-import Input from "@widgets/input";
+import Editor from "@widgets/editor";
 import Link from "@widgets/link";
 import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
@@ -215,7 +216,7 @@ export default function () {
                         </label>
                       </Show>
                       <Card class="peer" contentClass="p-2">
-                        <p class="text-wrap">{chat.content}</p>
+                        <Article content={chat.content} noExtraPaddings compact extra />
                       </Card>
                       <Show when={index() === chats().length - 1 || chats().at(index() + 1)?.user_id !== chat.user_id}>
                         <label class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
@@ -228,22 +229,24 @@ export default function () {
               </For>
             </div>
             <div class="sticky bottom-0 p-3 lg:p-6">
-              <Input
+              <Editor
+                class="h-24 bg-layer"
                 value={chat()}
                 placeholder={t("game.admin.chat.sendPlaceholder")}
-                extraBtn={
-                  <Button class="!rounded-l-none" onClick={handleSendChat} disabled={sending() || chat() === ""}>
-                    <span class="icon-[fluent--send-20-regular] w-5 h-5" />
-                  </Button>
-                }
                 onKeyPress={(e) => {
-                  if (e.key === "Enter") {
+                  if (e.key === "Enter" && !e.shiftKey) {
                     handleSendChat();
                   }
                 }}
-                onInput={(e) => setChat(e.currentTarget.value)}
+                lang="markdown"
+                onValueChanged={(v) => setChat(v)}
               />
             </div>
+            <Show when={sending()}>
+              <div class="absolute right-6 bottom-6 lg:right-9 lg:bottom-9">
+                <Spin width={20} height={20} />
+              </div>
+            </Show>
             <div ref={chatBottomEl!} />
           </div>
         </Show>

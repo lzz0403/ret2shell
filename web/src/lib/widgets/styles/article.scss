@@ -3,6 +3,46 @@ article.prose * {
   @apply scroll-m-20 indent-[2em];
 }
 
+.article-compact.prose * {
+  @apply scroll-m-0 indent-0;
+}
+
+.article-compact {
+  @apply p-0;
+
+  &> *:first-child {
+    @apply mt-0 pt-0;
+  }
+
+  &> *:last-child {
+    @apply mb-0 pb-0;
+  }
+
+  :where(pre) {
+    @apply mb-0;
+  }
+
+  :where(h1) {
+    @apply mb-0;
+  }
+
+  :where(h2) {
+    @apply mb-0;
+  }
+
+  :where(h3) {
+    @apply mb-0;
+  }
+
+  :where(h4) {
+    @apply mb-0;
+  }
+
+  p {
+    @apply m-0 py-1;
+  }
+}
+
 nav.toc * {
   @apply indent-0;
 }

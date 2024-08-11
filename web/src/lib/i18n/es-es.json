@@ -176,7 +176,8 @@
       "confirm": "Restablecer"
     },
     "verifyEmail": "Verificar correo electrónico",
-    "emailNotVerified": "Tu cuenta de correo electrónico aún no ha sido verificada, las funciones están limitadas."
+    "emailNotVerified": "Tu cuenta de correo electrónico aún no ha sido verificada, las funciones están limitadas.",
+    "canNotDeleteWhenGameInProgress": "Para evitar trampas, su cuenta no se puede eliminar mientras participa en un concurso en curso."
   },
   "admin": {
     "about": {
@@ -540,7 +541,7 @@
       },
       "chat": {
         "selectToShow": "Selecciona una conversación para ver y responder",
-        "sendPlaceholder": "Enviar respuesta...",
+        "sendPlaceholder": "Ingrese para enviar, Mayús Ingrese para ajustar, admite la sintaxis de Markdown",
         "unread": "No leído",
         "title": "Respuesta",
         "noSession": "No hay equipos que hayan enviado comentarios...",
@@ -586,7 +587,7 @@
       "fetchHintFailed": "Fallo al obtener información de las pistas del tema",
       "files": "archivo",
       "hammer": "Martillo",
-      "hammerInput": "Por favor, ingrese el problema que desea informar...",
+      "hammerInput": "Ingrese la pregunta que desea enviar, Ingrese para enviar, Mayús Ingrese para cambiar la línea, admite la sintaxis de Markdown",
       "hammerTips": "El mensaje que envíes aquí será reenviado junto con el estado del problema al creador del problema, quien podría responderte aquí o contactarte a través de otros canales.",
       "hammerTips2": "Por favor, ten en cuenta que solo puedes enviar un mensaje antes de que el autor de la pregunta responda, así que envía tu pregunta de una sola vez y no realices una conversación en tiempo real aquí.",
       "hint": "sugerencia",

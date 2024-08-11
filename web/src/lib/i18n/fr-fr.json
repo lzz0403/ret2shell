@@ -176,7 +176,8 @@
       "confirm": "Réinitialiser"
     },
     "verifyEmail": "Vérifier l'adresse e-mail",
-    "emailNotVerified": "Votre adresse e-mail de compte n'a pas encore été vérifiée, les fonctionnalités sont limitées."
+    "emailNotVerified": "Votre adresse e-mail de compte n'a pas encore été vérifiée, les fonctionnalités sont limitées.",
+    "canNotDeleteWhenGameInProgress": "Pour éviter la triche, votre compte ne peut pas être supprimé pendant que vous participez à un concours en cours."
   },
   "admin": {
     "about": {
@@ -540,7 +541,7 @@
       },
       "chat": {
         "selectToShow": "Sélectionnez une conversation pour afficher et répondre",
-        "sendPlaceholder": "Envoyer la réponse...",
+        "sendPlaceholder": "Entrée pour envoyer, Maj Entrée pour envelopper, prend en charge la syntaxe Markdown",
         "unread": "Non lu",
         "title": "Retour",
         "noSession": "Aucune équipe n'a envoyé de retour d'information...",
@@ -586,7 +587,7 @@
       "fetchHintFailed": "Échec de la récupération des informations d'indication du sujet",
       "files": "document",
       "hammer": "Marteau",
-      "hammerInput": "Entrez le problème que vous souhaitez signaler...",
+      "hammerInput": "Veuillez saisir la question à laquelle vous souhaitez répondre, Entrée pour envoyer, Maj Entrée pour changer de ligne, prend en charge la syntaxe Markdown",
       "hammerTips": "Le message que vous envoyez ici sera transmis avec l'état du sujet au concepteur de l'exercice, qui pourra répondre ici ou vous contacter par d'autres moyens.",
       "hammerTips2": "Veuillez noter que vous ne pouvez envoyer qu'un seul message avant la réponse de l'auteur de la question, donc envoyez votre question en une seule fois, pas de chat en temps réel ici.",
       "hint": "Indication",

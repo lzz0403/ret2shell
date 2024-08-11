@@ -85,7 +85,7 @@ export default function TeamSolves(props: {
                   {(challenge) => (
                     <div class="h-12 w-24 flex items-center justify-center">
                       <Show when={team.history.find((h) => h.challenge_id === challenge.id)}>
-                        <span class="icon-[fluent--checkmark-circle-20-filled] w-5 h-5 text-success" />
+                        <span class="icon-[fluent--checkmark-circle-20-filled] w-5 h-5 text-success -z-10" />
                       </Show>
                     </div>
                   )}

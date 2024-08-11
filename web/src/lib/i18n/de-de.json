@@ -176,7 +176,8 @@
       "confirm": "Zurücksetzen"
     },
     "verifyEmail": "E-Mail-Verifizierung",
-    "emailNotVerified": "Deine Konto-E-Mail wurde noch nicht verifiziert, Funktionen sind eingeschränkt."
+    "emailNotVerified": "Deine Konto-E-Mail wurde noch nicht verifiziert, Funktionen sind eingeschränkt.",
+    "canNotDeleteWhenGameInProgress": "Um Betrug zu verhindern, kann Ihr Konto nicht gelöscht werden, während Sie an einem laufenden Wettbewerb teilnehmen."
   },
   "admin": {
     "about": {
@@ -540,7 +541,7 @@
       },
       "chat": {
         "selectToShow": "Wählen Sie ein Gespräch aus, um es anzuzeigen und zu beantworten.",
-        "sendPlaceholder": "Senden Sie die Antwort...",
+        "sendPlaceholder": "Enter zum Senden, Shift Enter zum Umbrechen, unterstützt Markdown-Syntax",
         "unread": "Ungelesen",
         "title": "Rückmeldung",
         "noSession": "Keine Mannschaft hat Feedback gesendet...",
@@ -586,7 +587,7 @@
       "fetchHintFailed": "Die Abfrage der Hinweise für die Aufgabe ist fehlgeschlagen.",
       "files": "Datei",
       "hammer": "Hammer",
-      "hammerInput": "Bitte geben Sie das Problem ein, das Sie melden möchten...",
+      "hammerInput": "Bitte geben Sie die Frage ein, zu der Sie Feedback geben möchten. Geben Sie die Eingabetaste ein, um sie zu senden. Drücken Sie die Umschalt-Eingabetaste, um die Zeile zu ändern. Unterstützt die Markdown-Syntax",
       "hammerTips": "Die hier gesendeten Nachrichten werden zusammen mit dem Status der Aufgabe an den Aufgabenersteller weitergeleitet. Der Aufgabenersteller kann hier antworten oder dich über andere Kanäle kontaktieren.",
       "hammerTips2": "Bitte beachten Sie, dass Sie nur eine Nachricht senden können, bevor der Aufgabenersteller antwortet. Senden Sie daher Ihre Frage in einem einzigen Schritt und führen Sie hier keinen Live-Chat durch.",
       "hint": "Hinweis",

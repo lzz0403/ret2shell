@@ -67,8 +67,15 @@ export async function changeProfile(req: User) {
   return await api.patch(`${api_root}/account/profile`, { json: req }).json();
 }
 
-export async function deleteSelf() {
-  return await api.delete(`${api_root}/account/profile`).json<void>();
+export async function deleteSelf(captcha: {
+  captcha_id: string;
+  captcha_answer: string;
+}) {
+  return await api
+    .delete(`${api_root}/account/profile`, {
+      json: captcha,
+    })
+    .json<void>();
 }
 
 export async function getInstitutes() {

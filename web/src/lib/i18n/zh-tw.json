@@ -255,7 +255,8 @@
       "confirm": "重設"
     },
     "verifyEmail": "驗證電子郵件",
-    "emailNotVerified": "你的帳戶信箱尚未通過驗證，功能受限"
+    "emailNotVerified": "你的帳戶信箱尚未通過驗證，功能受限",
+    "canNotDeleteWhenGameInProgress": "為了防止作弊行為，當你參加了正在進行中的比賽時，無法刪除帳戶。"
   },
   "admin": {
     "about": {
@@ -619,7 +620,7 @@
       },
       "chat": {
         "selectToShow": "選擇一個對話來查看和回覆",
-        "sendPlaceholder": "發送回覆...",
+        "sendPlaceholder": "Enter 發送，Shift Enter 換行，支援 Markdown 語法",
         "unread": "未讀",
         "title": "回饋",
         "noSession": "沒有隊伍發送過回饋...",
@@ -663,7 +664,7 @@
       "fetchHintFailed": "獲取題目提示資訊失敗",
       "files": "檔案",
       "hammer": "錘子",
-      "hammerInput": "請輸入你要反饋的問題...",
+      "hammerInput": "請輸入你要回饋的問題，Enter 發送，Shift Enter 換行，支援 Markdown 語法",
       "hammerTips": "你在這裡發送的訊息將會與題目狀態一起轉發給出題人，出題人可能會在這裡回覆或者透過其他管道聯繫你。",
       "hammerTips2": "請注意，在出題人回覆之前，你只能發送一條消息，所以請一次發送你的問題，不要在這裡即時聊天。",
       "hint": "提示",

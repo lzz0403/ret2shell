@@ -176,7 +176,8 @@
       "confirm": "초기화"
     },
     "verifyEmail": "이메일 확인",
-    "emailNotVerified": "당신의 계정 이메일이 아직 확인되지 않아, 기능에 제한이 있습니다."
+    "emailNotVerified": "당신의 계정 이메일이 아직 확인되지 않아, 기능에 제한이 있습니다.",
+    "canNotDeleteWhenGameInProgress": "부정 행위를 방지하기 위해 진행 중인 콘테스트에 참여하는 동안에는 귀하의 계정을 삭제할 수 없습니다."
   },
   "admin": {
     "about": {
@@ -540,7 +541,7 @@
       },
       "chat": {
         "selectToShow": "대화를 선택하여 보고 답장하세요.",
-        "sendPlaceholder": "발신 응답...",
+        "sendPlaceholder": "보내려면 Enter, 줄 바꿈하려면 Shift Enter, Markdown 구문 지원",
         "unread": "읽지 않음",
         "title": "피드백",
         "noSession": "팀에서 피드백을 보낸 적이 없습니다...",
@@ -586,7 +587,7 @@
       "fetchHintFailed": "문제 힌트 정보를 가져오지 못했습니다.",
       "files": "파일",
       "hammer": "망치",
-      "hammerInput": "문제 피드백을 입력해주세요...",
+      "hammerInput": "피드백하고 싶은 질문을 입력하세요. 보내려면 Enter를 누르세요. 줄을 바꾸려면 Shift Enter를 누르세요. 마크다운 구문을 지원합니다.",
       "hammerTips": "여기에 보내는 메시지는 문제 상태와 함께 문제 출제자에게 전달될 것입니다. 문제 출제자는 여기에서 답변하거나,",
       "hammerTips2": "주의하세요, 문제 출제자가 답변하기 전까지는 한 번에 한 개의 메시지만 보낼 수 있습니다.",
       "hint": "힌트",

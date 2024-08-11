@@ -156,7 +156,7 @@ macro_rules! captcha_protected {
     let captcha_answer = $answer;
     let captcha = $cache
       .at("captcha")
-      .get::<r2s_captcha::Captcha>(captcha_id)
+      .getdel::<r2s_captcha::Captcha>(captcha_id)
       .await?;
     if captcha.is_none() {
       return Err(ResponseError::Gone("captcha is outdate".to_owned()));

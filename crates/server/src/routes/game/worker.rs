@@ -111,6 +111,7 @@ async fn score_maintainance_worker_exec(
         id: team.id,
         score,
         history: TeamScoreHistoryList(history),
+        last_active_at: changed_at,
         ..team
       },
     )
