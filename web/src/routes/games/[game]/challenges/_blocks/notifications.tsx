@@ -107,7 +107,7 @@ export default function () {
     }
   });
   return (
-    <div class="w-full h-full overflow-hidden">
+    <div class="flex-1 overflow-hidden">
       <OverlayScrollbarsComponent
         options={{
           scrollbars: {
@@ -219,7 +219,7 @@ export default function () {
                     </Show>
                   </h2>
                   <Divider />
-                  <p class="py-2 break-words">{notification.content}</p>
+                  <p class="py-2 break-words opacity-60">{notification.content}</p>
                 </div>
               </>
             )}

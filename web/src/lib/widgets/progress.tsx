@@ -7,9 +7,18 @@ export type ProgressProps = {
 };
 
 export default function (props: ProgressRootProps & ProgressProps) {
+  const value = createMemo(() => {
+    if (props.value && props.min && props.value < props.min) {
+      return props.min;
+    }
+    if (props.value && props.max && props.value > props.max) {
+      return props.max;
+    }
+    return props.value;
+  });
   const p = createMemo(() => ((props.value || 0) / ((props.max || 1) - (props.min || 0))) * 100);
   return (
-    <Progress.Root {...props}>
+    <Progress.Root {...props} value={value()}>
       <Progress.Track class="progress-track">
         <Progress.Range
           class="progress-range"

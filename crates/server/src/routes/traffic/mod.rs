@@ -6,7 +6,7 @@ use axum::{
 };
 use r2s_cluster::{Cluster, CHALLENGE_NS};
 use serde::Deserialize;
-use tracing::error;
+use tracing::debug;
 
 use crate::traits::{GlobalState, ResponseError};
 
@@ -33,7 +33,7 @@ async fn link_challenge_env(
       .wsrx_link(&token, port, socket)
       .await;
     if let Err(e) = result {
-      error!("Failed to link challenge env: {:?}", e);
+      debug!("Failed to link challenge env: {:?}", e);
     }
   }))
 }

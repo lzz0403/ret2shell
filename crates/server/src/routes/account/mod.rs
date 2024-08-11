@@ -756,6 +756,21 @@ async fn delete_self(
       ),
     ));
   }
+  let games = game::get_list(&db.conn, Some(Utc::now()), None, None, Some(Utc::now())).await?;
+  for game in games {
+    if team::get_by_user_id(&db.conn, game.id, user.id)
+      .await?
+      .is_some()
+    {
+      return Err(ResponseError::Forbidden(
+        "you can not delete account before game archived".to_owned(),
+        format!(
+          "user {}:'{}' ({}) want to delete itself before game {}:'{}' archived",
+          user.id, user.account, user.nickname, game.id, game.name
+        ),
+      ));
+    }
+  }
   let user = user::Model {
     account: format!("[DELETED]_{}", user.id),
     nickname: format!("[DELETED]_{}", user.id),

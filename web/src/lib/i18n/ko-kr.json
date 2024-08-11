@@ -543,7 +543,8 @@
         "sendPlaceholder": "발신 응답...",
         "unread": "읽지 않음",
         "title": "피드백",
-        "noSession": "팀에서 피드백을 보낸 적이 없습니다..."
+        "noSession": "팀에서 피드백을 보낸 적이 없습니다...",
+        "playerUnread": "선수 미확인"
       },
       "monitor": {
         "fetchFailed": "획득 실패",

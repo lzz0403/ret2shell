@@ -13,7 +13,7 @@ import { Match, Switch, createEffect, createSignal, untrack } from "solid-js";
 
 export default function UserCodeDialog() {
   const [code, setCode] = createSignal(null as { code: number; generate_at: DateTime } | null);
-  const [loadingCode, setLoadingCode] = createSignal(true);
+  const [loadingCode, setLoadingCode] = createSignal(false);
   function getCode() {
     if (accountStore.permissions.includes(Permission.Verified)) {
       setLoadingCode(true);

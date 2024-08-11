@@ -1,6 +1,6 @@
 import Spin from "@assets/animates/spin";
 import { randomTips } from "@lib/utils/loading-tips";
-import type { Team } from "@models/team";
+import { type Team, TeamState } from "@models/team";
 import { A } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
@@ -68,6 +68,11 @@ export default function TeamRanks(props: {
               >
                 {team.name}
               </A>
+              <Show when={team.state === TeamState.Hidden}>
+                <Tag level="warning">
+                  <span>{t("game.team.state.hidden")}</span>
+                </Tag>
+              </Show>
               <Show when={props.showTime && team.institute_id}>
                 <Tag level="info">
                   <span>{accountStore.institutes.find((v) => v.id === team.institute_id)?.name}</span>

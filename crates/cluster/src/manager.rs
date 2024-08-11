@@ -401,6 +401,13 @@ impl Cluster {
               }]
             }),
             resources: Some(ResourceRequirements {
+              requests: Some(
+                [("cpu", "10m".to_owned()), ("memory", "32Mi".to_owned())]
+                  .iter()
+                  .cloned()
+                  .map(|(k, v)| (k.to_owned(), Quantity(v)))
+                  .collect(),
+              ),
               limits: Some(
                 [
                   ("cpu", image.cpu.to_string()),

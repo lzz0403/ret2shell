@@ -5,6 +5,7 @@ import { accountStore } from "@storage/account";
 import { challengeStore } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
+import Divider from "@widgets/divider";
 import Link from "@widgets/link";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
@@ -120,7 +121,7 @@ export default function Tabs(props: {
               </Link>
             </Show>
             <Show when={challengeHistory().length > 0}>
-              <span class="h-12 w-[1px] bg-layer-content/15" />
+              <Divider direction="vertical" class="h-8" />
             </Show>
           </div>
           <For each={challengeHistory()}>

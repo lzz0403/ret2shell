@@ -7,7 +7,7 @@ export default function () {
   // TODO: refreshSelfTeam()
   return (
     <>
-      <div class="border-b border-b-layer-content/10 px-2 h-16 flex items-center justify-center">
+      <div class="border-b border-b-layer-content/10 px-2 h-16 flex-shrink-0 flex items-center justify-center">
         <Switch>
           <Match when={isGameAdmin()}>
             <Button ghost disabled class="w-full" justify="start">

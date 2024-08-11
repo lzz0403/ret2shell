@@ -330,7 +330,8 @@
         "sendPlaceholder": "发送回复...",
         "unread": "未读",
         "title": "反馈",
-        "noSession": "没有队伍发送过反馈..."
+        "noSession": "没有队伍发送过反馈...",
+        "playerUnread": "选手未读"
       },
       "monitor": {
         "fetchFailed": "获取失败",

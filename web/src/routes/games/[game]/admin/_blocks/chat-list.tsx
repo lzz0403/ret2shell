@@ -1,7 +1,6 @@
 import { getGameAdminChatSessions } from "@api/game";
 import type { ChatSession } from "@models/chat";
 import { useSearchParams } from "@solidjs/router";
-import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -10,17 +9,23 @@ import Divider from "@widgets/divider";
 import Link from "@widgets/link";
 import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { For, Show, createEffect, createMemo, createSignal } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 
 export default function ChatList() {
   const [sessions, setSessions] = createSignal([] as ChatSession[]);
   const [searchParams, _] = useSearchParams();
   const teamId = createMemo(() => Number.parseInt(searchParams.team ?? "") || null);
   const challengeId = createMemo(() => Number.parseInt(searchParams.challenge ?? "") || null);
-  createEffect(() => {
+  function refreshChats() {
     if (gameStore.current) {
-      getGameAdminChatSessions(gameStore.current.id)
-        .then(setSessions)
+      getGameAdminChatSessions(gameStore.current!.id)
+        .then((resp) => {
+          setSessions(
+            resp.sort((a, b) => {
+              return b.last_active_at.toMillis() - a.last_active_at.toMillis();
+            })
+          );
+        })
         .catch((err: HTTPError) => {
           err.response.text().then((text) => {
             addToast({
@@ -30,6 +35,18 @@ export default function ChatList() {
             });
           });
         });
+    }
+  }
+
+  const timer = setInterval(() => {
+    refreshChats();
+  }, 5000);
+
+  onCleanup(() => clearInterval(timer));
+
+  createEffect(() => {
+    if (gameStore.current) {
+      untrack(refreshChats);
     }
   });
   return (
@@ -73,14 +90,16 @@ export default function ChatList() {
                     <Avatar class="w-10 aspect-square flex-shrink-0" src={undefined} fallback={session.team_name} />
                     <div class="flex-col flex-1">
                       <div class="flex flex-row space-x-2 items-center">
-                        <span class="flex-1 truncate font-bold text-start">{session.team_name}</span>
-                        <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-                        <span class="flex-none truncate">{session.challenge_name}</span>
+                        <span class="flex-1 truncate font-bold text-start w-0">{session.team_name}</span>
+                        <span class="flex-1 w-0 text-end truncate">{session.challenge_name}</span>
                       </div>
                       <Divider />
                       <div class="flex flex-row space-x-2 items-center overflow-hidden">
-                        <Show when={!session.checked && session.last_user_id !== accountStore.id}>
+                        <Show when={!session.checked && !session.is_admin}>
                           <span class="text-error">[{t("game.admin.chat.unread")}]</span>
+                        </Show>
+                        <Show when={!session.checked && session.is_admin}>
+                          <span class="text-info">[{t("game.admin.chat.playerUnread")}]</span>
                         </Show>
                         <span class="flex-1 w-0 truncate opacity-60 text-start font-normal">
                           {session.last_message}

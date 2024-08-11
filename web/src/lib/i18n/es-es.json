@@ -543,7 +543,8 @@
         "sendPlaceholder": "Enviar respuesta...",
         "unread": "No leído",
         "title": "Respuesta",
-        "noSession": "No hay equipos que hayan enviado comentarios..."
+        "noSession": "No hay equipos que hayan enviado comentarios...",
+        "playerUnread": "Jugador no leído"
       },
       "monitor": {
         "fetchFailed": "Obtener fallido",

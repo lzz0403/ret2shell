@@ -124,7 +124,7 @@ export default function () {
           </div>
         )}
         rightBar={() => (
-          <div class="flex flex-col">
+          <div class="h-full flex flex-col">
             <Team />
             <Notifications />
           </div>

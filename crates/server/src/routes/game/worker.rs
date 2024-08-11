@@ -3,6 +3,7 @@ use futures::StreamExt;
 use r2s_bucket::Bucket;
 use r2s_cache::Cache;
 use r2s_checker::Checker;
+use r2s_cluster::Cluster;
 use r2s_database::{
   audit, challenge, extra, game, submission,
   team::{self, TeamScoreHistory, TeamScoreHistoryList},
@@ -24,12 +25,14 @@ pub async fn spawn_game_workers(state: GlobalState) {
   let checker = state.checker.clone();
   let bucket = state.bucket.clone();
   let cache = state.cache.clone();
+  let cluster = state.cluster.clone();
   tokio::spawn(submission_worker(
     queue.clone(),
     database.clone(),
     cache,
     checker,
     bucket,
+    cluster,
   ));
   tokio::spawn(score_maintainance_worker(queue, database));
 }
@@ -117,7 +120,7 @@ async fn score_maintainance_worker_exec(
 }
 
 async fn submission_worker(
-  queue: Queue, db: Database, cache: Cache, checker: Checker, bucket: Bucket,
+  queue: Queue, db: Database, cache: Cache, checker: Checker, bucket: Bucket, cluster: Cluster,
 ) {
   let messages = queue
     .subscribe("check")
@@ -157,6 +160,7 @@ async fn submission_worker(
         cache.clone(),
         checker.clone(),
         bucket.clone(),
+        cluster.clone(),
         submission.clone().unwrap(),
       )
       .await
@@ -185,7 +189,7 @@ async fn submission_worker(
 }
 
 async fn submission_worker_exec(
-  queue: Queue, db: Database, cache: Cache, mut checker: Checker, bucket: Bucket,
+  queue: Queue, db: Database, cache: Cache, mut checker: Checker, bucket: Bucket, cluster: Cluster,
   submission: submission::Model,
 ) -> Result<submission::Model, ResponseError> {
   // stage 1: get all necessary data
@@ -270,6 +274,13 @@ async fn submission_worker_exec(
       game.id,
       game.name
     );
+    tokio::spawn(async move {
+      cluster
+        .at("ret2shell-challenge")
+        .stop_challenge_env(user.id)
+        .await
+        .ok();
+    });
     // stage 3.1: update challenge score
     let (changed, decay, challenge) =
       challenge::maintain_score(&db.conn, challenge.clone()).await?;

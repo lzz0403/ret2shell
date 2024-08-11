@@ -117,6 +117,13 @@ function AuditList() {
               <span class="flex-1 w-0 truncate" title={audit.reason}>
                 {audit.reason}
               </span>
+              <A
+                class="hover:underline flex space-x-2 items-center"
+                href={`/games/${gameStore.current?.id}/challenges?challenge=${audit.challenge_id}`}
+              >
+                <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
+                <span>{audit.challenge_name}</span>
+              </A>
               <Tag
                 level={
                   audit.state === AuditState.Pending
@@ -230,6 +237,13 @@ function SubmissionList() {
               <span class="flex-1 w-0 overflow-hidden flex items-center" title={submission.content!}>
                 <span class="max-w-full truncate py-1 px-2 rounded-lg bg-layer-content/5">{submission.content}</span>
               </span>
+              <A
+                class="hover:underline flex space-x-2 items-center"
+                href={`/games/${gameStore.current?.id}/challenges?challenge=${submission.challenge_id}`}
+              >
+                <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
+                <span>{submission.challenge_name}</span>
+              </A>
               <Tag level={submission.solved ? "success" : "warning"}>
                 <span>
                   {submission.solved === null

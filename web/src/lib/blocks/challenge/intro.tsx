@@ -284,7 +284,7 @@ export default function (props: { inGame?: boolean }) {
                             onTimeout={() => {
                               setTimeout(() => {
                                 refreshCalmdown();
-                              }, 500);
+                              }, 1500);
                             }}
                           />
                         </Show>

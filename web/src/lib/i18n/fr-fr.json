@@ -543,7 +543,8 @@
         "sendPlaceholder": "Envoyer la réponse...",
         "unread": "Non lu",
         "title": "Retour",
-        "noSession": "Aucune équipe n'a envoyé de retour d'information..."
+        "noSession": "Aucune équipe n'a envoyé de retour d'information...",
+        "playerUnread": "Joueur non lu"
       },
       "monitor": {
         "fetchFailed": "Échec de l'obtention",

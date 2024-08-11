@@ -543,7 +543,8 @@
         "sendPlaceholder": "Senden Sie die Antwort...",
         "unread": "Ungelesen",
         "title": "Rückmeldung",
-        "noSession": "Keine Mannschaft hat Feedback gesendet..."
+        "noSession": "Keine Mannschaft hat Feedback gesendet...",
+        "playerUnread": "Spieler hat nicht gelesen"
       },
       "monitor": {
         "fetchFailed": "Fehler beim Abrufen",

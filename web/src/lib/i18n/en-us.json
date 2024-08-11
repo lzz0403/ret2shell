@@ -622,7 +622,8 @@
         "selectToShow": "Select a conversation to view and reply",
         "sendPlaceholder": "Send reply...",
         "title": "Feedback",
-        "unread": "Unread"
+        "unread": "Unread",
+        "playerUnread": "Player has not read"
       },
       "monitor": {
         "fetchFailed": "Fetch failed",
