@@ -244,6 +244,9 @@ async fn bind_account_by_code(
   if let Some(user_id) = user_id {
     cache.at("account-code").del(user_id).await.ok();
     if let Some(user) = user::get_ex(&db.conn, user_id).await? {
+      if user.institute_id.is_some() {
+        return Err(ResponseError::Conflict("account already bound".to_owned()));
+      }
       let user = user::Model {
         institute_id: Some(institute.id),
         ..user.into()
