@@ -20,6 +20,7 @@ import jiangnan from "@assets/brands/jiangnan.svg";
 import xdu from "@assets/brands/xdu.svg";
 import xmu from "@assets/brands/xmu.svg";
 import cumt from "@assets/brands/cumt.svg";
+import uestc from "@assets/brands/uestc.svg";
 import logo from "@assets/logo-gray.svg";
 const logos = {
   xdu: xdu,
@@ -27,6 +28,7 @@ const logos = {
   jiangnan: jiangnan,
   hdu: hdu,
   cumt: cumt,
+  uestc: uestc,
 };
 
 export default function () {

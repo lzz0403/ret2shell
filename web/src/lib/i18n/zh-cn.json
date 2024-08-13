@@ -863,6 +863,9 @@
       },
       "xdu_cas": {
         "title": "西安电子科技大学统一身份认证"
+      },
+      "uestc_email": {
+        "title": "电子科技大学邮件身份认证"
       }
     },
     "institute": {

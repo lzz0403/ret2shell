@@ -102,6 +102,9 @@
       },
       "cumt_email": {
         "title": "중국광업대학 이메일 신원 인증"
+      },
+      "uestc_email": {
+        "title": "중국 전자 과학 기술 대학교 이메일 신원 인증"
       }
     },
     "register": {

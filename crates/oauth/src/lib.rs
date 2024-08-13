@@ -11,6 +11,7 @@ pub struct OAuth {
   pub jiangnan_email: Option<adapters::jiangnan_email::OAuthProvider>,
   pub hdu_email: Option<adapters::hdu_email::OAuthProvider>,
   pub cumt_email: Option<adapters::cumt_email::OAuthProvider>,
+  pub uestc_email: Option<adapters::uestc_email::OAuthProvider>,
 }
 
 impl OAuth {
@@ -41,6 +42,11 @@ impl OAuth {
           key: key.to_owned().clone(),
         }
       }),
+      uestc_email: config.oauth_keys.get("uestc_email").as_ref().map(|key| {
+        adapters::uestc_email::OAuthProvider {
+          key: key.to_owned().clone(),
+        }
+      }),
     }
   }
 
@@ -66,6 +72,10 @@ impl OAuth {
         .cumt_email
         .as_ref()
         .map(|cumt| cumt as &dyn traits::OAuthProvider),
+      "uestc_email" => self
+        .uestc_email
+        .as_ref()
+        .map(|uestc| uestc as &dyn traits::OAuthProvider),
       _ => None,
     }
   }
@@ -81,6 +91,7 @@ pub async fn initialize(config: &Option<Config>) -> OAuth {
       jiangnan_email: None,
       hdu_email: None,
       cumt_email: None,
+      uestc_email: None,
     }
   }
 }

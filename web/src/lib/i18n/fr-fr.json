@@ -102,6 +102,9 @@
       },
       "cumt_email": {
         "title": "Authentification de l'identité du courrier électronique de l'Université chinoise des mines et des technologies"
+      },
+      "uestc_email": {
+        "title": "Authentification de l'identité de courrier électronique de l'Université des sciences et technologies électroniques de Chine"
       }
     },
     "register": {

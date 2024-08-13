@@ -181,6 +181,9 @@
       },
       "cumt_email": {
         "title": "中國礦業大學郵件身份認證"
+      },
+      "uestc_email": {
+        "title": "電子科技大學郵件身分認證"
       }
     },
     "register": {

@@ -12,6 +12,7 @@ xmu_cas = { id = "https://ctf.xmu.edu.cn/account/oauth", key = "NOTNEEDED" }
 jiangnan_email = { id = "jiangnan.edu.cn", key = "NOTNEEDED" }
 cumt_email = { id = "cumt.edu.cn", key = "NOTNEEDED" }
 hdu_email = { id = "hdu.edu.cn", key = "NOTNEEDED" }
+uestc_email = { id = "uestc.edu.cn", key = "NOTNEEDED" }
 
 [automate]
 enabled = false
