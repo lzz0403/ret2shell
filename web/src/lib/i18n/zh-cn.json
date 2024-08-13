@@ -869,6 +869,12 @@
       },
       "seu_email": {
         "title": "东南大学邮件身份认证"
+      },
+      "fudan_email": {
+        "title": "复旦大学邮件身份认证"
+      },
+      "jlu_email": {
+        "title": "吉林大学邮件身份认证"
       }
     },
     "institute": {

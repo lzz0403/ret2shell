@@ -108,6 +108,12 @@
       },
       "seu_email": {
         "title": "Authentification de l'identité de courrier électronique de l'Université du Sud-Est"
+      },
+      "fudan_email": {
+        "title": "Authentification de l'identité de courrier électronique de l'Université Fudan"
+      },
+      "jlu_email": {
+        "title": "Authentification de l'identité de courrier électronique de l'Université de Jilin"
       }
     },
     "register": {

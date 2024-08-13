@@ -108,6 +108,12 @@
       },
       "seu_email": {
         "title": "남동대학교 이메일 본인 인증"
+      },
+      "fudan_email": {
+        "title": "복단대학교 이메일 신원 인증"
+      },
+      "jlu_email": {
+        "title": "길림대학교 이메일 본인인증"
       }
     },
     "register": {

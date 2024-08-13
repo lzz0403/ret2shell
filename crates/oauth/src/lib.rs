@@ -13,81 +13,63 @@ pub struct OAuth {
   pub cumt_email: Option<adapters::cumt_email::OAuthProvider>,
   pub uestc_email: Option<adapters::uestc_email::OAuthProvider>,
   pub seu_email: Option<adapters::seu_email::OAuthProvider>,
+  pub fudan_email: Option<adapters::fudan_email::OAuthProvider>,
+  pub jlu_email: Option<adapters::jlu_email::OAuthProvider>,
+}
+
+macro_rules! map_oauth_providers {
+  ($self:ident, $ori:ident, $($provider:ident), *) => {
+    match $ori {
+      $(
+        stringify!($provider) => $self
+          .$provider
+          .as_ref()
+          .map(|x| x as &dyn traits::OAuthProvider),
+      )*
+      _ => None,
+    }
+  }
+}
+
+macro_rules! gen_config {
+  ($config:ident, $provider:ident) => {
+    $config
+      .oauth_keys
+      .get(stringify!($provider))
+      .as_ref()
+      .map(|key| adapters::$provider::OAuthProvider {
+        key: key.to_owned().clone(),
+      })
+  };
 }
 
 impl OAuth {
   pub fn from_config(config: &Config) -> Self {
     OAuth {
-      xdu_cas: config.oauth_keys.get("xdu_cas").as_ref().map(|key| {
-        adapters::xdu_cas::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
-      xmu_cas: config.oauth_keys.get("xmu_cas").as_ref().map(|key| {
-        adapters::xmu_cas::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
-      jiangnan_email: config.oauth_keys.get("jiangnan_email").as_ref().map(|key| {
-        adapters::jiangnan_email::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
-      hdu_email: config.oauth_keys.get("hdu_email").as_ref().map(|key| {
-        adapters::hdu_email::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
-      cumt_email: config.oauth_keys.get("cumt_email").as_ref().map(|key| {
-        adapters::cumt_email::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
-      uestc_email: config.oauth_keys.get("uestc_email").as_ref().map(|key| {
-        adapters::uestc_email::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
-      seu_email: config.oauth_keys.get("seu_email").as_ref().map(|key| {
-        adapters::seu_email::OAuthProvider {
-          key: key.to_owned().clone(),
-        }
-      }),
+      xdu_cas: gen_config!(config, xdu_cas),
+      xmu_cas: gen_config!(config, xmu_cas),
+      jiangnan_email: gen_config!(config, jiangnan_email),
+      hdu_email: gen_config!(config, hdu_email),
+      cumt_email: gen_config!(config, cumt_email),
+      uestc_email: gen_config!(config, uestc_email),
+      seu_email: gen_config!(config, seu_email),
+      fudan_email: gen_config!(config, fudan_email),
+      jlu_email: gen_config!(config, jlu_email),
     }
   }
 
   pub fn get_provider(&self, provider: &str) -> Option<&dyn traits::OAuthProvider> {
-    match provider {
-      "xdu_cas" => self
-        .xdu_cas
-        .as_ref()
-        .map(|xdu| xdu as &dyn traits::OAuthProvider),
-      "xmu_cas" => self
-        .xmu_cas
-        .as_ref()
-        .map(|xmu| xmu as &dyn traits::OAuthProvider),
-      "jiangnan_email" => self
-        .jiangnan_email
-        .as_ref()
-        .map(|jiangnan| jiangnan as &dyn traits::OAuthProvider),
-      "hdu_email" => self
-        .hdu_email
-        .as_ref()
-        .map(|hdu| hdu as &dyn traits::OAuthProvider),
-      "cumt_email" => self
-        .cumt_email
-        .as_ref()
-        .map(|cumt| cumt as &dyn traits::OAuthProvider),
-      "uestc_email" => self
-        .uestc_email
-        .as_ref()
-        .map(|uestc| uestc as &dyn traits::OAuthProvider),
-      "seu_email" => self
-        .seu_email
-        .as_ref()
-        .map(|seu| seu as &dyn traits::OAuthProvider),
-      _ => None,
-    }
+    map_oauth_providers!(
+      self,
+      provider,
+      xdu_cas,
+      xmu_cas,
+      jiangnan_email,
+      hdu_email,
+      cumt_email,
+      uestc_email,
+      seu_email
+    )
   }
 }
 
@@ -103,6 +85,8 @@ pub async fn initialize(config: &Option<Config>) -> OAuth {
       cumt_email: None,
       uestc_email: None,
       seu_email: None,
+      fudan_email: None,
+      jlu_email: None,
     }
   }
 }

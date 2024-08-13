@@ -187,6 +187,12 @@
       },
       "seu_email": {
         "title": "東南大學郵件認證"
+      },
+      "fudan_email": {
+        "title": "復旦大學郵件認證"
+      },
+      "jlu_email": {
+        "title": "吉林大學郵件身份認證"
       }
     },
     "register": {

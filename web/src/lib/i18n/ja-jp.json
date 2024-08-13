@@ -108,6 +108,12 @@
       },
       "seu_email": {
         "title": "東南大学の電子メール ID 認証"
+      },
+      "fudan_email": {
+        "title": "復旦大学の電子メール ID 認証"
+      },
+      "jlu_email": {
+        "title": "吉林大学の電子メール ID 認証"
       }
     },
     "register": {

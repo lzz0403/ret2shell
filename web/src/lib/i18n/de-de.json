@@ -108,6 +108,12 @@
       },
       "seu_email": {
         "title": "E-Mail-Identitätsauthentifizierung der Southeast University"
+      },
+      "fudan_email": {
+        "title": "E-Mail-Identitätsauthentifizierung der Fudan-Universität"
+      },
+      "jlu_email": {
+        "title": "E-Mail-Identitätsauthentifizierung der Universität Jilin"
       }
     },
     "register": {
