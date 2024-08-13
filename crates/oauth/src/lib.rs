@@ -68,7 +68,9 @@ impl OAuth {
       hdu_email,
       cumt_email,
       uestc_email,
-      seu_email
+      seu_email,
+      fudan_email,
+      jlu_email
     )
   }
 }
