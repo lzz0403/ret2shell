@@ -1,3 +1,4 @@
+import bit from "@assets/brands/bit.svg";
 import cumt from "@assets/brands/cumt.svg";
 import fudan from "@assets/brands/fudan.svg";
 import hdu from "@assets/brands/hdu.svg";
@@ -19,6 +20,7 @@ const eduLogos = {
   seu: seu,
   fudan: fudan,
   jlu: jlu,
+  bit: bit,
 };
 
 export function getLogo(provider: string) {

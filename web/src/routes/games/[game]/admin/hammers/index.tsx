@@ -297,9 +297,20 @@ export default function () {
                           <A href={`/users/${chat.user_id}`}>{chat.user_name}</A>
                         </label>
                       </Show>
-                      <Card class="peer" contentClass="p-2">
-                        <Article content={chat.content} noExtraPaddings compact extra />
-                      </Card>
+                      <div class={`peer flex ${chat.user_id !== accountStore.id ? "flex-row" : "flex-row-reverse"}`}>
+                        <Card contentClass="p-2">
+                          <Article content={chat.content} noExtraPaddings compact extra />
+                        </Card>
+                        <div class="px-2 self-end flex items-end">
+                          <span
+                            class={
+                              chat.checked
+                                ? "icon-[fluent--checkmark-circle-20-filled] w-5 h-5 text-success"
+                                : "icon-[fluent--circle-20-regular] w-5 h-5 opacity-40"
+                            }
+                          />
+                        </div>
+                      </div>
                       <Show
                         when={
                           index() === mixedChats().length - 1 || mixedChats().at(index() + 1)?.user_id !== chat.user_id

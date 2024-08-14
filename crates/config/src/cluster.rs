@@ -88,6 +88,7 @@ pub struct ChallengeImage {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ChallengeEnv {
   pub internet: bool,
+  pub restricted: Option<bool>,
   pub images: Vec<ChallengeImage>,
 }
 
@@ -106,6 +107,7 @@ impl ChallengeEnv {
   pub fn desensitize(self) -> Self {
     Self {
       internet: false,
+      restricted: None,
       images: self.images.into_iter().map(|i| i.desensitize()).collect(),
     }
   }

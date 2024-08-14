@@ -1,5 +1,5 @@
 import { Checkbox, type CheckboxRootProps, Popover } from "@ark-ui/solid";
-import { type JSX, splitProps } from "solid-js";
+import { type JSX, Show, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
 export type CheckboxProps = {
@@ -22,7 +22,9 @@ export default function (
   return (
     <Popover.Root autoFocus={false} open={!!checkboxProps.error} closeOnInteractOutside={false}>
       <Popover.Anchor class={`flex flex-col space-y-1 flex-1 ${rest.class}`.trim()}>
-        <label class="label">{props.title}</label>
+        <Show when={props.title}>
+          <label class="label">{props.title}</label>
+        </Show>
         <Checkbox.Root {...rest} class={classes()}>
           <Checkbox.Label asChild={() => children} />
           <Checkbox.Control class="w-5 h-5">

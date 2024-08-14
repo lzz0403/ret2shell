@@ -15,6 +15,7 @@ pub struct OAuth {
   pub seu_email: Option<adapters::seu_email::OAuthProvider>,
   pub fudan_email: Option<adapters::fudan_email::OAuthProvider>,
   pub jlu_email: Option<adapters::jlu_email::OAuthProvider>,
+  pub bit_email: Option<adapters::bit_email::OAuthProvider>,
 }
 
 macro_rules! map_oauth_providers {
@@ -55,6 +56,7 @@ impl OAuth {
       seu_email: gen_config!(config, seu_email),
       fudan_email: gen_config!(config, fudan_email),
       jlu_email: gen_config!(config, jlu_email),
+      bit_email: gen_config!(config, bit_email),
     }
   }
 
@@ -70,7 +72,8 @@ impl OAuth {
       uestc_email,
       seu_email,
       fudan_email,
-      jlu_email
+      jlu_email,
+      bit_email
     )
   }
 }
@@ -89,6 +92,7 @@ pub async fn initialize(config: &Option<Config>) -> OAuth {
       seu_email: None,
       fudan_email: None,
       jlu_email: None,
+      bit_email: None,
     }
   }
 }

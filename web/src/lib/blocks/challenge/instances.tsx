@@ -70,6 +70,7 @@ function CreateForm(fnProps: {
     setAdding(true);
     updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
       internet: challengeStore.env?.internet || false,
+      restricted: challengeStore.env?.restricted ?? null,
       images: [...(challengeStore.env?.images || []), result],
     })
       .then(() => {
@@ -201,14 +202,18 @@ function CreateForm(fnProps: {
                 />
                 <Field name="restricted" type="boolean">
                   {(field, props) => (
-                    <IconCheckbox
-                      inputProps={props}
-                      title={t("game.challenge.dropCap")}
-                      checked={field.value ?? false}
-                      uncheckedIcon="icon-[fluent--live-20-regular] w-5 h-5"
-                      checkedIcon="icon-[fluent--live-off-20-filled] w-5 h-5"
-                      error={field.error}
-                    />
+                    <div class="flex flex-col space-y-1">
+                      <label class="label">CAP</label>
+                      <IconCheckbox
+                        inputProps={props}
+                        title={t("game.challenge.dropCap")}
+                        checked={field.value ?? false}
+                        uncheckedIcon="icon-[fluent--live-20-regular]"
+                        checkedIcon="icon-[fluent--live-off-20-filled]"
+                        error={field.error}
+                        name="restricted"
+                      />
+                    </div>
                   )}
                 </Field>
               </div>
@@ -376,6 +381,31 @@ export default function (_props: {
   function onToggleInternet() {
     updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
       internet: !challengeStore.env?.internet,
+      restricted: challengeStore.env?.restricted ?? null,
+      images: challengeStore.env?.images || [],
+    })
+      .then(() => {
+        addToast({
+          level: "success",
+          description: t("game.challenge.toggleEnvInternetSuccess")!,
+          duration: 5000,
+        });
+        refreshChallengeAssets();
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("game.challenge.toggleEnvInternetFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      });
+  }
+  function onToggleRestricted() {
+    updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
+      internet: challengeStore.env?.internet || false,
+      restricted: !challengeStore.env?.restricted,
       images: challengeStore.env?.images || [],
     })
       .then(() => {
@@ -399,6 +429,7 @@ export default function (_props: {
   function onDeleteImage(name: string) {
     updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
       internet: challengeStore.env?.internet || false,
+      restricted: challengeStore.env?.restricted ?? null,
       images: challengeStore.env?.images?.filter((image) => image.name !== name) || [],
     })
       .then(() => {
@@ -491,14 +522,25 @@ export default function (_props: {
           </Popover>
         </Show>
       </header>
-      <Checkbox
-        checked={challengeStore.env?.internet}
-        onChange={() => {
-          onToggleInternet();
-        }}
-      >
-        <span class="flex-1 text-start">{t("game.challenge.envHasInternet")}</span>
-      </Checkbox>
+      <div class="flex flex-row space-x-2">
+        <Checkbox
+          checked={challengeStore.env?.internet}
+          onChange={() => {
+            onToggleInternet();
+          }}
+        >
+          <span class="flex-1 text-start">{t("game.challenge.envHasInternet")}</span>
+        </Checkbox>
+        <IconCheckbox
+          title={t("game.challenge.dropCap")}
+          checked={challengeStore.env?.restricted ?? false}
+          uncheckedIcon="icon-[fluent--live-20-regular]"
+          checkedIcon="icon-[fluent--live-off-20-filled]"
+          onChange={() => {
+            onToggleRestricted();
+          }}
+        />
+      </div>
 
       <For
         each={challengeStore.env?.images || []}

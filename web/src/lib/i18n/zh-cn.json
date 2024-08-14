@@ -876,6 +876,9 @@
       },
       "jlu_email": {
         "title": "吉林大学邮件身份认证"
+      },
+      "bit_email": {
+        "title": "北京理工大学邮件身份认证"
       }
     },
     "institute": {

@@ -1,5 +1,5 @@
 import { Checkbox, type CheckboxRootProps, Popover } from "@ark-ui/solid";
-import { createMemo, type JSX, splitProps } from "solid-js";
+import { type JSX, createMemo, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
 export type CheckboxProps = {
@@ -35,6 +35,7 @@ export default function (
   // data-[state=unchecked]:icon-[fluent--people-audience-20-regular] data-[state=checked]:icon-[fluent--people-audience-20-filled]
   // data-[state=unchecked]:icon-[fluent--edit-20-regular] data-[state=checked]:icon-[fluent--edit-20-filled]
   // data-[state=unchecked]:icon-[fluent--megaphone-loud-20-regular] data-[state=checked]:icon-[fluent--megaphone-loud-20-filled]
+  // data-[state=unchecked]:icon-[fluent--live-20-regular] data-[state=checked]:icon-[fluent--live-off-20-filled]
 
   return (
     <Popover.Root autoFocus={false} open={!!checkboxProps.error} closeOnInteractOutside={false}>

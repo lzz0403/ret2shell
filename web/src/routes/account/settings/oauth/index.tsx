@@ -11,7 +11,7 @@ import Button from "@widgets/button";
 import Link from "@widgets/link";
 import Tag from "@widgets/tag";
 import type { HTTPError } from "ky";
-import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 
 function getOAuthLink(service: string) {
   if (service.endsWith("_email")) {
@@ -118,9 +118,16 @@ export default function () {
                 }
               >
                 <span class="opacity-60">
-                  <span>{selfOAuthItems().find((v) => v.provider === service)?.data.name ?? "UNKNOWN"}</span>
-                  &nbsp;
-                  <span>({selfOAuthItems().find((v) => v.provider === service)?.data.id ?? "UNKNOWN"})</span>
+                  <Switch>
+                    <Match when={service.endsWith("cas")}>
+                      <span>{selfOAuthItems().find((v) => v.provider === service)?.data.name ?? "UNKNOWN"}</span>
+                      &nbsp;
+                      <span>({selfOAuthItems().find((v) => v.provider === service)?.data.id ?? "UNKNOWN"})</span>
+                    </Match>
+                    <Match when={service.endsWith("email")}>
+                      <span>{selfOAuthItems().find((v) => v.provider === service)?.data.email ?? "UNKNOWN"}</span>
+                    </Match>
+                  </Switch>
                 </span>
                 <Button
                   size="sm"
