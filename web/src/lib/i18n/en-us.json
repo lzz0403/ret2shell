@@ -648,7 +648,8 @@
         "title": "Feedback",
         "unread": "Unread",
         "playerUnread": "Player has not read",
-        "notReply": "Read and cannot reply"
+        "notReply": "Read and cannot reply",
+        "loadMore": "load more"
       },
       "monitor": {
         "fetchFailed": "Fetch failed",

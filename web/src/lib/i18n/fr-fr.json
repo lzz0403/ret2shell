@@ -569,7 +569,8 @@
         "title": "Retour",
         "noSession": "Aucune équipe n'a envoyé de retour d'information...",
         "playerUnread": "Joueur non lu",
-        "notReply": "J'ai lu et je ne peux pas répondre"
+        "notReply": "J'ai lu et je ne peux pas répondre",
+        "loadMore": "charger plus"
       },
       "monitor": {
         "fetchFailed": "Échec de l'obtention",

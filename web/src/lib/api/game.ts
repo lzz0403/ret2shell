@@ -368,8 +368,17 @@ export async function getChallengeSolveStatus(game_id: number, challenge_id: num
   }>();
 }
 
-export async function getGameAdminChatSessions(game_id: number) {
-  return await api.get(`${api_root}/game/${game_id}/chat/admin`).json<ChatSession[]>();
+export async function getGameAdminChatSessions(game_id: number, page?: number, page_size?: number) {
+  return await api
+    .get(`${api_root}/game/${game_id}/chat/admin`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          page,
+          page_size,
+        })
+      ) as SearchParamsOption,
+    })
+    .json<[ChatSession[], number]>();
 }
 
 export async function getGameAdminChatMessages(game_id: number, challenge_id: number, team_id: number) {

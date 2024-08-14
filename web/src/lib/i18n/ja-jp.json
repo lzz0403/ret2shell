@@ -569,7 +569,8 @@
         "title": "フィードバック",
         "noSession": "フィードバックが送信されていません...",
         "playerUnread": "選手未読",
-        "notReply": "読んでも返信できない"
+        "notReply": "読んでも返信できない",
+        "loadMore": "さらにロードする"
       },
       "monitor": {
         "fetchFailed": "取得失敗",

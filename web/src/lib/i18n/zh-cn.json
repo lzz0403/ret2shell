@@ -335,7 +335,8 @@
         "title": "反馈",
         "noSession": "没有队伍发送过反馈...",
         "playerUnread": "选手未读",
-        "notReply": "已读不回"
+        "notReply": "已读不回",
+        "loadMore": "加载更多"
       },
       "monitor": {
         "fetchFailed": "获取失败",

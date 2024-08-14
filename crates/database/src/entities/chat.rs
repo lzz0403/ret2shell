@@ -1,7 +1,7 @@
 use chrono::{serde::ts_seconds, DateTime, Utc};
 use sea_orm::{
-  entity::prelude::*, ActiveValue, FromQueryResult, IntoActiveModel, JoinType, Order, QueryOrder,
-  QuerySelect,
+  entity::prelude::*, ActiveValue, Condition, FromQueryResult, IntoActiveModel, JoinType, Order,
+  QueryOrder, QuerySelect, QueryTrait,
 };
 use serde::{Deserialize, Serialize};
 
@@ -118,7 +118,9 @@ impl Related<super::challenge::Entity> for Entity {
 
 impl ActiveModelBehavior for ActiveModel {}
 
-pub async fn get_sessions<C>(conn: &C, game_id: i64) -> Result<Vec<SessionModel>, DbErr>
+pub async fn get_sessions<C>(
+  conn: &C, game_id: i64, page: u64, page_size: u64,
+) -> Result<(Vec<SessionModel>, u64), DbErr>
 where
   C: sea_orm::ConnectionTrait,
 {
@@ -145,14 +147,23 @@ where
     .column_as(Column::UserId, "last_user_id")
     .column_as(Column::Content, "last_message")
     .column_as(Column::CreatedAt, "last_active_at");
-  sql = sql
+  let sub_query = Entity::find()
+    .select_only()
+    .columns([Column::Id])
     .distinct_on([(Entity, Column::TeamId), (Entity, Column::ChallengeId)])
     .order_by_desc(Column::TeamId)
     .order_by_desc(Column::ChallengeId)
+    .order_by_desc(Column::CreatedAt)
+    .into_query();
+  sql = sql
+    .filter(Condition::any().add(Column::Id.in_subquery(sub_query)))
     .order_by_desc(Column::CreatedAt);
 
-  let result = sql.into_model().all(conn).await?;
-  Ok(result)
+  let paginator = sql.into_model().paginate(conn, page_size);
+  let total = paginator.num_items().await?;
+  let result = paginator.fetch_page(page - 1).await?;
+
+  Ok((result, total))
 }
 
 pub async fn get_list<C>(conn: &C, team_id: i64, challenge_id: i64) -> Result<Vec<ExModel>, DbErr>

@@ -5,6 +5,7 @@ import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
+import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Link from "@widgets/link";
 import type { HTTPError } from "ky";
@@ -12,35 +13,69 @@ import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
 
+function mergeChats(oldSessions: ChatSession[], newSessions: ChatSession[]) {
+  const result = oldSessions;
+  const incomming = newSessions;
+  result.sort((a, b) => {
+    if (a.team_id === b.team_id) {
+      return a.challenge_id - b.challenge_id;
+    }
+    return a.team_id - b.team_id;
+  });
+  incomming.sort((a, b) => {
+    if (a.team_id === b.team_id) {
+      return a.challenge_id - b.challenge_id;
+    }
+    return a.team_id - b.team_id;
+  });
+  let i = 0;
+  const iLen = result.length;
+  let j = 0;
+  const jLen = incomming.length;
+  while (i < iLen && j < jLen) {
+    const oldSession = result[i];
+    const newSession = incomming[j];
+    if (oldSession.team_id === newSession.team_id && oldSession.challenge_id === newSession.challenge_id) {
+      if (
+        newSession.last_active_at.toMillis() > oldSession.last_active_at.toMillis() ||
+        newSession.checked !== oldSession.checked ||
+        newSession.is_admin !== oldSession.is_admin
+      ) {
+        result[i] = newSession;
+      }
+      i++;
+      j++;
+    } else if (
+      oldSession.team_id > newSession.team_id ||
+      (oldSession.team_id === newSession.team_id && oldSession.challenge_id > newSession.challenge_id)
+    ) {
+      result.push(newSession);
+      j++;
+    } else {
+      i++;
+    }
+  }
+  while (j < jLen) {
+    result.push(incomming[j]);
+    j++;
+  }
+  return result.sort((a, b) => b.last_active_at.toMillis() - a.last_active_at.toMillis());
+}
+
 export default function ChatList() {
   const [sessions, setSessions] = createSignal([] as ChatSession[]);
   const [searchParams, _] = useSearchParams();
+  const pageSize = 30;
+  const [page, setPage] = createSignal(1);
   const teamId = createMemo(() => Number.parseInt(searchParams.team ?? "") || null);
   const challengeId = createMemo(() => Number.parseInt(searchParams.challenge ?? "") || null);
   function refreshChats() {
     if (gameStore.current) {
-      getGameAdminChatSessions(gameStore.current!.id)
+      getGameAdminChatSessions(gameStore.current!.id, 1, pageSize * page())
         .then((resp) => {
-          // only append new sessions
-          const oldSessions = sessions().filter(
-            (session) =>
-              !resp.find(
-                (s) =>
-                  s.team_id === session.team_id &&
-                  s.challenge_id === session.challenge_id &&
-                  (s.last_active_at.toMillis() > session.last_active_at.toMillis() ||
-                    s.checked !== session.checked ||
-                    s.is_admin !== session.is_admin)
-              )
-          );
-          const newSessions = [
-            ...oldSessions,
-            ...resp.filter(
-              (session) =>
-                !oldSessions.find((s) => s.team_id === session.team_id && s.challenge_id === session.challenge_id)
-            ),
-          ].sort((a, b) => b.last_active_at.toMillis() - a.last_active_at.toMillis());
-          setSessions(newSessions);
+          const result = mergeChats(sessions(), resp[0]);
+          // console.log(result);
+          setSessions([...result]);
         })
         .catch((err: HTTPError) => {
           err.response.text().then((text) => {
@@ -130,6 +165,16 @@ export default function ChatList() {
                 )}
               </For>
             </TransitionGroup>
+            <Button
+              ghost
+              onClick={() => {
+                setPage(page() + 1);
+                refreshChats();
+              }}
+            >
+              <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5 opacity-60 hover:opacity-100" />
+              <span>{t("game.admin.chat.loadMore")}</span>
+            </Button>
           </div>
         </Show>
       </OverlayScrollbarsComponent>

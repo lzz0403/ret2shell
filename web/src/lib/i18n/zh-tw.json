@@ -648,7 +648,8 @@
         "title": "回饋",
         "noSession": "沒有隊伍發送過回饋...",
         "playerUnread": "選手未讀",
-        "notReply": "已讀不回"
+        "notReply": "已讀不回",
+        "loadMore": "加載更多"
       },
       "monitor": {
         "fetchFailed": "獲取失敗",

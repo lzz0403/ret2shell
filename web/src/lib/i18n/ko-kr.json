@@ -569,7 +569,8 @@
         "title": "피드백",
         "noSession": "팀에서 피드백을 보낸 적이 없습니다...",
         "playerUnread": "선수 미확인",
-        "notReply": "읽었으나 응답할 수 없음"
+        "notReply": "읽었으나 응답할 수 없음",
+        "loadMore": "더 로드하세요"
       },
       "monitor": {
         "fetchFailed": "획득 실패",

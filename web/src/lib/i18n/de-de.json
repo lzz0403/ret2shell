@@ -569,7 +569,8 @@
         "title": "Rückmeldung",
         "noSession": "Keine Mannschaft hat Feedback gesendet...",
         "playerUnread": "Spieler hat nicht gelesen",
-        "notReply": "Gelesen und kann nicht antworten"
+        "notReply": "Gelesen und kann nicht antworten",
+        "loadMore": "mehr laden"
       },
       "monitor": {
         "fetchFailed": "Fehler beim Abrufen",

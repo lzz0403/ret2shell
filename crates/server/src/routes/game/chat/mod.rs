@@ -58,10 +58,23 @@ struct SendChatRequest {
   content: String,
 }
 
+#[derive(Deserialize)]
+struct GetChatListQuery {
+  page: Option<u64>,
+  page_size: Option<u64>,
+}
+
 async fn admin_get_chat_list(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Query(query): Query<GetChatListQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let chats = chat::get_sessions(&db.conn, game.id).await?;
+  let chats = chat::get_sessions(
+    &db.conn,
+    game.id,
+    query.page.unwrap_or(1),
+    query.page_size.unwrap_or(30),
+  )
+  .await?;
   Ok(Json(chats))
 }
 

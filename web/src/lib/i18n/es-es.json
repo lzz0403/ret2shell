@@ -569,7 +569,8 @@
         "title": "Respuesta",
         "noSession": "No hay equipos que hayan enviado comentarios...",
         "playerUnread": "Jugador no leído",
-        "notReply": "Leí y no puedo responder."
+        "notReply": "Leí y no puedo responder.",
+        "loadMore": "cargar más"
       },
       "monitor": {
         "fetchFailed": "Obtener fallido",

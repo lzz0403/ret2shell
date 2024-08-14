@@ -26,15 +26,17 @@ import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 
-function mergeChats(a: Chat[], b: Chat[]): Chat[] {
+function mergeChats(challengeId: number, teamId: number, a: Chat[], b: Chat[]): Chat[] {
+  const aa = a.filter((x) => x.challenge_id === challengeId && x.team_id === teamId && x.user_id !== 0);
+  if (aa.length === 0) return b;
   // merge b into a, append all new chats and update checked chats
-  const last_msg = a.reduce((a, b) => (a.created_at > b.created_at ? a : b), {
+  const last_msg = aa.reduce((i, j) => (i.created_at > j.created_at ? i : j), {
     created_at: DateTime.fromMillis(0),
   });
   const new_chats = b.filter((x) => x.created_at > last_msg.created_at);
   const checked_chats = b.filter((x) => x.checked);
   const checked_ids = checked_chats.map((x) => x.id);
-  return a.map((x) => (checked_ids.includes(x.id) ? { ...x, checked: true } : x)).concat(new_chats);
+  return aa.map((x) => (checked_ids.includes(x.id) ? { ...x, checked: true } : x)).concat(new_chats);
 }
 
 export default function () {
@@ -108,7 +110,8 @@ export default function () {
               cachedChallengeId !== challengeId() ||
               result.length > chats().filter((u) => u.id !== 0).length
             ) {
-              setChats(mergeChats(chats(), result));
+              const r = mergeChats(challengeId() ?? 0, teamId() ?? 0, chats(), result);
+              setChats([...r]);
               cachedTeamId = teamId();
               cachedChallengeId = challengeId();
               setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 300);
