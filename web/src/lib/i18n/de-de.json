@@ -720,7 +720,8 @@
       "statisticsTips": "Wer hat meine Aufgabe gemacht?",
       "fetchHistoryFailed": "Die Abfrage des Verlaufs der Aufgabenänderungen ist fehlgeschlagen.",
       "fetchSolveError": "Lösungsstatus konnte nicht abgerufen werden",
-      "chatSolvedMessage": "Herzlichen Glückwunsch an den Teilnehmer zur Lösung dieses Problems!"
+      "chatSolvedMessage": "Herzlichen Glückwunsch an den Teilnehmer zur Lösung dieses Problems!",
+      "dropCap": "Ohne Privilegien ausführen (keine privilegierten Portberechtigungen)"
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

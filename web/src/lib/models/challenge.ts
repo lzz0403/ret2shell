@@ -21,6 +21,7 @@ export type ChallengeImage = {
   port: number | null;
   service_type: "http" | "tcp" | null;
   description: string | null;
+  restricted: boolean | null;
 };
 
 export type ChallengeEnv = {

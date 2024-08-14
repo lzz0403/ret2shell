@@ -799,7 +799,8 @@
       "statisticsTips": "誰做了我的題？",
       "fetchHistoryFailed": "獲取題目歷史更改失敗",
       "fetchSolveError": "取得解題情況失敗",
-      "chatSolvedMessage": "恭喜選手解出了此題！"
+      "chatSolvedMessage": "恭喜選手解出了此題！",
+      "dropCap": "無特權運作（無特權連接埠權限）"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

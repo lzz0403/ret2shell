@@ -82,6 +82,7 @@ pub struct ChallengeImage {
   pub port: Option<u16>,
   pub service_type: Option<String>,
   pub description: Option<String>,
+  pub restricted: Option<bool>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]

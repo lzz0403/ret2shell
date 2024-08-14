@@ -799,7 +799,8 @@
       "statisticsTips": "Who did my problem?",
       "fetchHistoryFailed": "Failed to retrieve historical changes of the question",
       "fetchSolveError": "Failed to obtain solution status",
-      "chatSolvedMessage": "Congratulations to the contestant for solving this problem!"
+      "chatSolvedMessage": "Congratulations to the contestant for solving this problem!",
+      "dropCap": "Run without privileges (no privileged port permissions)"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

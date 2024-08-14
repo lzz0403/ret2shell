@@ -6,8 +6,8 @@ use futures_io::AsyncBufRead;
 use k8s_openapi::{
   api::{
     core::v1::{
-      ConfigMap, Container, ContainerPort, EnvVar, Namespace, Node, Pod, PodSpec, PodStatus,
-      ResourceRequirements,
+      Capabilities, ConfigMap, Container, ContainerPort, EnvVar, Namespace, Node, Pod, PodSpec,
+      PodStatus, ResourceRequirements, SecurityContext,
     },
     networking::v1::NetworkPolicy,
   },
@@ -367,6 +367,14 @@ impl Cluster {
     } else {
       None
     };
+    let security_context = SecurityContext {
+      allow_privilege_escalation: Some(false),
+      capabilities: Some(Capabilities {
+        drop: Some(vec!["ALL".to_owned()]),
+        ..Default::default()
+      }),
+      ..Default::default()
+    };
     let pod = Pod {
       metadata: ObjectMeta {
         name: Some(pod_name.clone()),
@@ -420,6 +428,10 @@ impl Cluster {
               ),
               ..Default::default()
             }),
+            security_context: image
+              .restricted
+              .is_some_and(|r| r)
+              .then(|| security_context.clone()),
             ..Default::default()
           })
           .collect(),

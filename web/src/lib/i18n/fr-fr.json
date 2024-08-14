@@ -720,7 +720,8 @@
       "statisticsTips": "Qui a fait mon exercice ?",
       "fetchHistoryFailed": "Échec de l'obtention de l'historique des modifications du sujet",
       "fetchSolveError": "Échec de l'obtention de l'état de la solution",
-      "chatSolvedMessage": "Félicitations au candidat pour avoir résolu ce problème !"
+      "chatSolvedMessage": "Félicitations au candidat pour avoir résolu ce problème !",
+      "dropCap": "Exécuter sans privilèges (pas d'autorisations de port privilégié)"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

@@ -720,7 +720,8 @@
       "statisticsTips": "誰が私の問題を解決したの？",
       "fetchHistoryFailed": "題目履歴変更の取得に失敗しました",
       "fetchSolveError": "ソリューションステータスの取得に失敗しました",
-      "chatSolvedMessage": "この問題を解決した出場者におめでとうございます!"
+      "chatSolvedMessage": "この問題を解決した出場者におめでとうございます!",
+      "dropCap": "特権なしで実行 (特権ポート権限なし)"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

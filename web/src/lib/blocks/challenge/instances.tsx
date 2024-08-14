@@ -13,6 +13,7 @@ import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Checkbox from "@widgets/checkbox";
 import Dialog from "@widgets/dialog";
+import IconCheckbox from "@widgets/icon-checkbox";
 import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
 import Popover from "@widgets/popover";
@@ -180,23 +181,37 @@ function CreateForm(fnProps: {
                   </ArkPopover.Positioner>
                 </ArkPopover.Root>
               </div>
-              <Select
-                label={t("game.challenge.envContainerTagVersion")!}
-                class="flex-1"
-                error={field.error}
-                placeholder={t("game.challenge.selectEnvContainerTagVersion")}
-                items={
-                  tags().map((tag) => ({
-                    value: tag,
-                    label: tag,
-                    icon: "icon-[fluent--tag-20-regular]",
-                  })) || []
-                }
-                inputProps={props}
-                onValueChange={(e) => {
-                  setValue(form, "tag", `${registryConfig()?.external}/${searchedRepo()}:${e.value.at(0)}`);
-                }}
-              />
+              <div class="flex-1 flex flex-row space-x-2">
+                <Select
+                  label={t("game.challenge.envContainerTagVersion")!}
+                  error={field.error}
+                  class="flex-1"
+                  placeholder={t("game.challenge.selectEnvContainerTagVersion")}
+                  items={
+                    tags().map((tag) => ({
+                      value: tag,
+                      label: tag,
+                      icon: "icon-[fluent--tag-20-regular]",
+                    })) || []
+                  }
+                  inputProps={props}
+                  onValueChange={(e) => {
+                    setValue(form, "tag", `${registryConfig()?.external}/${searchedRepo()}:${e.value.at(0)}`);
+                  }}
+                />
+                <Field name="restricted" type="boolean">
+                  {(field, props) => (
+                    <IconCheckbox
+                      inputProps={props}
+                      title={t("game.challenge.dropCap")}
+                      checked={field.value ?? false}
+                      uncheckedIcon="icon-[fluent--live-20-regular] w-5 h-5"
+                      checkedIcon="icon-[fluent--live-off-20-filled] w-5 h-5"
+                      error={field.error}
+                    />
+                  )}
+                </Field>
+              </div>
             </>
           )}
         </Field>
