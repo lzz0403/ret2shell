@@ -1,6 +1,8 @@
 import { Select, type SelectRootProps } from "@ark-ui/solid";
 import type { CollectionItem } from "@ark-ui/solid/dist/types/types";
 import type { FormStore } from "@modular-forms/solid";
+import { fullTheme } from "@storage/theme";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { type ComponentProps, Index, Show, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
@@ -74,27 +76,40 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
       <Portal>
         <Select.Positioner>
           <Select.Content class="card w-full popover">
-            <Select.ItemGroup class="card-content p-2 flex flex-col space-y-2">
-              <Index each={others.items}>
-                {(item) => (
-                  <Select.Item
-                    item={item().value}
-                    class="btn btn-ghost btn-sm items-center overflow-hidden"
-                    title={item().label}
-                  >
-                    <Select.ItemText class="flex-1 text-start data-[state=checked]:text-primary flex flex-row space-x-2 items-center overflow-hidden">
-                      <Show when={item().icon}>
-                        <span class={`${item().icon} flex-shrink-0`.trim()} />
-                      </Show>
-                      <span class="truncate">{item().label}</span>
-                    </Select.ItemText>
-                    <Select.ItemIndicator class="flex items-center">
-                      <span class="icon-[fluent--checkmark-20-regular] w-5 h-5 text-success flex-shrink-0" />
-                    </Select.ItemIndicator>
-                  </Select.Item>
-                )}
-              </Index>
-            </Select.ItemGroup>
+            <OverlayScrollbarsComponent
+              options={{
+                scrollbars: {
+                  theme: `os-theme-${fullTheme()}`,
+                  autoHide: "scroll",
+                },
+              }}
+              class="relative w-full print:h-auto print:overflow-auto max-h-80"
+              defer
+            >
+              <Select.ItemGroup class="card-content p-2">
+                <div class="flex flex-col space-y-2">
+                  <Index each={others.items}>
+                    {(item) => (
+                      <Select.Item
+                        item={item().value}
+                        class="btn btn-ghost btn-sm items-center overflow-hidden"
+                        title={item().label}
+                      >
+                        <Select.ItemText class="flex-1 text-start data-[state=checked]:text-primary flex flex-row space-x-2 items-center overflow-hidden">
+                          <Show when={item().icon}>
+                            <span class={`${item().icon} flex-shrink-0`.trim()} />
+                          </Show>
+                          <span class="truncate">{item().label}</span>
+                        </Select.ItemText>
+                        <Select.ItemIndicator class="flex items-center">
+                          <span class="icon-[fluent--checkmark-20-regular] w-5 h-5 text-success flex-shrink-0" />
+                        </Select.ItemIndicator>
+                      </Select.Item>
+                    )}
+                  </Index>
+                </div>
+              </Select.ItemGroup>
+            </OverlayScrollbarsComponent>
           </Select.Content>
         </Select.Positioner>
       </Portal>

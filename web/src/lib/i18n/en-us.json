@@ -807,7 +807,9 @@
       "fetchHistoryFailed": "Failed to retrieve historical changes of the question",
       "fetchSolveError": "Failed to obtain solution status",
       "chatSolvedMessage": "Congratulations to the contestant for solving this problem!",
-      "dropCap": "Run without privileges (no privileged port permissions)"
+      "dropCap": "Run without privileges (no privileged port permissions)",
+      "hintHistory": "Prompt situation",
+      "hintHistoryTips": "Who bought my question?"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

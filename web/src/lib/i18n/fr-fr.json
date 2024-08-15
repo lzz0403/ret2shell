@@ -728,7 +728,9 @@
       "fetchHistoryFailed": "Échec de l'obtention de l'historique des modifications du sujet",
       "fetchSolveError": "Échec de l'obtention de l'état de la solution",
       "chatSolvedMessage": "Félicitations au candidat pour avoir résolu ce problème !",
-      "dropCap": "Exécuter sans privilèges (pas d'autorisations de port privilégié)"
+      "dropCap": "Exécuter sans privilèges (pas d'autorisations de port privilégié)",
+      "hintHistory": "Situation rapide",
+      "hintHistoryTips": "Qui a acheté ma question ?"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

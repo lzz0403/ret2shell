@@ -728,7 +728,9 @@
       "fetchHistoryFailed": "題目履歴変更の取得に失敗しました",
       "fetchSolveError": "ソリューションステータスの取得に失敗しました",
       "chatSolvedMessage": "この問題を解決した出場者におめでとうございます!",
-      "dropCap": "特権なしで実行 (特権ポート権限なし)"
+      "dropCap": "特権なしで実行 (特権ポート権限なし)",
+      "hintHistory": "早急な状況",
+      "hintHistoryTips": "私の質問を買ったのは誰ですか?"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",

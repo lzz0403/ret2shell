@@ -13,6 +13,9 @@ import { For, Match, Switch, createEffect, createSignal, untrack } from "solid-j
 function StatisticsPanel() {
   return <></>;
 }
+function HintsPanel() {
+  return <></>;
+}
 
 function HistoryPanel() {
   const [history, setHistory] = createSignal([] as CommitHistory[]);
@@ -54,7 +57,7 @@ export default function (_props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
-  const [tab, setTab] = createSignal("statistics" as "statistics" | "history");
+  const [tab, setTab] = createSignal("statistics" as "statistics" | "history" | "hints");
   return (
     <div class="flex flex-row min-h-full">
       <ul class="w-1/5 min-w-48 flex flex-col space-y-2 p-3 lg:p-6 sticky top-0 self-start">
@@ -74,6 +77,14 @@ export default function (_props: {
             </div>
           </Button>
         </li>
+        <li class="w-full">
+          <Button ghost={tab() !== "hints"} class="h-auto w-full" onClick={() => setTab("hints")}>
+            <div class="flex flex-col py-2 items-start w-full">
+              <span>{t("game.challenge.hintHistory")}</span>
+              <span class="font-normal opacity-60">{t("game.challenge.hintHistoryTips")}</span>
+            </div>
+          </Button>
+        </li>
       </ul>
       <Divider direction="vertical" />
       <div class="flex-1 w-0 flex flex-col space-y-2 p-3 lg:p-6">
@@ -83,6 +94,9 @@ export default function (_props: {
           </Match>
           <Match when={tab() === "history"}>
             <HistoryPanel />
+          </Match>
+          <Match when={tab() === "hints"}>
+            <HintsPanel />
           </Match>
         </Switch>
       </div>

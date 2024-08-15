@@ -728,7 +728,9 @@
       "fetchHistoryFailed": "문제 역사 변경 내용을 가져오지 못했습니다.",
       "fetchSolveError": "솔루션 상태를 가져오지 못했습니다.",
       "chatSolvedMessage": "이 문제를 해결한 참가자에게 축하를 보냅니다!",
-      "dropCap": "권한 없이 실행(권한 있는 포트 권한 없음)"
+      "dropCap": "권한 없이 실행(권한 있는 포트 권한 없음)",
+      "hintHistory": "신속한 상황",
+      "hintHistoryTips": "내 질문을 누가 샀나요?"
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",
