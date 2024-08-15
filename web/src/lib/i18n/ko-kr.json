@@ -730,7 +730,11 @@
       "chatSolvedMessage": "이 문제를 해결한 참가자에게 축하를 보냅니다!",
       "dropCap": "권한 없이 실행(권한 있는 포트 권한 없음)",
       "hintHistory": "신속한 상황",
-      "hintHistoryTips": "내 질문을 누가 샀나요?"
+      "hintHistoryTips": "내 질문을 누가 샀나요?",
+      "chatQuickReply1": "스스로 생각하고 문제를 해결하시기 바랍니다.",
+      "chatQuickReply2": "입장방법과 매뉴얼을 주의 깊게 읽어보시기 바랍니다.",
+      "chatQuickReply3": "다시 생각해봐, 어서!",
+      "chatQuickReply4": "불안해하지 말고 다시 생각해 보세요. 아이디어가 없으면 먼저 긴장을 풀면 됩니다."
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",

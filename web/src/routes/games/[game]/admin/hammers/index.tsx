@@ -7,6 +7,7 @@ import {
 } from "@api/game";
 import Spin from "@assets/animates/spin";
 import xdsecMascotCiallo from "@assets/imgs/xdsec-mascot-ciallo.webp";
+import { stickerSet } from "@assets/stickers";
 import { mediaPath } from "@lib/utils/media";
 import type { Challenge } from "@models/challenge";
 import type { Chat } from "@models/chat";
@@ -18,13 +19,22 @@ import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Avatar from "@widgets/avatar";
+import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Editor from "@widgets/editor";
 import Link from "@widgets/link";
+import Popover from "@widgets/popover";
 import { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
+
+const quickReplies = [
+  t("game.challenge.chatQuickReply1"),
+  t("game.challenge.chatQuickReply2"),
+  t("game.challenge.chatQuickReply3"),
+  t("game.challenge.chatQuickReply4"),
+];
 
 function mergeChats(challengeId: number, teamId: number, a: Chat[], b: Chat[]): Chat[] {
   const aa = a.filter((x) => x.challenge_id === challengeId && x.team_id === teamId && x.user_id !== 0);
@@ -329,18 +339,105 @@ export default function () {
               </For>
             </div>
             <div class="sticky bottom-0 p-3 lg:p-6">
-              <Editor
-                class="h-24 bg-layer"
-                value={chat()}
-                placeholder={t("game.admin.chat.sendPlaceholder")}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    handleSendChat();
-                  }
-                }}
-                lang="markdown"
-                onValueChanged={(v) => setChat(v)}
-              />
+              <div class="h-full w-full relative">
+                <Popover
+                  class="absolute -top-10 left-2"
+                  size="sm"
+                  square
+                  ghost
+                  btnContent={<span class="icon-[fluent--emoji-20-regular] w-5 h-5" />}
+                >
+                  <Card contentClass="p-2 aspect-square">
+                    <OverlayScrollbarsComponent
+                      options={{
+                        scrollbars: {
+                          theme: `os-theme-${fullTheme()}`,
+                          autoHide: "scroll",
+                        },
+                      }}
+                      class="relative w-full h-full print:h-auto print:overflow-auto"
+                      defer
+                    >
+                      <div class="grid grid-cols-4 gap-2">
+                        <For each={stickerSet}>
+                          {(sticker) => (
+                            <Button
+                              ghost
+                              class="p-0 aspect-square overflow-hidden"
+                              onClick={() => {
+                                setChat(`![${sticker.alt}](${sticker.src})`);
+                                setTimeout(() => {
+                                  handleSendChat();
+                                });
+                              }}
+                            >
+                              <img
+                                class="w-24 h-24 transition-transform duration-300 hover:scale-[1.1]"
+                                src={sticker.src}
+                                alt={sticker.alt}
+                                title={sticker.alt}
+                              />
+                            </Button>
+                          )}
+                        </For>
+                      </div>
+                    </OverlayScrollbarsComponent>
+                  </Card>
+                </Popover>
+                <Popover
+                  class="absolute -top-10 left-12"
+                  size="sm"
+                  square
+                  ghost
+                  btnContent={<span class="icon-[fluent--flash-20-regular] w-5 h-5" />}
+                >
+                  <Card contentClass="p-2">
+                    <OverlayScrollbarsComponent
+                      options={{
+                        scrollbars: {
+                          theme: `os-theme-${fullTheme()}`,
+                          autoHide: "scroll",
+                        },
+                      }}
+                      class="relative w-full h-full print:h-auto print:overflow-auto"
+                      defer
+                    >
+                      <div class="flex flex-col space-y-2">
+                        <For each={quickReplies}>
+                          {(reply) => (
+                            <Button
+                              size="sm"
+                              justify="start"
+                              ghost
+                              onClick={() => {
+                                setChat(reply!);
+                                setTimeout(() => {
+                                  handleSendChat();
+                                });
+                              }}
+                            >
+                              <span class="icon-[fluent--chat-20-regular] w-5 h-5" />
+                              <span>{reply}</span>
+                            </Button>
+                          )}
+                        </For>
+                      </div>
+                    </OverlayScrollbarsComponent>
+                  </Card>
+                </Popover>
+                <Editor
+                  class="h-24 bg-layer"
+                  value={chat()}
+                  placeholder={t("game.admin.chat.sendPlaceholder")}
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      handleSendChat();
+                    }
+                  }}
+                  lang="markdown"
+                  onValueChanged={(v) => setChat(v)}
+                />
+              </div>
             </div>
             <Show when={sending()}>
               <div class="absolute right-6 bottom-6 lg:right-9 lg:bottom-9">

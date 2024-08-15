@@ -730,7 +730,11 @@
       "chatSolvedMessage": "Félicitations au candidat pour avoir résolu ce problème !",
       "dropCap": "Exécuter sans privilèges (pas d'autorisations de port privilégié)",
       "hintHistory": "Situation rapide",
-      "hintHistoryTips": "Qui a acheté ma question ?"
+      "hintHistoryTips": "Qui a acheté ma question ?",
+      "chatQuickReply1": "Veuillez réfléchir et résoudre les problèmes de manière indépendante.",
+      "chatQuickReply2": "Veuillez lire attentivement les instructions d'entrée et le manuel.",
+      "chatQuickReply3": "Détrompez-vous, allez !",
+      "chatQuickReply4": "Ne vous inquiétez pas, réfléchissez-y à nouveau, si vous n'avez pas d'idées, vous pouvez d'abord vous détendre."
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

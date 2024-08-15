@@ -730,7 +730,11 @@
       "chatSolvedMessage": "Herzlichen Glückwunsch an den Teilnehmer zur Lösung dieses Problems!",
       "dropCap": "Ohne Privilegien ausführen (keine privilegierten Portberechtigungen)",
       "hintHistory": "Schnelle Situation",
-      "hintHistoryTips": "Wer hat meine Frage gekauft?"
+      "hintHistoryTips": "Wer hat meine Frage gekauft?",
+      "chatQuickReply1": "Bitte denken und lösen Sie Probleme selbstständig.",
+      "chatQuickReply2": "Bitte lesen Sie die Eingabeanleitung und das Handbuch sorgfältig durch.",
+      "chatQuickReply3": "Denken Sie noch einmal darüber nach, komm schon!",
+      "chatQuickReply4": "Machen Sie sich keine Sorgen, denken Sie noch einmal darüber nach. Wenn Sie keine Ideen haben, können Sie sich zunächst entspannen."
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

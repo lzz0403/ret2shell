@@ -809,7 +809,11 @@
       "chatSolvedMessage": "恭喜選手解出了此題！",
       "dropCap": "無特權運作（無特權連接埠權限）",
       "hintHistory": "提示狀況",
-      "hintHistoryTips": "誰買了我的題目？"
+      "hintHistoryTips": "誰買了我的題目？",
+      "chatQuickReply1": "請獨立思考並解題。",
+      "chatQuickReply2": "請仔細閱讀參賽須知和手冊。",
+      "chatQuickReply3": "再想一想，加油！",
+      "chatQuickReply4": "別急，再想想，沒有思緒的話可以先放鬆一下。"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

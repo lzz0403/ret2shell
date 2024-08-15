@@ -138,7 +138,20 @@ export default function ChatList() {
                     ghost={!(teamId() === session.team_id && challengeId() === session.challenge_id)}
                     class="flex-row space-x-2 items-center h-auto py-2 !px-3 fade-group-right"
                   >
-                    <Avatar class="w-10 aspect-square flex-shrink-0" src={undefined} fallback={session.team_name} />
+                    <div class="w-10 h-10 aspect-square flex-shrink-0 relative">
+                      <Avatar class="w-full h-full" src={undefined} fallback={session.team_name} />
+                      <div class="absolute -right-1 -bottom-1 w-2 h-2">
+                        <Show when={!session.checked && !session.is_admin}>
+                          <div class="bg-error rounded-full w-2 h-2" title={t("game.admin.chat.unread")} />
+                        </Show>
+                        <Show when={!session.checked && session.is_admin}>
+                          <div class="bg-info rounded-full w-2 h-2" title={t("game.admin.chat.playerUnread")} />
+                        </Show>
+                        <Show when={session.checked && !session.is_admin}>
+                          <div class="bg-warning rounded-full w-2 h-2" title={t("game.admin.chat.notReply")} />
+                        </Show>
+                      </div>
+                    </div>
                     <div class="flex-col flex-1">
                       <div class="flex flex-row space-x-2 items-center">
                         <span class="flex-1 truncate font-bold text-start w-0">{session.team_name}</span>
@@ -146,15 +159,6 @@ export default function ChatList() {
                       </div>
                       <Divider />
                       <div class="flex flex-row space-x-2 items-center overflow-hidden">
-                        <Show when={!session.checked && !session.is_admin}>
-                          <span class="text-error">[{t("game.admin.chat.unread")}]</span>
-                        </Show>
-                        <Show when={!session.checked && session.is_admin}>
-                          <span class="text-info">[{t("game.admin.chat.playerUnread")}]</span>
-                        </Show>
-                        <Show when={session.checked && !session.is_admin}>
-                          <span class="text-warning">[{t("game.admin.chat.notReply")}]</span>
-                        </Show>
                         <span class="flex-1 w-0 truncate opacity-60 text-start font-normal">
                           {session.last_message}
                         </span>

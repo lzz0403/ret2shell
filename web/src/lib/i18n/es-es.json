@@ -730,7 +730,11 @@
       "chatSolvedMessage": "¡Felicitaciones al concursante por resolver este problema!",
       "dropCap": "Ejecutar sin privilegios (sin permisos de puerto privilegiados)",
       "hintHistory": "Situación inmediata",
-      "hintHistoryTips": "¿Quién compró mi pregunta?"
+      "hintHistoryTips": "¿Quién compró mi pregunta?",
+      "chatQuickReply1": "Piense y resuelva los problemas de forma independiente.",
+      "chatQuickReply2": "Lea atentamente las instrucciones de entrada y el manual.",
+      "chatQuickReply3": "Piénsalo de nuevo, ¡vamos!",
+      "chatQuickReply4": "No te preocupes, piénsalo de nuevo, si no tienes ideas, primero puedes relajarte."
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

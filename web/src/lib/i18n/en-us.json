@@ -809,7 +809,11 @@
       "chatSolvedMessage": "Congratulations to the contestant for solving this problem!",
       "dropCap": "Run without privileges (no privileged port permissions)",
       "hintHistory": "Prompt situation",
-      "hintHistoryTips": "Who bought my question?"
+      "hintHistoryTips": "Who bought my question?",
+      "chatQuickReply1": "Please think and solve problems independently.",
+      "chatQuickReply2": "Please read the entry instructions and manual carefully.",
+      "chatQuickReply3": "Think again, come on!",
+      "chatQuickReply4": "Don't be anxious, think about it again, if you have no ideas, you can relax first."
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",
