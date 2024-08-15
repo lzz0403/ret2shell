@@ -7,7 +7,7 @@ import type { Challenge, ChallengeImage } from "@models/challenge";
 import type { RegistryConfig } from "@models/config";
 import { createForm, pattern, required, setValue, setValues } from "@modular-forms/solid";
 import { challengeStore, refreshChallengeAssets } from "@storage/challenge";
-import { t } from "@storage/theme";
+import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
@@ -21,6 +21,7 @@ import Select from "@widgets/select";
 import Slider from "@widgets/slider";
 import type { Pod } from "kubernetes-types/core/v1";
 import type { HTTPError } from "ky";
+import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
 function CreateForm(fnProps: {
@@ -155,29 +156,40 @@ function CreateForm(fnProps: {
                   </ArkPopover.Anchor>
                   <ArkPopover.Positioner class="w-full">
                     <ArkPopover.Content class="popover card w-full z-50">
-                      <div class="card-content p-2 flex flex-col space-y-2">
-                        <Show when={loading()}>
-                          <LoadingTips />
-                        </Show>
-                        <For each={fnProps.repos.filter((repo) => repo.includes(searchedRepo()))}>
-                          {(repo) => (
-                            <Button
-                              class="btn-sm"
-                              ghost
-                              justify="start"
-                              type="button"
-                              onClick={() => {
-                                setSearchedRepo(repo);
-                                setSelected(true);
-                                fetchTags(repo);
-                              }}
-                            >
-                              <span class="icon-[fluent--beaker-20-regular] w-5 h-5" />
-                              <span>{repo}</span>
-                            </Button>
-                          )}
-                        </For>
-                      </div>
+                      <OverlayScrollbarsComponent
+                        options={{
+                          scrollbars: {
+                            theme: `os-theme-${fullTheme()}`,
+                            autoHide: "scroll",
+                          },
+                        }}
+                        class="relative w-full print:h-auto print:overflow-auto max-h-48"
+                        defer
+                      >
+                        <div class="card-content p-2 flex flex-col space-y-2">
+                          <Show when={loading()}>
+                            <LoadingTips />
+                          </Show>
+                          <For each={fnProps.repos.filter((repo) => repo.includes(searchedRepo()))}>
+                            {(repo) => (
+                              <Button
+                                class="btn-sm"
+                                ghost
+                                justify="start"
+                                type="button"
+                                onClick={() => {
+                                  setSearchedRepo(repo);
+                                  setSelected(true);
+                                  fetchTags(repo);
+                                }}
+                              >
+                                <span class="icon-[fluent--beaker-20-regular] w-5 h-5" />
+                                <span>{repo}</span>
+                              </Button>
+                            )}
+                          </For>
+                        </div>
+                      </OverlayScrollbarsComponent>
                     </ArkPopover.Content>
                   </ArkPopover.Positioner>
                 </ArkPopover.Root>
