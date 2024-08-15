@@ -438,8 +438,13 @@ where
     } else {
       State::Passed
     }))
-    .filter(Column::Score.gte(score))
-    .filter(Column::LastActiveAt.lt(last_active_at))
+    .filter(
+      Condition::any().add(Column::Score.gt(score)).add(
+        Condition::all()
+          .add(Column::Score.eq(score))
+          .add(Column::LastActiveAt.lt(last_active_at)),
+      ),
+    )
     .count(db)
     .await?;
   Ok(count as i64 + 1)
