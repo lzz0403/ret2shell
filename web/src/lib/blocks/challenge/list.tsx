@@ -59,7 +59,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
             : c.solved
               ? "icon-[fluent--checkmark-circle-20-regular] text-success"
               : "icon-[fluent--flag-20-regular]",
-          extraPart: props.showScore ? <span class="font-bold opacity-60">{c.challenge.score} pts</span> : null,
+          extraPart: props.showScore ? <span class="opacity-60">{c.challenge.score} pts</span> : null,
           children: [],
         })),
       });

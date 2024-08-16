@@ -332,7 +332,7 @@ fn filter_and_order(
     let filter_like = format!("%{}%", filter.to_ascii_lowercase());
     cond = cond.add(Expr::expr(Func::lower(Expr::col(Column::Nickname))).like(&filter_like));
     cond = cond.add(Expr::expr(Func::lower(Expr::col(Column::Account))).like(&filter_like));
-    cond = cond.add(Expr::expr(Func::lower(Expr::col(Column::Email))).like(&filter_like));
+    cond = cond.add(Expr::expr(Func::lower(Expr::col(Column::Email))).eq(&filter));
     cond = cond.add(Expr::expr(Func::lower(Expr::col(super::ip::Column::Address))).eq(&filter));
     sql = sql
       .join(JoinType::LeftJoin, Relation::User2Ip.def())
