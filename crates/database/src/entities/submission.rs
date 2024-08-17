@@ -117,13 +117,16 @@ where
 
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page<C>(
-  db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool,
+  db: &C, page: u64, page_size: u64, only_solved: bool, with_content: bool, game_id: Option<i64>,
   challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
   C: ConnectionTrait,
 {
-  let mut sql = Entity::find();
+  let mut sql = Entity::find().join(JoinType::InnerJoin, Relation::Challenge.def());
+  if let Some(game_id) = game_id {
+    sql = sql.filter(challenge::Column::GameId.eq(game_id));
+  }
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }
@@ -148,8 +151,8 @@ where
 }
 
 pub async fn get_list<C>(
-  db: &C, only_solved: bool, with_content: bool, challenge_id: Option<i64>, team_id: Option<i64>,
-  user_id: Option<i64>, in_game: bool,
+  db: &C, only_solved: bool, with_content: bool, game_id: Option<i64>, challenge_id: Option<i64>,
+  team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
 ) -> Result<Vec<ExModel>, DbErr>
 where
   C: ConnectionTrait,
@@ -158,6 +161,9 @@ where
     .join(JoinType::LeftJoin, Relation::Team.def())
     .join(JoinType::InnerJoin, Relation::Challenge.def())
     .join(JoinType::InnerJoin, Relation::User.def());
+  if let Some(game_id) = game_id {
+    sql = sql.filter(challenge::Column::GameId.eq(game_id));
+  }
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }
@@ -198,8 +204,8 @@ where
 }
 
 pub async fn get_list_ex<C>(
-  db: &C, only_solved: bool, with_content: bool, challenge_id: Option<i64>, team_id: Option<i64>,
-  user_id: Option<i64>, in_game: bool,
+  db: &C, only_solved: bool, with_content: bool, game_id: Option<i64>, challenge_id: Option<i64>,
+  team_id: Option<i64>, user_id: Option<i64>, in_game: bool,
 ) -> Result<Vec<ExModel>, DbErr>
 where
   C: ConnectionTrait,
@@ -211,6 +217,9 @@ where
     .column_as(user::Column::Nickname, "user_name")
     .column_as(team::Column::Name, "team_name")
     .column_as(challenge::Column::Name, "challenge_name");
+  if let Some(game_id) = game_id {
+    sql = sql.filter(challenge::Column::GameId.eq(game_id));
+  }
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }
@@ -301,13 +310,18 @@ where
 }
 
 pub async fn count<C>(
-  db: &C, only_solved: bool, challenge_id: Option<i64>, team_id: Option<i64>, user_id: Option<i64>,
-  in_game: bool,
+  db: &C, only_solved: bool, game_id: Option<i64>, challenge_id: Option<i64>, team_id: Option<i64>,
+  user_id: Option<i64>, in_game: bool,
 ) -> Result<u64, DbErr>
 where
   C: ConnectionTrait,
 {
-  let mut sql = Entity::find().join(JoinType::LeftJoin, Relation::Team.def());
+  let mut sql = Entity::find()
+    .join(JoinType::LeftJoin, Relation::Team.def())
+    .join(JoinType::InnerJoin, Relation::Challenge.def());
+  if let Some(game_id) = game_id {
+    sql = sql.filter(challenge::Column::GameId.eq(game_id));
+  }
   if let Some(challenge_id) = challenge_id {
     sql = sql.filter(Column::ChallengeId.eq(challenge_id));
   }

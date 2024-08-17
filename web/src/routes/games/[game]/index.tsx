@@ -473,7 +473,7 @@ export default function () {
               </Match>
               <Match when={!accountStore.id}>
                 <Link
-                  href={`/account/login?redirect=${encodeURI(`/games/${gameStore.current?.id}/teams/create`)}`}
+                  href={`/account/login?redirect=${encodeURI(`/games/${gameStore.current?.id}`)}`}
                   class="flex-1"
                   level="warning"
                 >

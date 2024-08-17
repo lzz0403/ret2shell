@@ -44,7 +44,7 @@ async fn get_captcha(
     .at("captcha")
     .set_ex(&captcha.id, captcha.clone(), 60 * 5)
     .await?;
-  Ok(Json(captcha))
+  Ok(Json(captcha.desensitize()))
 }
 
 async fn get_cli_captcha(State(cache): State<Cache>) -> Result<impl IntoResponse, ResponseError> {
@@ -53,7 +53,7 @@ async fn get_cli_captcha(State(cache): State<Cache>) -> Result<impl IntoResponse
     .at("captcha")
     .set_ex(&captcha.id, captcha.clone(), 60 * 5)
     .await?;
-  Ok(Json(captcha))
+  Ok(Json(captcha.desensitize()))
 }
 
 #[derive(Deserialize)]

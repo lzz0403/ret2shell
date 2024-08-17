@@ -64,6 +64,10 @@ impl Media {
     fs::create_dir_all(self.path.join(&hash[..2]).join(&hash[2..4])).await?;
     let dest = self.path.join(&hash[..2]).join(&hash[2..4]).join(&hash);
     fs::rename(&temp_path, &dest).await?;
+    if !self.get_mime_type(&hash).await?.starts_with("image/") {
+      fs::remove_file(&dest).await?;
+      return Err(MediaError::UnsupportedFileType("not an image".to_string()));
+    }
     Ok(media::Model {
       id: 0,
       hash,

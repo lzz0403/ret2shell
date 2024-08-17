@@ -325,6 +325,15 @@ pub async fn challenge_access_required(
   Extension(challenge): Extension<challenge::Model>, team_ext: Option<Extension<team::Model>>,
   req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if game.id != challenge.game_id {
+    return Err(ResponseError::Forbidden(
+      "permission denied".to_owned(),
+      format!(
+        "user {}:'{}' ({}) want to access cross-game challenge {}:{} in game {}:{}",
+        token.id, token.account, token.nickname, challenge.id, challenge.name, game.id, game.name
+      ),
+    ));
+  }
   if is_game_admin!(token, game) {
     return Ok(next.run(req).await);
   }

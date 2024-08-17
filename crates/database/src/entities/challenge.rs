@@ -232,7 +232,16 @@ pub async fn maintain_score<C>(db: &C, challenge: Model) -> Result<(bool, u64, M
 where
   C: ConnectionTrait,
 {
-  let decay = submission::count(db, true, Some(challenge.id), None, None, true).await?;
+  let decay = submission::count(
+    db,
+    true,
+    Some(challenge.game_id),
+    Some(challenge.id),
+    None,
+    None,
+    true,
+  )
+  .await?;
   let score = if decay < 1 {
     challenge.score_rule.initial
   } else if decay >= challenge.score_rule.decay as u64 {

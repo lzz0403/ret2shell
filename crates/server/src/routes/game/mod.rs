@@ -429,8 +429,17 @@ async fn get_self_solves(
   Extension(game): Extension<game::Model>, team_ext: Option<Extension<team_db::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   if is_game_admin!(token, game) {
-    let solves =
-      submission::get_list_ex(&db.conn, true, false, None, None, Some(token.id), false).await?;
+    let solves = submission::get_list_ex(
+      &db.conn,
+      true,
+      false,
+      Some(game.id),
+      None,
+      None,
+      Some(token.id),
+      false,
+    )
+    .await?;
     return Ok(Json(solves));
   }
   let team = extract_team!(game, team_ext, token);
@@ -438,6 +447,7 @@ async fn get_self_solves(
     &db.conn,
     true,
     false,
+    Some(game.id),
     None,
     team.clone().map(|t| t.id),
     if team.is_none() { Some(token.id) } else { None },

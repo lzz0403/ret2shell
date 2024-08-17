@@ -417,7 +417,8 @@ pub async fn calc_score<C>(db: &C, id: i64) -> Result<i32, DbErr>
 where
   C: ConnectionTrait,
 {
-  let solves = super::submission::get_list(db, true, false, None, Some(id), None, true).await?;
+  let solves =
+    super::submission::get_list(db, true, false, None, None, Some(id), None, true).await?;
   let score: i32 = solves.iter().map(|s| s.score).sum();
   let extras = super::extra::get_list(db, id).await?;
   let extra_score: i32 = extras.iter().map(|e| e.score).sum();

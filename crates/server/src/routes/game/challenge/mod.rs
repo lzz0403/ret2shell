@@ -490,6 +490,7 @@ async fn get_challenge_solves_status(
   let solves = submission::count(
     &db.conn,
     true,
+    Some(challenge.game_id),
     Some(challenge.id),
     None,
     None,
@@ -500,6 +501,7 @@ async fn get_challenge_solves_status(
     submission::count(
       &db.conn,
       true,
+      Some(challenge.game_id),
       Some(challenge.id),
       Some(team.id),
       None,
@@ -511,6 +513,7 @@ async fn get_challenge_solves_status(
     submission::count(
       &db.conn,
       true,
+      Some(challenge.game_id),
       Some(challenge.id),
       None,
       Some(token.id),

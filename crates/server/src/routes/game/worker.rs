@@ -84,8 +84,17 @@ async fn score_maintainance_worker(queue: Queue, db: Database) {
 async fn score_maintainance_worker_exec(
   db: Database, challenge: challenge::Model,
 ) -> Result<(), ResponseError> {
-  let submissions =
-    submission::get_list(&db.conn, true, false, Some(challenge.id), None, None, true).await?;
+  let submissions = submission::get_list(
+    &db.conn,
+    true,
+    false,
+    Some(challenge.game_id),
+    Some(challenge.id),
+    None,
+    None,
+    true,
+  )
+  .await?;
   for submission in submissions {
     let team_id = submission.team_id.unwrap();
     let team = team::get(&db.conn, team_id).await?;

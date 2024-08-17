@@ -148,8 +148,8 @@ async fn get_platform_statistics(
   };
   let games = game::get_statistics(&db.conn).await?;
   let submissions = SubmissionStatistics {
-    total: submission::count(&db.conn, false, None, None, None, false).await?,
-    solved: submission::count(&db.conn, true, None, None, None, false).await?,
+    total: submission::count(&db.conn, false, None, None, None, None, false).await?,
+    solved: submission::count(&db.conn, true, None, None, None, None, false).await?,
   };
   let challenges = ChallengeStatistics {
     total: challenge::count(&db.conn, None, None, true).await?,
