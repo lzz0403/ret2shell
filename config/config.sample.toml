@@ -19,6 +19,7 @@ jlu_email = { id = "jlu.edu.cn", key = "NOTNEEDED" }
 bit_email = { id = "bit.edu.cn", key = "NOTNEEDED" }
 tzc_email = { id = "tzc.edu.cn", key = "NOTNEEDED" }
 cppu_email = { id = "cppu.edu.cn", key = "NOTNEEDED" }
+ncu_email = { id = "ncu.edu.cn", key = "NOTNEEDED" }
 
 [automate]
 enabled = false
