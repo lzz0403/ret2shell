@@ -302,7 +302,7 @@ impl IntoResponse for ResponseError {
         }
         r2s_checker::traits::CheckerError::ScriptError(_) => (
           StatusCode::PRECONDITION_FAILED,
-          "checker fails on your input, incorrect.".to_owned(),
+          "checker fails on your input, incorrect".to_owned(),
         ),
         _ => {
           log_with_resp!(

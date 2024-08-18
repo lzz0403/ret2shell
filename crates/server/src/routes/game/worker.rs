@@ -181,7 +181,7 @@ async fn submission_worker(
           submission::Model {
             id: submission.clone().unwrap().id,
             solved: Some(false),
-            result: Some("internal error".to_owned()),
+            result: Some("checker fails on your input, incorrect.".to_owned()),
             ..submission.unwrap()
           },
         )
