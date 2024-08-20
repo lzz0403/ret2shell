@@ -261,7 +261,8 @@
       "hammerTips3": "日志、代码等过长的消息建议使用网络剪贴板发送，例如：",
       "hammerHowto": "如何使用 Markdown？",
       "hammerSend": "发送",
-      "hammerLastMessage": "还可发送 {{last}} 条消息"
+      "hammerLastMessage": "还可发送 {{last}} 条消息",
+      "hideSolved": "隐藏已解出题目"
     },
     "scoreboard": {
       "title": "积分板",

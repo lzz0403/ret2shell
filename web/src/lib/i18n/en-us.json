@@ -823,7 +823,8 @@
       "hammerTips3": "It is recommended to use the network clipboard to send long messages such as logs and codes, for example:",
       "hammerHowto": "How to use Markdown?",
       "hammerSend": "send",
-      "hammerLastMessage": "Also send {{last}} messages"
+      "hammerLastMessage": "Also send {{last}} messages",
+      "hideSolved": "Hide solved questions"
     },
     "cover": {
       "uploadFailed": "Cover Upload Failed",

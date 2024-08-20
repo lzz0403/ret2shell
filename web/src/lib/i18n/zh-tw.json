@@ -823,7 +823,8 @@
       "hammerTips3": "日誌、代碼等過長的訊息建議使用網路剪貼簿發送，例如：",
       "hammerHowto": "如何使用 Markdown？",
       "hammerSend": "傳送",
-      "hammerLastMessage": "也可發送 {{last}} 訊息"
+      "hammerLastMessage": "也可發送 {{last}} 訊息",
+      "hideSolved": "隱藏已解出題目"
     },
     "cover": {
       "uploadFailed": "封面傳輸失敗",

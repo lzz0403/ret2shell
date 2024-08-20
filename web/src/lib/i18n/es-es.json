@@ -744,7 +744,8 @@
       "hammerTips3": "Se recomienda utilizar el portapapeles de la red para enviar mensajes largos como registros y códigos, por ejemplo:",
       "hammerHowto": "¿Cómo utilizar Markdown?",
       "hammerSend": "enviar",
-      "hammerLastMessage": "Enviar también {{last}} mensajes"
+      "hammerLastMessage": "Enviar también {{last}} mensajes",
+      "hideSolved": "Ocultar preguntas resueltas"
     },
     "cover": {
       "uploadFailed": "Error al subir la portada",

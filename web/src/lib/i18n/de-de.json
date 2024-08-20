@@ -744,7 +744,8 @@
       "hammerTips3": "Es wird empfohlen, die Netzwerk-Zwischenablage zu verwenden, um lange Nachrichten wie Protokolle und Codes zu senden, zum Beispiel:",
       "hammerHowto": "Wie verwende ich Markdown?",
       "hammerSend": "schicken",
-      "hammerLastMessage": "Senden Sie auch {{last}} Nachrichten"
+      "hammerLastMessage": "Senden Sie auch {{last}} Nachrichten",
+      "hideSolved": "Gelöste Fragen ausblenden"
     },
     "cover": {
       "uploadFailed": "Cover-Upload fehlgeschlagen",

@@ -214,7 +214,7 @@ export default function () {
             href={`/games/${gameStore.current?.id}/challenges?challenge=${challengeId()}`}
           >
             <span class="icon-[fluent--flag-20-regular] w-5 h-5 flex-shrink-0" />
-            <span class="flex-1 truncate">{challenge()?.name}</span>
+            <span class="truncate">{challenge()?.name}</span>
           </A>
         </Show>
       </div>

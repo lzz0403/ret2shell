@@ -744,7 +744,8 @@
       "hammerTips3": "Il est recommandé d'utiliser le presse-papiers du réseau pour envoyer des messages longs tels que des journaux et des codes, par exemple :",
       "hammerHowto": "Comment utiliser le Markdown ?",
       "hammerSend": "envoyer",
-      "hammerLastMessage": "Envoyez également {{last}} messages"
+      "hammerLastMessage": "Envoyez également {{last}} messages",
+      "hideSolved": "Masquer les questions résolues"
     },
     "cover": {
       "uploadFailed": "Échec du téléchargement de la couverture",

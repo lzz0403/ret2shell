@@ -2,11 +2,12 @@ import { useSearchParams } from "@solidjs/router";
 import { challengeStore, refreshChallenges, refreshSolves } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
+import Button from "@widgets/button";
 import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
 import TreeView, { type TreeNode } from "@widgets/treeview";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { Match, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { Match, Show, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 
 export default function ChallengeList(props: { showScore?: boolean; paginated?: boolean; inGame?: boolean }) {
   const [searchParams, _] = useSearchParams();
@@ -15,10 +16,10 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
   });
   const [loading, setLoading] = createSignal(false);
   const [search, setSearch] = createSignal("");
+  const [hideSolved, setHideSolved] = createSignal(false);
   const selectedChallenge = createMemo(() => challengeStore.challenges.find((c) => c.id === selectedChallengeId()));
   const challengesEx = createMemo(() => {
     const result = [];
-    // console.log(search().toLowerCase());
     for (const challenge of challengeStore.challenges.filter(
       (c) =>
         c.name.toLowerCase().includes(search().toLowerCase()) ||
@@ -35,6 +36,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
     for (const tag of tagsArray) {
       const taggedChallenges = result
         .filter((c) => c.challenge.tag.find((t) => t.primary)?.name === tag)
+        .filter((c) => !c.solved || !hideSolved())
         .sort((a, b) => {
           if (a.challenge.score !== b.challenge.score) return a.challenge.score - b.challenge.score;
           return a.challenge.updated_at < b.challenge.updated_at ? -1 : 1;
@@ -97,6 +99,18 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
               icon={<span class="icon-[fluent--filter-20-regular] w-5 h-5" />}
               placeholder={t("game.challenge.filterNameOrLabel")}
               onInput={(e) => setSearch(e.currentTarget.value)}
+              extraBtn={
+                <Button
+                  class="!rounded-l-none"
+                  title={t("game.challenge.hideSolved")!}
+                  square
+                  onClick={() => setHideSolved(!hideSolved())}
+                >
+                  <Show when={hideSolved()} fallback={<span class="icon-[fluent--eye-off-20-regular] w-5 h-5" />}>
+                    <span class="icon-[fluent--eye-off-20-filled] w-5 h-5 text-warning" />
+                  </Show>
+                </Button>
+              }
             />
             <Switch
               fallback={

@@ -744,7 +744,8 @@
       "hammerTips3": "로그, 코드 등의 긴 메시지를 보내려면 네트워크 클립보드를 사용하는 것이 좋습니다. 예:",
       "hammerHowto": "마크다운을 사용하는 방법?",
       "hammerSend": "보내다",
-      "hammerLastMessage": "또한 {{last}}개의 메시지를 보내세요"
+      "hammerLastMessage": "또한 {{last}}개의 메시지를 보내세요",
+      "hideSolved": "해결된 질문 숨기기"
     },
     "cover": {
       "uploadFailed": "표지 업로드 실패",

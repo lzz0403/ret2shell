@@ -744,7 +744,8 @@
       "hammerTips3": "ログやコードなどの長いメッセージを送信するには、ネットワーク クリップボードを使用することをお勧めします。次に例を示します。",
       "hammerHowto": "マークダウンの使い方は？",
       "hammerSend": "送信",
-      "hammerLastMessage": "{{last}} メッセージも送信します"
+      "hammerLastMessage": "{{last}} メッセージも送信します",
+      "hideSolved": "解決済みの質問を非表示にする"
     },
     "cover": {
       "uploadFailed": "表紙アップロード失敗",
