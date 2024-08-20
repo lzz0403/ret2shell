@@ -9,7 +9,7 @@ use sea_orm::{
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use super::{challenge, team, user};
+use super::{challenge, game, team, user};
 
 #[derive(
   Clone,
@@ -93,6 +93,14 @@ pub enum Relation {
     on_delete = "Cascade"
   )]
   User,
+  #[sea_orm(
+    belongs_to = "super::game::Entity",
+    from = "Column::GameId",
+    to = "super::game::Column::Id",
+    on_update = "Cascade",
+    on_delete = "Cascade"
+  )]
+  Game,
 }
 
 impl Related<super::challenge::Entity> for Entity {
@@ -110,6 +118,12 @@ impl Related<super::team::Entity> for Entity {
 impl Related<super::user::Entity> for Entity {
   fn to() -> RelationDef {
     Relation::User.def()
+  }
+}
+
+impl Related<super::game::Entity> for Entity {
+  fn to() -> RelationDef {
+    Relation::Game.def()
   }
 }
 
@@ -165,11 +179,13 @@ where
 {
   let mut sql = Entity::find()
     .join(JoinType::InnerJoin, Relation::Challenge.def())
-    .join(JoinType::InnerJoin, Relation::Team.def())
+    .join(JoinType::LeftJoin, Relation::Team.def())
     .join(JoinType::InnerJoin, Relation::User.def())
+    .join(JoinType::InnerJoin, Relation::Game.def())
     .column_as(challenge::Column::Name, "challenge_name")
     .column_as(team::Column::Name, "team_name")
-    .column_as(user::Column::Nickname, "user_name");
+    .column_as(user::Column::Account, "user_name")
+    .column_as(game::Column::Name, "game_name");
   if let Some(game_id) = game_id {
     sql = sql.filter(Column::GameId.eq(game_id));
   }
