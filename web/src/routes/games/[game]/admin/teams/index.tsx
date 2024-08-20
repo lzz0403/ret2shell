@@ -1,4 +1,5 @@
 import { getTeamList } from "@api/game";
+import NarrowTips from "@blocks/narrow-tips";
 import { type Team, TeamState } from "@models/team";
 import { A, useSearchParams } from "@solidjs/router";
 import { accountStore, refreshInstitutes } from "@storage/account";
@@ -65,7 +66,7 @@ export default function () {
     }
   });
   return (
-    <div class="w-full p-3 lg:p-6 flex flex-col flex-1">
+    <div class="w-full p-3 lg:p-6 flex flex-col flex-1 relative">
       <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
         <span class="icon-[fluent--settings-20-regular] w-5 h-5" />
         <span class="flex-1 text-start">{t("game.admin.teams.title")}</span>
@@ -184,6 +185,8 @@ export default function () {
         page={page()}
         onPageChange={(page) => setSearchParams({ page: page.page })}
       />
+
+      <NarrowTips breakpoint="lg" />
     </div>
   );
 }

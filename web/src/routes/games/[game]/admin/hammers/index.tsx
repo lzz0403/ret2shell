@@ -201,18 +201,20 @@ export default function () {
   return (
     <div class="flex-1 h-[calc(100vh-4rem)] overflow-hidden flex flex-col">
       <div class="h-16 flex flex-row px-4 space-x-2 items-center backdrop-blur border-b border-b-layer-content/10">
-        <span class="icon-[fluent--chat-20-regular] w-5 h-5" />
-        <A class="font-bold" href={`/games/${gameStore.current?.id}/teams/${teamId()}`}>
+        <span class="icon-[fluent--chat-20-regular] w-5 h-5 flex-shrink-0" />
+        <A
+          class="flex-1 w-0 flex flex-row space-x-2 hover:underline items-center truncate"
+          href={`/games/${gameStore.current?.id}/teams/${teamId()}`}
+        >
           {team() ? team()?.name : t("game.admin.chat.title")}
         </A>
-        <span class="flex-1" />
         <Show when={challenge()}>
           <A
-            class="flex flex-row space-x-2 hover:underline items-center"
+            class="flex-1 w-0 flex flex-row justify-end space-x-2 hover:underline items-center truncate"
             href={`/games/${gameStore.current?.id}/challenges?challenge=${challengeId()}`}
           >
-            <span class="icon-[fluent--flag-20-regular] w-5 h-5" />
-            <span>{challenge()?.name}</span>
+            <span class="icon-[fluent--flag-20-regular] w-5 h-5 flex-shrink-0" />
+            <span class="flex-1 truncate">{challenge()?.name}</span>
           </A>
         </Show>
       </div>
@@ -244,18 +246,18 @@ export default function () {
                 <div class="w-4 flex-shrink-0" />
                 <div class="flex-1 w-0 flex flex-col space-y-1 items-start">
                   <label class="label">Ciallo～(∠・ω&lt; )⌒☆</label>
-                  <Card contentClass="flex flex-col space-y-2 p-2 max-w-full">
+                  <Card class="max-w-full" contentClass="flex flex-col space-y-2 p-2 max-w-full">
                     <span>{t("game.challenge.adminHammerTips")}</span>
-                    <div class="flex flex-col space-y-2 lg:space-y-0 lg:flex-row lg:space-x-2 max-w-full">
+                    <div class="flex flex-col space-y-2 max-w-full">
                       <Link
                         class="!h-auto p-2"
                         justify="start"
                         href={`/games/${gameStore.current?.id}/challenges?challenge=${challengeId()}`}
                       >
-                        <div class="flex flex-row space-x-2 items-center pr-4">
-                          <span class="icon-[fluent--code-20-filled] w-8 h-8 m-2" />
-                          <div class="flex flex-col items-start">
-                            <h3 class="font-bold truncate">{challenge()?.name}</h3>
+                        <div class="flex flex-row space-x-2 items-center pr-4 max-w-full w-full">
+                          <span class="icon-[fluent--code-20-filled] w-8 h-8 m-2 flex-shrink-0" />
+                          <div class="flex flex-col items-start flex-1 w-0">
+                            <h3 class="font-bold truncate w-full text-start">{challenge()?.name}</h3>
                             <p class="opacity-60">{challenge()?.score} pts</p>
                           </div>
                         </div>
@@ -265,10 +267,10 @@ export default function () {
                         justify="start"
                         href={`/games/${gameStore.current?.id}/teams/${teamId()}`}
                       >
-                        <div class="flex flex-row space-x-2 items-center pr-4">
-                          <span class="icon-[fluent--flag-20-filled] w-8 h-8 m-2" />
-                          <div class="flex flex-col items-start">
-                            <h3 class="font-bold truncate">{team()?.name}</h3>
+                        <div class="flex flex-row space-x-2 items-center pr-4 max-w-full w-full">
+                          <span class="icon-[fluent--flag-20-filled] w-8 h-8 m-2 flex-shrink-0" />
+                          <div class="flex flex-col items-start flex-1 w-0">
+                            <h3 class="font-bold truncate w-full text-start">{team()?.name}</h3>
                             <p class="opacity-60">{team()?.score} pts</p>
                           </div>
                         </div>
@@ -436,7 +438,7 @@ export default function () {
                   rel="noreferrer"
                 >
                   <span class="icon-[fluent--question-circle-20-regular] w-5 h-5" />
-                  <span>{t("game.challenge.hammerHowto")}</span>
+                  <span class="hidden lg:inline-block">{t("game.challenge.hammerHowto")}</span>
                 </Link>
                 <Button
                   size="sm"

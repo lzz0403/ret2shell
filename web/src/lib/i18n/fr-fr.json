@@ -988,7 +988,8 @@
     "unavailable": "Système hors ligne",
     "underMaintenance": "Maintenance en cours...",
     "versionMismatch": "Version du service non concordante ({{frontend}} != {{backend}}), le serveur pourrait ne pas fonctionner correctement, veuillez contacter l'exploitation pour examiner.",
-    "yes": "确定"
+    "yes": "确定",
+    "tooNarrow": "Trop étroit, veuillez utiliser un appareil plus large pour parcourir"
   },
   "shell": {
     "canNotSwitchDir": "L'hôte distant a refusé la traversée de répertoire.",

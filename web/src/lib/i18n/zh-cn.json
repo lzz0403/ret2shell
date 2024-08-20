@@ -37,7 +37,8 @@
       "hideMakerDisabled": "你的许可证不允许隐藏开发者信息"
     },
     "return": "返回",
-    "versionMismatch": "服务版本不匹配（{{frontend}} != {{backend}}），服务器可能工作不正常，请联系运维排查。"
+    "versionMismatch": "服务版本不匹配（{{frontend}} != {{backend}}），服务器可能工作不正常，请联系运维排查。",
+    "tooNarrow": "太窄了，请换宽一点的设备浏览"
   },
   "wiki": {
     "title": "知识",

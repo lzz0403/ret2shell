@@ -988,7 +988,8 @@
     "unavailable": "시스템 오프라인",
     "underMaintenance": "유지보수 중...",
     "versionMismatch": "서비스 버전이 일치하지 않습니다 ({{frontend}} != {{backend}}). 서버가 정상적으로 작동하지 않을 수 있으니, IT운영팀에게 연락하여 확인해주세요.",
-    "yes": "확인"
+    "yes": "확인",
+    "tooNarrow": "너무 좁습니다. 탐색하려면 더 넓은 장치를 사용하세요."
   },
   "shell": {
     "canNotSwitchDir": "원격 호스트가 디렉터리 탐색을 거부했습니다.",

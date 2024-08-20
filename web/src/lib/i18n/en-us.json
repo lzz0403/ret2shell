@@ -1067,7 +1067,8 @@
     "unavailable": "System Offline",
     "underMaintenance": "Under maintenance...",
     "versionMismatch": "Service version mismatch ({{frontend}} != {{backend}}), the server may not be functioning properly, please contact operations for troubleshooting.",
-    "yes": "OK"
+    "yes": "OK",
+    "tooNarrow": "Too narrow, please use a wider device to browse"
   },
   "theme": {
     "colorScheme": "Light and Dark Themes",

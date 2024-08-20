@@ -1,4 +1,5 @@
 import { getGameAuditLogs, getGameSubmissions, updateGameAuditLog } from "@api/game";
+import NarrowTips from "@blocks/narrow-tips";
 import { type Audit, AuditState } from "@models/audit";
 import type { Submission } from "@models/submission";
 import { A, useSearchParams } from "@solidjs/router";
@@ -300,7 +301,7 @@ function SubmissionList() {
 export default function () {
   const [tab, setTab] = createSignal("submissions" as "submissions" | "audits");
   return (
-    <div class="w-full p-3 lg:p-6 flex flex-col flex-1">
+    <div class="w-full p-3 lg:p-6 flex flex-col flex-1 relative">
       <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
         <span class="icon-[fluent--flash-flow-20-regular] w-5 h-5" />
         <span class="flex-1 text-start">{t("game.admin.events.title")}</span>
@@ -336,6 +337,7 @@ export default function () {
           <AuditList />
         </Match>
       </Switch>
+      <NarrowTips breakpoint="xl" />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { getChallengeCheckerScript, updateChallengeCheckerScript } from "@api/game";
+import type { Challenge } from "@models/challenge";
 import { challengeStore } from "@storage/challenge";
 import { fullTheme, t } from "@storage/theme";
 import { addToast } from "@storage/toast";
@@ -13,7 +14,6 @@ import { Show, createEffect, createMemo, createSignal, untrack } from "solid-js"
 import dynamicChecker from "./scripts/dynamic.rx";
 import mappedChecker from "./scripts/mapped.rx";
 import simpleChecker from "./scripts/simple.rx";
-import type { Challenge } from "@models/challenge";
 
 type PresetChecker = "simple" | "mapped" | "dynamic";
 
@@ -89,11 +89,11 @@ export default function (_props: {
     <div class="flex-1 h-full flex flex-col">
       <header class="h-12 border-b border-b-layer-content/10 flex flex-row space-x-2 px-2 items-center">
         <span class="icon-[fluent--code-20-regular] w-5 h-5" />
-        <span class="font-bold">{t("game.challenge.checkerScript")}</span>
+        <span class="font-bold hidden lg:inline-block">{t("game.challenge.checkerScript")}</span>
         <span class="opacity-60">checker/main.rx</span>
         <div class="flex-1" />
         <Select
-          class="w-48"
+          class="w-48 hidden lg:flex"
           placeholder={t("game.challenge.selectPresetScripts")}
           size="sm"
           items={[

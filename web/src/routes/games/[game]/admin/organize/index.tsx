@@ -1,5 +1,6 @@
 import { updateGame } from "@api/game";
 import AdministratorsManagement from "@blocks/game/administrators";
+import NarrowTips from "@blocks/narrow-tips";
 import { accountStore, refreshInstitutes } from "@storage/account";
 import { gameStore, setGameStore } from "@storage/game";
 import { t } from "@storage/theme";
@@ -123,12 +124,13 @@ function InstituteManagement() {
 
 export default function () {
   return (
-    <div class="flex flex-col p-3 lg:p-6 w-full items-center">
+    <div class="flex flex-col p-3 lg:p-6 w-full items-center flex-1 min-h-full relative">
       <div class="flex flex-col w-full max-w-5xl relative space-y-2">
         <InstituteManagement />
         <div class="h-12" />
         <AdministratorsManagement />
       </div>
+      <NarrowTips breakpoint="lg" />
     </div>
   );
 }

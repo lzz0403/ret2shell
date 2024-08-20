@@ -331,7 +331,7 @@ export default function (props: {
               </OverlayScrollbarsComponent>
             </Card>
           </Popover>
-          <span class="flex items-center space-x-2">
+          <span class="hidden lg:flex items-center space-x-2">
             <span class={`w-2 h-2 rounded-full ${availableMsg() <= 0 ? "bg-error" : "bg-success"}`} />
             <span class="opacity-60">
               {availableMsg() <= 0
@@ -351,7 +351,7 @@ export default function (props: {
             rel="noreferrer"
           >
             <span class="icon-[fluent--question-circle-20-regular] w-5 h-5" />
-            <span>{t("game.challenge.hammerHowto")}</span>
+            <span class="hidden lg:inline-block">{t("game.challenge.hammerHowto")}</span>
           </Link>
           <Button
             size="sm"

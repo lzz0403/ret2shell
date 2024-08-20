@@ -16,7 +16,7 @@ export default function (props: ComponentProps<"svg">) {
     }, 3000);
   });
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} {...props} viewBox="0 0 256 256">
+    <svg width={width} height={height} {...props} viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
       <g>
         <path
           stroke-width="6"

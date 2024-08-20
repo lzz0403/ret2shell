@@ -988,7 +988,8 @@
     "unavailable": "Sistema fuera de línea",
     "underMaintenance": "Mantenimiento en curso...",
     "versionMismatch": "Versión de servicio no coincidente ({{frontend}} != {{backend}}), es posible que el servidor no funcione correctamente, contacte al equipo de operaciones para investigar.",
-    "yes": "Confirmar"
+    "yes": "Confirmar",
+    "tooNarrow": "Demasiado estrecho, utiliza un dispositivo más ancho para navegar"
   },
   "shell": {
     "canNotSwitchDir": "El host remoto rechazó la travesía de directorios.",

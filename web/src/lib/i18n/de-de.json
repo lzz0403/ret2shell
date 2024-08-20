@@ -988,7 +988,8 @@
     "unavailable": "System offline",
     "underMaintenance": "Wartung...",
     "versionMismatch": "Dienstversionen stimmen nicht überein ({{frontend}} != {{backend}}), der Server funktioniert möglicherweise nicht ordnungsgemäß, bitte wenden Sie sich an die Betriebsabteilung zur Untersuchung.",
-    "yes": "Bestätigen"
+    "yes": "Bestätigen",
+    "tooNarrow": "Zu schmal, bitte verwenden Sie zum Durchsuchen ein breiteres Gerät"
   },
   "shell": {
     "canNotSwitchDir": "Die Remote-Host hat die Verzeichnisschnittüberquerung abgelehnt.",

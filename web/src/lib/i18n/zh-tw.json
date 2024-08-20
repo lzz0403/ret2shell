@@ -1067,7 +1067,8 @@
     "unavailable": "系統離線",
     "underMaintenance": "維護中...",
     "versionMismatch": "服務版本不匹配（{{frontend}} != {{backend}}），伺服器可能工作不正常，請聯繫運維排查。",
-    "yes": "確定"
+    "yes": "確定",
+    "tooNarrow": "太窄了，請換寬一點的設備瀏覽"
   },
   "theme": {
     "colorScheme": "明暗主題",

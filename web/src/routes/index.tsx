@@ -1,4 +1,5 @@
 import LogoAnimate from "@assets/animates/logo-animate";
+import NarrowTips from "@blocks/narrow-tips";
 import { useSearchParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
@@ -163,6 +164,7 @@ export default function () {
               class="h-full min-h-full snap-center relative overflow-scroll"
             >
               <Calendar />
+              <NarrowTips breakpoint="lg" />
             </section>
           </Show>
         </div>
