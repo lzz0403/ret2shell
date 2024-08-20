@@ -25,7 +25,7 @@ pub struct Checker {
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct AuditMessage {
-  pub peer_team: Option<i64>,
+  pub peer_team: i64,
   pub reason: String,
 }
 
@@ -162,6 +162,7 @@ impl Checker {
       ["check"],
       (bucket, user_object, team_object, submission_object),
     )?;
+    debug!("check output: {:?}", output);
     let output: Result<(bool, String, Option<Object>), Value> = rune::from_value(output)?;
     if let Ok((result, message, audit)) = output {
       let audit = if let Some(audit) = audit {

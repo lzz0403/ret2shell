@@ -367,8 +367,8 @@ async fn submission_worker_exec(
 
   // stage 4: create audit if necessary
   if let Some(audit) = audit {
-    let peer_team = if let Some(peer_team_id) = audit.peer_team {
-      let peer_team = team::get(&db.conn, peer_team_id).await?;
+    let peer_team = if audit.peer_team > 0 {
+      let peer_team = team::get(&db.conn, audit.peer_team).await?;
       // could not find peer team, this audit is a mistake, ignore it
       if peer_team.is_none() {
         return Ok(submission);
