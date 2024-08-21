@@ -3,6 +3,7 @@ use std::{io::Write, net::SocketAddr, process};
 use colored::Colorize;
 use r2s_config::GlobalConfig;
 use rustls::crypto;
+use tokio::signal;
 use tracing::{error, info, warn};
 
 use crate::traits::GlobalState;
@@ -123,6 +124,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
     addr,
     router.into_make_service_with_connect_info::<SocketAddr>(),
   )
+  .with_graceful_shutdown(shutdown_signal())
   .await
   .expect("Failed to start server.");
 
@@ -170,4 +172,34 @@ pub async fn down(config: GlobalConfig) -> anyhow::Result<()> {
   drop(console_guard);
   drop(file_guard);
   Ok(())
+}
+
+async fn shutdown_signal() {
+  let ctrl_c = async {
+    signal::ctrl_c()
+      .await
+      .expect("failed to install Ctrl+C handler");
+  };
+
+  #[cfg(unix)]
+  let terminate = async {
+    signal::unix::signal(signal::unix::SignalKind::terminate())
+      .expect("failed to install signal handler")
+      .recv()
+      .await;
+  };
+
+  #[cfg(not(unix))]
+  let terminate = std::future::pending::<()>();
+
+  tokio::select! {
+      _ = ctrl_c => {
+          info!("Termination `Ctrl+C` received, shutting down...");
+          std::process::exit(0);
+      },
+      _ = terminate => {
+          info!("Termination signal received, shutting down...");
+          std::process::exit(0);
+      },
+  }
 }
