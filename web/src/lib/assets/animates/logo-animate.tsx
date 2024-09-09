@@ -19,19 +19,23 @@ export default function (props: ComponentProps<"svg">) {
     <svg width={width} height={height} {...props} viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
       <g>
         <path
+          fill="#0891ed"
+          stroke="#0891ed"
           stroke-width="6"
           stroke-dasharray="none"
           stroke-opacity="0.564706"
           d="m84.598 189.653-67.953-39.805v-12.37l57.14-32.885 6.491 9.052-52.757 30.017 60.575 35.759zm97.62-6.915-6.494-9.056 52.757-30.017-29.51-16.792 9.634-5.714 30.75 16.32v12.373z"
-          class="svg-elem-1 fill-primary stroke-primary"
+          class="svg-elem-1"
           ref={svgPath1!}
         />
         <path
+          fill="#e05763"
+          stroke="#e05763"
           stroke-width="6"
           stroke-dasharray="none"
           stroke-opacity="0.564706"
           d="m99.331 76.984 37.088 62.889 23.56-22.568 29.018 4.318 35.858-18.537-24.673-61.7-23.207 34.66-54.136-24.982Z"
-          class="svg-elem-2 fill-error stroke-error"
+          class="svg-elem-2"
           ref={svgPath2!}
         />
         <path

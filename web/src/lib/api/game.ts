@@ -226,6 +226,20 @@ export async function updateChallengeCheckerScript(game_id: number, challenge_id
     .json<void>();
 }
 
+export async function getChallengeSolves(game_id: number, challenge_id: number, page: number, page_size: number) {
+  return (
+    await api.get(`${api_root}/game/${game_id}/challenge/${challenge_id}/solve`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          page,
+          page_size,
+          only_solved: true,
+        })
+      ) as SearchParamsOption,
+    })
+  ).json<[Submission[], number]>();
+}
+
 export async function getTeamInfo(game_id: number, team_id: number, ex?: boolean) {
   return await api
     .get(`${api_root}/game/${game_id}/team/${team_id}`, {

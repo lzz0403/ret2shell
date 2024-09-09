@@ -1,19 +1,84 @@
-import { getChallengeCommitHistory } from "@api/game";
+import { getChallengeCommitHistory, getChallengeSolves } from "@api/game";
 import type { Challenge, CommitHistory } from "@models/challenge";
+import type { Submission } from "@models/submission";
 import { challengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
+import Pagination from "@widgets/pagination";
 import LoadingTips from "@widgets/loading-tips";
 import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { For, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
 
 function StatisticsPanel() {
-  return <></>;
+  const [solves, setSolves] = createSignal([] as Submission[]);
+  const [page, setPage] = createSignal(1);
+  const [pageSize, _setPageSize] = createSignal(10);
+  const [total, setTotal] = createSignal(0);
+  const [loading, setLoading] = createSignal(false);
+  function fetchSolves() {
+    setLoading(true);
+    getChallengeSolves(gameStore.current!.id, challengeStore.current!.id, page(), pageSize())
+      .then((resp) => {
+        setSolves(resp[0]);
+        setTotal(resp[1]);
+      })
+      .catch((err: HTTPError) => {
+        err.response.text().then((text) => {
+          addToast({
+            level: "error",
+            description: `${t("form.fetchFailed")}: ${text}`,
+            duration: 5000,
+          });
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
+  createEffect(() => {
+    if (challengeStore.current && page()) {
+      untrack(fetchSolves);
+    }
+  });
+  return (
+    <>
+      <Show when={loading()}>
+        <div class="w-full flex flex-row space-x-2 p-2 items-center border-b border-b-layer-content/10 overflow-hidden">
+          <LoadingTips />
+        </div>
+      </Show>
+      <For each={solves()}>
+        {(item) => (
+          <div class="w-full flex flex-row space-x-2 p-2 items-center border-b border-b-layer-content/10 overflow-hidden">
+            <span class="icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success" />
+            <a class="truncate hover:underline" href={`/users/${item.user_id}`}>
+              {item.user_name}
+            </a>
+            <span class="opacity-60">@</span>
+            <a class="truncate hover:underline" href={`/games/${gameStore.current?.id}/teams/${item.team_id}`}>
+              {item.team_name ?? "wheel"}
+            </a>
+            <div class="flex-1" />
+            <span class="opacity-40">{item.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}</span>
+          </div>
+        )}
+      </For>
+      <Pagination
+        class="p-6 lg:p-9"
+        count={total()}
+        pageSize={pageSize()}
+        page={page()}
+        onPageChange={(p) => setPage(p.page)}
+      />
+    </>
+  );
 }
+
 function HintsPanel() {
   return <></>;
 }
