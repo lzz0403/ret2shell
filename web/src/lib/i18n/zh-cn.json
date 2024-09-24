@@ -509,6 +509,17 @@
       "audits": "审计事件",
       "autoRefreshEnabled": "自动刷新已开启",
       "submit": "提交了"
+    },
+    "statistics": {
+      "title": "统计信息",
+      "players": "参赛选手",
+      "institutePlayers": "组织参赛选手",
+      "others": "其他",
+      "institutes": "组织",
+      "teams": "队伍",
+      "instituteTeams": "组织队伍",
+      "submissions": "提交记录",
+      "challengeSolveDetails": "题目解题情况"
     }
   },
   "bulletin": {

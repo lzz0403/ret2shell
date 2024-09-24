@@ -221,10 +221,7 @@ async fn bind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!(
-          "client {} has no permission to bind account",
-          ip
-        ),
+        format!("client {} has no permission to bind account", ip),
       ));
     }
   };
@@ -233,10 +230,7 @@ async fn bind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!(
-          "client {} has no permission to bind account",
-          ip
-        ),
+        format!("client {} has no permission to bind account", ip),
       ));
     }
   };
@@ -274,10 +268,7 @@ async fn unbind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!(
-          "client {} has no permission to bind account",
-          ip
-        ),
+        format!("client {} has no permission to bind account", ip),
       ));
     }
   };
@@ -286,10 +277,7 @@ async fn unbind_account_by_code(
     None => {
       return Err(ResponseError::Forbidden(
         "permission denied".to_owned(),
-        format!(
-          "client {} has no permission to bind account",
-          ip
-        ),
+        format!("client {} has no permission to bind account", ip),
       ));
     }
   };
@@ -300,10 +288,7 @@ async fn unbind_account_by_code(
       if user.institute_id.is_some_and(|v| v != institute.id) {
         return Err(ResponseError::Forbidden(
           "permission denied".to_owned(),
-          format!(
-            "client {} has no permission to unbind account",
-            ip
-          ),
+          format!("client {} has no permission to unbind account", ip),
         ));
       }
       user.institute_id = None;
@@ -507,7 +492,7 @@ async fn register(
 
   let password = hash_password(&body.password)?;
 
-  let mut permissions = match user::count(&db.conn, true, None).await? {
+  let mut permissions = match user::count(&db.conn, true, None, None).await? {
     0 => Permissions(vec![
       Permission::Basic,
       Permission::Verified,
@@ -864,7 +849,7 @@ async fn delete_self(
   Json(req): Json<DeleteSelfRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   captcha_protected!(cache, &req.captcha_id, &req.captcha_answer);
-  let user_count = user::count(&db.conn, false, None).await?;
+  let user_count = user::count(&db.conn, false, None, None).await?;
 
   if user_count == 1 {
     return Err(ResponseError::Forbidden(

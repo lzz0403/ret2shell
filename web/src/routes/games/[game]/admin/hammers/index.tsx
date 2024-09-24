@@ -36,7 +36,13 @@ const quickReplies = [
   t("game.challenge.chatQuickReply4"),
 ];
 
-function mergeChats(challengeId: number, teamId: number, a: Chat[], b: Chat[], solvedAt: DateTime | null): [boolean, Chat[]] {
+function mergeChats(
+  challengeId: number,
+  teamId: number,
+  a: Chat[],
+  b: Chat[],
+  solvedAt: DateTime | null
+): [boolean, Chat[]] {
   if (solvedAt) {
     b.push({
       id: 0,
@@ -89,7 +95,7 @@ function mergeChats(challengeId: number, teamId: number, a: Chat[], b: Chat[], s
   return [changed, aa.sort((x, y) => x.created_at.toMillis() - y.created_at.toMillis())];
 }
 
-export default function() {
+export default function () {
   const [searchParams, _] = useSearchParams();
   const teamId = createMemo(() => Number.parseInt(searchParams.team ?? "") || null);
   const challengeId = createMemo(() => Number.parseInt(searchParams.challenge ?? "") || null);
@@ -157,8 +163,7 @@ export default function() {
           .then((result) => {
             const [changed, r] = mergeChats(challengeId() ?? 0, teamId() ?? 0, chats(), result, s);
             setChats([...r]);
-            if (changed)
-              setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 700);
+            if (changed) setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 700);
           })
           .catch((err: HTTPError) => {
             err.response.text().then((text) => {

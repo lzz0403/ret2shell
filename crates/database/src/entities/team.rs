@@ -381,6 +381,21 @@ fn filter_sql(mut sql: Select<Entity>, filter: Option<String>) -> Result<Select<
   Ok(sql)
 }
 
+pub async fn count<C>(
+  db: &C, game_id: i64, min_state: State, institute_id: Option<i64>,
+) -> Result<u64, DbErr>
+where
+  C: ConnectionTrait,
+{
+  let mut sql = Entity::find()
+    .filter(Column::GameId.eq(game_id))
+    .filter(Column::State.gte(min_state));
+  if let Some(institute_id) = institute_id {
+    sql = sql.filter(Column::InstituteId.eq(institute_id));
+  }
+  sql.count(db).await
+}
+
 pub async fn create<C>(db: &C, team: Model) -> Result<Model, DbErr>
 where
   C: ConnectionTrait,

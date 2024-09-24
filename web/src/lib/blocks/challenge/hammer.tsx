@@ -1,8 +1,4 @@
-import {
-  getGamePlayerChatMessages,
-  getTeamSolves,
-  sendGamePlayerChatMessage,
-} from "@api/game";
+import { getGamePlayerChatMessages, getTeamSolves, sendGamePlayerChatMessage } from "@api/game";
 import xdsecMascotCiallo from "@assets/imgs/xdsec-mascot-ciallo.webp";
 import { stickerSet } from "@assets/stickers";
 import { mediaPath } from "@lib/utils/media";
@@ -24,14 +20,7 @@ import Popover from "@widgets/popover";
 import { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import {
-  For,
-  Show,
-  createMemo,
-  createSignal,
-  onCleanup,
-  onMount,
-} from "solid-js";
+import { For, Show, createMemo, createSignal, onCleanup, onMount } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
 
 function mergeChats(
@@ -39,7 +28,7 @@ function mergeChats(
   teamId: number,
   a: Chat[],
   b: Chat[],
-  solvedAt: DateTime | null,
+  solvedAt: DateTime | null
 ): [boolean, Chat[]] {
   if (solvedAt) {
     b.push({
@@ -93,7 +82,7 @@ function mergeChats(
   return [changed, aa.sort((x, y) => x.created_at.toMillis() - y.created_at.toMillis())];
 }
 
-export default function(props: {
+export default function (props: {
   onStateChange?: (challenge?: Challenge) => void;
   onExpand?: () => void;
   expanded?: boolean;
@@ -107,11 +96,7 @@ export default function(props: {
     if (chat().trim() === "") return;
     if (gameStore.current && challengeStore.current) {
       setSending(true);
-      sendGamePlayerChatMessage(
-        gameStore.current.id,
-        challengeStore.current.id,
-        chat(),
-      )
+      sendGamePlayerChatMessage(gameStore.current.id, challengeStore.current.id, chat())
         .then(() => {
           setChat("");
           refreshChats();
@@ -135,23 +120,12 @@ export default function(props: {
     if (gameStore.current && challengeStore.current && !isGameAdmin()) {
       getSolveStatus().then((s) => {
         setLoading(true);
-        getGamePlayerChatMessages(
-          gameStore.current!.id,
-          challengeStore.current!.id,
-        )
+        getGamePlayerChatMessages(gameStore.current!.id, challengeStore.current!.id)
           .then((result) => {
-            const [changed, r] = mergeChats(
-              challengeStore.current!.id,
-              gameStore.team?.id ?? 0,
-              chats(),
-              result,
-              s,
-            );
+            const [changed, r] = mergeChats(challengeStore.current!.id, gameStore.team?.id ?? 0, chats(), result, s);
             setChats([...r]);
             if (changed) {
-              setTimeout(() =>
-                chatBottomEl?.scrollIntoView({ behavior: "smooth" }),
-                700);
+              setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 700);
             }
           })
           .catch((err: HTTPError) => {
@@ -177,9 +151,7 @@ export default function(props: {
     if (gameStore.current?.id && gameStore.team?.id && !isGameAdmin()) {
       const resp = await getTeamSolves(gameStore.current.id, gameStore.team.id);
       try {
-        const s = resp.find(
-          (x) => x.challenge_id === challengeStore.current?.id,
-        );
+        const s = resp.find((x) => x.challenge_id === challengeStore.current?.id);
         return s?.created_at ?? null;
       } catch (err) {
         if (err instanceof HTTPError) {
@@ -217,15 +189,8 @@ export default function(props: {
           when={!isGameAdmin()}
           fallback={
             <div class="self-start flex-row max-w-[calc(100%-4rem)] flex items-center">
-              <A
-                class="w-10 h-10 flex-shrink-0 self-start mt-2"
-                href="/magic/sakana"
-              >
-                <Avatar
-                  class="w-full h-full"
-                  src={xdsecMascotCiallo}
-                  fallback="Ciallo"
-                />
+              <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href="/magic/sakana">
+                <Avatar class="w-full h-full" src={xdsecMascotCiallo} fallback="Ciallo" />
               </A>
               <div class="w-4 flex-shrink-0" />
               <div class="flex flex-col space-y-1">
@@ -239,15 +204,8 @@ export default function(props: {
           }
         >
           <div class="self-start flex-row max-w-[calc(100%-4rem)] flex items-center">
-            <A
-              class="w-10 h-10 flex-shrink-0 self-start mt-2"
-              href="/magic/sakana"
-            >
-              <Avatar
-                class="w-full h-full"
-                src={xdsecMascotCiallo}
-                fallback="Ciallo"
-              />
+            <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href="/magic/sakana">
+              <Avatar class="w-full h-full" src={xdsecMascotCiallo} fallback="Ciallo" />
             </A>
             <div class="w-4 flex-shrink-0" />
             <div class="flex flex-col space-y-1">
@@ -259,15 +217,8 @@ export default function(props: {
             </div>
           </div>
           <div class="self-start flex-row max-w-[calc(100%-4rem)] flex items-center">
-            <A
-              class="w-10 h-10 flex-shrink-0 self-start mt-2"
-              href="/magic/sakana"
-            >
-              <Avatar
-                class="w-full h-full"
-                src={xdsecMascotCiallo}
-                fallback="Ciallo"
-              />
+            <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href="/magic/sakana">
+              <Avatar class="w-full h-full" src={xdsecMascotCiallo} fallback="Ciallo" />
             </A>
             <div class="w-4 flex-shrink-0" />
             <div class="flex flex-col space-y-1 items-start">
@@ -308,31 +259,18 @@ export default function(props: {
                 class={`fade-group-up ${chat.user_id !== accountStore.id ? "self-start flex-row" : "self-end flex-row-reverse"} w-[calc(100%-4rem)] flex items-center`}
               >
                 <Show
-                  when={
-                    index() === 0 ||
-                    chats().at(index() - 1)?.user_id !== chat.user_id
-                  }
+                  when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}
                   fallback={<div class="w-10 h-10 flex-shrink-0 self-start" />}
                 >
                   <Show
                     when={chat.id !== 0}
                     fallback={
-                      <A
-                        class="w-10 h-10 flex-shrink-0 self-start mt-2"
-                        href="/magic/sakana"
-                      >
-                        <Avatar
-                          class="w-full h-full"
-                          src={xdsecMascotCiallo}
-                          fallback="Ciallo"
-                        />
+                      <A class="w-10 h-10 flex-shrink-0 self-start mt-2" href="/magic/sakana">
+                        <Avatar class="w-full h-full" src={xdsecMascotCiallo} fallback="Ciallo" />
                       </A>
                     }
                   >
-                    <A
-                      class="w-10 h-10 flex-shrink-0 self-start"
-                      href={`/users/${chat.user_id}`}
-                    >
+                    <A class="w-10 h-10 flex-shrink-0 self-start" href={`/users/${chat.user_id}`}>
                       <Avatar
                         class="w-full h-full"
                         src={chat.avatar ? mediaPath(chat.avatar) : undefined}
@@ -345,25 +283,14 @@ export default function(props: {
                 <div
                   class={`flex-1 w-0 flex flex-col space-y-1 ${chat.user_id !== accountStore.id ? "items-start" : "items-end"}`}
                 >
-                  <Show
-                    when={
-                      index() === 0 ||
-                      chats().at(index() - 1)?.user_id !== chat.user_id
-                    }
-                  >
+                  <Show when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}>
                     <label class="label space-x-2">
                       <Show when={chat.user_id !== 0}>
                         <Show
                           when={chat.is_admin}
-                          fallback={
-                            <span class="text-info">
-                              [{t("game.challenge.chatPlayerRole")}]
-                            </span>
-                          }
+                          fallback={<span class="text-info">[{t("game.challenge.chatPlayerRole")}]</span>}
                         >
-                          <span class="text-error">
-                            [{t("game.challenge.chatAdminRole")}]
-                          </span>
+                          <span class="text-error">[{t("game.challenge.chatAdminRole")}]</span>
                         </Show>
                       </Show>
                       <A href={`/users/${chat.user_id}`}>{chat.user_name}</A>
@@ -373,12 +300,7 @@ export default function(props: {
                     class={`peer flex max-w-full ${chat.user_id !== accountStore.id ? "flex-row" : "flex-row-reverse"}`}
                   >
                     <Card contentClass="p-2">
-                      <Article
-                        content={chat.content}
-                        noExtraPaddings
-                        compact
-                        extra
-                      />
+                      <Article content={chat.content} noExtraPaddings compact extra />
                     </Card>
                     <div class="px-2 self-end flex items-end">
                       <span
@@ -390,12 +312,7 @@ export default function(props: {
                       />
                     </div>
                   </div>
-                  <Show
-                    when={
-                      index() === chats().length - 1 ||
-                      chats().at(index() + 1)?.user_id !== chat.user_id
-                    }
-                  >
+                  <Show when={index() === chats().length - 1 || chats().at(index() + 1)?.user_id !== chat.user_id}>
                     <label class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
                       {chat.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
                     </label>
@@ -408,14 +325,7 @@ export default function(props: {
       </div>
       <div class="sticky bottom-0 flex flex-col space-y-2 p-3 border-t border-t-layer-content/5 backdrop-blur">
         <div class="flex flex-row items-center h-8 space-x-2">
-          <Popover
-            size="sm"
-            square
-            ghost
-            btnContent={
-              <span class="icon-[fluent--emoji-20-regular] w-5 h-5" />
-            }
-          >
+          <Popover size="sm" square ghost btnContent={<span class="icon-[fluent--emoji-20-regular] w-5 h-5" />}>
             <Card contentClass="p-2 aspect-square">
               <OverlayScrollbarsComponent
                 options={{
@@ -454,15 +364,13 @@ export default function(props: {
             </Card>
           </Popover>
           <span class="hidden lg:flex items-center space-x-2">
-            <span
-              class={`w-2 h-2 rounded-full ${availableMsg() <= 0 ? "bg-error" : "bg-success"}`}
-            />
+            <span class={`w-2 h-2 rounded-full ${availableMsg() <= 0 ? "bg-error" : "bg-success"}`} />
             <span class="opacity-60">
               {availableMsg() <= 0
                 ? t("game.challenge.hammerInputAlreadySend")
                 : t("game.challenge.hammerLastMessage", {
-                  last: availableMsg(),
-                })}
+                    last: availableMsg(),
+                  })}
             </span>
           </span>
           <div class="flex-1" />
@@ -475,9 +383,7 @@ export default function(props: {
             rel="noreferrer"
           >
             <span class="icon-[fluent--question-circle-20-regular] w-5 h-5" />
-            <span class="hidden lg:inline-block">
-              {t("game.challenge.hammerHowto")}
-            </span>
+            <span class="hidden lg:inline-block">{t("game.challenge.hammerHowto")}</span>
           </Link>
           <Button
             size="sm"
@@ -487,12 +393,7 @@ export default function(props: {
               setEditorExpanded(!editorExpanded());
             }}
           >
-            <Show
-              when={editorExpanded()}
-              fallback={
-                <span class="icon-[fluent--arrow-expand-20-regular] w-5 h-5" />
-              }
-            >
+            <Show when={editorExpanded()} fallback={<span class="icon-[fluent--arrow-expand-20-regular] w-5 h-5" />}>
               <span class="icon-[fluent--arrow-minimize-20-regular] w-5 h-5" />
             </Show>
           </Button>

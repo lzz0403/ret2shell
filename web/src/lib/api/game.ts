@@ -505,3 +505,25 @@ export async function updateGameAuditLog(game_id: number, audit_id: number, audi
     })
     .json<Audit>();
 }
+
+export async function getGameStatistics(game_id: number, in_game?: boolean) {
+  return await api
+    .get(`${api_root}/game/${game_id}/statistics`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          in_game,
+        })
+      ),
+    })
+    .json<{
+      total_players: number;
+      institute_players: { [key: number]: number };
+      total_teams: number;
+      total_passed_teams: number;
+      institute_teams: { [key: number]: number };
+      total_submissions: number;
+      total_solves: number;
+      challenge_submissions: { [key: number]: number };
+      challenge_solves: { [key: number]: number };
+    }>();
+}

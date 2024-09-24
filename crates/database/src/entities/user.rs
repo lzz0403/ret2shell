@@ -363,7 +363,9 @@ fn filter_and_order(
   Ok(sql)
 }
 
-pub async fn count<C>(db: &C, with_banned: bool, institute_id: Option<i64>) -> Result<u64, DbErr>
+pub async fn count<C>(
+  db: &C, with_banned: bool, institute_id: Option<i64>, game_id: Option<i64>,
+) -> Result<u64, DbErr>
 where
   C: ConnectionTrait,
 {
@@ -373,6 +375,12 @@ where
   }
   if let Some(institute_id) = institute_id {
     sql = sql.filter(Column::InstituteId.eq(institute_id));
+  }
+  if let Some(game_id) = game_id {
+    sql = sql
+      .join(JoinType::InnerJoin, Relation::User2Team.def())
+      .join(JoinType::InnerJoin, super::user2_team::Relation::Team.def())
+      .filter(super::team::Column::GameId.eq(game_id));
   }
   sql.count(db).await
 }

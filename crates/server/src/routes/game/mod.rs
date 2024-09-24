@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use axum::{
   extract::{Query, State},
   middleware,
@@ -11,7 +13,7 @@ use r2s_bucket::Bucket;
 use r2s_cache::Cache;
 use r2s_cluster::{Cluster, Pod, CHALLENGE_NS};
 use r2s_database::{
-  article, audit, game, submission, team as team_db,
+  article, audit, challenge as challenge_db, game, institute, submission, team as team_db,
   user::{self, Permission},
 };
 use r2s_event::{
@@ -65,6 +67,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             ))
             .route("/", get(get_audit_messages)),
         )
+        .route("/statistics", get(get_game_statistics))
         .route("/", patch(update_game).delete(delete_game))
         .route_layer(middleware::from_fn(auth::game_admin_required))
         .route("/solve", get(get_self_solves))
@@ -613,4 +616,95 @@ async fn update_audit(
   )
   .await?;
   Ok(Json(model))
+}
+
+#[derive(Serialize, Default)]
+struct GameStatistics {
+  pub total_players: u64,
+  pub institute_players: HashMap<i64, u64>,
+  pub total_teams: u64,
+  pub total_passed_teams: u64,
+  pub institute_teams: HashMap<i64, u64>,
+  pub total_submissions: u64,
+  pub total_solves: u64,
+  pub challenge_submissions: HashMap<i64, u64>,
+  pub challenge_solves: HashMap<i64, u64>,
+}
+
+#[derive(Deserialize)]
+struct GameStatisticsQuery {
+  pub in_game: Option<bool>,
+}
+
+async fn get_game_statistics(
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Query(query): Query<GameStatisticsQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let in_game = query.in_game.unwrap_or(false);
+  let institutes = institute::get_list(&db.conn).await?;
+  let total_players = user::count(&db.conn, false, None, Some(game.id)).await?;
+  let mut institute_players = HashMap::new();
+  for i in institutes.iter() {
+    institute_players.insert(
+      i.id,
+      user::count(&db.conn, false, Some(i.id), Some(game.id)).await?,
+    );
+  }
+  let total_teams = team_db::count(&db.conn, game.id, team_db::State::Banned, None).await?;
+  let total_passed_teams = team_db::count(&db.conn, game.id, team_db::State::Passed, None).await?;
+  let mut institute_teams = HashMap::new();
+  for i in institutes.iter() {
+    institute_teams.insert(
+      i.id,
+      team_db::count(&db.conn, game.id, team_db::State::Banned, Some(i.id)).await?,
+    );
+  }
+  let total_submissions =
+    submission::count(&db.conn, false, Some(game.id), None, None, None, in_game).await?;
+  let total_solves =
+    submission::count(&db.conn, true, Some(game.id), None, None, None, in_game).await?;
+
+  let mut challenge_solves = HashMap::new();
+  let mut challenge_submissions = HashMap::new();
+  let challenges = challenge_db::get_list(&db.conn, game.id, false).await?;
+  for c in challenges.iter() {
+    challenge_solves.insert(
+      c.id,
+      submission::count(
+        &db.conn,
+        true,
+        Some(game.id),
+        Some(c.id),
+        None,
+        None,
+        in_game,
+      )
+      .await?,
+    );
+    challenge_submissions.insert(
+      c.id,
+      submission::count(
+        &db.conn,
+        false,
+        Some(game.id),
+        Some(c.id),
+        None,
+        None,
+        in_game,
+      )
+      .await?,
+    );
+  }
+
+  Ok(Json(GameStatistics {
+    total_players,
+    institute_players,
+    total_teams,
+    total_passed_teams,
+    institute_teams,
+    total_submissions,
+    total_solves,
+    challenge_submissions,
+    challenge_solves,
+  }))
 }

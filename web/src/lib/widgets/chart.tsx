@@ -134,7 +134,7 @@ export default function Chart(props: EChartsBaseProps) {
       () => [size.width, size.height],
       ([width, height]) => {
         // console.log('resize', width, height)
-        chartInstance.resize({ width, height, ...props.resizeOptions });
+        chartInstance?.resize({ width, height, ...props.resizeOptions });
       },
       { defer: true }
     )
@@ -144,7 +144,7 @@ export default function Chart(props: EChartsBaseProps) {
     on(
       () => props.option,
       (option) => {
-        chartInstance.setOption(option, props.notMerge, props.lazyUpdate);
+        chartInstance?.setOption(option, props.notMerge, props.lazyUpdate);
       },
       { defer: true }
     )
