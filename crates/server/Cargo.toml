@@ -31,7 +31,7 @@ axum-extra = { version = "0.9", features = [
   "async-read-body",
 ] }
 tower = "0.5"
-tower-http = { version = "0.5", features = ["cors", "fs", "trace"] }
+tower-http = { version = "0.6", features = ["cors", "fs", "trace"] }
 jsonwebtoken = { version = "9.3", default-features = false }
 thiserror = "1.0"
 sea-orm = "1.0"
