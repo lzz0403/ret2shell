@@ -7,7 +7,7 @@ import Tag from "@widgets/tag";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { Show } from "solid-js";
 
-export default function() {
+export default function () {
   return (
     <div class="flex-1 relative">
       <div class="absolute h-full w-full overflow-scroll snap-mandatory snap-y">
@@ -48,34 +48,108 @@ export default function() {
                 <Divider class="w-full" />
                 <h3 class="font-bold">Developers</h3>
                 <div class="flex flex-row flex-wrap justify-center">
-                  <Tag level="success" class="m-1"><a href="https://github.com/Reverier-Xu" target="_blank">Reverier-Xu</a></Tag>
+                  <Tag level="success" class="m-1">
+                    <a href="https://github.com/Reverier-Xu" target="_blank" rel="noreferrer">
+                      Reverier-Xu
+                    </a>
+                  </Tag>
                 </div>
                 <h3 class="font-bold">Contributors</h3>
                 <div class="flex flex-row flex-wrap justify-center">
-                  <Tag level="info" class="m-1"><a href="https://github.com/cdcq" target="_blank">cdcq</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://github.com/orangecheers-x" target="_blank">Orange Cheers</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://github.com/frankli0324" target="_blank">frankli0324</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://github.com/DX39061" target="_blank">DX3906</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://github.com/GZTimeWalker" target="_blank">GZTime</a></Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/cdcq" target="_blank" rel="noreferrer">
+                      cdcq
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/orangecheers-x" target="_blank" rel="noreferrer">
+                      Orange Cheers
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/frankli0324" target="_blank" rel="noreferrer">
+                      frankli0324
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/DX39061" target="_blank" rel="noreferrer">
+                      DX3906
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/GZTimeWalker" target="_blank" rel="noreferrer">
+                      GZTime
+                    </a>
+                  </Tag>
                 </div>
                 <h3 class="font-bold">Artists</h3>
                 <div class="flex flex-row flex-wrap justify-center">
-                  <Tag level="info" class="m-1"><a href="https://github.com/hypnoticss" target="_blank">Hypnotics</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://twitter.com/LAttic1ng" target="_blank">Ac4ae0</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://github.com/arttnba3" target="_blank">Arttnba3</a></Tag>
-                  <Tag level="info" class="m-1"><span>W3nL0u</span></Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/hypnoticss" target="_blank" rel="noreferrer">
+                      Hypnotics
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://twitter.com/LAttic1ng" target="_blank" rel="noreferrer">
+                      Ac4ae0
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://github.com/arttnba3" target="_blank" rel="noreferrer">
+                      Arttnba3
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <span>W3nL0u</span>
+                  </Tag>
                 </div>
                 <h3 class="font-bold">Opensource projects & 3rd libraries</h3>
                 <div class="flex flex-row flex-wrap justify-center">
-                  <Tag level="warning" class="m-1"><a href="https://github.com/rust-lang/rust" target="_blank">Rust</a></Tag>
-                  <Tag level="warning" class="m-1"><a href="https://www.typescriptlang.org/" target="_blank">Typescript</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://tokio.rs/" target="_blank">Tokio</a></Tag>
-                  <Tag level="info" class="m-1"><a href="https://solidjs.com/" target="_blank">Solid JS</a></Tag>
-                  <Tag level="success" class="m-1"><a href="https://k3s.io/" target="_blank">K3S</a></Tag>
-                  <Tag level="success" class="m-1"><a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a></Tag>
-                  <Tag level="success" class="m-1"><a href="https://valkey.io/" target="_blank">Valkey</a></Tag>
-                  <Tag level="success" class="m-1"><a href="https://git-scm.com/" target="_blank">Git</a></Tag>
-                  <Tag level="success" class="m-1"><a href="https://rune-rs.github.io/" target="_blank">Rune</a></Tag>
+                  <Tag level="warning" class="m-1">
+                    <a href="https://github.com/rust-lang/rust" target="_blank" rel="noreferrer">
+                      Rust
+                    </a>
+                  </Tag>
+                  <Tag level="warning" class="m-1">
+                    <a href="https://www.typescriptlang.org/" target="_blank" rel="noreferrer">
+                      Typescript
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://tokio.rs/" target="_blank" rel="noreferrer">
+                      Tokio
+                    </a>
+                  </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://solidjs.com/" target="_blank" rel="noreferrer">
+                      Solid JS
+                    </a>
+                  </Tag>
+                  <Tag level="success" class="m-1">
+                    <a href="https://k3s.io/" target="_blank" rel="noreferrer">
+                      K3S
+                    </a>
+                  </Tag>
+                  <Tag level="success" class="m-1">
+                    <a href="https://www.postgresql.org/" target="_blank" rel="noreferrer">
+                      PostgreSQL
+                    </a>
+                  </Tag>
+                  <Tag level="success" class="m-1">
+                    <a href="https://valkey.io/" target="_blank" rel="noreferrer">
+                      Valkey
+                    </a>
+                  </Tag>
+                  <Tag level="success" class="m-1">
+                    <a href="https://git-scm.com/" target="_blank" rel="noreferrer">
+                      Git
+                    </a>
+                  </Tag>
+                  <Tag level="success" class="m-1">
+                    <a href="https://rune-rs.github.io/" target="_blank" rel="noreferrer">
+                      Rune
+                    </a>
+                  </Tag>
                 </div>
               </div>
             </div>
@@ -92,8 +166,7 @@ export default function() {
             <span class="text-primary self-end">with caffine, a cat named 'dog', and love.</span>
           </h2>
           <p class="font-bold opacity-60 max-w-3xl">
-            Idealism is that you will probably never receive something back,
-            but nonetheless still decide to give.
+            Idealism is that you will never receive something back, but nonetheless still decide to give.
             <span class="text-primary animate-ping">_</span>
           </p>
         </section>
