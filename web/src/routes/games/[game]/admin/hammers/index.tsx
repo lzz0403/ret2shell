@@ -49,7 +49,7 @@ function mergeChats(
       user_id: 0,
       user_name: "Ciallo～(∠・ω< )⌒☆",
       avatar: undefined,
-      content: `${t("game.challenge.chatSolvedMessage")} ٩(๑•̀ω•́๑)۶`,
+      content: `${t("game.challenge.chatSolvedMessage")} ٩(๑•ω•๑)۶`,
       created_at: solvedAt,
       is_admin: true,
       challenge_id: challengeId,
@@ -257,7 +257,7 @@ export default function () {
                 </A>
                 <div class="w-4 flex-shrink-0" />
                 <div class="flex-1 w-0 flex flex-col space-y-1 items-start">
-                  <label class="label">Ciallo～(∠・ω&lt; )⌒☆</label>
+                  <header class="label">Ciallo～(∠・ω&lt; )⌒☆</header>
                   <Card class="max-w-full" contentClass="flex flex-col space-y-2 p-2 max-w-full">
                     <span>{t("game.challenge.adminHammerTips")}</span>
                     <div class="flex flex-col space-y-2 max-w-full">
@@ -324,7 +324,7 @@ export default function () {
                         class={`flex-1 w-0 flex flex-col space-y-1 ${chat.user_id !== accountStore.id ? "items-start" : "items-end"}`}
                       >
                         <Show when={index() === 0 || chats().at(index() - 1)?.user_id !== chat.user_id}>
-                          <label class="label space-x-2">
+                          <header class="label space-x-2">
                             <Show when={chat.user_id !== 0}>
                               <Show
                                 when={chat.is_admin}
@@ -334,7 +334,7 @@ export default function () {
                               </Show>
                             </Show>
                             <A href={`/users/${chat.user_id}`}>{chat.user_name}</A>
-                          </label>
+                          </header>
                         </Show>
                         <div
                           class={`peer flex max-w-full ${chat.user_id !== accountStore.id ? "flex-row" : "flex-row-reverse"}`}
@@ -355,9 +355,9 @@ export default function () {
                         <Show
                           when={index() === chats().length - 1 || chats().at(index() + 1)?.user_id !== chat.user_id}
                         >
-                          <label class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
+                          <header class="opacity-0 peer-hover:opacity-60 text-sm transition-all duration-300">
                             {chat.created_at.toFormat("yyyy-MM-dd HH:mm:ss")}
-                          </label>
+                          </header>
                         </Show>
                       </div>
                     </div>
@@ -472,7 +472,7 @@ export default function () {
                 </Button>
               </div>
               <Editor
-                class={`bg-layer rounded-lg ${editorExpanded() ? "h-64" : "h-16"}`}
+                class={`bg-layer rounded-lg ${editorExpanded() ? "h-64" : "min-h-16 max-h-64"}`}
                 value={chat()}
                 placeholder="MARKDOWN"
                 lang="markdown"
