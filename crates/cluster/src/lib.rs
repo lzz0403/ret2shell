@@ -16,8 +16,7 @@ mod traits;
 
 pub use k8s_openapi::api::core::v1::{ConfigMap, Namespace, Node, Pod};
 pub use kube::api::ObjectList;
-pub use manager::Cluster;
-pub use manager::CHALLENGE_NS;
+pub use manager::{Cluster, CHALLENGE_NS};
 use r2s_config::cluster;
 use tracing::{error, info};
 pub use traits::ClusterError;

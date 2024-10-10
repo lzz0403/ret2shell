@@ -98,7 +98,7 @@ function InstituteManagement() {
         <span class="flex-1 text-start">{t("game.admin.organize.restrict")}</span>
       </Checkbox>
       <div class="flex flex-col space-y-1">
-        <label class="label">{t("game.admin.organize.instituteEnabled")}</label>
+        <header class="label">{t("game.admin.organize.instituteEnabled")}</header>
         <div class="flex flex-row flex-wrap">
           <For each={accountStore.institutes}>
             {(institute) => (

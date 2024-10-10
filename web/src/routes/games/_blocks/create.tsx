@@ -121,7 +121,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
           )}
         </Field>
         <div class="flex flex-col space-y-1">
-          <label class="label">{t("game.miscSettings")}</label>
+          <header class="label">{t("game.miscSettings")}</header>
           <div class="flex flex-row">
             <Field name="can_register_after_started" type="boolean">
               {(field, props) => (

@@ -8,7 +8,7 @@ export type CheckboxProps = {
   inputProps?: JSX.IntrinsicElements["input"];
 };
 
-export default function(
+export default function (
   props: CheckboxProps &
     CheckboxRootProps & {
       children?: JSX.Element;

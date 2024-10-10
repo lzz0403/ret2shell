@@ -1,9 +1,9 @@
 import { onMount, Show } from "solid-js";
 import { themeStore } from "@storage/theme";
-import BgBlurNight from '@assets/imgs/bg-blur-stars.webp'
-import BgBlurDay from '@assets/imgs/bg-blur-suzume.webp'
+import BgBlurNight from "@assets/imgs/bg-blur-stars.webp";
+import BgBlurDay from "@assets/imgs/bg-blur-suzume.webp";
 
-export default function() {
+export default function () {
   let svgPath1: SVGPathElement;
   let svgPath2: SVGPathElement;
   onMount(() => {
@@ -19,19 +19,21 @@ export default function() {
           <img
             src={BgBlurNight}
             alt=""
-            class={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${themeStore.colorScheme === 'dark' ? 'opacity-100' : 'opacity-0'
-              }`}
+            class={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${
+              themeStore.colorScheme === "dark" ? "opacity-100" : "opacity-0"
+            }`}
             onContextMenu={() => {
-              return false
+              return false;
             }}
           />
           <img
             src={BgBlurDay}
             alt=""
-            class={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${themeStore.colorScheme === 'light' ? 'opacity-100' : 'opacity-0'
-              }`}
+            class={`absolute top-0 left-0 w-full h-full object-cover transition-opacity duration-700 ${
+              themeStore.colorScheme === "light" ? "opacity-100" : "opacity-0"
+            }`}
             onContextMenu={() => {
-              return false
+              return false;
             }}
           />
         </div>

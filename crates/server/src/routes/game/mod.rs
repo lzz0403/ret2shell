@@ -521,7 +521,7 @@ async fn get_connected_devices(
   let clients = event.clients.read().await;
   let clients = clients
     .iter()
-    .filter(|(id, _, _, _)| game.id == *id)
+    .filter(|(id, ..)| game.id == *id)
     .map(|(_, c, a, d)| ConnectedDevice {
       client: c.clone(),
       address: a.to_string(),

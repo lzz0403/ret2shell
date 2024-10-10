@@ -35,6 +35,7 @@ use serde::{Deserialize, Serialize};
 use tokio_util::io::{ReaderStream, StreamReader};
 use tracing::{debug, info, warn};
 
+use super::worker;
 use crate::{
   middleware::{
     auth::{self, is_game_admin, Token},
@@ -42,8 +43,6 @@ use crate::{
   },
   traits::{GlobalState, ResponseError},
 };
-
-use super::worker;
 
 const LABEL_ALPHABET: [char; 62] = [
   '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
@@ -283,7 +282,9 @@ async fn update_challenge(
   Extension(game): Extension<game::Model>, Extension(prev_challenge): Extension<challenge::Model>,
   Json(challenge): Json<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  // refuse to change some columns when challenge is cloned from another challenge.
+  // refuse to change some columns when challenge is cloned from another
+  // challenge.
+  //
   // if prev_challenge.ref_id.is_some() {
   //   check_const_columns!(
   //     prev_challenge,

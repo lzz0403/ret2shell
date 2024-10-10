@@ -1,8 +1,7 @@
 use tracing::debug;
 
-use crate::traits::OAuthError;
-
 use super::xml::{get_info_from_xml, IdsInfo};
+use crate::traits::OAuthError;
 
 pub async fn get_user_info_by_ticket(
   cas_addr: impl AsRef<str>, host_addr: impl AsRef<str>, ticket: impl AsRef<str>,

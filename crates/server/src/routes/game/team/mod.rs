@@ -17,6 +17,7 @@ use r2s_migrator::Database;
 use serde::Deserialize;
 use tracing::info;
 
+use super::worker;
 use crate::{
   middleware::{
     auth::{self, is_game_admin, Token},
@@ -24,8 +25,6 @@ use crate::{
   },
   traits::{GlobalState, ResponseError},
 };
-
-use super::worker;
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()

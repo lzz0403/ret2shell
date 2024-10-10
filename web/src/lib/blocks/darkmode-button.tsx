@@ -2,7 +2,7 @@ import { setColorScheme, t, themeStore } from "@storage/theme";
 import { Show } from "solid-js";
 import darkmodeStars from "./darkmode-stars.svg";
 
-export default function() {
+export default function () {
   let wrapper: HTMLButtonElement;
 
   return (

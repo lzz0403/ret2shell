@@ -18,14 +18,12 @@ use kube::{
   runtime::reflector::Lookup,
   Api, Client,
 };
-use tokio_util::codec::Framed;
-
 use r2s_config::cluster::{ChallengeEnv, Config};
+use tokio_util::codec::Framed;
 use tracing::{debug, error, warn};
 
-use crate::registry::Registry;
-
 use super::traits::ClusterError;
+use crate::registry::Registry;
 
 pub const CHALLENGE_NS: &str = "ret2shell-challenge";
 

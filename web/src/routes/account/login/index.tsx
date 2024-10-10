@@ -195,7 +195,7 @@ export default function () {
                     alt="Illustrated by hypnotics"
                     title="Illustrated by hypnotics"
                   />
-                  <label>{t("account.login.accountMascotTip")}</label>
+                  <header>{t("account.login.accountMascotTip")}</header>
                 </Match>
                 <Match when={mascot() === xdsecMascotUnsee}>
                   <img
@@ -204,7 +204,7 @@ export default function () {
                     alt="Illustrated by hypnotics"
                     title="Illustrated by hypnotics"
                   />
-                  <label>{t("account.login.passwordMascotTip")}</label>
+                  <header>{t("account.login.passwordMascotTip")}</header>
                 </Match>
                 <Match when={mascot() === xdsecMascotHappy}>
                   <img
@@ -213,7 +213,7 @@ export default function () {
                     alt="Illustrated by hypnotics"
                     title="Illustrated by hypnotics"
                   />
-                  <label>{t("account.login.successMascotTip")}</label>
+                  <header>{t("account.login.successMascotTip")}</header>
                 </Match>
                 <Match when={mascot() === xdsecMascotCrying}>
                   <img
@@ -222,7 +222,7 @@ export default function () {
                     alt="Illustrated by hypnotics"
                     title="Illustrated by hypnotics"
                   />
-                  <label>{t("account.login.failMascotTip")}</label>
+                  <header>{t("account.login.failMascotTip")}</header>
                 </Match>
               </Switch>
             </div>

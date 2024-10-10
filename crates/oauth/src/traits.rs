@@ -23,7 +23,8 @@ pub trait OAuthProvider {
   ///
   /// # returns
   ///
-  /// * `Ok((auth_key, data))` - auth_key is the unique key for the oauth account, data is the user data
+  /// * `Ok((auth_key, data))` - auth_key is the unique key for the oauth
+  ///   account, data is the user data
   async fn login(
     &self, account: &str, email: &str, query: HashMap<String, String>,
   ) -> Result<(String, Value), OAuthError>;

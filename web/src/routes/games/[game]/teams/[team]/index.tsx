@@ -106,7 +106,7 @@ function AdminManagement(props: {
       </h3>
       <section class="flex flex-col space-y-2 mt-2">
         <div class="flex flex-col space-y-1">
-          <label class="label">{t("game.team.token")}</label>
+          <header class="label">{t("game.team.token")}</header>
           <Clipboard value={props.team?.token || undefined} />
         </div>
         <Form class="flex flex-col space-y-2" onSubmit={onSubmit}>
@@ -267,7 +267,7 @@ function SelfManagement(props: {
       </h3>
       <section class="flex flex-col space-y-2 mt-2">
         <div class="flex flex-col space-y-1">
-          <label class="label">{t("game.team.token")}</label>
+          <header class="label">{t("game.team.token")}</header>
           <Clipboard value={gameStore.team?.token || undefined} />
         </div>
         <Form class="flex flex-col space-y-2" onSubmit={onSubmit}>
