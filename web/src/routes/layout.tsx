@@ -134,21 +134,6 @@ function GameNav(props: { size: "sm" | "md" }) {
           <span>{t("game.scoreboard.title")}</span>
         </Link>
       </li>
-      <Show when={gameStore.current?.end_at && gameStore.current.end_at < DateTime.now()}>
-        <li class="nav">
-          <Link
-            class="w-full"
-            href={`/games/${gameStore.current?.id}/writeups`}
-            activeMatch="partial"
-            ghost
-            justify="start"
-            size={props.size}
-          >
-            <span class="icon-[fluent--book-open-20-regular] w-5 h-5" />
-            <span>{t("game.writeup.title")}</span>
-          </Link>
-        </li>
-      </Show>
       <Show when={isGameAdmin()}>
         <li class="nav">
           <Link

@@ -1,9 +1,7 @@
-import { Select, type SelectRootProps } from "@ark-ui/solid";
-import type { CollectionItem } from "@ark-ui/solid/dist/types/types";
-import type { FormStore } from "@modular-forms/solid";
+import { createListCollection, Select, type SelectRootProps, type CollectionItem } from "@ark-ui/solid";
 import { fullTheme } from "@storage/theme";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { type ComponentProps, Index, Show, splitProps } from "solid-js";
+import { type ComponentProps, createMemo, Index, Show, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 
 export type SelectProps = {
@@ -13,18 +11,20 @@ export type SelectProps = {
   size?: "sm" | "md";
   ghost?: boolean;
   error?: string;
-  // biome-ignore lint/suspicious/noExplicitAny: the options are not ensured
-  form?: FormStore<any, undefined>;
+  items: SelectItemType[];
 };
 
-export interface SelectItemType {
+export interface SelectItemType extends CollectionItem {
   label: string;
   icon?: string;
   value: string;
   disabled?: boolean;
 }
 
-export default function <T extends CollectionItem & SelectItemType>(props: SelectRootProps<T> & SelectProps) {
+export default function (
+  props: Pick<SelectRootProps<SelectItemType>, Exclude<keyof SelectRootProps<SelectItemType>, "collection">> &
+    SelectProps
+) {
   const [selectProps, others] = splitProps(props, [
     "label",
     "placeholder",
@@ -32,13 +32,20 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
     "ghost",
     "error",
     "inputProps",
-    "form",
+    "items",
   ]);
+
+  const collection = createMemo(() =>
+    createListCollection({
+      items: selectProps.items,
+    })
+  );
+
   return (
     <Select.Root
       {...others}
       class={`flex flex-col space-y-1 ${others.class}`}
-      items={others.items}
+      collection={collection()}
       positioning={{
         sameWidth: true,
       }}
@@ -48,11 +55,9 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
       </Show>
       <Select.Control class="w-full">
         <Select.Trigger
-          class={`btn flex flex-row ${
-            selectProps.size === "sm" ? "px-0" : "px-2"
-          } gap-0 items-center w-full ${selectProps.size === "sm" ? "btn-sm" : "btn-sm lg:btn-md"} ${selectProps.ghost ? "btn-ghost" : ""} ${
+          class={`btn flex flex-row gap-0 items-center w-full ${selectProps.size === "sm" ? "btn-sm" : "btn-md"} ${selectProps.ghost ? "btn-ghost" : ""} ${
             selectProps.error ? "border-error" : ""
-          }`.trim()}
+          } ${selectProps.size === "sm" ? "px-1" : "px-2"}`.trim()}
         >
           <Show
             when={props.error}
@@ -65,10 +70,14 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
           >
             <span class="text-error flex-1 px-4 text-start">{props.error}</span>
           </Show>
-          <Select.Indicator class="btn btn-sm btn-square btn-ghost items-center justify-center">
+          <Select.Indicator
+            class={`btn ${selectProps.size === "sm" ? "btn-xs" : "btn-sm"} btn-square btn-ghost items-center justify-center`}
+          >
             <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" />
           </Select.Indicator>
-          <Select.ClearTrigger class="btn btn-sm btn-square btn-ghost items-center justify-center">
+          <Select.ClearTrigger
+            class={`btn ${selectProps.size === "sm" ? "btn-xs" : "btn-sm"} btn-square btn-ghost items-center justify-center`}
+          >
             <span class="icon-[fluent--dismiss-circle-20-regular] w-5 h-5" />
           </Select.ClearTrigger>
         </Select.Trigger>
@@ -88,7 +97,7 @@ export default function <T extends CollectionItem & SelectItemType>(props: Selec
             >
               <Select.ItemGroup class="card-content p-2">
                 <div class="flex flex-col space-y-2">
-                  <Index each={others.items}>
+                  <Index each={selectProps.items}>
                     {(item) => (
                       <Select.Item
                         item={item().value}

@@ -506,24 +506,47 @@ export async function updateGameAuditLog(game_id: number, audit_id: number, audi
     .json<Audit>();
 }
 
-export async function getGameStatistics(game_id: number, in_game?: boolean) {
+export type GameStatistics = {
+  total_players: number;
+  institute_players: { [key: number]: number };
+  total_teams: number;
+  total_passed_teams: number;
+  institute_teams: { [key: number]: number };
+  total_submissions: number;
+  total_solves: number;
+  challenge_submissions: { [key: number]: number };
+  challenge_solves: { [key: number]: number };
+}
+
+export async function getGameStatistics(game_id: number, in_game?: boolean, institute?: number) {
   return await api
     .get(`${api_root}/game/${game_id}/statistics`, {
       searchParams: JSON.parse(
         JSON.stringify({
           in_game,
+          institute,
         })
       ),
     })
-    .json<{
-      total_players: number;
-      institute_players: { [key: number]: number };
-      total_teams: number;
-      total_passed_teams: number;
-      institute_teams: { [key: number]: number };
-      total_submissions: number;
-      total_solves: number;
-      challenge_submissions: { [key: number]: number };
-      challenge_solves: { [key: number]: number };
-    }>();
+    .json<GameStatistics>();
 }
+
+export type GameStatisticsExport = {
+  statistics: GameStatistics;
+  scoreboard: [Team, User[]][];
+  audits: Audit[];
+};
+
+export async function getGameStatisticsExport(game_id: number, in_game?: boolean, institute?: number) {
+  return await api
+    .get(`${api_root}/game/${game_id}/statistics/export`, {
+      searchParams: JSON.parse(
+        JSON.stringify({
+          in_game,
+          institute,
+        })
+      ),
+    })
+    .json<GameStatisticsExport>();
+}
+

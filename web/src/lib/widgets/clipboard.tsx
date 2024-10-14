@@ -1,7 +1,7 @@
 import { Clipboard, type ClipboardRootProps } from "@ark-ui/solid";
 import { t } from "@storage/theme";
 
-export default function (props: ClipboardRootProps) {
+export default function(props: ClipboardRootProps) {
   return (
     <Clipboard.Root {...props}>
       <Clipboard.Control class="w-full flex flex-row space-x-2">

@@ -35,6 +35,10 @@
       @apply px-2 rounded-md min-h-8;
     }
 
+    &-xs {
+      @apply px-1 rounded-sm min-h-6;
+    }
+
     &-primary {
       @apply bg-primary text-primary-content outline-primary;
 
@@ -236,6 +240,10 @@
 
       &.btn-sm {
         @apply rounded-md min-h-8 min-w-8;
+      }
+
+      &.btn-xs {
+        @apply rounded-md min-h-6 min-w-6;
       }
     }
 

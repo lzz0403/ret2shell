@@ -67,7 +67,12 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             ))
             .route("/", get(get_audit_messages)),
         )
-        .route("/statistics", get(get_game_statistics))
+        .nest(
+          "/statistics",
+          Router::new()
+            .route("/", get(get_game_statistics))
+            .route("/export", get(export_statistics)),
+        )
         .route("/", patch(update_game).delete(delete_game))
         .route_layer(middleware::from_fn(auth::game_admin_required))
         .route("/solve", get(get_self_solves))
@@ -631,18 +636,18 @@ struct GameStatistics {
   pub challenge_solves: HashMap<i64, u64>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 struct GameStatisticsQuery {
   pub in_game: Option<bool>,
+  pub institute: Option<i64>,
 }
 
-async fn get_game_statistics(
-  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Query(query): Query<GameStatisticsQuery>,
-) -> Result<impl IntoResponse, ResponseError> {
+async fn get_game_statistics_impl(
+  db: &Database, game: &game::Model, query: GameStatisticsQuery,
+) -> Result<GameStatistics, ResponseError> {
   let in_game = query.in_game.unwrap_or(false);
   let institutes = institute::get_list(&db.conn).await?;
-  let total_players = user::count(&db.conn, false, None, Some(game.id)).await?;
+  let total_players = user::count(&db.conn, false, query.institute, Some(game.id)).await?;
   let mut institute_players = HashMap::new();
   for i in institutes.iter() {
     institute_players.insert(
@@ -650,8 +655,10 @@ async fn get_game_statistics(
       user::count(&db.conn, false, Some(i.id), Some(game.id)).await?,
     );
   }
-  let total_teams = team_db::count(&db.conn, game.id, team_db::State::Banned, None).await?;
-  let total_passed_teams = team_db::count(&db.conn, game.id, team_db::State::Passed, None).await?;
+  let total_teams =
+    team_db::count(&db.conn, game.id, team_db::State::Banned, query.institute).await?;
+  let total_passed_teams =
+    team_db::count(&db.conn, game.id, team_db::State::Passed, query.institute).await?;
   let mut institute_teams = HashMap::new();
   for i in institutes.iter() {
     institute_teams.insert(
@@ -659,10 +666,28 @@ async fn get_game_statistics(
       team_db::count(&db.conn, game.id, team_db::State::Banned, Some(i.id)).await?,
     );
   }
-  let total_submissions =
-    submission::count(&db.conn, false, Some(game.id), None, None, None, in_game).await?;
-  let total_solves =
-    submission::count(&db.conn, true, Some(game.id), None, None, None, in_game).await?;
+  let total_submissions = submission::count(
+    &db.conn,
+    false,
+    Some(game.id),
+    None,
+    None,
+    None,
+    query.institute,
+    in_game,
+  )
+  .await?;
+  let total_solves = submission::count(
+    &db.conn,
+    true,
+    Some(game.id),
+    None,
+    None,
+    None,
+    query.institute,
+    in_game,
+  )
+  .await?;
 
   let mut challenge_solves = HashMap::new();
   let mut challenge_submissions = HashMap::new();
@@ -677,6 +702,7 @@ async fn get_game_statistics(
         Some(c.id),
         None,
         None,
+        query.institute,
         in_game,
       )
       .await?,
@@ -690,13 +716,14 @@ async fn get_game_statistics(
         Some(c.id),
         None,
         None,
+        query.institute,
         in_game,
       )
       .await?,
     );
   }
 
-  Ok(Json(GameStatistics {
+  Ok(GameStatistics {
     total_players,
     institute_players,
     total_teams,
@@ -706,5 +733,59 @@ async fn get_game_statistics(
     total_solves,
     challenge_submissions,
     challenge_solves,
+  })
+}
+
+async fn get_game_statistics(
+  State(db): State<Database>, Extension(game): Extension<game::Model>,
+  Query(query): Query<GameStatisticsQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let statistics = get_game_statistics_impl(&db, &game, query).await?;
+  Ok(Json(statistics))
+}
+
+#[derive(Serialize)]
+struct GameStatisticsExport {
+  pub statistics: GameStatistics,
+  pub scoreboard: Vec<(team_db::Model, Vec<user::Model>)>,
+  pub audits: Vec<audit::ExModel>,
+}
+
+async fn export_statistics(
+  State(db): State<Database>, Extension(game): Extension<game::Model>,
+  Query(query): Query<GameStatisticsQuery>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let statistics = get_game_statistics_impl(&db, &game, query.clone()).await?;
+  let scoreboard_teams = team_db::get_page(
+    &db.conn,
+    game.id,
+    1,
+    statistics.total_teams,
+    Some(team_db::State::Banned),
+    query.institute,
+    None,
+    Some("score".to_owned()),
+    false,
+  )
+  .await?;
+  let mut scoreboard = Vec::new();
+  for team in scoreboard_teams.0.iter() {
+    let members = team_db::get_members(&db.conn, team.id).await?;
+    scoreboard.push((team.clone(), members));
+  }
+  let audits = audit::get_list_ex(
+    &db.conn,
+    Some(game.id),
+    query.institute,
+    None,
+    None,
+    None,
+    Some(audit::State::Confirmed),
+  )
+  .await?;
+  Ok(Json(GameStatisticsExport {
+    statistics,
+    scoreboard,
+    audits,
   }))
 }

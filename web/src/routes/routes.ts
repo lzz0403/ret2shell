@@ -135,24 +135,6 @@ export const routes = {
               component: lazy(() => import("./games/[game]/index")),
             },
             {
-              path: "/writeups",
-              component: lazy(() => import("./games/[game]/writeups/layout")),
-              children: [
-                {
-                  path: "/",
-                  component: lazy(() => import("./games/[game]/writeups/index")),
-                },
-                {
-                  path: "/edit",
-                  component: lazy(() => import("./games/[game]/writeups/edit/index")),
-                },
-                {
-                  path: "/:writeup",
-                  component: lazy(() => import("./games/[game]/writeups/[writeup]/index")),
-                },
-              ],
-            },
-            {
               path: "/admin",
               component: lazy(() => import("./games/[game]/admin/layout")),
               children: [

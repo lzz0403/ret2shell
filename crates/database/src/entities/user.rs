@@ -256,13 +256,15 @@ impl ActiveModelBehavior for ActiveModel {}
 
 pub async fn get<C>(db: &C, user_id: i64) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(user_id).one(db).await
 }
 
 pub async fn get_ex<C>(db: &C, user_id: i64) -> Result<Option<ExModel>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(user_id)
     .join(JoinType::LeftJoin, Relation::Institute.def())
     .column_as(institute::Column::Name, "institute_name")
@@ -273,7 +275,8 @@ where
 
 pub async fn get_multiple<C>(db: &C, user_ids: &[i64]) -> Result<Vec<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find()
     .filter(Condition::any().add(Expr::col(Column::Id).in_tuples(user_ids.to_vec())))
     .all(db)
@@ -282,7 +285,8 @@ where
 
 pub async fn get_by_account_or_email<C>(db: &C, n: &str) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find()
     .filter(
       Condition::any()
@@ -298,7 +302,10 @@ pub async fn get_page<C>(
   with_hidden: bool, with_institute_id: Option<i64>,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
+  let page_size = page_size.max(1);
+  let page = page.max(1);
   let mut sql = Entity::find()
     .select_only()
     .columns(Column::iter().filter(|col| !matches!(col, Column::Password | Column::Description)));
@@ -362,7 +369,8 @@ pub async fn count<C>(
   db: &C, with_banned: bool, institute_id: Option<i64>, game_id: Option<i64>,
 ) -> Result<u64, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let mut sql = Entity::find();
   if !with_banned {
     sql = sql.filter(Column::Banned.eq(false));
@@ -372,16 +380,20 @@ where
   }
   if let Some(game_id) = game_id {
     sql = sql
-      .join(JoinType::InnerJoin, Relation::User2Team.def())
-      .join(JoinType::InnerJoin, super::user2_team::Relation::Team.def())
-      .filter(super::team::Column::GameId.eq(game_id));
+      .join(JoinType::InnerJoin, Relation::Submission.def())
+      .join(
+        JoinType::InnerJoin,
+        super::submission::Relation::Challenge.def(),
+      )
+      .filter(super::challenge::Column::GameId.eq(game_id));
   }
   sql.count(db).await
 }
 
 pub async fn create<C>(db: &C, user: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let active_model: ActiveModel = ActiveModel {
     id: ActiveValue::NotSet,
     ..user.into_active_model().reset_all()
@@ -391,7 +403,8 @@ where
 
 pub async fn update<C>(db: &C, user: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let active_model: ActiveModel = ActiveModel {
     id: ActiveValue::Unchanged(user.id),
     password: ActiveValue::NotSet,
@@ -402,7 +415,8 @@ where
 
 pub async fn update_password<C>(db: &C, user_id: i64, password: String) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let active_model: ActiveModel = ActiveModel {
     id: ActiveValue::Set(user_id),
     password: ActiveValue::Set(Some(password)),
@@ -413,6 +427,7 @@ where
 
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::delete_by_id(id).exec(db).await.map(|_| ())
 }

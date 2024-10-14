@@ -495,6 +495,7 @@ async fn get_challenge_solves_status(
     Some(challenge.id),
     None,
     None,
+    None,
     team.is_some(),
   )
   .await?;
@@ -505,6 +506,7 @@ async fn get_challenge_solves_status(
       Some(challenge.game_id),
       Some(challenge.id),
       Some(team.id),
+      None,
       None,
       false,
     )
@@ -518,6 +520,7 @@ async fn get_challenge_solves_status(
       Some(challenge.id),
       None,
       Some(token.id),
+      None,
       false,
     )
     .await?

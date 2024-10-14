@@ -29,7 +29,7 @@ use super::{challenge, game, team, user};
 #[sea_orm(rs_type = "i32", db_type = "Integer")]
 pub enum State {
   #[default]
-  Pending   = 0,
+  Pending = 0,
   Misjudged = 1,
   Confirmed = 2,
 }
@@ -135,7 +135,10 @@ pub async fn get_page<C>(
   user_id: Option<i64>, challenge_id: Option<i64>, state: Option<State>,
 ) -> Result<(Vec<Model>, u64), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
+  let page_size = page_size.max(1);
+  let page = page.max(1);
   let mut sql = Entity::find();
   if let Some(game_id) = game_id {
     sql = sql.filter(Column::GameId.eq(game_id));
@@ -161,19 +164,16 @@ where
   Ok((articles, total))
 }
 
-pub async fn get<C>(db: &C, id: i64) -> Result<Option<Model>, DbErr>
-where
-  C: ConnectionTrait, {
-  Entity::find_by_id(id).one(db).await
-}
-
 #[allow(clippy::too_many_arguments)]
 pub async fn get_page_ex<C>(
   db: &C, page: u64, page_size: u64, game_id: Option<i64>, team_id: Option<i64>,
   user_id: Option<i64>, challenge_id: Option<i64>, state: Option<State>,
 ) -> Result<(Vec<ExModel>, u64), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
+  let page_size = page_size.max(1);
+  let page = page.max(1);
   let mut sql = Entity::find()
     .join(JoinType::InnerJoin, Relation::Challenge.def())
     .join(JoinType::LeftJoin, Relation::Team.def())
@@ -203,13 +203,58 @@ where
     .into_model()
     .paginate(db, page_size);
   let total = paginator.num_items().await?;
-  let articles = paginator.fetch_page(page - 1).await?;
-  Ok((articles, total))
+  let audits = paginator.fetch_page(page - 1).await?;
+  Ok((audits, total))
+}
+
+pub async fn get_list_ex<C>(
+  db: &C, game_id: Option<i64>, institute_id: Option<i64>, team_id: Option<i64>,
+  user_id: Option<i64>, challenge_id: Option<i64>, state: Option<State>,
+) -> Result<Vec<ExModel>, DbErr>
+where
+  C: ConnectionTrait,
+{
+  let mut sql = Entity::find()
+    .join(JoinType::InnerJoin, Relation::Challenge.def())
+    .join(JoinType::LeftJoin, Relation::Team.def())
+    .join(JoinType::InnerJoin, Relation::User.def())
+    .join(JoinType::InnerJoin, Relation::Game.def())
+    .column_as(challenge::Column::Name, "challenge_name")
+    .column_as(team::Column::Name, "team_name")
+    .column_as(user::Column::Account, "user_name")
+    .column_as(game::Column::Name, "game_name");
+  if let Some(game_id) = game_id {
+    sql = sql.filter(Column::GameId.eq(game_id));
+  }
+  if let Some(institute_id) = institute_id {
+    sql = sql.filter(super::user::Column::InstituteId.eq(institute_id));
+  }
+  if let Some(team_id) = team_id {
+    sql = sql.filter(Column::TeamId.eq(team_id));
+  }
+  if let Some(user_id) = user_id {
+    sql = sql.filter(Column::UserId.eq(user_id));
+  }
+  if let Some(challenge_id) = challenge_id {
+    sql = sql.filter(Column::ChallengeId.eq(challenge_id));
+  }
+  if let Some(state) = state {
+    sql = sql.filter(Column::State.eq(state));
+  }
+  sql.into_model().all(db).await
+}
+
+pub async fn get<C>(db: &C, id: i64) -> Result<Option<Model>, DbErr>
+where
+  C: ConnectionTrait,
+{
+  Entity::find_by_id(id).one(db).await
 }
 
 pub async fn create<C>(db: &C, model: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let model = ActiveModel {
     id: ActiveValue::NotSet,
     created_at: ActiveValue::Set(Utc::now()),
@@ -220,7 +265,8 @@ where
 
 pub async fn update<C>(db: &C, id: i64, model: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let model = ActiveModel {
     id: ActiveValue::Unchanged(id),
     ..model.into_active_model().reset_all()
@@ -230,6 +276,7 @@ where
 
 pub async fn delete<C>(db: &C, id: i64) -> Result<(), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::delete_by_id(id).exec(db).await.map(|_| ())
 }
