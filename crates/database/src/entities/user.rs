@@ -387,7 +387,7 @@ where
       )
       .filter(super::challenge::Column::GameId.eq(game_id));
   }
-  sql.count(db).await
+  sql.distinct_on([Column::Id]).count(db).await
 }
 
 pub async fn create<C>(db: &C, user: Model) -> Result<Model, DbErr>

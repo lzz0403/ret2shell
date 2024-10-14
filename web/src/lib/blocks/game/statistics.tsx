@@ -15,6 +15,7 @@ import { accountStore, refreshInstitutes } from "@storage/account";
 import { challengeStore, refreshChallenges } from "@storage/challenge";
 import Button from "@widgets/button";
 import Select from "@widgets/select";
+import XLSX from "@e965/xlsx";
 
 export default function GameStatistics(props: {
   inGame?: boolean;
@@ -125,6 +126,103 @@ export default function GameStatistics(props: {
     }
   }
 
+  function exportStatisticsXlsx() {
+    if (gameStore.current) {
+      setExporting(true);
+      getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined)
+        .then((data) => {
+          const workbook = XLSX.utils.book_new();
+          const statisticsSheet = XLSX.utils.sheet_new();
+          const statisticsArr = [];
+          for (const [key, value] of Object.entries(data.statistics)) {
+            statisticsArr.push([key, value]);
+          }
+          // add header
+          XLSX.utils.sheet_add_aoa(
+            statisticsSheet,
+            [[gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"]],
+            { origin: "A1" }
+          );
+          const max_width = statisticsArr.reduce((max, row) => Math.max(max, (row[0] as string).length), 0);
+          statisticsSheet["!cols"] = [{ wch: max_width }];
+          XLSX.utils.sheet_add_aoa(statisticsSheet, statisticsArr, { origin: "A2" });
+          XLSX.utils.book_append_sheet(workbook, statisticsSheet, "Statistics");
+
+          const scoreboardHeader = [
+            "Rank",
+            "ID",
+            "Team",
+            "Institute",
+            ...Array.from({ length: gameStore.current?.team_size ?? 0 }, (_, i) => `PLAYER ${i}`),
+            ...Array.from({ length: challenges().length }, (_, i) => challenges()[i].name),
+          ];
+          const scoreboardSheet = XLSX.utils.aoa_to_sheet([scoreboardHeader]);
+          for (const [index, [team, members]] of data.scoreboard.entries()) {
+            const row = [
+              index + 1,
+              team.id,
+              team.name,
+              accountStore.institutes.find((i) => i.id === team.institute_id)?.name,
+              ...members.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
+              ...challenges().map((c) => team.history.find((h) => h.challenge_id === c.id) ? "*" : ""),
+            ];
+            XLSX.utils.sheet_add_aoa(scoreboardSheet, [row], {
+              origin: "A" + (scoreboardSheet["!ref"]?.split(
+                ":"
+              )[1].split("$")[1] ?? "1")
+            });
+          }
+          XLSX.utils.book_append_sheet(workbook, scoreboardSheet, "Scoreboard");
+
+          const auditHeader = [
+            "Created At",
+            "User",
+            "Team",
+            "Reason",
+          ]
+          const auditSheet = XLSX.utils.aoa_to_sheet([auditHeader]);
+          for (const audit of data.audits) {
+            const row = [
+              audit.created_at,
+              audit.user_name,
+              audit.team_name,
+              audit.reason,
+            ];
+            XLSX.utils.sheet_add_aoa(auditSheet, [row], {
+              origin: "A" + (auditSheet["!ref"]?.split(
+                ":"
+              )[1].split("$")[1] ?? "1")
+            });
+          }
+
+          XLSX.utils.book_append_sheet(workbook, auditSheet, "Audits");
+
+          const blob = new Blob([XLSX.write(workbook, { bookType: "xlsx", type: "array" })], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+          });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `statistics.${gameInstitutes().find((i) => i.id === selectedInstituteId())?.name ?? "general"}.xlsx`;
+          link.click();
+          URL.revokeObjectURL(url);
+          document.body.removeChild(link);
+        })
+        .catch((err: HTTPError) => {
+          err.response.text().then((text) => {
+            addToast({
+              level: "error",
+              description: `${t("game.fetchFailed")}: ${text}`,
+              duration: 5000,
+            });
+          });
+        })
+        .finally(() => {
+          setExporting(false);
+        });
+    }
+  }
+
   return (
     <>
       <Title title={`${t("game.statistics.title")} - ${platformStore.config.name || t("platform.name")}`} />
@@ -147,11 +245,17 @@ export default function GameStatistics(props: {
             />
           </Show>
           <div class="flex-1" />
-          <Button size="sm" square onClick={exportStatisticsJson} loading={exporting()} disabled={exporting()}>
+          <Button size="sm" onClick={exportStatisticsJson} loading={exporting()} disabled={exporting()}>
             <Show when={!exporting()}>
               <span class="icon-[fluent--open-20-regular] w-5 h-5" />
-              <span>JSON</span>
             </Show>
+            <span>JSON</span>
+          </Button>
+          <Button size="sm" onClick={exportStatisticsXlsx} loading={exporting()} disabled={exporting()}>
+            <Show when={!exporting()}>
+              <span class="icon-[fluent--open-20-regular] w-5 h-5" />
+            </Show>
+            <span>XLSX</span>
           </Button>
         </div>
         <Divider />
@@ -159,36 +263,48 @@ export default function GameStatistics(props: {
           <div class="xl:flex-1 flex flex-col space-y-2 lg:space-y-4">
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--emoji-sparkle-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-info">{stats()?.total_players}</span>
+              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                <span class="font-bold text-3xl text-info">{stats()?.total_players}</span>
+              </Show>
               <span class="opacity-60">PLAYERS</span>
             </div>
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--people-team-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-success">{stats()?.total_teams}</span>
+              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                <span class="font-bold text-3xl text-success">{stats()?.total_teams}</span>
+              </Show>
               <span class="opacity-60">TEAMS</span>
             </div>
           </div>
           <div class="xl:flex-1 flex flex-col space-y-2 lg:space-y-4">
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--checkmark-starburst-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-success">{stats()?.total_solves}</span>
+              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                <span class="font-bold text-3xl text-success">{stats()?.total_solves}</span>
+              </Show>
               <span class="opacity-60">SOLVES</span>
             </div>
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--text-bullet-list-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-warning">{stats()?.total_submissions}</span>
+              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                <span class="font-bold text-3xl text-warning">{stats()?.total_submissions}</span>
+              </Show>
               <span class="opacity-60">SUBMISSIONS</span>
             </div>
           </div>
           <div class="xl:flex-1 flex flex-col space-y-2 lg:space-y-4">
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--code-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-info">{challenges().filter((c) => !c.hidden).length}</span>
+              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                <span class="font-bold text-3xl text-info">{challenges().filter((c) => !c.hidden).length}</span>
+              </Show>
               <span class="opacity-60">PLUBLISHED CHALLS</span>
             </div>
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--target-edit-20-regular] w-8 h-8 opacity-80" />
-              <span class="font-bold text-3xl text-info">{challenges().length}</span>
+              <Show when={!loading() && stats()} fallback={<Spin width={24} height={24} />}>
+                <span class="font-bold text-3xl text-info">{challenges().length}</span>
+              </Show>
               <span class="opacity-60">TOTAL CHALLS</span>
             </div>
           </div>
@@ -394,7 +510,7 @@ export default function GameStatistics(props: {
                           .map(([_, v]) => v)
                           .concat(
                             stats()!.total_players -
-                              Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
+                            Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
                           ),
                         barMaxWidth: 64,
                       },
