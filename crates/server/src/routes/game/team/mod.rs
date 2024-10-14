@@ -40,6 +40,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     ))
     .route("/", post(create_team).patch(join_team))
     .route_layer(middleware::from_fn(auth::permission_required_all!(
+      Permission::Basic,
       Permission::Verified
     )))
     .route("/", get(get_team_list))

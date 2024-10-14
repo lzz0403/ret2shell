@@ -51,6 +51,10 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       state.clone(),
       auth::game_access_required,
     ))
+    .route_layer(middleware::from_fn(auth::permission_required_all!(
+      user::Permission::Basic,
+      user::Permission::Verified
+    )))
 }
 
 #[derive(Deserialize)]

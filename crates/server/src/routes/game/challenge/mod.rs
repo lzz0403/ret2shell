@@ -114,6 +114,10 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       state.clone(),
       auth::game_access_required,
     ))
+    .route_layer(middleware::from_fn(auth::permission_required_all!(
+      Permission::Basic,
+      Permission::Verified
+    )))
 }
 
 macro_rules! get_challenge_bucket {
