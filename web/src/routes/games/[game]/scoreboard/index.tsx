@@ -180,8 +180,8 @@ export default function () {
       type: "line",
       step: "end",
       data: t.history
-              .map((h) => [h.changed_at.toMillis(), h.score])
-              .concat([[Math.min(Date.now(), gameStore.current?.end_at.toMillis() ?? Date.now()), t.score]]),
+        .map((h) => [h.changed_at.toMillis(), h.score])
+        .concat([[Math.min(Date.now(), gameStore.current?.end_at.toMillis() ?? Date.now()), t.score]]),
     }));
   };
 

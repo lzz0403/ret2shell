@@ -1,5 +1,5 @@
 import LogoAnimate from "@assets/animates/logo-animate";
-import NarrowTips from "@blocks/narrow-tips";
+// import NarrowTips from "@blocks/narrow-tips";
 import { useSearchParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
@@ -9,7 +9,7 @@ import Card from "@widgets/card";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import { Show, onMount } from "solid-js";
-import Calendar from "./calendar";
+// import Calendar from "./calendar";
 
 export default function () {
   const [searchParams] = useSearchParams();
@@ -17,7 +17,7 @@ export default function () {
   onMount(() => {
     if (searchParams.event) {
       try {
-        const result = Number.parseInt(searchParams.event);
+        const result = Number.parseInt(searchParams.event as string);
         if (result) {
           setTimeout(() => {
             calendarSection.scrollIntoView({ behavior: "smooth" });
@@ -69,25 +69,25 @@ export default function () {
                   </a>
                 </Show>
               </Button>
-              <Show
-                when={platformStore.isOnline}
-                fallback={
-                  <Link href="/docs" ghost>
-                    <span class="icon-[fluent--book-20-regular] w-5 h-5" />
-                    <span>{t("docs.title")}</span>
-                  </Link>
-                }
-              >
-                <Button
-                  ghost
-                  onClick={() => {
-                    document.getElementById("index-calendar")?.scrollIntoView({ behavior: "smooth" });
-                  }}
-                >
-                  <span>{t("calendar.scrollToView")}</span>
-                  <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" />
-                </Button>
-              </Show>
+              {/* <Show */}
+              {/*   when={platformStore.isOnline} */}
+              {/*   fallback={ */}
+              {/*     <Link href="/docs" ghost> */}
+              {/*       <span class="icon-[fluent--book-20-regular] w-5 h-5" /> */}
+              {/*       <span>{t("docs.title")}</span> */}
+              {/*     </Link> */}
+              {/*   } */}
+              {/* > */}
+              {/*   <Button */}
+              {/*     ghost */}
+              {/*     onClick={() => { */}
+              {/*       document.getElementById("index-calendar")?.scrollIntoView({ behavior: "smooth" }); */}
+              {/*     }} */}
+              {/*   > */}
+              {/*     <span>{t("calendar.scrollToView")}</span> */}
+              {/*     <span class="icon-[fluent--chevron-double-down-20-regular] w-5 h-5" /> */}
+              {/*   </Button> */}
+              {/* </Show> */}
               <Show when={!platformStore.config.hide_maker}>
                 <Link square href="/magic/sakana" ghost name="gift">
                   <span class="icon-[fluent--gift-20-regular] w-5 h-5" />
@@ -164,16 +164,16 @@ export default function () {
               </Show>
             </div>
           </section>
-          <Show when={platformStore.isOnline}>
-            <section
-              id="index-calendar"
-              ref={calendarSection!}
-              class="h-full min-h-full snap-center relative overflow-scroll"
-            >
-              <Calendar />
-              <NarrowTips breakpoint="lg" />
-            </section>
-          </Show>
+          {/* <Show when={platformStore.isOnline}> */}
+          {/*   <section */}
+          {/*     id="index-calendar" */}
+          {/*     ref={calendarSection!} */}
+          {/*     class="h-full min-h-full snap-center relative overflow-scroll" */}
+          {/*   > */}
+          {/*     <Calendar /> */}
+          {/*     <NarrowTips breakpoint="lg" /> */}
+          {/*   </section> */}
+          {/* </Show> */}
         </div>
       </div>
     </>

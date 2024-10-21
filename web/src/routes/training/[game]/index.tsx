@@ -21,7 +21,7 @@ import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { accountStore } from "@storage/account";
 import { Permission } from "@models/user";
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   const params = useParams();
   if (!accountStore.token) {
@@ -86,7 +86,7 @@ export default function() {
         setCreating(false);
       });
   }
-  const selectedChallengeId = createMemo(() => Number.parseInt(searchParams.challenge || "NaN") || null);
+  const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "NaN") || null);
   const inEdit = createMemo(() => searchParams.edit === "true");
   const inStatistics = createMemo(() => searchParams.statistics === "true");
   createEffect(() => {
@@ -117,7 +117,8 @@ export default function() {
     }
   });
   onCleanup(() => {
-    setGameStore({ current: null });
+    setGameStore({ current: null, preload: null, team: null, showTeamCover: false });
+    setChallengeStore({ current: null, challenges: [], solves: [] });
   });
 
   const [editing, setEditing] = createSignal(false);

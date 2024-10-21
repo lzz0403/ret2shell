@@ -33,6 +33,7 @@ export function refreshSelfTeam() {
     getSelfTeam(gameStore.current?.id)
       .then((team) => {
         setGameStore({ team });
+        if (!team) return;
         getTeamRank(gameStore.current!.id, team.id)
           .then((rank) => {
             setGameStore({ rank });
@@ -135,7 +136,7 @@ export function canAccessChallenges(): [boolean, string] {
     return [false, t("game.challenge.notStarted")!];
   }
   if (inArchived()) {
-    return [false, t("game.ended")!];
+    return [true, t("game.ended")!];
   }
   if (inProgress() || inArchiving()) {
     if (gameStore.team) {

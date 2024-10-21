@@ -4,6 +4,7 @@ import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Progress from "@widgets/progress";
 import { Match, Switch } from "solid-js";
+import { DateTime } from "luxon";
 
 export default function () {
   const solvedChallenges = () => gameStore.team?.history.filter((h) => !!h.challenge_id).length;
@@ -31,6 +32,18 @@ export default function () {
             value={(solvedChallenges() ?? 0) / (totalChallenges() || 1)}
             static
           />
+        </Match>
+        <Match when={gameStore.current?.archive_at && gameStore.current.archive_at < DateTime.now()}>
+          <Button ghost disabled class="w-full" justify="start">
+            <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
+            <span>{t("game.ended")}</span>
+          </Button>
+        </Match>
+        <Match when={true}>
+          <Button ghost disabled class="w-full" justify="start">
+            <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-primary" />
+            <span>{t("game.canNotParticipate")}</span>
+          </Button>
         </Match>
       </Switch>
     </div>

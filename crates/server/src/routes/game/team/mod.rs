@@ -66,8 +66,9 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
 }
 
 async fn get_self_team(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, team_ext: Option<Extension<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team_ext.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let team = team::get_ex(&db.conn, team.id).await?;
   Ok(Json(team))
 }
