@@ -33,7 +33,7 @@ const api = ky.extend({
           request.headers.set("Authorization", `Bearer ${token}`);
         }
 
-        if (platformStore.enable_ret2codec && request.body instanceof ReadableStream) {
+        if (platformStore.enable_ret2codec && request.headers.get("Content-Type") === "application/json") {
           request.headers.set("X-Original-Content-Type", request.headers.get("Content-Type") || "application/json");
           request.headers.set("Content-Type", "application/x-ret2stream");
         }

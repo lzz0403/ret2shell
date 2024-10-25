@@ -104,7 +104,7 @@ export function DiyBoxContent() {
             setPlatformStore({ enable_ret2codec: !platformStore.enable_ret2codec });
           }}
         >
-          <span class="flex-1 text-start font-normal">Ret 2 Codec</span>
+          <span class="flex-1 text-start font-normal">{t("platform.ret2codec")}</span>
           <Show
             when={platformStore.enable_ret2codec}
             fallback={<span class="icon-[fluent--lock-open-20-regular] w-5 h-5" />}
