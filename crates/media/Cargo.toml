@@ -12,7 +12,7 @@ resolver = "2"
 
 [dependencies]
 tokio = { version = "1.41", features = ["full"] }
-thiserror = "1.0"
+thiserror = "2.0"
 tracing = "0.1"
 ring = "0.17"
 mime = "0.3"

@@ -1,8 +1,7 @@
 import type { Challenge } from "@models/challenge";
-import { Permission } from "@models/user";
 import { useSearchParams } from "@solidjs/router";
-import { accountStore } from "@storage/account";
 import { challengeStore } from "@storage/challenge";
+import { isGameAdmin } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
@@ -17,7 +16,7 @@ export default function Tabs(props: {
   inGame?: boolean;
 }) {
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedChallengeId = createMemo(() => Number.parseInt(searchParams.challenge || "NaN") || null);
+  const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "NaN") || null);
   const [challengeHistory, setChallengeHistory] = createSignal<{ id: number; name: string }[]>([]);
   const inCreate = createMemo(() => searchParams.create === "true");
   const inEditGame = createMemo(() => searchParams.edit === "true");
@@ -77,7 +76,7 @@ export default function Tabs(props: {
                 <span>{t("game.challenge.welcome")}</span>
               </Show>
             </Link>
-            <Show when={accountStore.permissions.includes(Permission.Game)}>
+            <Show when={isGameAdmin()}>
               <Show when={!props.inGame}>
                 <Link
                   active={inStatistics()}

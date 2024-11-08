@@ -1,10 +1,10 @@
 article.prose,
 article.prose * {
-  @apply scroll-m-20 indent-[2em] break-words;
+  @apply scroll-m-20 break-words;
 }
 
 .article-compact.prose * {
-  @apply scroll-m-0 indent-0;
+  @apply scroll-m-0;
 }
 
 .article-compact {
@@ -51,10 +51,6 @@ article.prose * {
   }
 }
 
-nav.toc * {
-  @apply indent-0;
-}
-
 nav.toc {
   @apply prose m-0 p-0;
 }
@@ -73,15 +69,15 @@ nav.toc a {
 
 article > pre,
 article > pre * {
-  @apply text-base break-words indent-0 #{!important};
+  @apply text-base break-words;
 }
 
 article > pre {
-  @apply bg-layer-content/5 backdrop-blur rounded-md mx-1 indent-0 min-w-0 text-wrap #{!important};
+  @apply bg-layer-content/5 backdrop-blur rounded-md mx-1 min-w-0 text-wrap #{!important};
 }
 
 code:not(pre code) {
-  @apply text-[1em] break-words bg-layer-content/10 rounded-sm mx-1 px-1 indent-0 #{!important};
+  @apply text-[1em] break-words bg-layer-content/10 rounded-sm mx-1 px-1 #{!important};
   @apply before:content-[''] after:content-[''] #{!important};
 }
 
@@ -99,16 +95,12 @@ article > h3 > a,
 article > h4 > a,
 article > h5 > a,
 article > h6 > a {
-  @apply no-underline indent-0 #{!important};
-}
-
-article > h1, article > h2, article > h3, article > h4, article > h5, article > h6 {
-  @apply indent-0 #{!important};
+  @apply no-underline #{!important};
 }
 
 article > ol > li,
 article > ul > li {
-  @apply list-inside indent-0 #{!important};
+  @apply list-inside #{!important};
 }
 
 article > h1 > a,
@@ -132,10 +124,10 @@ article > h6 > a:hover::after {
 }
 
 article blockquote {
-  @apply border-l-primary bg-primary/10 indent-0 rounded-md p-0 m-1 backdrop-blur #{!important};
+  @apply border-l-primary bg-primary/10 rounded-md p-0 m-1 backdrop-blur #{!important};
 
   & > p {
-    @apply px-4 py-2 indent-0 #{!important};
+    @apply px-4 py-2 #{!important};
     @apply before:content-[''] after:content-[''] #{!important};
   }
 }

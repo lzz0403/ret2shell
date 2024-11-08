@@ -28,7 +28,7 @@ lettre = { version = "0.11", features = [
   "tracing",
   "builder",
 ], default-features = false }
-thiserror = "1.0"
+thiserror = "2.0"
 futures = "0.3"
 async-nats = "0.37"
 

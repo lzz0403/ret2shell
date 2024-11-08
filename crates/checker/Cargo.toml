@@ -13,7 +13,7 @@ resolver = "2"
 [dependencies]
 rune = { version = "0.13", features = ["tokio"] }
 rune-modules = { version = "0.13", features = ["full"] }
-thiserror = "1.0"
+thiserror = "2.0"
 async-trait = "0.1"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.41", features = ["full"] }

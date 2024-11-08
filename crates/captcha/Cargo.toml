@@ -13,7 +13,7 @@ resolver = "2"
 [dependencies]
 nanoid = "0.4"
 ring = "0.17"
-thiserror = "1.0"
+thiserror = "2.0"
 hex = "0.4"
 biosvg = "0.1"
 serde = { version = "1.0", features = ["derive"] }
