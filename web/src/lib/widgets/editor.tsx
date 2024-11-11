@@ -1,7 +1,5 @@
 import { type ComponentProps, Show, createEffect, createSignal, onMount, splitProps } from "solid-js";
-
 import Card from "./card";
-
 import ace from "ace-builds";
 import "ace-builds/esm-resolver";
 import { type FormStore, setValue } from "@modular-forms/solid";
