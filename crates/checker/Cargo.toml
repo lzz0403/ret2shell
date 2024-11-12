@@ -1,6 +1,6 @@
 [package]
 name = "r2s-checker"
-version = "3.2.0"
+version = "3.3.1"
 edition = "2021"
 rust-version = "1.80.0"
 description = "Challenge checkers for Ret2Shell - A feature-riches CTF challenge platform."
@@ -21,7 +21,7 @@ async-nats = "0.37"
 chrono = "0.4"
 once_cell = "1.20"
 tracing = "0.1"
-ret2script = { version = "1.5", default-features = false }
+ret2script = { version = "1.6", default-features = false }
 
 r2s-config = { version = "3", path = "../config" }
 r2s-database = { version = "3", path = "../database" }

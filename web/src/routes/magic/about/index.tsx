@@ -81,6 +81,11 @@ export default function () {
                       GZTime
                     </a>
                   </Tag>
+                  <Tag level="info" class="m-1">
+                    <a href="https://cnily.me/" target="_blank" rel="noreferrer">
+                      Cnily03
+                    </a>
+                  </Tag>
                 </div>
                 <h3 class="font-bold">Artists</h3>
                 <div class="flex flex-row flex-wrap justify-center">
