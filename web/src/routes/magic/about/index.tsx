@@ -105,7 +105,9 @@ export default function () {
                     </a>
                   </Tag>
                   <Tag level="info" class="m-1">
-                    <span>W3nL0u</span>
+                    <a href="https://xyy9233.github.io/" target="_blank" rel="noreferrer">
+                      W3nL0u
+                    </a>
                   </Tag>
                 </div>
                 <h3 class="font-bold">Opensource projects & 3rd libraries</h3>
