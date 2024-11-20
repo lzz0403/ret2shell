@@ -43,13 +43,13 @@ export default function () {
   const selectedGameId = createMemo(() => {
     const result = searchParams.selected ? Number.parseInt(searchParams.selected as string) : Number.NaN;
     if (Number.isNaN(result)) {
-      return keyGames().at(0)?.id || null;
+      return keyGames().at(0)?.id ?? null;
     }
     return result;
   });
 
   const selectedGame = createMemo(() => {
-    return keyGames().find((game) => game.id === selectedGameId());
+    return keyGames().find((game) => game.id === selectedGameId()) ?? keyGames().at(0);
   });
   createEffect(() => {
     setGameStore({ preload: selectedGame() || null });
