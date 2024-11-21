@@ -24,6 +24,8 @@ pub enum Challenge {
   Score,
   Bucket,
   RefId,
+  ReleaseAt,
+  ArchiveAt,
 }
 
 #[async_trait::async_trait]

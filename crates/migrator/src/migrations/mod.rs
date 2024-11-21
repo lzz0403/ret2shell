@@ -19,3 +19,5 @@ pub mod m_20240104_000007_link_team_user;
 pub mod m_20240104_000008_create_extra;
 pub mod m_20240104_000009_create_audit;
 pub mod m_20240104_000010_create_chat;
+pub mod m_20241122_000001_game_timeline_presets;
+pub mod m_20241122_000002_challenge_timeline;

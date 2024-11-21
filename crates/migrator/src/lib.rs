@@ -33,6 +33,8 @@ impl MigratorTrait for Migrator {
       Box::new(migrations::m_20240104_000008_create_extra::Migration),
       Box::new(migrations::m_20240104_000009_create_audit::Migration),
       Box::new(migrations::m_20240104_000010_create_chat::Migration),
+      Box::new(migrations::m_20241122_000001_game_timeline_presets::Migration),
+      Box::new(migrations::m_20241122_000002_challenge_timeline::Migration),
     ]
   }
 }

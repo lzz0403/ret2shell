@@ -38,6 +38,7 @@ pub enum Game {
   Weight,
   Bucket,
   Token,
+  TimelinePresets,
 }
 
 #[async_trait::async_trait]
