@@ -4,7 +4,7 @@ import type { Challenge } from "@models/challenge";
 import type { Team } from "@models/team";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { For, Show, createMemo } from "solid-js";
+import { For, Match, Show, Switch, createMemo } from "solid-js";
 
 export default function TeamSolves(props: {
   teams: Team[];
@@ -35,7 +35,7 @@ export default function TeamSolves(props: {
   });
   return (
     <>
-      <header class="h-48 border-b border-b-layer-content/10 flex flex-col">
+      <header class="border-b border-b-layer-content/10 flex flex-col">
         <div class="flex flex-row items-center self-end space-x-6 h-24 sticky right-3 lg:right-6">
           <Show when={gameStore.current?.logo} fallback={<LogoAnimate width={80} height={80} />}>
             <img
@@ -48,6 +48,7 @@ export default function TeamSolves(props: {
           </Show>
           <h1 class="text-3xl font-bold">{gameStore.current?.name}</h1>
         </div>
+        <div class="h-2" />
         <div class="h-12 flex flex-row border-b border-b-layer-content/10">
           <For each={tags()}>
             {(tag) => (
@@ -84,9 +85,20 @@ export default function TeamSolves(props: {
                 <For each={challengeMap().get(tag)!}>
                   {(challenge) => (
                     <div class="h-12 w-24 flex items-center justify-center">
-                      <Show when={team.history.find((h) => h.challenge_id === challenge.id)}>
-                        <span class="icon-[fluent--checkmark-circle-20-filled] w-5 h-5 text-success -z-10" />
-                      </Show>
+                      <Switch>
+                        <Match when={team.history.find((h) => h.challenge_id === challenge.id)?.blood_state === 1}>
+                          <span class="icon-[fluent--hexagon-20-filled] w-5 h-5 text-yellow-500 -z-10" />
+                        </Match>
+                        <Match when={team.history.find((h) => h.challenge_id === challenge.id)?.blood_state === 2}>
+                          <span class="icon-[fluent--hexagon-20-filled] w-5 h-5 text-gray-500 -z-10" />
+                        </Match>
+                        <Match when={team.history.find((h) => h.challenge_id === challenge.id)?.blood_state === 3}>
+                          <span class="icon-[fluent--hexagon-20-filled] w-5 h-5 text-info -z-10" />
+                        </Match>
+                        <Match when={team.history.find((h) => h.challenge_id === challenge.id)}>
+                          <span class="icon-[fluent--flag-20-filled] w-5 h-5 text-success -z-10" />
+                        </Match>
+                      </Switch>
                     </div>
                   )}
                 </For>

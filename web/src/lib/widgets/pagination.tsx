@@ -4,9 +4,6 @@ import { For } from "solid-js";
 export default function (props: PaginationRootProps) {
   return (
     <Pagination.Root {...props} class={`flex flex-row space-x-2 items-center justify-center ${props.class}`.trim()}>
-      <Pagination.PrevTrigger class="btn btn-sm lg:btn-md btn-square btn-ghost justify-center">
-        <span class="icon-[fluent--chevron-double-left-20-regular] w-5 h-5" />
-      </Pagination.PrevTrigger>
       <Pagination.Context>
         {(api) => (
           <For each={api().pages}>
@@ -27,9 +24,6 @@ export default function (props: PaginationRootProps) {
           </For>
         )}
       </Pagination.Context>
-      <Pagination.NextTrigger class="btn btn-sm lg:btn-md btn-square btn-ghost justify-center">
-        <span class="icon-[fluent--chevron-double-right-20-regular] w-5 h-5" />
-      </Pagination.NextTrigger>
     </Pagination.Root>
   );
 }
