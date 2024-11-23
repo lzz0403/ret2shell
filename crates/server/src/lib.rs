@@ -119,6 +119,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   let addr = tokio::net::TcpListener::bind(addr_str.clone())
     .await
     .expect("Failed to bind server address");
+  info!("高性能ですから！\\ Φ ω Φ /");
   info!("Server started at [ {} ]", addr_str);
   axum::serve(
     addr,
