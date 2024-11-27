@@ -4,13 +4,6 @@ import viteCompression from "vite-plugin-compression";
 import solidPlugin from "vite-plugin-solid";
 
 export default defineConfig({
-  css: {
-    preprocessorOptions: {
-      scss: {
-        api: "modern",
-      },
-    },
-  },
   plugins: [
     solidPlugin(),
     viteCompression(),
