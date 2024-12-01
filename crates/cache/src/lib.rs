@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-pub use fred::error::{RedisError, RedisErrorKind};
+pub use fred::error::{Error as RedisError, ErrorKind as RedisErrorKind};
 use fred::prelude::*;
 use r2s_config::cache;
 use serde::{Deserialize, Serialize};
@@ -24,12 +24,12 @@ macro_rules! with_domain {
 
 #[derive(Debug, Clone)]
 pub struct Cache {
-  client: RedisClient,
+  client: Client,
   domain: Option<String>,
 }
 
 impl Cache {
-  pub fn new(client: RedisClient) -> Self {
+  pub fn new(client: Client) -> Self {
     Cache {
       client,
       domain: None,
@@ -65,11 +65,10 @@ impl Cache {
     }
   }
 
-  pub async fn get<T>(
-    &self, key: impl Into<RedisKey> + Send + Display,
-  ) -> Result<Option<T>, CacheError>
+  pub async fn get<T>(&self, key: impl Into<Key> + Send + Display) -> Result<Option<T>, CacheError>
   where
-    T: for<'de> Deserialize<'de>, {
+    T: for<'de> Deserialize<'de>,
+  {
     let domain_key = with_domain!(self.domain, key);
     let result = self.client.get::<Option<Value>, _>(domain_key).await?;
     match result {
@@ -79,10 +78,11 @@ impl Cache {
   }
 
   pub async fn getdel<T>(
-    &self, key: impl Into<RedisKey> + Send + Display,
+    &self, key: impl Into<Key> + Send + Display,
   ) -> Result<Option<T>, CacheError>
   where
-    T: for<'de> Deserialize<'de>, {
+    T: for<'de> Deserialize<'de>,
+  {
     let domain_key = with_domain!(self.domain, key);
     let result = self.client.getdel::<Option<Value>, _>(domain_key).await?;
     match result {
@@ -92,7 +92,7 @@ impl Cache {
   }
 
   pub async fn set(
-    &self, key: impl Into<RedisKey> + Send + Display, value: impl Serialize + Send,
+    &self, key: impl Into<Key> + Send + Display, value: impl Serialize + Send,
   ) -> Result<(), CacheError> {
     let domain_key = with_domain!(self.domain, key);
     let value = serde_json::to_string(&value)?;
@@ -109,7 +109,7 @@ impl Cache {
   /// * `value` - The value to set.
   /// * `ttl` - The time to live for the key in seconds.
   pub async fn set_ex(
-    &self, key: impl Into<RedisKey> + Send + Display, value: impl Serialize + Send, ttl: i64,
+    &self, key: impl Into<Key> + Send + Display, value: impl Serialize + Send, ttl: i64,
   ) -> Result<(), CacheError> {
     let domain_key = with_domain!(self.domain, key);
     let value = serde_json::to_string(&value)?;
@@ -120,36 +120,34 @@ impl Cache {
     Ok(())
   }
 
-  pub async fn incr(&self, key: impl Into<RedisKey> + Send + Display) -> Result<i64, CacheError> {
+  pub async fn incr(&self, key: impl Into<Key> + Send + Display) -> Result<i64, CacheError> {
     let domain_key = with_domain!(self.domain, key);
     let result = self.client.incr(domain_key).await?;
     Ok(result)
   }
 
   pub async fn expire(
-    &self, key: impl Into<RedisKey> + Send + Display, ttl: i64,
+    &self, key: impl Into<Key> + Send + Display, ttl: i64,
   ) -> Result<(), CacheError> {
     let domain_key = with_domain!(self.domain, key);
-    self.client.expire::<(), _>(domain_key, ttl).await?;
+    self.client.expire::<(), _>(domain_key, ttl, None).await?;
     Ok(())
   }
 
-  pub async fn del(&self, key: impl Into<RedisKey> + Send + Display) -> Result<(), CacheError> {
+  pub async fn del(&self, key: impl Into<Key> + Send + Display) -> Result<(), CacheError> {
     let domain_key = with_domain!(self.domain, key);
     self.client.del::<(), _>(domain_key).await?;
     Ok(())
   }
 
-  pub async fn exists(
-    &self, key: impl Into<RedisKey> + Send + Display,
-  ) -> Result<bool, CacheError> {
+  pub async fn exists(&self, key: impl Into<Key> + Send + Display) -> Result<bool, CacheError> {
     let domain_key = with_domain!(self.domain, key);
     let result = self.client.exists(domain_key).await?;
     Ok(result)
   }
 
   pub async fn push(
-    &self, key: impl Into<RedisKey> + Send + Display, value: impl Serialize + Send,
+    &self, key: impl Into<Key> + Send + Display, value: impl Serialize + Send,
   ) -> Result<(), CacheError> {
     let domain_key = with_domain!(self.domain, key);
     let value = serde_json::to_string(&value)?;
@@ -157,11 +155,10 @@ impl Cache {
     Ok(())
   }
 
-  pub async fn pop<T>(
-    &self, key: impl Into<RedisKey> + Send + Display,
-  ) -> Result<Option<T>, CacheError>
+  pub async fn pop<T>(&self, key: impl Into<Key> + Send + Display) -> Result<Option<T>, CacheError>
   where
-    T: for<'de> Deserialize<'de>, {
+    T: for<'de> Deserialize<'de>,
+  {
     let domain_key = with_domain!(self.domain, key);
     let result = self
       .client
@@ -174,7 +171,7 @@ impl Cache {
   }
 
   pub async fn rem(
-    &self, key: impl Into<RedisKey> + Send + Display, value: impl Serialize + Send,
+    &self, key: impl Into<Key> + Send + Display, value: impl Serialize + Send,
   ) -> Result<(), CacheError> {
     let domain_key = with_domain!(self.domain, key);
     let value = serde_json::to_string(&value)?;
@@ -196,8 +193,8 @@ impl Cache {
 pub async fn initialize(config: &Option<cache::Config>) -> Result<Cache, CacheError> {
   let config = config.clone().ok_or(CacheError::ConfigNeeded)?;
   debug!("initialize cache manager with url: {:?}", config.url);
-  let config = RedisConfig::from_url(&config.url)?;
-  let client = RedisClient::new(config, None, None, None);
+  let config = Config::from_url(&config.url)?;
+  let client = Client::new(config, None, None, None);
   client.init().await?;
   Ok(Cache::new(client))
 }
@@ -205,8 +202,8 @@ pub async fn initialize(config: &Option<cache::Config>) -> Result<Cache, CacheEr
 pub async fn down(config: &Option<cache::Config>) -> Result<(), CacheError> {
   let config = config.clone().ok_or(CacheError::ConfigNeeded)?;
   debug!("down cache manager with url: {:?}", config.url);
-  let config = RedisConfig::from_url(&config.url)?;
-  let client = RedisClient::new(config, None, None, None);
+  let config = Config::from_url(&config.url)?;
+  let client = Client::new(config, None, None, None);
   client.init().await?;
   client.flushall::<()>(false).await?;
   Ok(())
