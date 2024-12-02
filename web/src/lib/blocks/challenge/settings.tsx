@@ -4,17 +4,17 @@ import { challengeStore, setChallengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 import { type ChallengeForm, FormBare } from "./form";
+import { handleHttpError } from "@api";
 
 export default function (props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
   const [loading, setLoading] = createSignal(false);
-  function handleUpdateChallenge(result: ChallengeForm) {
+  async function handleUpdateChallenge(result: ChallengeForm) {
     setLoading(true);
     const tags = result.tag.split("/").map((t) => {
       return { name: t, primary: false };
@@ -38,28 +38,19 @@ export default function (props: {
         decay: result.decay || 1,
       },
     };
-    updateChallenge(gameStore.current!.id, challenge)
-      .then((result) => {
-        props.onStateChange?.(result);
-        setChallengeStore({ current: result });
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      const result = await updateChallenge(gameStore.current!.id, challenge);
+      props.onStateChange?.(result);
+      setChallengeStore({ current: result });
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
       });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <div class="flex flex-col p-3 lg:p-6 w-full items-center">

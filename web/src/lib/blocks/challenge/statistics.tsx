@@ -4,14 +4,13 @@ import type { Submission } from "@models/submission";
 import { challengeStore } from "@storage/challenge";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Pagination from "@widgets/pagination";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { For, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
+import { handleHttpError } from "@api";
 
 function StatisticsPanel() {
   const [solves, setSolves] = createSignal([] as Submission[]);
@@ -19,25 +18,16 @@ function StatisticsPanel() {
   const [pageSize, _setPageSize] = createSignal(10);
   const [total, setTotal] = createSignal(0);
   const [loading, setLoading] = createSignal(false);
-  function fetchSolves() {
+  async function fetchSolves() {
     setLoading(true);
-    getChallengeSolves(gameStore.current!.id, challengeStore.current!.id, page(), pageSize())
-      .then((resp) => {
-        setSolves(resp[0]);
-        setTotal(resp[1]);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.fetchSolveStatusFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const resp = await getChallengeSolves(gameStore.current!.id, challengeStore.current!.id, page(), pageSize());
+      setSolves(resp[0]);
+      setTotal(resp[1]);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.fetchSolveStatusFailed")!);
+    }
+    setLoading(false);
   }
 
   createEffect(() => {
@@ -84,22 +74,14 @@ function HistoryPanel() {
   const [loading, setLoading] = createSignal(false);
   createEffect(() => {
     if (challengeStore.current) {
-      untrack(() => {
+      untrack(async () => {
         setLoading(true);
-        getChallengeCommitHistory(gameStore.current!.id, challengeStore.current!.id)
-          .then(setHistory)
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchHistoryFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => {
-            setLoading(false);
-          });
+        try {
+          setHistory(await getChallengeCommitHistory(gameStore.current!.id, challengeStore.current!.id));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.challenge.fetchHistoryFailed")!);
+        }
+        setLoading(false);
       });
     }
   });

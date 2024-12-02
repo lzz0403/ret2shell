@@ -1,4 +1,4 @@
-import { api_root } from "@api";
+import { api_root, handleHttpError } from "@api";
 import { getRegistryConfig, getRegistryImageTags, getRegistryRepositories } from "@api/cluster";
 import { deleteChallengeEnv, getChallengeInstance, updateChallengeEnv } from "@api/game";
 import { Popover as ArkPopover } from "@ark-ui/solid";
@@ -22,10 +22,9 @@ import Popover from "@widgets/popover";
 import Select from "@widgets/select";
 import Slider from "@widgets/slider";
 import type { Pod } from "kubernetes-types/core/v1";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
-import { For, Match, Show, Switch, createEffect, createSignal, untrack } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createSignal, onMount, untrack } from "solid-js";
 
 function CreateForm(fnProps: {
   repos: string[];
@@ -33,80 +32,57 @@ function CreateForm(fnProps: {
 }) {
   const [loading, setLoading] = createSignal(false);
   const [registryConfig, setRegistryConfig] = createSignal<RegistryConfig | null>(null);
-  getRegistryConfig()
-    .then(setRegistryConfig)
-    .catch((err: HTTPError) => {
-      err.response.text().then((text) => {
-        addToast({
-          level: "error",
-          description: `${t("game.challenge.fetchEnvRegistryConfigFailed")}: ${text}`,
-          duration: 5000,
-        });
-      });
-    });
+  onMount(async () => {
+    try {
+      setRegistryConfig(await getRegistryConfig());
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.fetchEnvRegistryConfigFailed")!);
+    }
+  });
   const [tags, setTags] = createSignal<string[]>([]);
   const [form, { Form, Field }] = createForm<ChallengeImage>();
   setValue(form, "cpu", 0.5);
   setValue(form, "mem", "128Mi");
   const [searchedRepo, setSearchedRepo] = createSignal("");
   const [selected, setSelected] = createSignal(false);
-  function fetchTags(repo: string) {
+  async function fetchTags(repo: string) {
     setLoading(true);
-    getRegistryImageTags(repo)
-      .then((tags) => {
-        setTags(tags);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.fetchEnvImagesFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      setTags(await getRegistryImageTags(repo));
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.fetchEnvImagesFailed")!);
+    }
+    setLoading(false);
   }
   const [adding, setAdding] = createSignal(false);
-  function onSubmit(result: ChallengeImage) {
+  async function onSubmit(result: ChallengeImage) {
     setAdding(true);
-    updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-      internet: challengeStore.env?.internet || false,
-      restricted: challengeStore.env?.restricted ?? null,
-      images: [...(challengeStore.env?.images || []), result],
-    })
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.challenge.addEnvSuccess")!,
-          duration: 5000,
-        });
-        setValues(form, {
-          name: "",
-          tag: "",
-          cpu: 0.5,
-          mem: "128Mi",
-          port: null,
-          service_type: null,
-          description: "",
-        });
-        refreshChallengeAssets();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.addEnvFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setAdding(false);
-        fnProps.onDone?.();
+    try {
+      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
+        internet: challengeStore.env?.internet || false,
+        restricted: challengeStore.env?.restricted ?? null,
+        images: [...(challengeStore.env?.images || []), result],
       });
+      addToast({
+        level: "success",
+        description: t("game.challenge.addEnvSuccess")!,
+        duration: 5000,
+      });
+      setValues(form, {
+        name: "",
+        tag: "",
+        cpu: 0.5,
+        mem: "128Mi",
+        port: null,
+        service_type: null,
+        description: "",
+      });
+      refreshChallengeAssets();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.addEnvFailed")!);
+    }
+    setAdding(false);
+    fnProps.onDone?.();
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2">
@@ -329,18 +305,12 @@ function InstanceList() {
   const [pods, setPods] = createSignal<Pod[]>([]);
   createEffect(() => {
     if (challengeStore.current) {
-      untrack(() => {
-        getChallengeInstance(challengeStore!.current!.game_id, challengeStore!.current!.id)
-          .then(setPods)
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchEnvInstancesFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          });
+      untrack(async () => {
+        try {
+          setPods(await getChallengeInstance(challengeStore!.current!.game_id, challengeStore!.current!.id));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.challenge.fetchEnvInstancesFailed")!);
+        }
       });
     }
   });
@@ -416,117 +386,81 @@ export default function (_props: {
   inGame?: boolean;
 }) {
   const [repos, setRepos] = createSignal<string[]>([]);
-  function fetchRepos() {
-    getRegistryRepositories()
-      .then((repos) => {
-        setRepos(repos);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.fetchEnvImagesFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      });
+  async function fetchRepos() {
+    try {
+      setRepos(await getRegistryRepositories());
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.fetchEnvImagesFailed")!);
+    }
   }
   createEffect(() => {
     if (challengeStore.current) {
       untrack(fetchRepos);
     }
   });
-  function onToggleInternet() {
-    updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-      internet: !challengeStore.env?.internet,
-      restricted: challengeStore.env?.restricted ?? null,
-      images: challengeStore.env?.images || [],
-    })
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.challenge.toggleEnvInternetSuccess")!,
-          duration: 5000,
-        });
-        refreshChallengeAssets();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.toggleEnvInternetFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function onToggleInternet() {
+    try {
+      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
+        internet: !challengeStore.env?.internet,
+        restricted: challengeStore.env?.restricted ?? null,
+        images: challengeStore.env?.images || [],
       });
+      addToast({
+        level: "success",
+        description: t("game.challenge.toggleEnvInternetSuccess")!,
+        duration: 5000,
+      });
+      refreshChallengeAssets();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.toggleEnvInternetFailed")!);
+    }
   }
-  function onToggleRestricted() {
-    updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-      internet: challengeStore.env?.internet || false,
-      restricted: !challengeStore.env?.restricted,
-      images: challengeStore.env?.images || [],
-    })
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.challenge.toggleEnvInternetSuccess")!,
-          duration: 5000,
-        });
-        refreshChallengeAssets();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.toggleEnvInternetFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function onToggleRestricted() {
+    try {
+      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
+        internet: challengeStore.env?.internet || false,
+        restricted: !challengeStore.env?.restricted,
+        images: challengeStore.env?.images || [],
       });
+      addToast({
+        level: "success",
+        description: t("game.challenge.toggleEnvInternetSuccess")!,
+        duration: 5000,
+      });
+      refreshChallengeAssets();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.toggleEnvInternetFailed")!);
+    }
   }
-  function onDeleteImage(name: string) {
-    updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
-      internet: challengeStore.env?.internet || false,
-      restricted: challengeStore.env?.restricted ?? null,
-      images: challengeStore.env?.images?.filter((image) => image.name !== name) || [],
-    })
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.challenge.deleteEnvImageSuccess")!,
-          duration: 5000,
-        });
-        refreshChallengeAssets();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.deleteEnvImageFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function onDeleteImage(name: string) {
+    try {
+      await updateChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id, {
+        internet: challengeStore.env?.internet || false,
+        restricted: challengeStore.env?.restricted ?? null,
+        images: challengeStore.env?.images?.filter((image) => image.name !== name) || [],
       });
+      addToast({
+        level: "success",
+        description: t("game.challenge.deleteEnvImageSuccess")!,
+        duration: 5000,
+      });
+      refreshChallengeAssets();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.deleteEnvImageFailed")!);
+    }
   }
-  function onDeleteEnv() {
-    deleteChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id)
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.challenge.deleteEnvSuccess")!,
-          duration: 5000,
-        });
-        refreshChallengeAssets();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.deleteEnvFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function onDeleteEnv() {
+    try {
+      await deleteChallengeEnv(challengeStore!.current!.game_id, challengeStore!.current!.id);
+      addToast({
+        level: "success",
+        description: t("game.challenge.deleteEnvSuccess")!,
+        duration: 5000,
       });
+      refreshChallengeAssets();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.deleteEnvFailed")!);
+    }
   }
   const [formOpen, setFormOpen] = createSignal(false);
   return (

@@ -1,4 +1,4 @@
-import { api_root } from "@api";
+import { api_root, handleHttpError } from "@api";
 import { getCalmdownStatus } from "@api/cluster";
 import { delayGameSelfEnv, startChallengeEnv, stopGameSelfEnv } from "@api/game";
 import Spin from "@assets/animates/spin";
@@ -14,7 +14,6 @@ import Divider from "@widgets/divider";
 import Tag from "@widgets/tag";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
-import type { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { passiveSupport } from "passive-events-support/src/utils";
@@ -87,80 +86,53 @@ export default function (props: { inGame?: boolean }) {
   });
 
   const [starting, setStarting] = createSignal(false);
-  function handleStartChallengeEnv() {
+  async function handleStartChallengeEnv() {
     setStarting(true);
-    startChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id)
-      .then(() => {
-        setTimeout(() => {
-          maintainInstances();
-        }, 500);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.startEnvFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setStarting(false);
-      });
+    try {
+      await startChallengeEnv(challengeStore.current!.game_id, challengeStore.current!.id);
+      setTimeout(() => {
+        maintainInstances();
+      }, 500);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.startEnvFailed")!);
+    }
+    setStarting(false);
   }
 
   const [delaying, setDelaying] = createSignal(false);
   function handleDelaySelfEnv() {
     setDelaying(true);
-    setTimeout(() => {
-      delayGameSelfEnv(challengeStore.current!.game_id)
-        .then(() => {
-          setTimeout(() => {
-            maintainInstances();
-          }, 500);
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.delayEnvFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setDelaying(false);
-        });
+    setTimeout(async () => {
+      try {
+        await delayGameSelfEnv(challengeStore.current!.game_id);
+        setTimeout(() => {
+          maintainInstances();
+        }, 500);
+      } catch (err) {
+        handleHttpError(err as Error, t("game.challenge.delayEnvFailed")!);
+      }
+      setDelaying(false);
     }, 500);
   }
   const [stopping, setStopping] = createSignal(false);
   function handleStopSelfEnv() {
     setStopping(true);
-    setTimeout(() => {
-      stopGameSelfEnv(challengeStore.current!.game_id)
-        .then(() => {
-          addToast({
-            level: "success",
-            description: t("game.challenge.stopEnvSuccess")!,
-            duration: 5000,
-          });
-          setTimeout(() => {
-            maintainInstances();
-            refreshCalmdown();
-          }, 500);
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.stopEnvFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => {
-          setStopping(false);
+    setTimeout(async () => {
+      try {
+        await stopGameSelfEnv(challengeStore.current!.game_id);
+        addToast({
+          level: "success",
+          description: t("game.challenge.stopEnvSuccess")!,
+          duration: 5000,
         });
+        setTimeout(() => {
+          maintainInstances();
+          refreshCalmdown();
+        }, 500);
+      } catch (err) {
+        handleHttpError(err as Error, t("game.challenge.stopEnvFailed")!);
+      }
+      setStopping(false);
     }, 500);
   }
   return (
@@ -292,27 +264,6 @@ export default function (props: { inGame?: boolean }) {
                     }
                   >
                     <Match when={instance()}>
-                      {/* <For each={challengeStore.env?.images}>
-                        {(image) => (
-                          <Show when={image.port}>
-                            <ClipboardBtn
-                              size="sm"
-                              title={image.description!}
-                              value={getWsrxLink(instance()!.wsrx, image.port!)}
-                            >
-                              <Switch>
-                                <Match when={image.service_type === "http"}>
-                                  <span class="text-info">HTTP</span>
-                                </Match>
-                                <Match when={image.service_type === "tcp"}>
-                                  <span class="text-warning">TCP</span>
-                                </Match>
-                              </Switch>
-                              <span>{image.port}</span>
-                            </ClipboardBtn>
-                          </Show>
-                        )}
-                      </For> */}
                       <Timer
                         end={instance()!.created_at.plus({ hours: instance()!.renew_count + 1 })}
                         onTimeout={() => {

@@ -12,7 +12,7 @@ import { Match, Show, Switch, createEffect, createMemo, createSignal, untrack } 
 export default function ChallengeList(props: { showScore?: boolean; paginated?: boolean; inGame?: boolean }) {
   const [searchParams, _] = useSearchParams();
   const selectedChallengeId = createMemo(() => {
-    return Number.parseInt(searchParams.challenge || "") ?? null;
+    return Number.parseInt((searchParams.challenge as string) || "") ?? null;
   });
   const [loading, setLoading] = createSignal(false);
   const [search, setSearch] = createSignal("");
