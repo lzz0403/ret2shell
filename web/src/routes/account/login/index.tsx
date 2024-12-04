@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { login } from "@api/account";
 import { getAuthConfig } from "@api/platform";
 import LogoAnimate from "@assets/animates/logo-animate";
@@ -21,9 +22,8 @@ import Card from "@widgets/card";
 import Divider from "@widgets/divider";
 import Input from "@widgets/input";
 import Link from "@widgets/link";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
-import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
+import { Match, Show, Switch, createMemo, createSignal, onMount } from "solid-js";
 
 type LoginForm = {
   account: string;
@@ -46,44 +46,45 @@ export default function () {
     expires_time: 0,
     oauth_keys: {},
   } as AuthConfig);
-  getAuthConfig()
-    .then((config) => setAuthConfig(config))
-    .catch(() => {});
+
+  onMount(async () => {
+    try {
+      setAuthConfig(await getAuthConfig());
+    } catch (err) {
+      handleHttpError(err as Error, t("errors.unknown")!);
+    }
+  });
+
   const oauthServices = createMemo(() => Object.keys(authConfig().oauth_keys || {}));
   const [mascot, setMascot] = createSignal(null as string | null);
   const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
   function handleLogin(result: LoginForm) {
     setLoading(true);
-    setTimeout(() => {
-      login(result)
-        .then(() => {
-          addToast({
-            level: "success",
-            description: t("account.login.success")!,
-            duration: 5000,
-            img: xdsecMascotHappy,
-          });
-          const redirectUrl = location.query.redirect;
-          if (redirectUrl) {
-            navigate(redirectUrl, { replace: true });
-          } else {
-            navigate("/", { replace: true });
-          }
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({ level: "error", description: text, duration: 5000 });
-          });
-          setTimestamp(DateTime.now().toMillis());
-          setValue(form, "password", "");
-          setTimeout(() => {
-            setMascot(xdsecMascotCrying);
-          }, 500);
-        })
-        .finally(() => {
-          setLoading(false);
+    setTimeout(async () => {
+      try {
+        await login(result);
+        addToast({
+          level: "success",
+          description: t("account.login.success")!,
+          duration: 5000,
+          img: xdsecMascotHappy,
         });
+        const redirectUrl = location.query.redirect;
+        if (redirectUrl) {
+          navigate(redirectUrl as string, { replace: true });
+        } else {
+          navigate("/", { replace: true });
+        }
+      } catch (err) {
+        handleHttpError(err as Error, t("account.login.failMascotTip")!);
+        setTimestamp(DateTime.now().toMillis());
+        setValue(form, "password", "");
+        setTimeout(() => {
+          setMascot(xdsecMascotCrying);
+        }, 500);
+      }
+      setLoading(false);
     }, 500);
   }
   return (

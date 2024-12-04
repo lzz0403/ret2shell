@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { register } from "@api/account";
 import { deunicode, leet } from "@api/rpc";
 import xdsecMascotHappy from "@assets/imgs/xdsec-mascot-happy.webp";
@@ -12,7 +13,6 @@ import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -38,30 +38,21 @@ export default function () {
 
   function onSubmit(result: RegisterForm) {
     setLoading(true);
-    setTimeout(() => {
-      register(result)
-        .then(() => {
-          addToast({
-            level: "success",
-            description: t("account.register.success")!,
-            duration: 5000,
-            img: xdsecMascotHappy,
-          });
-          navigate("/", { replace: true });
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: text,
-              duration: 5000,
-            });
-          });
-          setTimestamp(DateTime.now().toMillis());
-        })
-        .finally(() => {
-          setLoading(false);
+    setTimeout(async () => {
+      try {
+        await register(result);
+        addToast({
+          level: "success",
+          description: t("account.register.success")!,
+          duration: 5000,
+          img: xdsecMascotHappy,
         });
+        navigate("/", { replace: true });
+      } catch (err) {
+        handleHttpError(err as Error, t("errors.unknown")!);
+        setTimestamp(DateTime.now().toMillis());
+      }
+      setLoading(false);
     }, 500);
   }
 

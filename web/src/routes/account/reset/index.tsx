@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { resetPassword } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, email, minLength, pattern, required, setValue } from "@modular-forms/solid";
@@ -10,7 +11,6 @@ import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -37,35 +37,26 @@ export default function () {
     navigate("/sigtrap/403", { replace: true });
     return null;
   }
-  setValue(form, "email", emailPredef);
-  setValue(form, "token", tokenPredef);
+  setValue(form, "email", emailPredef as string);
+  setValue(form, "token", tokenPredef as string);
   const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
   function handleSubmit(data: ResetForm) {
     setLoading(true);
-    setTimeout(() => {
-      resetPassword(data)
-        .then(() => {
-          addToast({
-            level: "success",
-            description: t("account.reset.success")!,
-            duration: 5000,
-          });
-          navigate("/", { replace: true });
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("account.reset.failed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-          setTimestamp(DateTime.now().toMillis());
-        })
-        .finally(() => {
-          setLoading(false);
+    setTimeout(async () => {
+      try {
+        await resetPassword(data);
+        addToast({
+          level: "success",
+          description: t("account.reset.success")!,
+          duration: 5000,
         });
+        navigate("/", { replace: true });
+      } catch (err) {
+        handleHttpError(err as Error, t("account.reset.failed")!);
+        setTimestamp(DateTime.now().toMillis());
+      }
+      setLoading(false);
     }, 500);
   }
   return (

@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { changePassword } from "@api/account";
 import { createForm, custom, getValue, minLength, pattern, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
@@ -6,7 +7,6 @@ import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { createSignal } from "solid-js";
 
 type ChangePasswordForm = {
@@ -19,35 +19,26 @@ export default function () {
   const [form, { Form, Field }] = createForm<ChangePasswordForm>();
   const [loading, setLoading] = createSignal(false);
   const navigate = useNavigate();
-  function onSubmit(result: ChangePasswordForm) {
+  async function onSubmit(result: ChangePasswordForm) {
     setLoading(true);
-    changePassword({
-      old_password: result.old_password,
-      new_password: result.new_password,
-    })
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("account.settings.password.success")!,
-          duration: 5000,
-        });
-      })
-      .catch((e: HTTPError) => {
-        e.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-        setTimeout(() => {
-          resetUser();
-          navigate("/account/login");
-        }, 1000);
+    try {
+      await changePassword({
+        old_password: result.old_password,
+        new_password: result.new_password,
       });
+      addToast({
+        level: "success",
+        description: t("account.settings.password.success")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setLoading(false);
+    setTimeout(() => {
+      resetUser();
+      navigate("/account/login");
+    }, 1000);
   }
   return (
     <>

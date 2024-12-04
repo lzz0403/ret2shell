@@ -1,15 +1,14 @@
+import { handleHttpError } from "@api";
 import { deleteSelf } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, minLength, required } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
 import { accountStore, resetUser } from "@storage/account";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -25,26 +24,17 @@ export default function () {
   const canDelete = () => name() === accountStore.account!;
   const [loading, setLoading] = createSignal(false);
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
-  function handleDeactivate(result: CaptchaForm) {
+  async function handleDeactivate(result: CaptchaForm) {
     setLoading(true);
-    deleteSelf(result)
-      .then(() => {
-        resetUser();
-        navigate("/");
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("account.deleteAccountFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-        setTimestamp(DateTime.now().toMillis());
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      await deleteSelf(result);
+      resetUser();
+      navigate("/");
+    } catch (err) {
+      handleHttpError(err as Error, t("account.deleteAccountFailed")!);
+      setTimestamp(DateTime.now().toMillis());
+    }
+    setLoading(false);
   }
   return (
     <div class="flex-1 flex flex-row p-4 lg:p-6 justify-center">

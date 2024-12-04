@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { getInstitutes, getOAuthStatus, unbindWithOAuth } from "@api/account";
 import { getAuthConfig } from "@api/platform";
 import { getLogo } from "@assets/brands";
@@ -6,12 +7,10 @@ import type { Institute } from "@models/institute";
 import type { OAuth } from "@models/oauth";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Link from "@widgets/link";
 import Tag from "@widgets/tag";
-import type { HTTPError } from "ky";
-import { For, Match, Show, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Match, Show, Switch, createEffect, createMemo, createSignal, onMount, untrack } from "solid-js";
 
 function getOAuthLink(service: string) {
   if (service.endsWith("_email")) {
@@ -37,22 +36,20 @@ export default function () {
     .catch(() => {});
   const [institutes, setInstitutes] = createSignal([] as Institute[]);
   const [selfOAuthItems, setSelfOAuthItems] = createSignal([] as OAuth[]);
-  getInstitutes()
-    .then((items) => setInstitutes(items))
-    .catch(() => {});
-  function refreshOAuthStatus() {
-    getOAuthStatus()
-      .then((items) => setSelfOAuthItems(items))
-      .catch((err: HTTPError) => {
-        setSelfOAuthItems([]);
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("account.settings.oauth.failedToGetOAuthStatus")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      });
+  onMount(async () => {
+    try {
+      setInstitutes(await getInstitutes());
+    } catch (err) {
+      handleHttpError(err as Error, t("errors.unknown")!);
+    }
+  });
+  async function refreshOAuthStatus() {
+    try {
+      setSelfOAuthItems(await getOAuthStatus());
+    } catch (err) {
+      setSelfOAuthItems([]);
+      handleHttpError(err as Error, t("account.settings.oauth.failedToGetOAuthStatus")!);
+    }
   }
   createEffect(() => {
     if (accountStore.token) {
@@ -71,20 +68,13 @@ export default function () {
     return result;
   });
 
-  function handleUnbind(id: number) {
-    unbindWithOAuth(id)
-      .then(() => {
-        refreshOAuthStatus();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("account.oauth.failedToUnbind")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      });
+  async function handleUnbind(id: number) {
+    try {
+      await unbindWithOAuth(id);
+      refreshOAuthStatus();
+    } catch (err) {
+      handleHttpError(err as Error, t("account.oauth.failedToUnbind")!);
+    }
   }
   return (
     <div class="flex flex-col p-3 lg:p-6 w-full items-center">

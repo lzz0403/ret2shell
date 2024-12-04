@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { changeProfile, resendEmail } from "@api/account";
 import { uploadMedia } from "@api/media";
 import { mediaPath } from "@lib/utils/media";
@@ -11,7 +12,6 @@ import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Editor from "@widgets/editor";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { Show, createEffect, createSignal, untrack } from "solid-js";
 
 export type UserForm = {
@@ -54,78 +54,55 @@ export default function () {
       handleUploadAvatar();
     }
   }
-  function handleUploadAvatar() {
+  async function handleUploadAvatar() {
     if (avatarFile()) {
       setAvatarUploading(true);
-      uploadMedia(avatarFile()!, false)
-        .then((resp) => {
-          if (accountStore.info)
-            setAccountStore({
-              info: {
-                ...accountStore.info,
-                avatar: resp.hash,
-              },
-            });
-          setValue(form, "avatar", resp.hash);
-          setAvatarSet(true);
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("account.settings.info.avatarUploadFailed")}: ${text}`,
-              duration: 5000,
-            });
+      try {
+        const resp = await uploadMedia(avatarFile()!, false);
+        if (accountStore.info)
+          setAccountStore({
+            info: {
+              ...accountStore.info,
+              avatar: resp.hash,
+            },
           });
-        })
-        .finally(() => {
-          setAvatarUploading(false);
-        });
+        setValue(form, "avatar", resp.hash);
+        setAvatarSet(true);
+      } catch (err) {
+        handleHttpError(err as Error, t("account.settings.info.avatarUploadFailed")!);
+      }
+      setAvatarUploading(false);
     }
   }
-  function handleResendVerifyEmail() {
-    resendEmail()
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("account.resendVerifyEmailSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("account.resendVerifyEmailFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function handleResendVerifyEmail() {
+    try {
+      await resendEmail();
+      addToast({
+        level: "success",
+        description: t("account.resendVerifyEmailSuccess")!,
+        duration: 5000,
       });
+    } catch (err) {
+      handleHttpError(err as Error, t("account.resendVerifyEmailFailed")!);
+    }
   }
-  function onSubmit(result: UserForm) {
+  async function onSubmit(result: UserForm) {
     setLoading(true);
-    changeProfile({
-      ...accountStore.info!,
-      ...result,
-    })
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-        refreshUser();
-      })
-      .catch((e: HTTPError) => {
-        e.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => setLoading(false));
+    try {
+      await changeProfile({
+        ...accountStore.info!,
+        ...result,
+      });
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+      refreshUser();
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <div class="flex flex-col p-3 lg:p-6 w-full items-center">

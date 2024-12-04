@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { loginWithOAuth } from "@api/account";
 import LogoAnimate from "@assets/animates/logo-animate";
 import { getLogo } from "@assets/brands";
@@ -7,7 +8,6 @@ import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { createSignal, onMount } from "solid-js";
 
 export default function () {
@@ -25,33 +25,26 @@ export default function () {
   });
   const brand = () => {
     const service = searchParams.service;
-    if (service) return getLogo(service);
+    if (service) return getLogo(service as string);
     return logo;
   };
 
-  function handleLoginWithOAuth() {
-    loginWithOAuth(location.search)
-      .then(() => {
-        navigate("/", { replace: true });
-        addToast({
-          level: "success",
-          description: t("account.login.success")!,
-          duration: 5000,
-          img: xdsecMascotHappy,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("account.oauth.failedToLogin")}: ${text}`,
-            duration: 5000,
-          });
-          setTimeout(() => {
-            navigate("/account/login", { replace: true });
-          });
-        });
+  async function handleLoginWithOAuth() {
+    try {
+      await loginWithOAuth(location.search);
+      navigate("/", { replace: true });
+      addToast({
+        level: "success",
+        description: t("account.login.success")!,
+        duration: 5000,
+        img: xdsecMascotHappy,
       });
+    } catch (err) {
+      handleHttpError(err as Error, t("account.oauth.failedToLogin")!);
+      setTimeout(() => {
+        navigate("/account/login", { replace: true });
+      });
+    }
   }
 
   return (

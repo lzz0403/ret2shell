@@ -5,12 +5,11 @@ import { useLocation, useNavigate, useSearchParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { createSignal, onMount } from "solid-js";
 import logo from "@assets/logo-gray.svg";
 import { getLogo } from "@assets/brands";
+import { handleHttpError } from "@api";
 
 export default function () {
   const [animate, setAnimate] = createSignal(false);
@@ -27,26 +26,19 @@ export default function () {
   });
   const brand = () => {
     const service = searchParams.service;
-    if (service) return getLogo(service);
+    if (service) return getLogo(service as string);
     return logo;
   };
 
-  function handleBindWithOAuth() {
-    bindWithOAuth(location.search)
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("account.oauth.failedToBind")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setTimeout(() => {
-          navigate("/account/settings/oauth", { replace: true });
-        });
-      });
+  async function handleBindWithOAuth() {
+    try {
+      await bindWithOAuth(location.search);
+    } catch (err) {
+      handleHttpError(err as Error, t("account.oauth.failedToBind")!);
+    }
+    setTimeout(() => {
+      navigate("/account/settings/oauth", { replace: true });
+    });
   }
 
   return (

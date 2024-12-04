@@ -1,26 +1,28 @@
+import { handleHttpError } from "@api";
 import { generateAccountCode, getAccountCode } from "@api/account";
 import { Permission } from "@models/user";
 import { A } from "@solidjs/router";
 import { accountStore, setAccountStore } from "@storage/account";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Dialog from "@widgets/dialog";
 import Timer from "@widgets/timer";
-import type { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { Match, Switch, createEffect, createSignal, untrack } from "solid-js";
 
 export default function UserCodeDialog() {
   const [code, setCode] = createSignal(null as { code: number; generate_at: DateTime } | null);
   const [loadingCode, setLoadingCode] = createSignal(false);
-  function getCode() {
+  async function getCode() {
     if (accountStore.permissions.includes(Permission.Verified)) {
       setLoadingCode(true);
-      void getAccountCode()
-        .then(setCode)
-        .catch(() => setCode(null))
-        .finally(() => setLoadingCode(false));
+      try {
+        setCode(await getAccountCode());
+      } catch (err) {
+        setCode(null);
+        handleHttpError(err as Error, t("account.login.failMascotTip")!);
+      }
+      setLoadingCode(false);
     }
   }
   const verified = () => accountStore.permissions.includes(Permission.Verified);
@@ -30,19 +32,13 @@ export default function UserCodeDialog() {
     }
     setCode(null);
     setLoadingCode(true);
-    setTimeout(() => {
-      generateAccountCode()
-        .then(setCode)
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: text,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => setLoadingCode(false));
+    setTimeout(async () => {
+      try {
+        setCode(await generateAccountCode());
+      } catch (err) {
+        handleHttpError(err as Error, t("account.login.failMascotTip")!);
+      }
+      setLoadingCode(false);
     }, 500);
   }
   createEffect(() => {

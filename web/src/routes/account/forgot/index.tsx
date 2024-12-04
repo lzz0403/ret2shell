@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { forgotPassword } from "@api/account";
 import Captcha from "@blocks/captcha";
 import { createForm, email, minLength, required } from "@modular-forms/solid";
@@ -9,7 +10,7 @@ import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
+import { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -26,37 +27,28 @@ export default function () {
   const [timestamp, setTimestamp] = createSignal(DateTime.now().toMillis());
   function handleSubmit(data: ForgotForm) {
     setLoading(true);
-    setTimeout(() => {
-      forgotPassword(data)
-        .then(() => {
+    setTimeout(async () => {
+      try {
+        await forgotPassword(data);
+        addToast({
+          level: "success",
+          description: t("account.forgot.success")!,
+          duration: 5000,
+        });
+        navigate("/", { replace: true });
+      } catch (err) {
+        if (err instanceof HTTPError && err.response.status === 429) {
           addToast({
-            level: "success",
-            description: t("account.forgot.success")!,
+            level: "error",
+            description: t("account.forgot.rateLimit")!,
             duration: 5000,
           });
-          navigate("/", { replace: true });
-        })
-        .catch((err: HTTPError) => {
-          if (err.response.status === 429) {
-            addToast({
-              level: "error",
-              description: t("account.forgot.rateLimit")!,
-              duration: 5000,
-            });
-          } else {
-            void err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: text,
-                duration: 5000,
-              });
-            });
-            setTimestamp(DateTime.now().toMillis());
-          }
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        } else {
+          handleHttpError(err as Error, t("form.createFailed")!);
+          setTimestamp(DateTime.now().toMillis());
+        }
+      }
+      setLoading(false);
     }, 500);
   }
   return (

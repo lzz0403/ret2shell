@@ -66,36 +66,6 @@ export function DiyBoxContent() {
           </li>
         </ul>
       </Card>
-
-      {/* <Card contentClass="p-2 flex flex-col space-y-2"> */}
-      {/*   <ul class="flex flex-row space-x-2"> */}
-      {/*     <li> */}
-      {/*       <Button square onClick={() => setLocale("de_de")} ghost justify="center" size="sm"> */}
-      {/*         <span>De</span> */}
-      {/*       </Button> */}
-      {/*     </li> */}
-      {/*     <li> */}
-      {/*       <Button square onClick={() => setLocale("ru_ru")} ghost justify="center" size="sm"> */}
-      {/*         <span>Зн</span> */}
-      {/*       </Button> */}
-      {/*     </li> */}
-      {/*     <li> */}
-      {/*       <Button square onClick={() => setLocale("es_es")} ghost justify="center" size="sm"> */}
-      {/*         <span>Es</span> */}
-      {/*       </Button> */}
-      {/*     </li> */}
-      {/*     <li> */}
-      {/*       <Button square onClick={() => setLocale("fr_fr")} ghost justify="center" size="sm"> */}
-      {/*         <span>Fr</span> */}
-      {/*       </Button> */}
-      {/*     </li> */}
-      {/*     <li> */}
-      {/*       <Button square onClick={() => setLocale("ko_kr")} ghost justify="center" size="sm"> */}
-      {/*         <span>한</span> */}
-      {/*       </Button> */}
-      {/*     </li> */}
-      {/*   </ul> */}
-      {/* </Card> */}
       <Card contentClass="p-2 flex flex-col space-y-2">
         <Button
           size="sm"
