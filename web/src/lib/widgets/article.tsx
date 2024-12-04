@@ -58,19 +58,18 @@ export default function (props: ComponentProps<"article"> & ArticleProps) {
   createEffect(() => {
     if (articleProps.content) {
       setReady(false);
-      untrack(() => {
-        render(articleProps.content)
-          .then(() => {
-            setReady(true);
-            scrollToView();
-          })
-          .catch((err: Error) => {
-            addToast({
-              level: "error",
-              description: err.message,
-              duration: 5000,
-            });
+      untrack(async () => {
+        try {
+          await render(articleProps.content);
+          setReady(true);
+          scrollToView();
+        } catch (err) {
+          addToast({
+            level: "error",
+            description: (err as Error).message,
+            duration: 5000,
           });
+        }
       });
     } else {
       untrack(() => {

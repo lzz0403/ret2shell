@@ -249,7 +249,12 @@ function i2hex(i: number) {
   return `0${i.toString(16)}`.slice(-2);
 }
 
-export function hashToHex(data: Uint8Array): string {
+export async function hashToHex(data: Uint8Array) {
+  if (window.crypto?.subtle?.digest) {
+    return Array.from(new Uint8Array(await window.crypto.subtle.digest("SHA-256", data)))
+      .map((b) => i2hex(b))
+      .join("");
+  }
   return hash(data).reduce((memo, i) => {
     return memo + i2hex(i);
   }, "");
