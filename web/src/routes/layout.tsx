@@ -491,7 +491,7 @@ export default function (props: { children?: JSX.Element }) {
           "color: currentColor;"
         );
         console.log(
-          "\n%cIf you want to self-host CTF platforms or look for further cooperating, please contact ret2shell@woooo.tech.\n",
+          "\n%cIf you want to self-host CTF platforms or look for further cooperating, please contact <support@ret.sh.cn>.\n",
           "color: currentColor;"
         );
 

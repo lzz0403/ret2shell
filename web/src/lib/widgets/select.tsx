@@ -46,6 +46,7 @@ export default function (
       {...others}
       class={`flex flex-col space-y-1 ${others.class}`}
       collection={collection()}
+      // value={selectProps.inputProps?.value}
       positioning={{
         sameWidth: true,
       }}
@@ -53,6 +54,7 @@ export default function (
       <Show when={selectProps.label}>
         <Select.Label class="label">{selectProps.label}</Select.Label>
       </Show>
+      <Select.HiddenSelect {...selectProps.inputProps} />
       <Select.Control class="w-full">
         <Select.Trigger
           class={`btn flex flex-row gap-0 items-center w-full ${selectProps.size === "sm" ? "btn-sm" : "btn-md"} ${selectProps.ghost ? "btn-ghost" : ""} ${
@@ -122,7 +124,6 @@ export default function (
           </Select.Content>
         </Select.Positioner>
       </Portal>
-      <Select.HiddenSelect {...selectProps.inputProps} />
     </Select.Root>
   );
 }

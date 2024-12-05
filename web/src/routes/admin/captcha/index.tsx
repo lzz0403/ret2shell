@@ -11,22 +11,26 @@ import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import type { HTTPError } from "ky";
 import { createSignal, onMount } from "solid-js";
+import { handleHttpError } from "@api";
 
 export default function () {
   const [form, { Form, Field }] = createForm<CaptchaConfig>();
   const [loading, setLoading] = createSignal(false);
   const [config, setConfig] = createSignal(null as null | Config);
-  onMount(() => {
-    getPlatformConfig().then((resp) => {
+  onMount(async () => {
+    try {
+      const resp = await getPlatformConfig();
       setConfig(resp);
       setValues(form, {
         enabled: resp.captcha.enabled,
         difficulty: resp.captcha.difficulty,
         validator: resp.captcha.validator,
       });
-    });
+    } catch (err) {
+      handleHttpError(err as HTTPError, t("errors.500")!);
+    }
   });
-  function onSubmit(result: CaptchaConfig) {
+  async function onSubmit(result: CaptchaConfig) {
     setLoading(true);
     if (!config()) {
       addToast({
@@ -44,25 +48,18 @@ export default function () {
         validator: result.validator,
       },
     } as Config;
-    updatePlatformConfig(mergedConfig)
-      .then(() => {
-        setConfig(mergedConfig);
-        addToast({
-          level: "success",
-          description: t("admin.platform.updateSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("admin.platform.updateFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => setLoading(false));
+    try {
+      await updatePlatformConfig(mergedConfig);
+      setConfig(mergedConfig);
+      addToast({
+        level: "success",
+        description: t("admin.platform.updateSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as HTTPError, t("admin.platform.updateFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <>
