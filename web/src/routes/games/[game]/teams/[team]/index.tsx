@@ -306,9 +306,9 @@ function SelfManagement(props: {
                   name={field.name}
                   error={field.error}
                   inputProps={props}
-                  onValueChange={(v) => {
-                    setValue(form, "institute_id", (v.value.at(0) && Number.parseInt(v.value.at(0)!)) || 0);
-                  }}
+                  // onValueChange={(v) => {
+                  //   setValue(form, "institute_id", (v.value.at(0) && Number.parseInt(v.value.at(0)!)) || 0);
+                  // }}
                   value={field.value ? [field.value.toString()] : undefined}
                 />
               )}
