@@ -17,6 +17,12 @@ pub struct Media {
   path: PathBuf,
 }
 
+macro_rules! hashed_path {
+  ($base: expr, $hash: expr) => {
+    $base.join(&$hash[..2]).join(&$hash[2..4]).join($hash)
+  };
+}
+
 impl Media {
   pub async fn try_open(path: impl AsRef<Path>) -> Result<Self, MediaError> {
     let path = path.as_ref().to_path_buf();
@@ -62,7 +68,7 @@ impl Media {
     }
     let hash = hex::encode(hasher.finish().as_ref());
     fs::create_dir_all(self.path.join(&hash[..2]).join(&hash[2..4])).await?;
-    let dest = self.path.join(&hash[..2]).join(&hash[2..4]).join(&hash);
+    let dest = hashed_path!(self.path, &hash);
     fs::rename(&temp_path, &dest).await?;
     if !self.get_mime_type(&hash).await?.starts_with("image/") {
       fs::remove_file(&dest).await?;
@@ -79,7 +85,7 @@ impl Media {
     &self, hash: impl AsRef<str>, longest_edge: u32,
   ) -> Result<(), MediaError> {
     let hash = hash.as_ref();
-    let original = self.path.join(&hash[..2]).join(&hash[2..4]).join(hash);
+    let original = hashed_path!(self.path, &hash);
     let dest = self
       .thumbnails_dir()
       .join(&hash[..2])
@@ -90,13 +96,13 @@ impl Media {
 
   pub async fn get(&self, hash: impl AsRef<str>) -> Result<File, MediaError> {
     let hash = hash.as_ref();
-    let path = self.path.join(&hash[..2]).join(&hash[2..4]).join(hash);
+    let path = hashed_path!(self.path, &hash);
     Ok(File::open(&path).await?)
   }
 
   pub async fn delete(&self, hash: impl AsRef<str>) -> Result<(), MediaError> {
     let hash = hash.as_ref();
-    let path = self.path.join(&hash[..2]).join(&hash[2..4]).join(hash);
+    let path = hashed_path!(self.path, &hash);
     fs::remove_file(&path).await?;
     let thumbnails_path = self
       .thumbnails_dir()
@@ -111,7 +117,7 @@ impl Media {
 
   pub async fn get_mime_type(&self, hash: impl AsRef<str>) -> Result<String, MediaError> {
     let hash = hash.as_ref();
-    let path = self.path.join(&hash[..2]).join(&hash[2..4]).join(hash);
+    let path = hashed_path!(self.path, &hash);
     match infer::get_from_path(path)? {
       Some(mime) => {
         if mime.mime_type() == "text/xml" {
