@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { gameStore } from "@storage/game";
@@ -32,10 +33,10 @@ export default function IntroForm(props: {
       });
     }
   });
-  function onSubmit(result: ArticleForm) {
+  async function onSubmit(result: ArticleForm) {
     setLoading(true);
-    props
-      .onDone({
+    try {
+      props.onDone({
         id: props.editSource?.id || 0,
         content: result.content,
         created_at: props.editSource?.created_at || DateTime.now(),
@@ -48,8 +49,11 @@ export default function IntroForm(props: {
         path: [],
         enable_comment: false,
         weight: 0,
-      })
-      .catch(() => setLoading(false));
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">

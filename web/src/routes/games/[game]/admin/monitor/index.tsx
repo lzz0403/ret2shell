@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { getGameAuditLogs, getGameSubmissions, updateGameAuditLog } from "@api/game";
 import NarrowTips from "@blocks/narrow-tips";
 import { type Audit, AuditState } from "@models/audit";
@@ -10,36 +11,25 @@ import Button from "@widgets/button";
 import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
 import Tag from "@widgets/tag";
-import type { HTTPError } from "ky";
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 
 function AuditList() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page)) || 1);
+  const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string)) || 1);
   const pageSize = 15;
   const [total, setTotal] = createSignal(0);
   const [audits, setAudits] = createSignal([] as Audit[]);
   const [loading, setLoading] = createSignal(false);
-  function refreshAudits() {
+  async function refreshAudits() {
     setLoading(true);
-    getGameAuditLogs(gameStore.current!.id, page(), pageSize)
-      .then((resp) => {
-        setAudits(resp[0]);
-        setTotal(resp[1]);
-      })
-      .catch((err: HTTPError) => {
-        // console.log(err);
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.admin.monitor.fetchFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const resp = await getGameAuditLogs(gameStore.current!.id, page(), pageSize);
+      setAudits(resp[0]);
+      setTotal(resp[1]);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.admin.monitor.fetchFailed")!);
+    }
+    setLoading(false);
   }
   createEffect(() => {
     if (gameStore.current && page()) {
@@ -52,52 +42,38 @@ function AuditList() {
   onCleanup(() => {
     clearInterval(timer);
   });
-  function handleMisjudged(audit: Audit) {
-    updateGameAuditLog(gameStore.current!.id, audit.id, {
-      ...audit,
-      state: AuditState.Misjudged,
-    })
-      .then(() => {
-        refreshAudits();
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function handleMisjudged(audit: Audit) {
+    try {
+      await updateGameAuditLog(gameStore.current!.id, audit.id, {
+        ...audit,
+        state: AuditState.Misjudged,
       });
+      refreshAudits();
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
   }
 
-  function handleConfirmed(audit: Audit) {
-    updateGameAuditLog(gameStore.current!.id, audit.id, {
-      ...audit,
-      state: AuditState.Confirmed,
-    })
-      .then(() => {
-        refreshAudits();
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+  async function handleConfirmed(audit: Audit) {
+    try {
+      await updateGameAuditLog(gameStore.current!.id, audit.id, {
+        ...audit,
+        state: AuditState.Confirmed,
       });
+      refreshAudits();
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
   }
   return (
     <>
@@ -194,31 +170,21 @@ function AuditList() {
 
 function SubmissionList() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page)) || 1);
+  const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string)) || 1);
   const pageSize = 15;
   const [total, setTotal] = createSignal(0);
   const [submissions, setSubmissions] = createSignal([] as Submission[]);
   const [loading, setLoading] = createSignal(false);
-  function refreshSubmissions() {
+  async function refreshSubmissions() {
     setLoading(true);
-    getGameSubmissions(gameStore.current!.id, page(), pageSize)
-      .then((resp) => {
-        setSubmissions(resp[0]);
-        setTotal(resp[1]);
-      })
-      .catch((err: HTTPError) => {
-        // console.log(err);
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.admin.monitor.fetchFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .then(() => {
-        setLoading(false);
-      });
+    try {
+      const resp = await getGameSubmissions(gameStore.current!.id, page(), pageSize);
+      setSubmissions(resp[0]);
+      setTotal(resp[1]);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.admin.monitor.fetchFailed")!);
+    }
+    setLoading(false);
   }
   createEffect(() => {
     if (gameStore.current && page()) {

@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { updateGame } from "@api/game";
 import AdministratorsManagement from "@blocks/game/administrators";
 import NarrowTips from "@blocks/narrow-tips";
@@ -8,42 +9,38 @@ import { addToast } from "@storage/toast";
 import Checkbox from "@widgets/checkbox";
 import LoadingTips from "@widgets/loading-tips";
 import type { HTTPError } from "ky";
-import { For, Show, createSignal } from "solid-js";
+import { For, Show, createSignal, onMount } from "solid-js";
 
 function InstituteManagement() {
   const [loading, setLoading] = createSignal(true);
-  refreshInstitutes().then(() => setLoading(false));
-  function handleChangePolicy(restrict: boolean) {
+  onMount(async () => {
+    await refreshInstitutes();
+    setLoading(false);
+  });
+  async function handleChangePolicy(restrict: boolean) {
     if (gameStore.current) {
       setLoading(true);
-      updateGame(gameStore.current.id, {
-        ...gameStore.current,
-        access_policy: {
-          ...gameStore.current.access_policy,
-          restrict,
-        },
-      })
-        .then((resp) => {
-          addToast({
-            level: "success",
-            description: t("form.saveSuccess")!,
-            duration: 5000,
-          });
-          setGameStore({ current: resp });
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("form.saveFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => setLoading(false));
+      try {
+        const resp = await updateGame(gameStore.current.id, {
+          ...gameStore.current,
+          access_policy: {
+            ...gameStore.current.access_policy,
+            restrict,
+          },
+        });
+        addToast({
+          level: "success",
+          description: t("form.saveSuccess")!,
+          duration: 5000,
+        });
+        setGameStore({ current: resp });
+      } catch (err) {
+        handleHttpError(err as HTTPError, t("form.saveFailed")!);
+      }
+      setLoading(false);
     }
   }
-  function handleChangeInstitute(institute: number, enabled: boolean) {
+  async function handleChangeInstitute(institute: number, enabled: boolean) {
     if (gameStore.current) {
       setLoading(true);
       const institutes = JSON.parse(JSON.stringify(gameStore.current.access_policy.institutes));
@@ -52,31 +49,24 @@ function InstituteManagement() {
       } else {
         institutes.splice(institutes.indexOf(institute), 1);
       }
-      updateGame(gameStore.current.id, {
-        ...gameStore.current,
-        access_policy: {
-          ...gameStore.current.access_policy,
-          institutes,
-        },
-      })
-        .then((resp) => {
-          addToast({
-            level: "success",
-            description: t("form.saveSuccess")!,
-            duration: 5000,
-          });
-          setGameStore({ current: resp });
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("form.saveFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        })
-        .finally(() => setLoading(false));
+      try {
+        const resp = await updateGame(gameStore.current.id, {
+          ...gameStore.current,
+          access_policy: {
+            ...gameStore.current.access_policy,
+            institutes,
+          },
+        });
+        addToast({
+          level: "success",
+          description: t("form.saveSuccess")!,
+          duration: 5000,
+        });
+        setGameStore({ current: resp });
+      } catch (err) {
+        handleHttpError(err as HTTPError, t("form.saveFailed")!);
+      }
+      setLoading(false);
     }
   }
   return (

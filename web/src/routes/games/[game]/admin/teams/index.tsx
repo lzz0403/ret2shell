@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { getTeamList } from "@api/game";
 import NarrowTips from "@blocks/narrow-tips";
 import { type Team, TeamState } from "@models/team";
@@ -5,13 +6,11 @@ import { A, useSearchParams } from "@solidjs/router";
 import { accountStore, refreshInstitutes } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
 import Select from "@widgets/select";
 import Tag from "@widgets/tag";
-import type { HTTPError } from "ky";
 import { For, Match, Show, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 
 type OrderType = "id" | "name" | "institute_id" | "state";
@@ -37,30 +36,23 @@ export default function () {
     }));
   });
   refreshInstitutes();
-  function refreshTeams() {
+  async function refreshTeams() {
     setLoading(true);
-    getTeamList(
-      gameStore.current!.id,
-      page(),
-      pageSize,
-      order() || "id",
-      filter() ?? undefined,
-      instituteId() ?? undefined
-    )
-      .then((resp) => {
-        setTeams(resp[0]);
-        setTotal(resp[1]);
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.admin.teams.fetchFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => setLoading(false));
+    try {
+      const resp = await getTeamList(
+        gameStore.current!.id,
+        page(),
+        pageSize,
+        order() || "id",
+        filter() ?? undefined,
+        instituteId() ?? undefined
+      );
+      setTeams(resp[0]);
+      setTotal(resp[1]);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.admin.teams.fetchFailed")!);
+    }
+    setLoading(false);
   }
   createEffect(() => {
     if (page() && gameStore.current) {

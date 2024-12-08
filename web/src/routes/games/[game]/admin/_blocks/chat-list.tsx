@@ -1,14 +1,13 @@
+import { handleHttpError } from "@api";
 import { getGameAdminChatSessions } from "@api/game";
 import type { ChatSession } from "@models/chat";
 import { useSearchParams } from "@solidjs/router";
 import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Link from "@widgets/link";
-import type { HTTPError } from "ky";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
 import { TransitionGroup } from "solid-transition-group";
@@ -67,25 +66,17 @@ export default function ChatList() {
   const [searchParams, _] = useSearchParams();
   const pageSize = 30;
   const [page, setPage] = createSignal(1);
-  const teamId = createMemo(() => Number.parseInt(searchParams.team ?? "") || null);
-  const challengeId = createMemo(() => Number.parseInt(searchParams.challenge ?? "") || null);
-  function refreshChats() {
+  const teamId = createMemo(() => Number.parseInt((searchParams.team as string) ?? "") || null);
+  const challengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) ?? "") || null);
+  async function refreshChats() {
     if (gameStore.current) {
-      getGameAdminChatSessions(gameStore.current!.id, 1, pageSize * page())
-        .then((resp) => {
-          const result = mergeChats(sessions(), resp[0]);
-          // console.log(result);
-          setSessions([...result]);
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.fetchChatSessionError")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        });
+      try {
+        const resp = await getGameAdminChatSessions(gameStore.current!.id, 1, pageSize * page());
+        const result = mergeChats(sessions(), resp[0]);
+        setSessions([...result]);
+      } catch (err) {
+        handleHttpError(err as Error, t("game.challenge.fetchChatSessionError")!);
+      }
     }
   }
 

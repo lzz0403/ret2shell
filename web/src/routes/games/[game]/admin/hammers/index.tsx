@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import {
   getChallenge,
   getGameAdminChatMessages,
@@ -15,7 +16,6 @@ import { A, useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
@@ -23,7 +23,6 @@ import Card from "@widgets/card";
 import Editor from "@widgets/editor";
 import Link from "@widgets/link";
 import Popover from "@widgets/popover";
-import { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
@@ -97,86 +96,65 @@ function mergeChats(
 
 export default function () {
   const [searchParams, _] = useSearchParams();
-  const teamId = createMemo(() => Number.parseInt(searchParams.team ?? "") || null);
-  const challengeId = createMemo(() => Number.parseInt(searchParams.challenge ?? "") || null);
+  const teamId = createMemo(() => Number.parseInt((searchParams.team as string) ?? "") || null);
+  const challengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) ?? "") || null);
   const [challenge, setChallenge] = createSignal(null as Challenge | null);
   const [team, setTeam] = createSignal(null as Team | null);
-  createEffect(() => {
+  createEffect(async () => {
     if (gameStore.current && challengeId()) {
-      getChallenge(gameStore.current.id, challengeId()!)
-        .then(setChallenge)
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.challenge.fetchChallengeFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        });
+      try {
+        setChallenge(await getChallenge(gameStore.current.id, challengeId()!));
+      } catch (err) {
+        handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
+      }
     }
     if (gameStore.current && teamId()) {
-      getTeamInfo(gameStore.current.id, teamId()!)
-        .then(setTeam)
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.team.fetchTeamFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        });
+      try {
+        setTeam(await getTeamInfo(gameStore.current.id, teamId()!));
+      } catch (err) {
+        handleHttpError(err as Error, t("game.team.fetchTeamFailed")!);
+      }
     }
   });
   const [chats, setChats] = createSignal([] as Chat[]);
   const [chat, setChat] = createSignal("");
   const [sending, setSending] = createSignal(false);
-  function handleSendChat() {
+  async function handleSendChat() {
     if (chat().trim() === "") return;
     setSending(true);
-    sendGameAdminChatMessage(gameStore.current!.id, challengeId()!, teamId()!, chat())
-      .then(() => {
-        setChat("");
-        refreshChats();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.sendChatError")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => setSending(false));
+    try {
+      await sendGameAdminChatMessage(gameStore.current!.id, challengeId()!, teamId()!, chat());
+      setChat("");
+      refreshChats();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.sendChatError")!);
+    }
+    setSending(false);
   }
   let chatBottomEl: HTMLDivElement;
 
-  const [_loading, setLoading] = createSignal(false);
+  const [loading, setLoading] = createSignal(false);
+
+  async function _refreshChats() {
+    if (gameStore.current && challengeId() && teamId()) {
+      setLoading(true);
+      try {
+        const [s, result] = await Promise.all([
+          getSolveStatus(),
+          getGameAdminChatMessages(gameStore.current.id, challengeId()!, teamId()!),
+        ]);
+        const [changed, r] = mergeChats(challengeId()!, teamId()!, chats(), result, s);
+        setChats([...r]);
+        if (changed) setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 700);
+      } catch (err) {
+        handleHttpError(err as Error, t("game.challenge.fetchChatError")!);
+      }
+      setLoading(false);
+    }
+  }
 
   function refreshChats() {
-    if (gameStore.current && challengeId() && teamId()) {
-      getSolveStatus().then((s) => {
-        setLoading(true);
-        getGameAdminChatMessages(gameStore.current!.id, challengeId()!, teamId()!)
-          .then((result) => {
-            const [changed, r] = mergeChats(challengeId() ?? 0, teamId() ?? 0, chats(), result, s);
-            setChats([...r]);
-            if (changed) setTimeout(() => chatBottomEl?.scrollIntoView({ behavior: "smooth" }), 700);
-          })
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchChatError")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => setLoading(false));
-      });
-    }
+    _refreshChats();
     return refreshChats;
   }
 
@@ -194,14 +172,7 @@ export default function () {
         const s = resp.find((x) => x.challenge_id === challengeId());
         return s?.created_at ?? null;
       } catch (err) {
-        if (err instanceof HTTPError) {
-          const text = await err.response.text();
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.fetchSolveError")}: ${text}`,
-            duration: 5000,
-          });
-        }
+        handleHttpError(err as Error, t("game.challenge.fetchSolveError")!);
       }
       return null;
     }
@@ -466,7 +437,13 @@ export default function () {
                     <span class="icon-[fluent--arrow-minimize-20-regular] w-5 h-5" />
                   </Show>
                 </Button>
-                <Button level="primary" size="sm" onClick={handleSendChat} disabled={sending()} loading={sending()}>
+                <Button
+                  level="primary"
+                  size="sm"
+                  onClick={handleSendChat}
+                  disabled={sending()}
+                  loading={sending() || loading()}
+                >
                   <span class="icon-[fluent--send-20-regular] w-5 h-5" />
                   <span>{t("game.challenge.hammerSend")}</span>
                 </Button>

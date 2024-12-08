@@ -1,31 +1,23 @@
+import { handleHttpError } from "@api";
 import { type EventDeviceInfo, getGameDevices } from "@api/game";
 import NarrowTips from "@blocks/narrow-tips";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Card from "@widgets/card";
 import Clipboard from "@widgets/clipboard";
-import type { HTTPError } from "ky";
 import { For, createEffect, createSignal, untrack } from "solid-js";
 
 export default function () {
   const [linkedDevices, setLinkedDevices] = createSignal([] as EventDeviceInfo[]);
   createEffect(() => {
     if (gameStore.current) {
-      untrack(() => {
-        getGameDevices(gameStore.current!.id)
-          .then((devices) => {
-            setLinkedDevices(devices);
-          })
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.admin.automate.fetchDevicesFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          });
+      untrack(async () => {
+        try {
+          const devices = await getGameDevices(gameStore.current!.id);
+          setLinkedDevices(devices);
+        } catch (err) {
+          handleHttpError(err as Error, t("game.admin.automate.fetchDevicesFailed")!);
+        }
       });
     }
   });
