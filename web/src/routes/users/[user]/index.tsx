@@ -12,7 +12,7 @@ import { For, Match, Switch, createEffect, createSignal, untrack } from "solid-j
 import Sidebar from "./_blocks/sidebar";
 import { handleHttpError } from "@api";
 
-export default function() {
+export default function () {
   const [user, setUser] = createSignal(null as null | User);
   const [loading, setLoading] = createSignal(true);
   const params = useParams();

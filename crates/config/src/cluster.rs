@@ -33,7 +33,8 @@ pub struct Config {
   pub challenge_node_selector: Option<String>,
   /// `proxy_image` is the image for the proxy container.
   pub proxy_image: Option<String>,
-  /// `traffic` is the traffic backend, default to `wsrx`. Available options are:
+  /// `traffic` is the traffic backend, default to `wsrx`. Available options
+  /// are:
   /// - `wsrx`: websocket reverse proxy
   /// - `plain`: plain tcp outbound
   pub traffic: Option<String>,

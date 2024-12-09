@@ -24,7 +24,7 @@ function getOAuthLink(service: string) {
   }
 }
 
-export default function() {
+export default function () {
   const [authConfig, setAuthConfig] = createSignal({
     signing_key: "",
     buffer_time: 0,

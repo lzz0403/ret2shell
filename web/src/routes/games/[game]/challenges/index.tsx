@@ -26,7 +26,7 @@ import Button from "@widgets/button";
 import { Transition } from "solid-transition-group";
 import { handleHttpError } from "@api";
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   if (accountStore.token === null) {
     navigate(`/account/login?redirect=/games/${gameStore.current ? gameStore.current.id : ""}`);
@@ -168,8 +168,9 @@ export default function() {
           >
             {/* icon-[fluent--code-20-regular] icon-[fluent--dismiss-20-regular] rotate-90 rotate-0 */}
             <span
-              class={`transition-transform rotate-${showLeftSidebar() ? "90" : "0"} icon-[fluent--${showLeftSidebar() ? "dismiss" : "code"
-                }-20-regular] w-5 h-5`}
+              class={`transition-transform rotate-${showLeftSidebar() ? "90" : "0"} icon-[fluent--${
+                showLeftSidebar() ? "dismiss" : "code"
+              }-20-regular] w-5 h-5`}
             />
           </Button>
         </Show>
@@ -187,8 +188,9 @@ export default function() {
           >
             {/* icon-[fluent--alert-20-regular] icon-[fluent--dismiss-20-regular] rotate-90 rotate-0 */}
             <span
-              class={`transition-transform rotate-${showRightSidebar() ? "90" : "0"} icon-[fluent--${showRightSidebar() ? "dismiss" : "alert"
-                }-20-regular] w-5 h-5`}
+              class={`transition-transform rotate-${showRightSidebar() ? "90" : "0"} icon-[fluent--${
+                showRightSidebar() ? "dismiss" : "alert"
+              }-20-regular] w-5 h-5`}
             />
           </Button>
         </Show>

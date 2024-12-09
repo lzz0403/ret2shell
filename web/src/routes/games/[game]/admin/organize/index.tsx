@@ -112,7 +112,7 @@ function InstituteManagement() {
   );
 }
 
-export default function() {
+export default function () {
   return (
     <div class="flex flex-col p-3 lg:p-6 w-full items-center flex-1 min-h-full relative">
       <div class="flex flex-col w-full max-w-5xl relative space-y-2">

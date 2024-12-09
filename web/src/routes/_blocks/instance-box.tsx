@@ -29,7 +29,7 @@ export function InstanceBoxContent() {
   }
 
   function retryConnect() {
-    wsrx.tryConnect().catch(() => { });
+    wsrx.tryConnect().catch(() => {});
     setConnecting(true);
     setTimeout(async () => {
       await wsrx.checkConnection();
@@ -81,8 +81,9 @@ export function InstanceBoxContent() {
         >
           <Show when={!connecting() && wsrx.connected() !== WsrxState.Pending}>
             <span
-              class={`icon-[fluent--fluid-20-regular] w-5 h-5 ${wsrx.connected() === WsrxState.Connected ? "text-success" : "text-warning"
-                }`}
+              class={`icon-[fluent--fluid-20-regular] w-5 h-5 ${
+                wsrx.connected() === WsrxState.Connected ? "text-success" : "text-warning"
+              }`}
             />
           </Show>
           <span
@@ -112,8 +113,9 @@ export function InstanceBoxContent() {
         >
           {/* icon-[fluent--settings-20-regular] icon-[fluent--settings-20-filled] */}
           <span
-            class={`icon-[fluent--settings-20-${showSettings() ? "filled" : "regular"}] w-5 h-5 ${showSettings() ? "text-primary" : ""
-              }`.trim()}
+            class={`icon-[fluent--settings-20-${showSettings() ? "filled" : "regular"}] w-5 h-5 ${
+              showSettings() ? "text-primary" : ""
+            }`.trim()}
           />
         </Button>
         <Link

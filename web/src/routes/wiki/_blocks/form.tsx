@@ -20,7 +20,7 @@ type WikiForm = {
   published: boolean;
 };
 
-export default function(props: {
+export default function (props: {
   onDone: (article: Article) => void;
   editSource?: Article;
 }) {

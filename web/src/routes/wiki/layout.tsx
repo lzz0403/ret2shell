@@ -9,7 +9,7 @@ import { type JSX, Show, createSignal } from "solid-js";
 import { Transition } from "solid-transition-group";
 import SideBar from "./_blocks/sidebar";
 
-export default function(props: { children?: JSX.Element }) {
+export default function (props: { children?: JSX.Element }) {
   const breakpoints = {
     lg: "1024px",
   };
@@ -32,8 +32,9 @@ export default function(props: { children?: JSX.Element }) {
           >
             {/* icon-[fluent--book-20-regular] icon-[fluent--dismiss-20-regular] rotate-90 rotate-0 */}
             <span
-              class={`transition-transform rotate-${showSidebar() ? "90" : "0"} icon-[fluent--${showSidebar() ? "dismiss" : "book"
-                }-20-regular] w-5 h-5`}
+              class={`transition-transform rotate-${showSidebar() ? "90" : "0"} icon-[fluent--${
+                showSidebar() ? "dismiss" : "book"
+              }-20-regular] w-5 h-5`}
             />
           </Button>
         </Show>

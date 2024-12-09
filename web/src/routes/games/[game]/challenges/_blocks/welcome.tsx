@@ -3,7 +3,7 @@ import Article from "@widgets/article";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createEffect, createSignal, untrack } from "solid-js";
 
-export default function() {
+export default function () {
   const [content, setContent] = createSignal(null as null | string);
   const comps = import.meta.glob("../../_blocks/contents/*.md");
   createEffect(() => {

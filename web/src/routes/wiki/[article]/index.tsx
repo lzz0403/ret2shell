@@ -16,7 +16,7 @@ import { Show, createEffect, onCleanup, untrack } from "solid-js";
 import EditForm from "../_blocks/form";
 import { handleHttpError } from "@api";
 
-export default function() {
+export default function () {
   const params = useParams();
   const article_id = () => Number.parseInt(params.article);
   const [searchParams, setSearchParams] = useSearchParams();

@@ -10,7 +10,7 @@ export type ImageProps = {
   height?: number;
 };
 
-export default function(props: ImageProps & ComponentProps<"div">) {
+export default function (props: ImageProps & ComponentProps<"div">) {
   const [imageProps, rest] = splitProps(props, ["src", "alt", "fallback", "width", "height"]);
   const [loading, setLoading] = createSignal(true);
   let cachedSrc = "" as string | undefined;

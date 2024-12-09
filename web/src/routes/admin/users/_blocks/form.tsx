@@ -43,7 +43,7 @@ export type UserForm = {
   permDevOps: boolean;
 };
 
-export default function(compProps: {
+export default function (compProps: {
   onDone?: (result: User) => void;
   editSource?: User;
   loading: boolean;

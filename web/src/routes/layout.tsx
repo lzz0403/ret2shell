@@ -216,11 +216,13 @@ function TitleBar() {
                         onClick={() => setAdditionalMobileBox("wsrx")}
                       >
                         <span
-                          class={`${wsrx.instances().length > 0
+                          class={`${
+                            wsrx.instances().length > 0
                               ? "icon-[fluent--fluid-20-filled]"
                               : "icon-[fluent--fluid-20-regular]"
-                            } w-5 h-5 ${wsrx.instances().length > 0 ? (wsrx.connected() ? "text-success" : "text-warning") : ""
-                            }`.trim()}
+                          } w-5 h-5 ${
+                            wsrx.instances().length > 0 ? (wsrx.connected() ? "text-success" : "text-warning") : ""
+                          }`.trim()}
                         />
                         <span>{t("instance.box")}</span>
                       </Button>
@@ -234,10 +236,11 @@ function TitleBar() {
                         onClick={() => setAdditionalMobileBox("notification")}
                       >
                         <span
-                          class={`${toastStore.toasts.length > 0
+                          class={`${
+                            toastStore.toasts.length > 0
                               ? "icon-[fluent--alert-badge-20-filled] text-primary"
                               : "icon-[fluent--alert-20-regular]"
-                            } w-5 h-5`}
+                          } w-5 h-5`}
                         />
                         <span>{t("platform.notificationBox")}</span>
                       </Button>
@@ -390,7 +393,7 @@ function checkCookiePolicy() {
   }
 }
 
-export default function(props: { children?: JSX.Element }) {
+export default function (props: { children?: JSX.Element }) {
   let platformName = `\xa0\xa0[\xa0${platformStore.config.name || t("platform.name")}\xa0]\xa0`;
   const [platformTyped, setPlatformTyped] = createSignal("");
   const [hideAnimation, setHideAnimation] = createSignal(false);

@@ -25,7 +25,7 @@ type RegisterForm = {
   captcha_answer: string;
 };
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   if (accountStore.token) {
     navigate("/", { replace: true });
@@ -90,7 +90,7 @@ export default function() {
                       if (e.target.value) {
                         try {
                           setValue(form, "account", await deunicode(e.target.value));
-                        } catch { }
+                        } catch {}
                       }
                     }}
                   />
@@ -126,7 +126,7 @@ export default function() {
                           if (accountInputRef?.value) {
                             try {
                               setValue(form, "account", await leet(accountInputRef!.value));
-                            } catch { }
+                            } catch {}
                           }
                         }}
                       >

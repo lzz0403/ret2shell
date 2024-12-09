@@ -21,7 +21,7 @@ type NotificationForm = {
   content: string;
 };
 
-export default function() {
+export default function () {
   const [notifications, setNotifications] = createSignal([] as Notification[]);
   const sortedNotifications = () =>
     notifications().sort((a, b) => b.published_at.toMillis() - a.published_at.toMillis());

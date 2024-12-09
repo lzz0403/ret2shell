@@ -15,7 +15,7 @@ import { For, Match, Show, Switch, createEffect, createMemo, createSignal, untra
 
 type OrderType = "id" | "name" | "institute_id" | "state";
 
-export default function() {
+export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
   const [teams, setTeams] = createSignal([] as Team[]);
   const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string)) || 1);

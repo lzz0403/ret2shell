@@ -166,7 +166,7 @@ function UserList() {
   );
 }
 
-export default function() {
+export default function () {
   const [searchParams] = useSearchParams();
   const inEdit = createMemo(() => (searchParams.user && Number.parseInt(searchParams.user as string)) || null);
   const [user, setUser] = createSignal(null as User | null);

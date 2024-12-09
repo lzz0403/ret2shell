@@ -35,7 +35,7 @@ import { For, Match, Show, Switch, createEffect, createSignal, onCleanup, untrac
 import IntroForm from "./_blocks/intro-form";
 import { handleHttpError } from "@api";
 
-export default function() {
+export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
   const inEdit = () => searchParams.edit === "true";
   const period = () => {

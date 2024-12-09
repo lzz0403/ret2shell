@@ -22,7 +22,7 @@ import { accountStore } from "@storage/account";
 import { Permission } from "@models/user";
 import { handleHttpError } from "@api";
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   const params = useParams();
   if (!accountStore.token) {

@@ -11,7 +11,7 @@ import { refreshInstitutes } from "@storage/account";
 import { handleHttpError } from "@api";
 import { t } from "@storage/theme";
 
-export default function(props: { children?: JSX.Element }) {
+export default function (props: { children?: JSX.Element }) {
   const navigate = useNavigate();
   onCleanup(() => {
     setGameStore({ current: null, preload: null, team: null, showTeamCover: false });

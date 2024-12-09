@@ -19,7 +19,7 @@ type TeamJoinForm = {
   accepted: boolean;
 };
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   const [form, { Form, Field }] = createForm<TeamJoinForm>();
   createEffect(() => {
