@@ -1,12 +1,11 @@
+import { handleHttpError } from "@api";
 import { createGame } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { createForm, required } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -18,7 +17,7 @@ type CreatePlaygroundForm = {
 export default function CreatePlayground(props: { onDone: (game: Game) => void }) {
   const [_, { Form, Field }] = createForm<CreatePlaygroundForm>();
   const [loading, setLoading] = createSignal(false);
-  function onSubmit(result: CreatePlaygroundForm) {
+  async function onSubmit(result: CreatePlaygroundForm) {
     setLoading(true);
     const req: Game = {
       ...result,
@@ -44,22 +43,12 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
       enable_audit: false,
       weight: 1,
     };
-    createGame(req)
-      .then((resp) => {
-        props.onDone(resp);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((reason) => {
-          addToast({
-            level: "error",
-            description: `${t("game.createFailed")}: ${reason}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      props.onDone(await createGame(req));
+    } catch (err) {
+      handleHttpError(err as Error, t("game.createFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <div class="flex-1 self-center w-full max-w-5xl flex flex-col">

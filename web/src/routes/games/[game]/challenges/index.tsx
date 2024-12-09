@@ -13,7 +13,6 @@ import LoadingTips from "@widgets/loading-tips";
 
 import { createChallenge, getChallenge } from "@api/game";
 import { addToast } from "@storage/toast";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { Match, Show, Switch, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import Notifications from "./_blocks/notifications";
@@ -25,8 +24,9 @@ import { createBreakpoints } from "@solid-primitives/media";
 import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallengeStore } from "@storage/challenge";
 import Button from "@widgets/button";
 import { Transition } from "solid-transition-group";
+import { handleHttpError } from "@api";
 
-export default function () {
+export default function() {
   const navigate = useNavigate();
   if (accountStore.token === null) {
     navigate(`/account/login?redirect=/games/${gameStore.current ? gameStore.current.id : ""}`);
@@ -35,6 +35,9 @@ export default function () {
   const [loadingChallenge, setLoadingChallenge] = createSignal(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "NaN") || null);
+  const inCreate = createMemo(() => searchParams.create === "true");
+  const [creating, setCreating] = createSignal(false);
+
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
       if (gameStore.current && gameStore.current.start_at > DateTime.now()) {
@@ -46,36 +49,24 @@ export default function () {
         navigate(`/games/${gameStore.current.id}`);
         return;
       }
-      untrack(() => {
+      untrack(async () => {
         setLoadingChallenge(true);
-        getChallenge(gameStore.current!.id, selectedChallengeId()!)
-          .then((resp) => {
-            setChallengeStore({ current: resp });
-            refreshChallengeAssets();
-          })
-          .catch((e: HTTPError) => {
-            e.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchChallengeFailed")}: ${text}`,
-                duration: 5000,
-              });
-              setSearchParams({ challenge: null, create: null });
-            });
-          })
-          .finally(() => {
-            setLoadingChallenge(false);
-          });
+        try {
+          const resp = await getChallenge(gameStore.current!.id, selectedChallengeId()!);
+          setChallengeStore({ current: resp });
+          refreshChallengeAssets();
+        } catch (err) {
+          handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
+          setSearchParams({ challenge: null, create: null });
+        }
+        setLoadingChallenge(false);
       });
     } else {
       setChallengeStore({ current: null });
     }
   });
 
-  const inCreate = createMemo(() => searchParams.create === "true");
-  const [creating, setCreating] = createSignal(false);
-
-  function onCreateChallenge(result: ChallengeForm) {
+  async function onCreateChallenge(result: ChallengeForm) {
     setCreating(true);
     const tags = result.tag.split("/").map((t) => {
       return { name: t, primary: false };
@@ -98,26 +89,17 @@ export default function () {
       score: result.initial,
       bucket: null,
     } as ChallengeModel;
-    createChallenge(gameStore.current!.id, challenge)
-      .then((result) => {
-        setSearchParams({
-          create: null,
-          challenge: result.id,
-        });
-        refreshChallenges();
-      })
-      .catch((e: HTTPError) => {
-        e.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.createFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setCreating(false);
+    try {
+      const result = await createChallenge(gameStore.current!.id, challenge);
+      setSearchParams({
+        create: null,
+        challenge: result.id,
       });
+      refreshChallenges();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.createFailed")!);
+    }
+    setCreating(false);
   }
   const breakpoints = {
     lg: "1024px",
@@ -186,9 +168,8 @@ export default function () {
           >
             {/* icon-[fluent--code-20-regular] icon-[fluent--dismiss-20-regular] rotate-90 rotate-0 */}
             <span
-              class={`transition-transform rotate-${showLeftSidebar() ? "90" : "0"} icon-[fluent--${
-                showLeftSidebar() ? "dismiss" : "code"
-              }-20-regular] w-5 h-5`}
+              class={`transition-transform rotate-${showLeftSidebar() ? "90" : "0"} icon-[fluent--${showLeftSidebar() ? "dismiss" : "code"
+                }-20-regular] w-5 h-5`}
             />
           </Button>
         </Show>
@@ -206,9 +187,8 @@ export default function () {
           >
             {/* icon-[fluent--alert-20-regular] icon-[fluent--dismiss-20-regular] rotate-90 rotate-0 */}
             <span
-              class={`transition-transform rotate-${showRightSidebar() ? "90" : "0"} icon-[fluent--${
-                showRightSidebar() ? "dismiss" : "alert"
-              }-20-regular] w-5 h-5`}
+              class={`transition-transform rotate-${showRightSidebar() ? "90" : "0"} icon-[fluent--${showRightSidebar() ? "dismiss" : "alert"
+                }-20-regular] w-5 h-5`}
             />
           </Button>
         </Show>

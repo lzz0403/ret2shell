@@ -9,11 +9,6 @@ import Pagination from "@widgets/pagination";
 import Tag from "@widgets/tag";
 import { For, Match, Show, Switch } from "solid-js";
 
-// icon-[fluent-emoji-flat--1st-place-medal]
-// icon-[fluent-emoji-flat--2nd-place-medal]
-// icon-[fluent-emoji-flat--3rd-place-medal]
-// icon-[fluent-emoji-flat--sports-medal]
-
 export default function TeamRanks(props: {
   teams: Team[];
   page: number;

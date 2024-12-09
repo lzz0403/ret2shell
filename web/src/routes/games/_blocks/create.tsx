@@ -1,14 +1,13 @@
+import { handleHttpError } from "@api";
 import { createGame } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { createForm, maxRange, minRange, required, setValue, setValues } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import IconCheckbox from "@widgets/icon-checkbox";
 import Input from "@widgets/input";
 import TimePicker from "@widgets/timepicker";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createSignal } from "solid-js";
 
@@ -36,7 +35,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
     enable_audit: true,
     can_register_after_started: true,
   });
-  function onSubmit(result: CreateGameForm) {
+  async function onSubmit(result: CreateGameForm) {
     setLoading(true);
     const req: Game = {
       ...result,
@@ -57,22 +56,12 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
       admins: [accountStore.id!],
       token: null,
     };
-    createGame(req)
-      .then((resp) => {
-        props.onDone(resp);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((reason) => {
-          addToast({
-            level: "error",
-            description: `${t("game.createFailed")}: ${reason}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      props.onDone(await createGame(req));
+    } catch (err) {
+      handleHttpError(err as Error, t("game.createFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col self-center w-full max-w-5xl space-y-2">

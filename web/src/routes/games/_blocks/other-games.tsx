@@ -2,10 +2,8 @@ import { getGames } from "@api/game";
 import { HostType } from "@models/game";
 import { appendGames, gameStore, setGameStore } from "@storage/game";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Card from "@widgets/card";
 import Picture from "@widgets/picture";
-import type { HTTPError } from "ky";
 import { createEffect, createMemo, createSignal, For, Show, untrack } from "solid-js";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { mediaPath } from "@lib/utils/media";
@@ -13,8 +11,9 @@ import Tag from "@widgets/tag";
 import { DateTime } from "luxon";
 import Pagination from "@widgets/pagination";
 import Spin from "@assets/animates/spin";
+import { handleHttpError } from "@api";
 
-export default function () {
+export default function() {
   const [page, setPage] = createSignal(1);
   const pageSize = 20;
   const [total, setTotal] = createSignal(0);
@@ -28,25 +27,31 @@ export default function () {
       .slice((page() - 1) * pageSize, page() * pageSize);
   });
 
-  function fetchGames() {
+  async function fetchGames() {
     /// fetch games from server
-    getGames(page(), pageSize, HostType.CTFGame, 1)
-      .then(([games, total]) => {
-        appendGames(games);
-        setTotal(total);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((resp) => {
-          addToast({
-            level: "error",
-            description: `${t("game.fetchFailed")}: ${resp}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    setLoading(true);
+    // getGames(page(), pageSize, HostType.CTFGame, 1)
+    //   .then(([games, total]) => {
+    //     appendGames(games);
+    //     setTotal(total);
+    //   })
+    //   .catch((err: HTTPError) => {
+    //     void err.response.text().then((resp) => {
+    //       addToast({
+    //         level: "error",
+    //         description: `${t("game.fetchFailed")}: ${resp}`,
+    //         duration: 5000,
+    //       });
+    //     });
+    //   })
+    try {
+      const [games, total] = await getGames(page(), pageSize, HostType.CTFGame, 1);
+      appendGames(games);
+      setTotal(total);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.fetchFailed")!);
+    }
+    setLoading(false);
   }
 
   createEffect(() => {

@@ -3,7 +3,7 @@ import { getTeamList } from "@api/game";
 import NarrowTips from "@blocks/narrow-tips";
 import { type Team, TeamState } from "@models/team";
 import { A, useSearchParams } from "@solidjs/router";
-import { accountStore, refreshInstitutes } from "@storage/account";
+import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import Input from "@widgets/input";
@@ -15,7 +15,7 @@ import { For, Match, Show, Switch, createEffect, createMemo, createSignal, untra
 
 type OrderType = "id" | "name" | "institute_id" | "state";
 
-export default function () {
+export default function() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [teams, setTeams] = createSignal([] as Team[]);
   const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string)) || 1);
@@ -35,7 +35,6 @@ export default function () {
       icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
     }));
   });
-  refreshInstitutes();
   async function refreshTeams() {
     setLoading(true);
     try {

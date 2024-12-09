@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { joinTeam } from "@api/game";
 import { createForm, required, setValue } from "@modular-forms/solid";
 import { useNavigate } from "@solidjs/router";
@@ -11,7 +12,6 @@ import Card from "@widgets/card";
 import Dialog from "@widgets/dialog";
 import Input from "@widgets/input";
 import Link from "@widgets/link";
-import type { HTTPError } from "ky";
 import { Show, createEffect, createSignal, untrack } from "solid-js";
 
 type TeamJoinForm = {
@@ -19,7 +19,7 @@ type TeamJoinForm = {
   accepted: boolean;
 };
 
-export default function () {
+export default function() {
   const navigate = useNavigate();
   const [form, { Form, Field }] = createForm<TeamJoinForm>();
   createEffect(() => {
@@ -33,37 +33,26 @@ export default function () {
     }
   });
   const [loading, setLoading] = createSignal(false);
-  function onSubmit(data: TeamJoinForm) {
+  async function onSubmit(data: TeamJoinForm) {
     setLoading(true);
-    joinTeam(gameStore.current!.id, data.token)
-      .then((team) => {
-        setGameStore({ team, showTeamCover: true });
-        setTimeout(() => {
-          navigate(`/games/${gameStore.current?.id}`);
-        }, 2000);
-      })
-      .catch((e: HTTPError) => {
-        e.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.team.join.failed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      const team = await joinTeam(gameStore.current!.id, data.token);
+      setGameStore({ team, showTeamCover: true });
+      setTimeout(() => {
+        navigate(`/games/${gameStore.current?.id}`);
+      }, 2000);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.team.join.failed")!);
+    }
+    setLoading(false);
   }
   const [content, setContent] = createSignal(null as null | string);
   const comps = import.meta.glob("../../_blocks/contents/*.md");
   createEffect(() => {
     if (themeStore.locale) {
-      untrack(() => {
+      untrack(async () => {
         const match = comps[`../../_blocks/contents/welcome.${themeStore.locale}.md`];
-        match().then((content) => {
-          setContent((content as { default: string }).default);
-        });
+        setContent(((await match()) as { default: string }).default);
       });
     }
   });

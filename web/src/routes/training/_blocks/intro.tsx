@@ -8,11 +8,9 @@ export default function Intro() {
   const comps = import.meta.glob("./contents/*.md");
   createEffect(() => {
     if (themeStore.locale) {
-      untrack(() => {
+      untrack(async () => {
         const match = comps[`./contents/intro.${themeStore.locale}.md`];
-        match().then((content) => {
-          setContent((content as { default: string }).default);
-        });
+        setContent(((await match()) as { default: string }).default);
       });
     }
   });

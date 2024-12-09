@@ -1,3 +1,4 @@
+import { handleHttpError } from "@api";
 import { createNotification, deleteNotification, getNotifications } from "@api/notification";
 import type { Notification } from "@models/notification";
 import { createForm, required, setValues } from "@modular-forms/solid";
@@ -11,7 +12,6 @@ import Divider from "@widgets/divider";
 import Editor from "@widgets/editor";
 import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createSignal } from "solid-js";
@@ -21,13 +21,13 @@ type NotificationForm = {
   content: string;
 };
 
-export default function () {
+export default function() {
   const [notifications, setNotifications] = createSignal([] as Notification[]);
   const sortedNotifications = () =>
     notifications().sort((a, b) => b.published_at.toMillis() - a.published_at.toMillis());
   const [createFormExpanded, setCreateFormExpanded] = createSignal(false);
   const [form, { Form, Field }] = createForm<NotificationForm>();
-  const onSubmit = (result: NotificationForm) => {
+  async function onSubmit(result: NotificationForm) {
     const payload = {
       id: 0,
       title: result.title,
@@ -36,70 +36,45 @@ export default function () {
       publisher_id: accountStore.id,
       game_id: gameStore.current!.id,
     } as Notification;
-    createNotification(gameStore.current!.id, payload)
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.notification.createSuccess")!,
-          duration: 5000,
-        });
-        setValues(form, {
-          title: "",
-          content: "",
-        });
-        setCreateFormExpanded(false);
-        refreshNotifications();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.notification.createFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
+    try {
+      await createNotification(gameStore.current!.id, payload);
+      addToast({
+        level: "success",
+        description: t("game.notification.createSuccess")!,
+        duration: 5000,
       });
-  };
-  const [loading, setLoading] = createSignal(false);
-  function refreshNotifications() {
-    setLoading(true);
-    getNotifications(gameStore.current!.id)
-      .then(setNotifications)
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.notification.fetchFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+      setValues(form, {
+        title: "",
+        content: "",
       });
+      setCreateFormExpanded(false);
+      refreshNotifications();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.notification.createFailed")!);
+    }
   }
-  function onDelete(id: number) {
-    deleteNotification(gameStore.current!.id, id)
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("game.notification.deleteSuccess")!,
-          duration: 5000,
-        });
-        refreshNotifications();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.notification.deleteFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        refreshNotifications();
+  const [loading, setLoading] = createSignal(false);
+  async function refreshNotifications() {
+    setLoading(true);
+    try {
+      setNotifications(await getNotifications(gameStore.current!.id));
+    } catch (err) {
+      handleHttpError(err as Error, t("game.notification.fetchFailed")!);
+    }
+    setLoading(false);
+  }
+  async function onDelete(id: number) {
+    try {
+      await deleteNotification(gameStore.current!.id, id);
+      addToast({
+        level: "success",
+        description: t("game.notification.deleteSuccess")!,
+        duration: 5000,
       });
+      refreshNotifications();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.notification.deleteFailed")!);
+    }
   }
   createEffect(() => {
     if (gameStore.current) {

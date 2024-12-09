@@ -14,7 +14,7 @@ import type { Team } from "@models/team";
 import type { User } from "@models/user";
 import { createForm, maxLength, required, setValue, setValues } from "@modular-forms/solid";
 import { A, useNavigate, useParams } from "@solidjs/router";
-import { accountStore, refreshInstitutes } from "@storage/account";
+import { accountStore } from "@storage/account";
 import { gameStore, isGameAdmin, setGameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
@@ -24,10 +24,11 @@ import Chart from "@widgets/chart";
 import Clipboard from "@widgets/clipboard";
 import Input from "@widgets/input";
 import Select from "@widgets/select";
-import type { HTTPError } from "ky";
+import { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import Sidebar from "./_blocks/sidebar";
+import { handleHttpError } from "@api";
 
 type TeamAdminUpdateForm = {
   name: string;
@@ -67,36 +68,26 @@ function AdminManagement(props: {
     }
     return result;
   });
-  refreshInstitutes();
   const [updating, setUpdating] = createSignal(false);
-  function onSubmit(result: TeamAdminUpdateForm) {
+  async function onSubmit(result: TeamAdminUpdateForm) {
     setUpdating(true);
-    updateTeamInfo(gameStore.current!.id, props.team!.id, {
-      ...props.team!,
-      name: result.name,
-      state: Number.parseInt(result.state),
-      institute_id: Number.parseInt(result.institute_id) || null,
-    })
-      .then((team) => {
-        props.onDone?.(team);
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setUpdating(false);
+    try {
+      const team = await updateTeamInfo(gameStore.current!.id, props.team!.id, {
+        ...props.team!,
+        name: result.name,
+        state: Number.parseInt(result.state),
+        institute_id: Number.parseInt(result.institute_id) || null,
       });
+      props.onDone?.(team);
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setUpdating(false);
   }
   return (
     <>
@@ -175,9 +166,6 @@ function AdminManagement(props: {
                   name={field.name}
                   error={field.error}
                   inputProps={props}
-                  // onValueChange={(v) => {
-                  //   setValue(form, "state", v.value.at(0) || "0");
-                  // }}
                   value={field.value ? [field.value.toString()] : undefined}
                 />
               )}
@@ -233,34 +221,24 @@ function SelfManagement(props: {
     });
     return result;
   });
-  refreshInstitutes();
   const [updating, setUpdating] = createSignal(false);
-  function onSubmit(result: TeamSelfUpdateForm) {
+  async function onSubmit(result: TeamSelfUpdateForm) {
     setUpdating(true);
-    updateSelfteam(gameStore.current!.id, {
-      name: result.name,
-      institute_id: Number.parseInt(result.institute_id) || null,
-    })
-      .then((team) => {
-        setGameStore({ team });
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setUpdating(false);
+    try {
+      const team = await updateSelfteam(gameStore.current!.id, {
+        name: result.name,
+        institute_id: Number.parseInt(result.institute_id) || null,
       });
+      setGameStore({ team });
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
+    }
+    setUpdating(false);
   }
   return (
     <>
@@ -336,32 +314,23 @@ function ExtraForm(props: {
   setValue(form, "score", 0);
 
   const [loading, setLoading] = createSignal(false);
-  function onSubmit(result: CreateExtraForm) {
+  async function onSubmit(result: CreateExtraForm) {
     setLoading(true);
-    createTeamExtra(gameStore.current!.id, props.team!.id, {
-      id: 0,
-      created_at: DateTime.now(),
-      reason: result.reason,
-      score: result.score,
-      hint_id: null,
-      challenge_id: null,
-      team_id: props.team!.id,
-    })
-      .then(() => {
-        props.onDone?.();
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.team.createExtraFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
+    try {
+      await createTeamExtra(gameStore.current!.id, props.team!.id, {
+        id: 0,
+        created_at: DateTime.now(),
+        reason: result.reason,
+        score: result.score,
+        hint_id: null,
+        challenge_id: null,
+        team_id: props.team!.id,
       });
+      props.onDone?.();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.team.createExtraFailed")!);
+    }
+    setLoading(false);
   }
 
   return (
@@ -407,7 +376,7 @@ function ExtraForm(props: {
   );
 }
 
-export default function () {
+export default function() {
   const [team, setTeam] = createSignal(null as Team | null);
   const [solves, setSolves] = createSignal([] as Submission[]);
   const [extras, setExtras] = createSignal([] as Extra[]);
@@ -415,62 +384,31 @@ export default function () {
   const teamId = () => Number.parseInt(params.team) || null;
   const isSelfTeam = () => team() && team()?.id === gameStore.team?.id;
   const navigate = useNavigate();
-  function refreshExtras() {
-    getTeamExtras(gameStore.current!.id, teamId()!)
-      .then((resp) => {
-        setExtras(resp);
-      })
-      .catch((err: HTTPError) => {
-        if (err.response.status === 404) {
-          navigate("/sigtrap/404");
-        } else {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.team.fetchTeamExtrasFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        }
-      });
+  async function refreshExtras() {
+    try {
+      const resp = await getTeamExtras(gameStore.current!.id, teamId()!);
+      setExtras(resp);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.team.fetchTeamExtrasFailed")!);
+    }
   }
-  function refreshInfo() {
-    getTeamInfo(gameStore.current!.id, teamId()!, true)
-      .then((resp) => {
-        setTeam(resp);
-      })
-      .catch((err: HTTPError) => {
-        if (err.response.status === 404) {
-          navigate("/sigtrap/404");
-        } else {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.team.fetchTeamFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        }
-      });
+  async function refreshInfo() {
+    try {
+      setTeam(await getTeamInfo(gameStore.current!.id, teamId()!, true));
+    } catch (err) {
+      if (err instanceof HTTPError && err.response.status === 404) {
+        navigate("/sigtrap/404");
+      }
+      handleHttpError(err as Error, t("game.team.fetchTeamFailed")!);
+    }
   }
-  function refreshSolves() {
-    getTeamSolves(gameStore.current!.id, teamId()!)
-      .then((resp) => {
-        setSolves(resp);
-      })
-      .catch((err: HTTPError) => {
-        if (err.response.status === 404) {
-          navigate("/sigtrap/404");
-        } else {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("game.team.fetchTeamSubmissionsFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        }
-      });
+  async function refreshSolves() {
+    try {
+      const resp = await getTeamSolves(gameStore.current!.id, teamId()!);
+      setSolves(resp);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.team.fetchTeamSubmissionsFailed")!);
+    }
   }
   createEffect(() => {
     if (gameStore.current && teamId()) {
@@ -495,20 +433,14 @@ export default function () {
   const [loadingMembers, setLoadingMembers] = createSignal(false);
   createEffect(() => {
     if (team()) {
-      untrack(() => {
+      untrack(async () => {
         setLoadingMembers(true);
-        getTeamMembers(team()!.game_id, team()!.id)
-          .then(setMembers)
-          .catch((err: HTTPError) => {
-            err.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.team.fetchMembersFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-          })
-          .finally(() => setLoadingMembers(false));
+        try {
+          setMembers(await getTeamMembers(gameStore.current!.id, team()!.id));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.team.fetchMembersFailed")!);
+        }
+        setLoadingMembers(false);
       });
     }
   });

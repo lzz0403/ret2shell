@@ -20,8 +20,9 @@ import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { accountStore } from "@storage/account";
 import { Permission } from "@models/user";
+import { handleHttpError } from "@api";
 
-export default function () {
+export default function() {
   const navigate = useNavigate();
   const params = useParams();
   if (!accountStore.token) {
@@ -42,7 +43,7 @@ export default function () {
   const [loadingChallenge, setLoadingChallenge] = createSignal(false);
   const [creating, setCreating] = createSignal(false);
 
-  function onCreateChallenge(result: ChallengeForm) {
+  async function onCreateChallenge(result: ChallengeForm) {
     setCreating(true);
     const tags = result.tag.split("/").map((t) => {
       return { name: t, primary: false };
@@ -65,52 +66,34 @@ export default function () {
       score: 1,
       bucket: null,
     } as ChallengeModel;
-    createChallenge(gameStore.current!.id, challenge)
-      .then((result) => {
-        setSearchParams({
-          create: null,
-          challenge: result.id,
-        });
-        void refreshChallenges();
-      })
-      .catch((e: HTTPError) => {
-        e.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("game.challenge.createFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setCreating(false);
+    try {
+      const result = await createChallenge(gameStore.current!.id, challenge);
+      setSearchParams({
+        create: null,
+        challenge: result.id,
       });
+      refreshChallenges();
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.createFailed")!);
+    }
+    setCreating(false);
   }
   const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "NaN") || null);
   const inEdit = createMemo(() => searchParams.edit === "true");
   const inStatistics = createMemo(() => searchParams.statistics === "true");
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
-      untrack(() => {
+      untrack(async () => {
         setLoadingChallenge(true);
-        getChallenge(gameStore.current!.id, selectedChallengeId()!)
-          .then((resp) => {
-            setChallengeStore({ current: resp });
-            refreshChallengeAssets();
-          })
-          .catch((e: HTTPError) => {
-            e.response.text().then((text) => {
-              addToast({
-                level: "error",
-                description: `${t("game.challenge.fetchChallengeFailed")}: ${text}`,
-                duration: 5000,
-              });
-            });
-            setSearchParams({ challenge: null, create: null });
-          })
-          .finally(() => {
-            setLoadingChallenge(false);
-          });
+        try {
+          const resp = await getChallenge(gameStore.current!.id, selectedChallengeId()!);
+          setChallengeStore({ current: resp });
+          refreshChallengeAssets();
+        } catch (err) {
+          handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
+          setSearchParams({ challenge: null, create: null });
+        }
+        setLoadingChallenge(false);
       });
     } else {
       setChallengeStore({ current: null });
@@ -123,36 +106,27 @@ export default function () {
 
   const [editing, setEditing] = createSignal(false);
 
-  function onEditGame(result: GameForm) {
+  async function onEditGame(result: GameForm) {
     setEditing(true);
-    updateGame(gameStore.current!.id, {
-      ...gameStore.current!,
-      ...result,
-      start_at: gameStore.current?.start_at ?? DateTime.fromFormat("2002-05-05 10:00", "yyyy-MM-dd HH:mm"),
-      end_at: gameStore.current?.end_at ?? DateTime.fromFormat("2077-01-01 10:00", "yyyy-MM-dd HH:mm"),
-      archive_at: gameStore.current?.archive_at ?? DateTime.fromFormat("2077-01-01 10:00", "yyyy-MM-dd HH:mm"),
-      register_at: gameStore.current?.register_at ?? DateTime.fromFormat("2002-05-05 10:00", "yyyy-MM-dd HH:mm"),
-    })
-      .then((game) => {
-        setGameStore({ current: game });
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-      })
-      .catch((err: HTTPError) => {
-        err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("form.saveFailed")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setEditing(false);
+    try {
+      const resp = await updateGame(gameStore.current!.id, {
+        ...gameStore.current!,
+        ...result,
+        start_at: gameStore.current?.start_at ?? DateTime.fromFormat("2002-05-05 10:00", "yyyy-MM-dd HH:mm"),
+        end_at: gameStore.current?.end_at ?? DateTime.fromFormat("2077-01-01 10:00", "yyyy-MM-dd HH:mm"),
+        archive_at: gameStore.current?.archive_at ?? DateTime.fromFormat("2077-01-01 10:00", "yyyy-MM-dd HH:mm"),
+        register_at: gameStore.current?.register_at ?? DateTime.fromFormat("2002-05-05 10:00", "yyyy-MM-dd HH:mm"),
       });
+      setGameStore({ current: resp });
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as HTTPError, t("form.saveFailed")!);
+    }
+    setEditing(false);
   }
 
   return (

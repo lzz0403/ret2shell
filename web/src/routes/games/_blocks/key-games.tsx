@@ -12,7 +12,6 @@ import { useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { appendGames, gameStore, setGameStore } from "@storage/game";
 import { t, themeStore } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Divider from "@widgets/divider";
@@ -20,12 +19,12 @@ import Link from "@widgets/link";
 import Picture from "@widgets/picture";
 import Popover from "@widgets/popover";
 import Tag from "@widgets/tag";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
 import CreateGame from "./create";
+import { handleHttpError } from "@api";
 
-export default function () {
+export default function() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = createSignal(1);
   const pageSize = 5;
@@ -55,25 +54,16 @@ export default function () {
     setGameStore({ preload: selectedGame() || null });
   });
 
-  function fetchGames() {
-    /// fetch games from server
-    getGames(page(), pageSize, HostType.CTFGame, 3)
-      .then(([games, total]) => {
-        appendGames(games);
-        setTotal(total);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((resp) => {
-          addToast({
-            level: "error",
-            description: `${t("game.fetchFailed")}: ${resp}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+  async function fetchGames() {
+    setLoading(true);
+    try {
+      const [game, total] = await getGames(page(), pageSize, HostType.CTFGame, 3);
+      appendGames(game);
+      setTotal(total);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.fetchFailed")!);
+    }
+    setLoading(false);
   }
 
   createEffect(() => {
@@ -125,14 +115,12 @@ export default function () {
             >
               {/* icon-[fluent--flag-20-regular] icon-[fluent--flag-20-filled] */}
               <span
-                class={`icon-[fluent--flag-20-${
-                  selectedGameId() === game.id && !showCreate() ? "filled" : "regular"
-                }] w-5 h-5 ${selectedGameId() === game.id && !showCreate() ? "text-primary" : "opacity-60"}`}
+                class={`icon-[fluent--flag-20-${selectedGameId() === game.id && !showCreate() ? "filled" : "regular"
+                  }] w-5 h-5 ${selectedGameId() === game.id && !showCreate() ? "text-primary" : "opacity-60"}`}
               />
               <span
-                class={`flex-1 text-start ${
-                  selectedGameId() === game.id && !showCreate() ? "font-bold" : "font-normal opacity-60"
-                }`}
+                class={`flex-1 text-start ${selectedGameId() === game.id && !showCreate() ? "font-bold" : "font-normal opacity-60"
+                  }`}
               >
                 {game.name}
               </span>
@@ -143,13 +131,12 @@ export default function () {
                 <span class="icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning mx-2" />
               </Show>
               <div
-                class={`w-2 h-2 rounded-full ${
-                  DateTime.now() < game.start_at
+                class={`w-2 h-2 rounded-full ${DateTime.now() < game.start_at
                     ? "bg-info"
                     : DateTime.now() > game.end_at
                       ? "bg-warning"
                       : "bg-success"
-                }`}
+                  }`}
               />
             </Link>
           )}
@@ -204,9 +191,8 @@ export default function () {
                 >
                   {/* icon-[fluent--flag-20-regular] icon-[fluent--flag-20-filled] */}
                   <span
-                    class={`icon-[fluent--flag-20-${
-                      selectedGameId() === game.id ? "filled" : "regular"
-                    }] w-5 h-5 ${selectedGameId() === game.id ? "text-primary" : "opacity-60"}`}
+                    class={`icon-[fluent--flag-20-${selectedGameId() === game.id ? "filled" : "regular"
+                      }] w-5 h-5 ${selectedGameId() === game.id ? "text-primary" : "opacity-60"}`}
                   />
                   <span
                     class={`flex-1 text-start ${selectedGameId() === game.id ? "font-bold" : "font-normal opacity-60"}`}
@@ -214,13 +200,12 @@ export default function () {
                     {game.name}
                   </span>
                   <div
-                    class={`w-2 h-2 rounded-full ${
-                      DateTime.now() < game.start_at
+                    class={`w-2 h-2 rounded-full ${DateTime.now() < game.start_at
                         ? "bg-info"
                         : DateTime.now() > game.end_at
                           ? "bg-warning"
                           : "bg-success"
-                    }`}
+                      }`}
                   />
                 </Link>
               )}

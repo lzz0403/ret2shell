@@ -13,7 +13,7 @@ import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
 import Select from "@widgets/select";
 import Tag from "@widgets/tag";
-import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
+import { For, Show, createEffect, createMemo, createSignal, onMount, untrack } from "solid-js";
 import Form from "./_blocks/form";
 import { handleHttpError } from "@api";
 
@@ -56,7 +56,6 @@ function UserList() {
       icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
     }));
   });
-  refreshInstitutes();
   createEffect(() => {
     if (page()) {
       untrack(refreshUsers);
@@ -167,7 +166,7 @@ function UserList() {
   );
 }
 
-export default function () {
+export default function() {
   const [searchParams] = useSearchParams();
   const inEdit = createMemo(() => (searchParams.user && Number.parseInt(searchParams.user as string)) || null);
   const [user, setUser] = createSignal(null as User | null);
@@ -202,6 +201,10 @@ export default function () {
     }
     setUpdatingUser(false);
   }
+
+  onMount(() => {
+    refreshInstitutes();
+  });
   return (
     <div class="flex-1 flex flex-col items-center">
       <Title title={`${t("admin.users.title")} - ${platformStore.config.name || t("platform.name")}`} />

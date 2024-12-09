@@ -4,11 +4,14 @@ import { useNavigate, useParams } from "@solidjs/router";
 import { setChallengeStore } from "@storage/challenge";
 import { gameStore, refreshSelfTeam, setGameStore } from "@storage/game";
 import { Title } from "@storage/header";
-import type { HTTPError } from "ky";
-import { type JSX, onCleanup } from "solid-js";
+import { HTTPError } from "ky";
+import { type JSX, onCleanup, onMount } from "solid-js";
 import TeamCover from "./_blocks/team-cover";
+import { refreshInstitutes } from "@storage/account";
+import { handleHttpError } from "@api";
+import { t } from "@storage/theme";
 
-export default function (props: { children?: JSX.Element }) {
+export default function(props: { children?: JSX.Element }) {
   const navigate = useNavigate();
   onCleanup(() => {
     setGameStore({ current: null, preload: null, team: null, showTeamCover: false });
@@ -16,9 +19,10 @@ export default function (props: { children?: JSX.Element }) {
   });
   const params = useParams();
   const game_id = Number.parseInt(params.game);
-  if (game_id) {
-    getGame(game_id)
-      .then((resp) => {
+  onMount(async () => {
+    if (game_id) {
+      try {
+        const resp = await getGame(game_id);
         if (resp.host_type !== HostType.CTFGame) {
           navigate(`/training/${resp.id}`);
           return null;
@@ -27,11 +31,16 @@ export default function (props: { children?: JSX.Element }) {
         setTimeout(() => {
           refreshSelfTeam();
         });
-      })
-      .catch((err: HTTPError) => {
-        navigate(`/sigtrap/${err.response.status}`, { replace: true });
-      });
-  }
+      } catch (err) {
+        if (err instanceof HTTPError) {
+          navigate(`/sigtrap/${err.response.status}`, { replace: true });
+        }
+        handleHttpError(err as HTTPError, t("game.fetchFailed")!);
+      }
+    }
+    refreshInstitutes();
+  });
+
   return (
     <>
       <Title title={gameStore.current?.name || "CTF"} />

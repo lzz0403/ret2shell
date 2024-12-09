@@ -6,12 +6,11 @@ import { t } from "@storage/theme";
 import { refreshWikiToc } from "@storage/wiki";
 import CreateForm from "../_blocks/form";
 
-export default function () {
+export default function() {
   const navigate = useNavigate();
-  function onDone(article: Article) {
-    void refreshWikiToc().then(() => {
-      navigate(`/wiki/${article.id}`);
-    });
+  async function onDone(article: Article) {
+    await refreshWikiToc();
+    navigate(`/wiki/${article.id}`);
   }
   return (
     <>

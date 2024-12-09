@@ -6,7 +6,7 @@ import { randomTips } from "@lib/utils/loading-tips";
 import { mediaPath } from "@lib/utils/media";
 import type { Article as ArticleModel } from "@models/article";
 import { TeamState, stringifyState } from "@models/team";
-import { accountStore, refreshInstitutes } from "@storage/account";
+import { accountStore } from "@storage/account";
 import {
   canParticipate,
   gameStore,
@@ -30,13 +30,12 @@ import Timer from "@widgets/timer";
 
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { useSearchParams } from "@solidjs/router";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { For, Match, Show, Switch, createEffect, createSignal, onCleanup, untrack } from "solid-js";
 import IntroForm from "./_blocks/intro-form";
+import { handleHttpError } from "@api";
 
-export default function () {
-  void refreshInstitutes();
+export default function() {
   const [searchParams, setSearchParams] = useSearchParams();
   const inEdit = () => searchParams.edit === "true";
   const period = () => {
@@ -80,33 +79,20 @@ export default function () {
   const [loading, setLoading] = createSignal(true);
 
   createEffect(() => {
+    setIntroduction(null);
     if (gameStore.current?.introduction_id) {
-      untrack(() => {
+      untrack(async () => {
         if (gameStore.current?.introduction_id) {
-          getGameIntroduction(gameStore.current.id)
-            .then((resp) => {
-              setIntroduction(resp);
-              setLoading(false);
-            })
-            .catch((err: HTTPError) => {
-              void err.response.text().then((resp) => {
-                addToast({
-                  level: "error",
-                  description: `${t("game.introduction.fetchFailed")}: ${resp}`,
-                  duration: 5000,
-                });
-              });
-              setIntroduction(null);
-              setLoading(false);
-            });
-        } else {
-          setIntroduction(null);
+          setLoading(true);
+          try {
+            const resp = await getGameIntroduction(gameStore.current.id);
+            setIntroduction(resp);
+          } catch (err) {
+            handleHttpError(err as Error, t("game.introduction.fetchFailed")!);
+          }
           setLoading(false);
         }
       });
-    } else {
-      setIntroduction(null);
-      setLoading(false);
     }
   });
 
@@ -134,47 +120,29 @@ export default function () {
       setCoverSet(true);
     }
   }
-  function handleUploadCover() {
-    if (coverFile())
-      uploadMedia(coverFile()!, false)
-        .then((resp) => {
-          if (gameStore.current)
-            updateGame(gameStore.current.id, {
-              ...gameStore.current,
-              cover: resp.hash,
-            })
-              .then((resp) => {
-                setGameStore({ current: resp });
-                addToast({
-                  level: "success",
-                  description: t("game.cover.uploaded")!,
-                  duration: 5000,
-                });
-              })
-              .catch((err: HTTPError) => {
-                void err.response.text().then((resp) => {
-                  addToast({
-                    level: "error",
-                    description: `${t("game.cover.uploadFailed")}: ${resp}`,
-                    duration: 5000,
-                  });
-                });
-              })
-              .finally(() => {
-                setCoverUploading(false);
-                setCoverFile(null);
-                setCoverSet(false);
-              });
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((resp) => {
-            addToast({
-              level: "error",
-              description: `${t("game.cover.uploadFailed")}: ${resp}`,
-              duration: 5000,
-            });
+  async function handleUploadCover() {
+    if (coverFile()) {
+      try {
+        const resp = await uploadMedia(coverFile()!, false);
+        if (gameStore.current) {
+          const game = await updateGame(gameStore.current.id, {
+            ...gameStore.current,
+            cover: resp.hash,
           });
-        });
+          setGameStore({ current: game });
+          addToast({
+            level: "success",
+            description: t("game.cover.uploaded")!,
+            duration: 5000,
+          });
+        }
+      } catch (err) {
+        handleHttpError(err as Error, t("game.cover.uploadFailed")!);
+      }
+      setCoverUploading(false);
+      setCoverFile(null);
+      setCoverSet(false);
+    }
   }
   const [logoSet, setLogoSet] = createSignal(false);
   const [logoFile, setLogoFile] = createSignal(null as File | null);
@@ -200,47 +168,29 @@ export default function () {
       setLogoSet(true);
     }
   }
-  function handleUploadLogo() {
-    if (logoFile())
-      uploadMedia(logoFile()!, false)
-        .then((resp) => {
-          if (gameStore.current)
-            updateGame(gameStore.current.id, {
-              ...gameStore.current,
-              logo: resp.hash,
-            })
-              .then((resp) => {
-                setGameStore({ current: resp });
-                addToast({
-                  level: "success",
-                  description: t("game.logo.uploaded")!,
-                  duration: 5000,
-                });
-              })
-              .catch((err: HTTPError) => {
-                void err.response.text().then((resp) => {
-                  addToast({
-                    level: "error",
-                    description: `${t("game.logo.uploadFailed")}: ${resp}`,
-                    duration: 5000,
-                  });
-                });
-              })
-              .finally(() => {
-                setLogoUploading(false);
-                setLogoFile(null);
-                setLogoSet(false);
-              });
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((resp) => {
-            addToast({
-              level: "error",
-              description: `${t("game.logo.uploadFailed")}: ${resp}`,
-              duration: 5000,
-            });
+  async function handleUploadLogo() {
+    if (logoFile()) {
+      try {
+        const resp = await uploadMedia(logoFile()!, false);
+        if (gameStore.current) {
+          const game = await updateGame(gameStore.current.id, {
+            ...gameStore.current,
+            logo: resp.hash,
           });
-        });
+          setGameStore({ current: game });
+          addToast({
+            level: "success",
+            description: t("game.logo.uploaded")!,
+            duration: 5000,
+          });
+        }
+      } catch (err) {
+        handleHttpError(err as Error, t("game.logo.uploadFailed")!);
+      }
+      setLogoUploading(false);
+      setLogoFile(null);
+      setLogoSet(false);
+    }
   }
 
   async function onUpdateIntroduction(result: ArticleModel) {
@@ -249,12 +199,7 @@ export default function () {
       setIntroduction(resp);
       setSearchParams({ edit: null });
     } catch (err) {
-      const text = await (err as HTTPError).response.text();
-      addToast({
-        level: "error",
-        description: `${t("game.introduction.updateFailed")}: ${text}`,
-        duration: 5000,
-      });
+      handleHttpError(err as Error, t("game.introduction.updateFailed")!);
     }
   }
 

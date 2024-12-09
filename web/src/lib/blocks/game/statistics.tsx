@@ -493,7 +493,7 @@ export default function GameStatistics(props: {
                           .map(([_, v]) => v)
                           .concat(
                             stats()!.total_players -
-                              Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
+                            Object.values(stats()!.institute_players).reduce((a, b) => a + b, 0)
                           ),
                         barMaxWidth: 64,
                       },

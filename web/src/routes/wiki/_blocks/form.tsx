@@ -4,13 +4,12 @@ import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Editor from "@widgets/editor";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { createEffect, createSignal, untrack } from "solid-js";
+import { handleHttpError } from "@api";
 
 type WikiForm = {
   title: string;
@@ -21,7 +20,7 @@ type WikiForm = {
   published: boolean;
 };
 
-export default function (props: {
+export default function(props: {
   onDone: (article: Article) => void;
   editSource?: Article;
 }) {
@@ -52,7 +51,7 @@ export default function (props: {
       });
     }
   });
-  function onSubmit(result: WikiForm) {
+  async function onSubmit(result: WikiForm) {
     setLoading(true);
     const article: Article = {
       ...result,
@@ -64,20 +63,12 @@ export default function (props: {
       access_policy: ArticleAccessPolicy.Wiki,
       weight: 0,
     };
-    (props.editSource ? updateWiki : createWiki)(article)
-      .then((resp) => props.onDone(resp))
-      .catch((err: HTTPError) => {
-        void err.response.text().then((resp) => {
-          addToast({
-            level: "error",
-            description: `${props.editSource ? t("form.saveFailed") : t("form.createFailed")}: ${resp}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+    try {
+      props.onDone(await (props.editSource ? updateWiki(article) : createWiki(article)));
+    } catch (err) {
+      handleHttpError(err as Error, props.editSource ? t("form.saveFailed")! : t("form.createFailed")!);
+    }
+    setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">

@@ -6,14 +6,13 @@ import { A, useNavigate, useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Article from "@widgets/article";
 import LoadingTips from "@widgets/loading-tips";
-import type { HTTPError } from "ky";
 import { For, Match, Switch, createEffect, createSignal, untrack } from "solid-js";
 import Sidebar from "./_blocks/sidebar";
+import { handleHttpError } from "@api";
 
-export default function () {
+export default function() {
   const [user, setUser] = createSignal(null as null | User);
   const [loading, setLoading] = createSignal(true);
   const params = useParams();
@@ -24,23 +23,17 @@ export default function () {
     if (!userId()) {
       navigate("/sigtrap/404", { replace: true });
     }
-    untrack(() => {
-      getUser(userId()!)
-        .then(setUser)
-        .finally(() => setLoading(false));
-      getUserTeams(userId()!)
-        .then((teams) => {
-          setTeams(teams.sort((a, b) => a.last_active_at.toMillis() - b.last_active_at.toMillis()));
-        })
-        .catch((err: HTTPError) => {
-          err.response.text().then((text) => {
-            addToast({
-              level: "error",
-              description: `${t("user.fetchTeamsFailed")}: ${text}`,
-              duration: 5000,
-            });
-          });
-        });
+    untrack(async () => {
+      setLoading(true);
+      try {
+        setUser(await getUser(userId()!));
+        setTeams(
+          (await getUserTeams(userId()!)).sort((a, b) => a.last_active_at.toMillis() - b.last_active_at.toMillis())
+        );
+      } catch (err) {
+        handleHttpError(err as Error, t("user.fetchTeamsFailed")!);
+      }
+      setLoading(false);
     });
   });
 

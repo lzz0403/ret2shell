@@ -11,11 +11,12 @@ import { addToast } from "@storage/toast";
 import { refreshWikiToc, setWikiStore, wikiStore } from "@storage/wiki";
 import Article from "@widgets/article";
 import Divider from "@widgets/divider";
-import type { HTTPError } from "ky";
+import { HTTPError } from "ky";
 import { Show, createEffect, onCleanup, untrack } from "solid-js";
 import EditForm from "../_blocks/form";
+import { handleHttpError } from "@api";
 
-export default function () {
+export default function() {
   const params = useParams();
   const article_id = () => Number.parseInt(params.article);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -24,18 +25,17 @@ export default function () {
 
   createEffect(() => {
     if (Number.isNaN(article_id())) navigate("/sigtrap/404", { replace: true });
-    untrack(() => {
-      getWiki(article_id())
-        .then((resp) => {
-          setWikiStore({ current: resp });
-          // console.log(resp)
-        })
-        .catch((err: HTTPError) => {
-          void err.response.text().then((reason) => {
-            addToast({ level: "error", description: reason, duration: 5000 });
-            navigate(`/sigtrap/${err.response.status}`, { replace: true });
-          });
-        });
+    untrack(async () => {
+      try {
+        setWikiStore({ current: await getWiki(article_id()) });
+      } catch (err) {
+        handleHttpError(err as Error, t("errors.unknown")!);
+        if (err instanceof HTTPError) {
+          navigate(`/sigtrap/${err.response.status}`, { replace: true });
+        } else {
+          navigate("/sigtrap/unknown", { replace: true });
+        }
+      }
     });
   });
 
@@ -43,35 +43,33 @@ export default function () {
     setWikiStore({ current: null });
   });
 
-  function onDelete() {
-    deleteWiki(article_id())
-      .then(() => {
-        addToast({
-          level: "success",
-          description: t("wiki.deleteSuccess")!,
-          duration: 5000,
-        });
-        void refreshWikiToc().then(() => navigate("/wiki", { replace: true }));
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((reason) => {
-          addToast({ level: "error", description: reason, duration: 5000 });
-        });
+  async function onDelete() {
+    try {
+      await deleteWiki(article_id());
+      addToast({
+        level: "success",
+        description: t("wiki.deleteSuccess")!,
+        duration: 5000,
       });
+      await refreshWikiToc();
+      navigate("/wiki", { replace: true });
+    } catch (err) {
+      handleHttpError(err as Error, t("errors.unknown")!);
+    }
   }
 
-  function onDone(article: ArticleModel) {
-    getWiki(article.id)
-      .then((resp) => {
-        setWikiStore({ current: resp });
-        void refreshWikiToc();
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((reason) => {
-          addToast({ level: "error", description: reason, duration: 5000 });
-          navigate(`/sigtrap/${err.response.status}`, { replace: true });
-        });
-      });
+  async function onDone(article: ArticleModel) {
+    try {
+      setWikiStore({ current: await getWiki(article.id) });
+      await refreshWikiToc();
+    } catch (err) {
+      handleHttpError(err as Error, t("errors.unknown")!);
+      if (err instanceof HTTPError) {
+        navigate(`/sigtrap/${err.response.status}`, { replace: true });
+      } else {
+        navigate("/sigtrap/unknown", { replace: true });
+      }
+    }
     setSearchParams({ edit: undefined });
   }
   return (

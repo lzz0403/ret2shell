@@ -3,12 +3,12 @@ import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Progress from "@widgets/progress";
-import { Match, Switch } from "solid-js";
+import { createMemo, Match, Switch } from "solid-js";
 import { DateTime } from "luxon";
 
-export default function () {
-  const solvedChallenges = () => gameStore.team?.history.filter((h) => !!h.challenge_id).length;
-  const totalChallenges = () => challengeStore.challenges.length;
+export default function() {
+  const solvedChallenges = createMemo(() => gameStore.team?.history.filter((h) => !!h.challenge_id).length);
+  const totalChallenges = createMemo(() => challengeStore.challenges.length);
   return (
     <div class="border-b border-b-layer-content/10 px-2 h-16 flex-shrink-0 flex items-center justify-center relative">
       <Switch>

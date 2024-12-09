@@ -2,21 +2,18 @@ import { handleHttpError } from "@api";
 import { updateGame } from "@api/game";
 import AdministratorsManagement from "@blocks/game/administrators";
 import NarrowTips from "@blocks/narrow-tips";
-import { accountStore, refreshInstitutes } from "@storage/account";
+import { accountStore } from "@storage/account";
 import { gameStore, setGameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Checkbox from "@widgets/checkbox";
 import LoadingTips from "@widgets/loading-tips";
 import type { HTTPError } from "ky";
-import { For, Show, createSignal, onMount } from "solid-js";
+import { For, Show, createSignal } from "solid-js";
 
 function InstituteManagement() {
-  const [loading, setLoading] = createSignal(true);
-  onMount(async () => {
-    await refreshInstitutes();
-    setLoading(false);
-  });
+  const [loading, setLoading] = createSignal(false);
+
   async function handleChangePolicy(restrict: boolean) {
     if (gameStore.current) {
       setLoading(true);
@@ -115,7 +112,7 @@ function InstituteManagement() {
   );
 }
 
-export default function () {
+export default function() {
   return (
     <div class="flex flex-col p-3 lg:p-6 w-full items-center flex-1 min-h-full relative">
       <div class="flex flex-col w-full max-w-5xl relative space-y-2">

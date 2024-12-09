@@ -3,16 +3,14 @@ import Article from "@widgets/article";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { createEffect, createSignal, untrack } from "solid-js";
 
-export default function () {
+export default function() {
   const [content, setContent] = createSignal(null as null | string);
   const comps = import.meta.glob("../../_blocks/contents/*.md");
   createEffect(() => {
     if (themeStore.locale) {
-      untrack(() => {
+      untrack(async () => {
         const match = comps[`../../_blocks/contents/welcome.${themeStore.locale}.md`];
-        match().then((content) => {
-          setContent((content as { default: string }).default);
-        });
+        setContent(((await match()) as { default: string }).default);
       });
     }
   });

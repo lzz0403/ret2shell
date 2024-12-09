@@ -1,13 +1,12 @@
+import { handleHttpError } from "@api";
 import { getGames } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { Permission } from "@models/user";
 import { accountStore } from "@storage/account";
 import { fullTheme, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Divider from "@widgets/divider";
 import Link from "@widgets/link";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, untrack } from "solid-js";
@@ -25,48 +24,28 @@ export default function Playgrounds() {
   const [gameTotal, setGameTotal] = createSignal(1);
   const gameTotalPages = createMemo(() => Math.ceil(gameTotal() / pageSize));
 
-  /// TODO: move requests outside
-
-  function fetchPlaygrounds() {
+  async function fetchPlaygrounds() {
     setLoadingPlaygrounds(true);
-    getGames(playgroundPage(), pageSize, HostType.CTFTraining)
-      .then((resp) => {
-        setPlaygrounds(resp[0]);
-        setPlaygroundTotal(resp[1]);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("training.failedToFetchPlaygrounds")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoadingPlaygrounds(false);
-      });
+    try {
+      const [playgrounds, total] = await getGames(playgroundPage(), pageSize, HostType.CTFTraining);
+      setPlaygrounds(playgrounds);
+      setPlaygroundTotal(total);
+    } catch (err) {
+      handleHttpError(err as Error, t("training.failedToFetchPlaygrounds")!);
+    }
+    setLoadingPlaygrounds(false);
   }
 
-  function fetchGames() {
+  async function fetchGames() {
     setLoadingGames(true);
-    getGames(gamePage(), pageSize, HostType.CTFGame)
-      .then((resp) => {
-        setGames(resp[0]);
-        setGameTotal(resp[1]);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((text) => {
-          addToast({
-            level: "error",
-            description: `${t("training.failedToFetchGames")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => {
-        setLoadingGames(false);
-      });
+    try {
+      const [games, total] = await getGames(gamePage(), pageSize, HostType.CTFGame);
+      setGames(games);
+      setGameTotal(total);
+    } catch (err) {
+      handleHttpError(err as Error, t("training.failedToFetchGames")!);
+    }
+    setLoadingGames(false);
   }
   createEffect(() => {
     if (playgroundPage()) untrack(fetchPlaygrounds);

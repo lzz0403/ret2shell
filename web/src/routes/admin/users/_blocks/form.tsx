@@ -8,7 +8,7 @@ import type { OAuth } from "@models/oauth";
 import { Permission, type User, permissionToString } from "@models/user";
 import { createForm, email, getValue, required, setValue, setValues } from "@modular-forms/solid";
 import { A } from "@solidjs/router";
-import { accountStore, refreshInstitutes } from "@storage/account";
+import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
@@ -43,7 +43,7 @@ export type UserForm = {
   permDevOps: boolean;
 };
 
-export default function (compProps: {
+export default function(compProps: {
   onDone?: (result: User) => void;
   editSource?: User;
   loading: boolean;
@@ -128,7 +128,6 @@ export default function (compProps: {
       icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
     }));
   });
-  refreshInstitutes();
 
   function onSubmit(result: UserForm) {
     const permissions: Permission[] = [];

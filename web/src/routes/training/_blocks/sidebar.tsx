@@ -4,9 +4,10 @@ import { useNavigate, useParams } from "@solidjs/router";
 import { gameStore, setGameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import Link from "@widgets/link";
-import type { HTTPError } from "ky";
+import { HTTPError } from "ky";
 import { Show, createEffect, untrack } from "solid-js";
 import Playgrounds from "./playgrounds";
+import { handleHttpError } from "@api";
 
 export default function SideBar() {
   const params = useParams();
@@ -14,16 +15,15 @@ export default function SideBar() {
   const navigate = useNavigate();
   createEffect(() => {
     if (selectedGameId()) {
-      untrack(() => {
-        getGame(selectedGameId())
-          .then((resp) => {
-            // console.log(resp);
-            setGameStore({ current: resp });
-          })
-          .catch((err: HTTPError) => {
-            console.error(err);
-            navigate(`/sigtrap/${err.response.status}`, { replace: true });
-          });
+      untrack(async () => {
+        try {
+          const resp = await getGame(selectedGameId());
+          setGameStore({ current: resp });
+        } catch (err) {
+          handleHttpError(err as Error, t("game.fetchFailed")!);
+          if (err instanceof HTTPError) navigate(`/sigtrap/${err.response.status}`, { replace: true });
+          else navigate("/sigtrap/unknown", { replace: true });
+        }
       });
     }
   });

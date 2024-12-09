@@ -3,21 +3,20 @@ import type { Team } from "@models/team";
 import { createBreakpoints } from "@solid-primitives/media";
 import { type Size, createElementSize } from "@solid-primitives/resize-observer";
 import { useSearchParams } from "@solidjs/router";
-import { accountStore, refreshInstitutes } from "@storage/account";
+import { accountStore } from "@storage/account";
 import { challengeStore, refreshChallenges } from "@storage/challenge";
 import { canAccessChallenges, gameStore, inArchived } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
-import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Chart from "@widgets/chart";
 import Select from "@widgets/select";
-import type { HTTPError } from "ky";
 import { Match, Show, Switch, createEffect, createMemo, createSignal, onMount, untrack } from "solid-js";
 import TeamDetails from "./_blocks/team-details";
 import TeamRanks from "./_blocks/team-ranks";
 import TeamSolves from "./_blocks/team-solves";
+import { handleHttpError } from "@api";
 
 function ChartOperations(props: {
   onRefresh?: () => void;
@@ -84,7 +83,7 @@ function ChartOperations(props: {
   );
 }
 
-export default function () {
+export default function() {
   const [showLargePanel, setShowLargePanel] = createSignal(false);
   const [showChallengeDetail, setShowChallengeDetail] = createSignal(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -96,57 +95,54 @@ export default function () {
   const [pageSize, setPageSize] = createSignal(10);
   const showHiddenTeams = createMemo(() => searchParams.hidden === "true");
   const selectedInstituteId = createMemo(() => Number.parseInt((searchParams.institute as string) || "NaN") || null);
-  const [loadingInstitute, setLoadingInstitute] = createSignal(true);
   const [loading, setLoading] = createSignal(false);
   const [showPlane, setShowPlane] = createSignal(false);
-  void refreshInstitutes().then(() => setLoadingInstitute(false));
   const breakpoints = {
     xl: "1440px",
     lg: "1024px",
   };
   const matches = createBreakpoints(breakpoints);
-  function getTopTeams() {
+
+  onMount(async () => {
+    pageHeight = createElementSize(autoPageSizeWatcher);
+  });
+  async function getTopTeams() {
     setLoading(true);
-    getGameScoreboard(gameStore.current?.id || 0, 1, 10, showHiddenTeams(), selectedInstituteId() || undefined)
-      .then((data) => {
-        setTopTeams(data[0]);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((text: string) => {
-          addToast({
-            level: "error",
-            description: `${t("game.scoreboard.fetchError")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => setLoading(false));
+    try {
+      setTopTeams(
+        (
+          await getGameScoreboard(
+            gameStore.current?.id || 0,
+            1,
+            10,
+            showHiddenTeams(),
+            selectedInstituteId() || undefined
+          )
+        )[0]
+      );
+    } catch (err) {
+      handleHttpError(err as Error, t("game.scoreboard.fetchError")!);
+    }
+    setLoading(false);
   }
 
-  function getTeams() {
+  async function getTeams() {
     setLoading(true);
     setTeams([]);
-    getGameScoreboard(
-      gameStore.current?.id || 0,
-      page(),
-      pageSize(),
-      showHiddenTeams(),
-      selectedInstituteId() || undefined
-    )
-      .then((data) => {
-        setTeams(data[0]);
-        setTotal(data[1]);
-      })
-      .catch((err: HTTPError) => {
-        void err.response.text().then((text: string) => {
-          addToast({
-            level: "error",
-            description: `${t("game.scoreboard.fetchError")}: ${text}`,
-            duration: 5000,
-          });
-        });
-      })
-      .finally(() => setLoading(false));
+    try {
+      const data = await getGameScoreboard(
+        gameStore.current?.id || 0,
+        page(),
+        pageSize(),
+        showHiddenTeams(),
+        selectedInstituteId() || undefined
+      );
+      setTeams(data[0]);
+      setTotal(data[1]);
+    } catch (err) {
+      handleHttpError(err as Error, t("game.scoreboard.fetchError")!);
+    }
+    setLoading(false);
   }
 
   createEffect(() => {
@@ -185,10 +181,6 @@ export default function () {
     }));
   };
 
-  onMount(() => {
-    pageHeight = createElementSize(autoPageSizeWatcher);
-  });
-
   createEffect(() => {
     if (pageHeight?.height) {
       const p = Math.floor(pageHeight.height / 48);
@@ -202,9 +194,9 @@ export default function () {
 
   createEffect(() => {
     if (gameStore.current) {
-      untrack(() => {
+      untrack(async () => {
         if (challengeStore.challenges.length === 0 && canAccessChallenges()[0]) {
-          void refreshChallenges();
+          await refreshChallenges();
         }
       });
     }
@@ -215,15 +207,14 @@ export default function () {
       <Title title={`${t("game.scoreboard.title")} - ${gameStore.current?.name || "CTF"}`} />
       <div class="flex flex-col xl:flex-row flex-1 min-w-min">
         <div ref={autoPageSizeWatcher!} class="fixed h-[calc(100vh-24rem)]" />
-        <Show when={!loadingInstitute() && topTeams().length > 0}>
+        <Show when={topTeams().length > 0}>
           <div
-            class={`xl:sticky w-full top-0 left-0 ${
-              showChallengeDetail()
+            class={`xl:sticky w-full top-0 left-0 ${showChallengeDetail()
                 ? "xl:w-[20vw] backdrop-blur border-r border-r-layer-content/10"
                 : showLargePanel()
                   ? "xl:w-[75vw] justify-center"
                   : "xl:w-[40vw]"
-            } transition-size duration-500 p-3 lg:p-6 flex flex-col space-y-2 flex-shrink-0`}
+              } transition-size duration-500 p-3 lg:p-6 flex flex-col space-y-2 flex-shrink-0`}
           >
             <Card class="relative" contentClass={`p-2 ${showChallengeDetail() ? "h-48" : "aspect-video"}`}>
               <Chart
