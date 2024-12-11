@@ -12,6 +12,7 @@ resolver = "2"
 
 [dependencies]
 serde = { workspace = true }
+extism = { workspace = true }
 tracing = { workspace = true }
 reqwest = { workspace = true }
 roxmltree = { workspace = true }
