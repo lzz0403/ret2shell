@@ -22,6 +22,8 @@ export async function fetchDictionary(locale: Locale): Promise<Dict> {
     case "ja_jp":
       dict = await import("./ja-jp.json");
       break;
+    default:
+      dict = await import("./zh-cn.json");
   }
   // flatten the dictionary to make all nested keys available top-level
   return flatten(dict);
