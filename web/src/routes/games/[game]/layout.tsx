@@ -23,7 +23,7 @@ export default function (props: { children?: JSX.Element }) {
     if (game_id) {
       try {
         const resp = await getGame(game_id);
-        if (resp.host_type !== HostType.CTFGame) {
+        if (resp.host_type !== HostType.Game) {
           navigate(`/training/${resp.id}`);
           return null;
         }

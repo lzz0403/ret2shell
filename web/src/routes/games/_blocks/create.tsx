@@ -43,7 +43,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
       end_at: DateTime.fromSeconds(result.end_at),
       register_at: DateTime.fromSeconds(result.register_at),
       archive_at: DateTime.fromSeconds(result.archive_at),
-      host_type: HostType.CTFGame,
+      host_type: HostType.Game,
       id: 0,
       hidden: true,
       frozen: false,

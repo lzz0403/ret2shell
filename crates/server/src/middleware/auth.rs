@@ -295,7 +295,7 @@ pub async fn game_access_required(
       ),
     ));
   }
-  if game.host_type == game::HostType::CTFTraining {
+  if game.host_type == game::HostType::Training {
     return Ok(next.run(req).await);
   }
   if game.archive_at < Utc::now() {

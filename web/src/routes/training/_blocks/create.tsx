@@ -25,7 +25,7 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
       end_at: DateTime.fromFormat("2077-01-01", "yyyy-MM-dd"),
       register_at: DateTime.fromFormat("2002-05-05", "yyyy-MM-dd"),
       archive_at: DateTime.fromFormat("2077-01-01", "yyyy-MM-dd"),
-      host_type: HostType.CTFTraining,
+      host_type: HostType.Training,
       id: 0,
       hidden: true,
       frozen: false,

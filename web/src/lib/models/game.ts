@@ -1,8 +1,8 @@
 import type { DateTime } from "luxon";
 
 export enum HostType {
-  CTFTraining = 0,
-  CTFGame = 1,
+  Training = 0,
+  Game = 1,
 }
 
 export type GameAccessPolicy = {

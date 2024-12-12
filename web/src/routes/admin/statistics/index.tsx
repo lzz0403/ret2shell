@@ -37,14 +37,14 @@ export default function () {
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--dumbbell-20-regular] w-8 h-8 opacity-80" />
               <span class="font-bold text-3xl text-info">
-                {statistics()?.games.filter((g) => g.host_type === HostType.CTFTraining).length}
+                {statistics()?.games.filter((g) => g.host_type === HostType.Training).length}
               </span>
               <span class="opacity-60">{t("admin.statistics.trainings")}</span>
             </div>
             <div class="flex flex-row space-x-4 items-center flex-1">
               <span class="icon-[fluent--flag-20-regular] w-8 h-8 opacity-80" />
               <span class="font-bold text-3xl text-error">
-                {statistics()?.games.filter((g) => g.host_type === HostType.CTFGame).length}
+                {statistics()?.games.filter((g) => g.host_type === HostType.Game).length}
               </span>
               <span class="opacity-60">{t("admin.statistics.totalGames")}</span>
             </div>
@@ -80,9 +80,9 @@ export default function () {
                       },
                       {
                         value:
-                          (statistics()!.games.filter((g) => g.host_type === HostType.CTFTraining).length *
+                          (statistics()!.games.filter((g) => g.host_type === HostType.Training).length *
                             statistics()!
-                              .games.filter((g) => g.host_type === HostType.CTFGame)
+                              .games.filter((g) => g.host_type === HostType.Game)
                               .reduce((a, b) => a + b.teams, 0)) /
                           statistics()!.games.length,
                         name: t("admin.statistics.trainings"),
@@ -92,7 +92,7 @@ export default function () {
                       },
                       {
                         value: statistics()!
-                          .games.filter((g) => g.host_type === HostType.CTFGame)
+                          .games.filter((g) => g.host_type === HostType.Game)
                           .reduce((a, b) => a + b.teams, 0),
                         name: t("admin.statistics.games"),
                         itemStyle: {
@@ -105,10 +105,10 @@ export default function () {
                             },
                             name: t("admin.statistics.pendingGames"),
                             value: statistics()!
-                              .games.filter((g) => g.host_type === HostType.CTFGame && g.start_at > DateTime.now())
+                              .games.filter((g) => g.host_type === HostType.Game && g.start_at > DateTime.now())
                               .reduce((a, b) => a + b.teams, 0),
                             children: statistics()!
-                              .games.filter((g) => g.host_type === HostType.CTFGame && g.start_at > DateTime.now())
+                              .games.filter((g) => g.host_type === HostType.Game && g.start_at > DateTime.now())
                               .map((g) => ({
                                 value: g.teams,
                                 name: g.name,
@@ -122,7 +122,7 @@ export default function () {
                             value: statistics()!
                               .games.filter(
                                 (g) =>
-                                  g.host_type === HostType.CTFGame &&
+                                  g.host_type === HostType.Game &&
                                   g.start_at < DateTime.now() &&
                                   g.end_at > DateTime.now()
                               )
@@ -130,7 +130,7 @@ export default function () {
                             children: statistics()!
                               .games.filter(
                                 (g) =>
-                                  g.host_type === HostType.CTFGame &&
+                                  g.host_type === HostType.Game &&
                                   g.start_at < DateTime.now() &&
                                   g.end_at > DateTime.now()
                               )
@@ -145,10 +145,10 @@ export default function () {
                             },
                             name: t("admin.statistics.endedGames"),
                             value: statistics()!
-                              .games.filter((g) => g.host_type === HostType.CTFGame && g.end_at < DateTime.now())
+                              .games.filter((g) => g.host_type === HostType.Game && g.end_at < DateTime.now())
                               .reduce((a, b) => a + b.teams, 0),
                             children: statistics()!
-                              .games.filter((g) => g.host_type === HostType.CTFGame && g.end_at < DateTime.now())
+                              .games.filter((g) => g.host_type === HostType.Game && g.end_at < DateTime.now())
                               .map((g) => ({
                                 value: g.teams,
                                 name: g.name,

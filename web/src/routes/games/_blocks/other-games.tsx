@@ -22,7 +22,7 @@ export default function () {
 
   const otherGames = createMemo(() => {
     return gameStore.games
-      .filter((game) => game.weight < 3 && game.host_type === HostType.CTFGame)
+      .filter((game) => game.weight < 3 && game.host_type === HostType.Game)
       .sort((a, b) => b.start_at.toSeconds() - a.start_at.toSeconds())
       .slice((page() - 1) * pageSize, page() * pageSize);
   });
@@ -31,7 +31,7 @@ export default function () {
     /// fetch games from server
     setLoading(true);
     try {
-      const [games, total] = await getGames(page(), pageSize, HostType.CTFGame, 1);
+      const [games, total] = await getGames(page(), pageSize, HostType.Game, 1);
       appendGames(games);
       setTotal(total);
     } catch (err) {

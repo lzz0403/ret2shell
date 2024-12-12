@@ -27,7 +27,7 @@ export default function Playgrounds() {
   async function fetchPlaygrounds() {
     setLoadingPlaygrounds(true);
     try {
-      const [playgrounds, total] = await getGames(playgroundPage(), pageSize, HostType.CTFTraining);
+      const [playgrounds, total] = await getGames(playgroundPage(), pageSize, HostType.Training);
       setPlaygrounds(playgrounds);
       setPlaygroundTotal(total);
     } catch (err) {
@@ -39,7 +39,7 @@ export default function Playgrounds() {
   async function fetchGames() {
     setLoadingGames(true);
     try {
-      const [games, total] = await getGames(gamePage(), pageSize, HostType.CTFGame);
+      const [games, total] = await getGames(gamePage(), pageSize, HostType.Game);
       setGames(games);
       setGameTotal(total);
     } catch (err) {

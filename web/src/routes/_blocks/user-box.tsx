@@ -98,7 +98,7 @@ export default function UserBox() {
               </Button>
             </div>
           </Card>
-          <Show when={gameStore.current && gameStore.current.host_type === HostType.CTFGame}>
+          <Show when={gameStore.current && gameStore.current.host_type === HostType.Game}>
             <Card contentClass="p-2 flex flex-row space-x-2">
               <Switch>
                 <Match when={isGameAdmin()}>

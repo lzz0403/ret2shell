@@ -153,7 +153,7 @@ async fn get_platform_statistics(
   };
   let challenges = ChallengeStatistics {
     total: challenge::count(&db.conn, None, None, true).await?,
-    in_game: challenge::count(&db.conn, None, Some(HostType::CTFGame), true).await?,
+    in_game: challenge::count(&db.conn, None, Some(HostType::Game), true).await?,
   };
   let statistics = Statistics {
     users,

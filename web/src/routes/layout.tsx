@@ -197,7 +197,7 @@ function TitleBar() {
                       <Match
                         when={
                           gameStore.current &&
-                          gameStore.current.host_type === HostType.CTFGame &&
+                          gameStore.current.host_type === HostType.Game &&
                           params.game &&
                           location.pathname.startsWith(`/games/${params.game}`)
                         }
@@ -278,7 +278,7 @@ function TitleBar() {
             <Match
               when={
                 gameStore.current &&
-                gameStore.current.host_type === HostType.CTFGame &&
+                gameStore.current.host_type === HostType.Game &&
                 params.game &&
                 location.pathname.startsWith(`/games/${params.game}`)
               }
@@ -293,7 +293,7 @@ function TitleBar() {
                 when={
                   platformStore.isOnline &&
                   gameStore.current &&
-                  gameStore.current.host_type === HostType.CTFGame &&
+                  gameStore.current.host_type === HostType.Game &&
                   params.game &&
                   location.pathname.startsWith(`/games/${params.game}`)
                 }
@@ -316,7 +316,7 @@ function TitleBar() {
             <div class="hidden xl:flex flex-row space-x-2">
               <Show when={platformStore.isOnline && accountStore.token !== null && gameStore.current}>
                 <Switch>
-                  <Match when={gameStore.current && gameStore.current.host_type === HostType.CTFTraining}>
+                  <Match when={gameStore.current && gameStore.current.host_type === HostType.Training}>
                     <div class="flex flex-col items-center justify-center px-4 relative">
                       <span>{t("training.openForever")}</span>
                       <TimeProgress

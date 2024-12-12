@@ -34,7 +34,7 @@ export default function () {
   const showCreate = () => searchParams.create === "true";
   const keyGames = createMemo(() => {
     return gameStore.games
-      .filter((game) => game.weight >= 3 && game.host_type === HostType.CTFGame)
+      .filter((game) => game.weight >= 3 && game.host_type === HostType.Game)
       .sort((a, b) => b.start_at.toSeconds() - a.start_at.toSeconds())
       .slice((page() - 1) * pageSize, page() * pageSize);
   });
@@ -57,7 +57,7 @@ export default function () {
   async function fetchGames() {
     setLoading(true);
     try {
-      const [game, total] = await getGames(page(), pageSize, HostType.CTFGame, 3);
+      const [game, total] = await getGames(page(), pageSize, HostType.Game, 3);
       appendGames(game);
       setTotal(total);
     } catch (err) {
