@@ -31,7 +31,7 @@ impl Decoder for Ret2Codec {
   type Error = std::io::Error;
 
   fn decode(&mut self, src: &mut BytesMut) -> Result<Option<Self::Item>, Self::Error> {
-    if src.is_empty() || (src.len() < 1024 && src.len() % 4 != 0) {
+    if src.is_empty() || src.len() % 4 != 0 {
       return Ok(None);
     }
     let consumed = src.len();
@@ -71,7 +71,7 @@ pub async fn encrypt_stream_codec(
     let config = GeneralPurposeConfig::new()
       .with_decode_allow_trailing_bits(true)
       .with_encode_padding(true)
-      .with_decode_padding_mode(engine::DecodePaddingMode::Indifferent);
+      .with_decode_padding_mode(engine::DecodePaddingMode::RequireCanonical);
     let engine = GeneralPurpose::new(&alphabet, config);
     let (parts, body) = req.into_parts();
     let body_stream = body
