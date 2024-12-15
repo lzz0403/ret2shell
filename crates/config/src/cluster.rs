@@ -85,6 +85,7 @@ pub struct ChallengeImage {
   pub tag: String,
   pub cpu: f64,
   pub mem: String,
+  pub storage: Option<String>,
   pub port: Option<u16>,
   pub service_type: Option<String>,
   pub description: Option<String>,

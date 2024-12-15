@@ -300,6 +300,25 @@ function CreateForm(fnProps: {
             </>
           )}
         </Field>
+        <Field name="storage" validate={[required(t("game.challenge.envContainerStorageRequired")!)]}>
+          {(field, props) => (
+            <>
+              <Slider
+                class="flex-1"
+                label={`${t("game.challenge.envContainerStorage")} (GB)`}
+                max={20}
+                min={1}
+                step={1}
+                name={field.name}
+                value={[Number.parseInt(field.value?.replace("Gi", "") || "3") || 3]}
+                onValueChange={(e) => {
+                  setValue(form, "storage", `${e.value[0]}Gi`);
+                }}
+              />
+              <input hidden {...props} value={field.value || "3Gi"} class="hidden" />
+            </>
+          )}
+        </Field>
       </div>
       <Button type="submit" level="primary" class="!mt-4" loading={adding()} disabled={adding()}>
         {t("form.add")}
