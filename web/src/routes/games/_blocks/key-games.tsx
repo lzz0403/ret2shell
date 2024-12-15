@@ -120,7 +120,7 @@ export default function () {
                 }] w-5 h-5 ${selectedGameId() === game.id && !showCreate() ? "text-primary" : "opacity-60"}`}
               />
               <span
-                class={`flex-1 text-start ${
+                class={`flex-1 text-start truncate ${
                   selectedGameId() === game.id && !showCreate() ? "font-bold" : "font-normal opacity-60"
                 }`}
               >
