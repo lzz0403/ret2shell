@@ -116,18 +116,32 @@ export default function (_props: {
     <div class="flex flex-row min-h-full">
       <ul class="w-1/5 min-w-48 flex flex-col space-y-2 p-3 lg:p-6 sticky top-0 self-start">
         <li class="w-full">
-          <Button ghost={tab() !== "statistics"} class="h-auto w-full" onClick={() => setTab("statistics")}>
+          <Button
+            ghost={tab() !== "statistics"}
+            class="h-auto w-full"
+            onClick={() => setTab("statistics")}
+            title={t("game.challenge.statisticsTips")}
+          >
             <div class="flex flex-col py-2 items-start w-full">
               <span>{t("game.challenge.statistics")}</span>
-              <span class="font-normal opacity-60">{t("game.challenge.statisticsTips")}</span>
+              <span class="font-normal opacity-60 w-full text-start truncate">
+                {t("game.challenge.statisticsTips")}
+              </span>
             </div>
           </Button>
         </li>
         <li class="w-full">
-          <Button ghost={tab() !== "history"} class="h-auto w-full" onClick={() => setTab("history")}>
+          <Button
+            ghost={tab() !== "history"}
+            class="h-auto w-full"
+            onClick={() => setTab("history")}
+            title={t("game.challenge.commitHistoryTips")}
+          >
             <div class="flex flex-col py-2 items-start w-full">
               <span>{t("game.challenge.commitHistory")}</span>
-              <span class="font-normal opacity-60">{t("game.challenge.commitHistoryTips")}</span>
+              <span class="font-normal opacity-60 w-full text-start truncate">
+                {t("game.challenge.commitHistoryTips")}
+              </span>
             </div>
           </Button>
         </li>

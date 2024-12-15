@@ -64,26 +64,41 @@ export default function (_props: {
     <div class="flex flex-row min-h-full">
       <ul class="w-1/5 min-w-48 flex flex-col flex-shrink-0 space-y-2 p-3 lg:p-6 sticky top-0 self-start">
         <li class="w-full">
-          <Button ghost={folder() !== "static"} class="h-auto w-full" onClick={() => setFolder("static")}>
+          <Button
+            ghost={folder() !== "static"}
+            class="h-auto w-full"
+            onClick={() => setFolder("static")}
+            title="$BUCKET/static"
+          >
             <div class="flex flex-col py-2 items-start w-full">
               <span>{t("game.challenge.staticAttachment")}</span>
-              <span class="font-normal opacity-60">$BUCKET/static</span>
+              <span class="font-normal opacity-60 w-full text-start truncate">$BUCKET/static</span>
             </div>
           </Button>
         </li>
         <li class="w-full">
-          <Button ghost={folder() !== "mapped"} class="h-auto w-full" onClick={() => setFolder("mapped")}>
+          <Button
+            ghost={folder() !== "mapped"}
+            class="h-auto w-full"
+            onClick={() => setFolder("mapped")}
+            title="$BUCKET/mapped"
+          >
             <div class="flex flex-col py-2 items-start w-full">
               <span>{t("game.challenge.mappedAttachment")}</span>
-              <span class="font-normal opacity-60">$BUCKET/mapped</span>
+              <span class="font-normal opacity-60 w-full text-start truncate">$BUCKET/mapped</span>
             </div>
           </Button>
         </li>
         <li class="w-full">
-          <Button ghost={folder() !== "checker"} class="h-auto w-full" onClick={() => setFolder("checker")}>
+          <Button
+            ghost={folder() !== "checker"}
+            class="h-auto w-full"
+            onClick={() => setFolder("checker")}
+            title="$BUCKET/checker"
+          >
             <div class="flex flex-col py-2 items-start w-full">
               <span>{t("game.challenge.checkerAttachment")}</span>
-              <span class="font-normal opacity-60">$BUCKET/checker</span>
+              <span class="font-normal opacity-60 w-full text-start truncate">$BUCKET/checker</span>
             </div>
           </Button>
         </li>
