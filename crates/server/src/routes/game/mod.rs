@@ -1,17 +1,19 @@
 use std::collections::HashMap;
 
 use axum::{
-  extract::{Query, State},
+  extract::{DefaultBodyLimit, Multipart, Path, Query, State},
   middleware,
   response::IntoResponse,
   routing::{get, patch, post},
   Extension, Json, Router,
 };
 use chrono::{serde::ts_seconds, DateTime, Utc};
+use futures::TryStreamExt;
 use nanoid::nanoid;
 use r2s_bucket::Bucket;
 use r2s_cache::Cache;
 use r2s_cluster::{Cluster, Pod, CHALLENGE_NS};
+use r2s_config::GlobalConfig;
 use r2s_database::{
   article, audit, challenge as challenge_db, game, institute, submission, team as team_db,
   user::{self, Permission},
@@ -24,6 +26,7 @@ use r2s_migrator::Database;
 use r2s_queue::Queue;
 use sea_orm::TransactionTrait;
 use serde::{Deserialize, Serialize};
+use tokio_util::io::StreamReader;
 use tracing::{info, warn};
 
 use crate::{
@@ -53,6 +56,14 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route(
           "/administrator",
           get(get_game_administrator).patch(update_game_administrator),
+        )
+        .nest(
+          "/registry",
+          Router::new()
+            .route("/config", get(get_cluster_registry_config))
+            .route("/", get(get_cluster_registry_repo).post(upload_image))
+            .route_layer(DefaultBodyLimit::max(1024 * 1024 * 1024))
+            .route("/:image", get(get_cluster_registry_image)),
         )
         .route("/device", get(get_connected_devices))
         .route("/introduction", patch(update_game_intro))
@@ -788,4 +799,106 @@ async fn export_statistics(
     scoreboard,
     audits,
   }))
+}
+
+async fn get_cluster_registry_repo(
+  State(cluster): State<Cluster>, State(cache): State<Cache>,
+  Extension(game): Extension<game::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let repos: Option<Vec<String>> = cache
+    .at("registry")
+    .get(&game.bucket.clone().unwrap_or("_".to_string()))
+    .await?;
+  if let Some(repos) = repos {
+    return Ok(Json(repos));
+  }
+  let mut registry = if let Some(registry) = cluster.registry {
+    registry
+  } else {
+    return Err(ResponseError::NotFound("registry".to_string()));
+  };
+
+  let repos = registry.sync_repo().await?;
+  for i in repos.iter() {
+    let (org, repo) = i;
+    cache.at("registry").set(org, repo).await?;
+  }
+  Ok(Json(
+    repos
+      .get(&game.bucket.unwrap_or("_".to_string()))
+      .unwrap_or(&vec![])
+      .clone(),
+  ))
+}
+
+async fn get_cluster_registry_image(
+  State(cluster): State<Cluster>, Path(params): Path<HashMap<String, String>>,
+  Extension(game): Extension<game::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let registry = if let Some(registry) = cluster.registry {
+    registry
+  } else {
+    return Err(ResponseError::NotFound("registry".to_string()));
+  };
+  let image = params
+    .get("image")
+    .ok_or(ResponseError::BadRequest("no image".to_string()))?;
+  let tags = registry
+    .images(&format!(
+      "{}/{image}",
+      game.bucket.unwrap_or("_".to_string())
+    ))
+    .await?;
+  Ok(Json(tags))
+}
+
+async fn upload_image(
+  State(cluster): State<Cluster>, State(cache): State<Cache>,
+  Extension(game): Extension<game::Model>, mut multipart: Multipart,
+) -> Result<impl IntoResponse, ResponseError> {
+  let registry = if let Some(registry) = cluster.registry {
+    registry
+  } else {
+    return Err(ResponseError::NotFound("registry".to_string()));
+  };
+  if let Some(field) = multipart
+    .next_field()
+    .await
+    .map_err(|err| ResponseError::BadRequest(err.to_string()))?
+  {
+    let file_name = field
+      .file_name()
+      .ok_or(ResponseError::BadRequest(
+        "file name is required".to_owned(),
+      ))?
+      .to_owned();
+    let reader =
+      StreamReader::new(field.map_err(|multipart_error| {
+        std::io::Error::new(std::io::ErrorKind::Other, multipart_error)
+      }));
+    registry
+      .upload_image(
+        &game.bucket.clone().unwrap_or("_".to_string()),
+        &file_name,
+        reader,
+      )
+      .await?;
+    cache
+      .at("registry")
+      .del(&game.bucket.unwrap_or("_".to_string()))
+      .await?;
+    Ok(())
+  } else {
+    Err(ResponseError::BadRequest("no file".to_string()))
+  }
+}
+
+async fn get_cluster_registry_config(
+  State(config): State<GlobalConfig>,
+) -> Result<impl IntoResponse, ResponseError> {
+  if let Some(cluster) = config.cluster {
+    Ok(Json(cluster.registry))
+  } else {
+    Ok(Json(None))
+  }
 }

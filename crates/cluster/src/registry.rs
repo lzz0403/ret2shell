@@ -1,8 +1,10 @@
+use std::collections::HashMap;
+
 use r2s_config::cluster::RegistryConfig;
 use serde::{Deserialize, Serialize};
 use tempdir::TempDir;
 use tokio::{io::AsyncRead, process::Command};
-use tracing::debug;
+use tracing::{debug, info, warn};
 
 use crate::ClusterError;
 
@@ -65,10 +67,11 @@ impl Registry {
     ))
   }
 
-  pub async fn repositories(&self) -> Result<Vec<String>, ClusterError> {
+  pub async fn sync_repo(&mut self) -> Result<HashMap<String, Vec<String>>, ClusterError> {
     let api_base = self.api_base()?;
     let mut result: Vec<String> = Vec::new();
     let mut last = String::new();
+    let mut orgs: HashMap<String, Vec<String>> = HashMap::new();
     loop {
       let res = match last {
         ref s if s.is_empty() => reqwest::get(&format!("{}/_catalog?n=1000", api_base)).await?,
@@ -82,7 +85,19 @@ impl Registry {
       last = repositories.last().unwrap().clone();
       result.extend(repositories);
     }
-    Ok(result)
+    for i in result {
+      if i.contains('/') {
+        let org = i.split('/').next().unwrap();
+        let repo = i.split('/').last().unwrap();
+        orgs
+          .entry(org.to_string())
+          .or_default()
+          .push(repo.to_string());
+      } else {
+        orgs.entry("_".to_string()).or_default().push(i);
+      }
+    }
+    Ok(orgs)
   }
 
   pub async fn images(&self, repository: &str) -> Result<Vec<String>, ClusterError> {
@@ -93,8 +108,13 @@ impl Registry {
   }
 
   pub async fn upload_image(
-    &self, name: &str, mut stdin: impl AsyncRead + Send + Unpin,
+    &self, org: &str, name: &str, mut stdin: impl AsyncRead + Send + Unpin,
   ) -> Result<(), ClusterError> {
+    if !(name.ends_with(".tar") || name.ends_with(".tar.gz") || name.ends_with(".tgz")) {
+      return Err(ClusterError::InvalidImageFileType(
+        "only support tar/tar.gz/tgz files".to_string(),
+      ));
+    }
     let tmp_dir = TempDir::new("ret2shell")?;
     let file_path = tmp_dir.path().join(name);
     let mut file = tokio::fs::File::create(&file_path).await?;
@@ -105,25 +125,23 @@ impl Registry {
     let mut args = vec![
       "copy".to_string(),
       format!("docker-archive:{}", name),
-      format!("docker://{}/{}:latest", self.base()?, repo),
+      format!("docker://{}/{org}/{repo}:latest", self.base()?),
     ];
     if self.credentials.clone().is_some_and(|c| c.insecure) {
       args.push("--dest-tls-verify=false".to_string());
     }
     let output = Command::new("skopeo")
       .current_dir(&tmp_dir)
-      // .arg("copy")
-      // .arg(format!("docker-archive:{}", name))
-      // .arg(format!("docker://{}/{}:latest", self.base()?, repo))
       .args(&args)
       .output()
       .await?;
     if output.status.success() {
+      info!("upload image {} to {}/{}", name, org, repo);
       Ok(())
     } else {
-      Err(ClusterError::UploadFailed(
-        String::from_utf8_lossy(&output.stderr).to_string(),
-      ))
+      let error = String::from_utf8_lossy(&output.stderr).to_string();
+      warn!("upload image failed: {error}",);
+      Err(ClusterError::UploadFailed(error))
     }
   }
 }

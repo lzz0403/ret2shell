@@ -30,4 +30,6 @@ pub enum ClusterError {
   UploadFailed(String),
   #[error("renew exceed limit: {0}")]
   PodRenewExceedLimit(String),
+  #[error("invalid image file type: {0}")]
+  InvalidImageFileType(String),
 }
