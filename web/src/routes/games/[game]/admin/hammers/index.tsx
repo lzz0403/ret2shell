@@ -100,20 +100,24 @@ export default function () {
   const challengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) ?? "") || null);
   const [challenge, setChallenge] = createSignal(null as Challenge | null);
   const [team, setTeam] = createSignal(null as Team | null);
-  createEffect(async () => {
+  createEffect(() => {
     if (gameStore.current && challengeId()) {
-      try {
-        setChallenge(await getChallenge(gameStore.current.id, challengeId()!));
-      } catch (err) {
-        handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
-      }
+      untrack(async () => {
+        try {
+          setChallenge(await getChallenge(gameStore.current.id, challengeId()!));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.challenge.fetchChallengeFailed")!);
+        }
+      });
     }
     if (gameStore.current && teamId()) {
-      try {
-        setTeam(await getTeamInfo(gameStore.current.id, teamId()!));
-      } catch (err) {
-        handleHttpError(err as Error, t("game.team.fetchTeamFailed")!);
-      }
+      untrack(async () => {
+        try {
+          setTeam(await getTeamInfo(gameStore.current.id, teamId()!));
+        } catch (err) {
+          handleHttpError(err as Error, t("game.team.fetchTeamFailed")!);
+        }
+      });
     }
   });
   const [chats, setChats] = createSignal([] as Chat[]);

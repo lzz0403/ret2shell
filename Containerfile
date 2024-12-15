@@ -13,6 +13,8 @@ WORKDIR /var/lib/ret2shell
 
 RUN cargo build --release --target x86_64-unknown-linux-musl
 
+# --------------------------------------------------------------------------------------------------------
+
 FROM alpine:3
 
 # hadolint ignore=DL3018

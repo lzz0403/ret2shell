@@ -20,7 +20,7 @@ export default function () {
         const result = Number.parseInt(searchParams.event as string);
         if (result) {
           setTimeout(() => {
-            calendarSection.scrollIntoView({ behavior: "smooth" });
+            calendarSection!.scrollIntoView({ behavior: "smooth" });
           }, 1000);
         }
       } catch {
