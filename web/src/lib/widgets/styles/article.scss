@@ -73,7 +73,7 @@ article pre * {
 }
 
 article pre {
-  @apply bg-layer-content/5 backdrop-blur rounded-md mx-1 min-w-0 text-wrap #{!important};
+  @apply bg-layer-content/5 text-layer-content backdrop-blur rounded-md mx-1 min-w-0 text-wrap #{!important};
 }
 
 article pre > code {
