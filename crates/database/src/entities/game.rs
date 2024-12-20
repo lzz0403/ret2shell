@@ -108,6 +108,8 @@ impl Model {
     Self {
       bucket: None,
       token: None,
+      node_selector: None,
+      traffic: None,
       ..self
     }
   }
