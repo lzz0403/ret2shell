@@ -24,7 +24,7 @@ import { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { type JSX, Match, Show, Switch, createEffect, createMemo, createSignal, onMount, untrack } from "solid-js";
 import { Transition } from "solid-transition-group";
-import DiyBox, { DiyBoxContent } from "./_blocks/diy-box";
+import ThemeBox, { ThemeBoxContent } from "./_blocks/theme-box";
 import InstanceBox, { InstanceBoxContent } from "./_blocks/instance-box";
 import NotificationBox, { NotificationBoxContent } from "./_blocks/notification-box";
 import Toasts from "./_blocks/toasts";
@@ -268,7 +268,7 @@ function TitleBar() {
                     <NotificationBoxContent />
                   </Match>
                   <Match when={additionalMobileBox() === "diy"}>
-                    <DiyBoxContent />
+                    <ThemeBoxContent />
                   </Match>
                 </Switch>
               </div>
@@ -340,7 +340,7 @@ function TitleBar() {
                 <InstanceBox />
               </Show>
               <NotificationBox />
-              <DiyBox />
+              <ThemeBox />
             </div>
             <Switch
               fallback={

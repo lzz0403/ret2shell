@@ -44,7 +44,7 @@ export default function (
   return (
     <Select.Root
       {...others}
-      class={`flex flex-col space-y-1 ${others.class}`}
+      class={`flex flex-col ${others.class}`}
       collection={collection()}
       // value={selectProps.inputProps?.value}
       positioning={{
@@ -52,7 +52,7 @@ export default function (
       }}
     >
       <Show when={selectProps.label}>
-        <Select.Label class="label">{selectProps.label}</Select.Label>
+        <Select.Label class="label mb-1">{selectProps.label}</Select.Label>
       </Show>
       <Select.HiddenSelect
         {...selectProps.inputProps}
@@ -73,7 +73,7 @@ export default function (
             when={props.error}
             fallback={
               <Select.ValueText
-                class={`px-4 text-start truncate ${props.error ? "" : "flex-1"}`.trim()}
+                class={`${selectProps.size === "sm" ? "px-1" : "px-2"} text-start truncate ${props.error ? "" : "flex-1"}`.trim()}
                 placeholder={selectProps.placeholder}
               />
             }

@@ -1,12 +1,12 @@
 import DarkmodeButton from "@blocks/darkmode-button";
 import { platformStore, setPlatformStore } from "@storage/platform";
-import { setLocale, setThemeStore, t, themeStore, toggleBackgroundImg } from "@storage/theme";
+import { setLocale, setThemeStore, t, themeStore } from "@storage/theme";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Popover from "@widgets/popover";
 import { Show } from "solid-js";
 
-export function DiyBoxContent() {
+export function ThemeBoxContent() {
   return (
     <div class="flex flex-col space-y-2 max-w-64">
       <Card contentClass="flex flex-col p-0 hover:p-2 hover:space-y-2 transition-all duration-300 group">
@@ -56,32 +56,21 @@ export function DiyBoxContent() {
               size="sm"
               ghost
               square
+              title={t("platform.ret2codec")}
               justify="center"
               onClick={() => {
-                toggleBackgroundImg();
+                setPlatformStore({ enable_ret2codec: !platformStore.enable_ret2codec });
               }}
             >
-              <span class="icon-[fluent--image-border-20-regular] w-5 h-5" />
+              <Show
+                when={platformStore.enable_ret2codec}
+                fallback={<span class="icon-[fluent--emoji-20-regular] w-5 h-5" />}
+              >
+                <span class="icon-[fluent--emoji-meme-20-regular] w-5 h-5 text-success" />
+              </Show>
             </Button>
           </li>
         </ul>
-      </Card>
-      <Card contentClass="p-2 flex flex-col space-y-2">
-        <Button
-          size="sm"
-          ghost
-          onClick={() => {
-            setPlatformStore({ enable_ret2codec: !platformStore.enable_ret2codec });
-          }}
-        >
-          <span class="flex-1 text-start font-normal">{t("platform.ret2codec")}</span>
-          <Show
-            when={platformStore.enable_ret2codec}
-            fallback={<span class="icon-[fluent--emoji-20-regular] w-5 h-5" />}
-          >
-            <span class="icon-[fluent--emoji-meme-20-regular] w-5 h-5 text-success" />
-          </Show>
-        </Button>
       </Card>
     </div>
   );
@@ -96,7 +85,7 @@ export default function DiyBox() {
       popContentClass="pt-2"
       title={t("platform.diyBox")}
     >
-      <DiyBoxContent />
+      <ThemeBoxContent />
     </Popover>
   );
 }
