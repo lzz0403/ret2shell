@@ -67,7 +67,7 @@ export default function () {
         </article>
         <Divider class="w-full" />
         <Form
-          class="w-full max-w-5xl self-center flex flex-row items-center justify-center space-x-2"
+          class="w-full max-w-5xl self-center flex flex-row items-center justify-center"
           onSubmit={handleDeactivate}
         >
           <Field name="captcha_id">
@@ -101,7 +101,7 @@ export default function () {
                 <span class="hidden md:inline">{t("account.bye")}</span>
               </Button>
             }
-            class="flex-1"
+            class="flex-1 ml-2"
             onInput={(v) => {
               setName(v.target.value);
             }}
