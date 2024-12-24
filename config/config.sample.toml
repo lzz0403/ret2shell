@@ -2,9 +2,9 @@
 sensitive_word_list = './config/sensitive_word_list.txt'
 
 [auth]
-signing_key = 'K3yInD3v3l0pm3nt'
-buffer_time = 21600
+buffer_time  = 21600
 expires_time = 86400
+signing_key  = 'K3yInD3v3l0pm3nt'
 
 [auth.oauth_keys]
 #xdu_cas = { id = "https://ctf.xidian.edu.cn/account/oauth", key = "NOTNEEDED" }
@@ -21,56 +21,56 @@ path = './data/bucket'
 url = 'redis://localhost:6379'
 
 [captcha]
-enabled = true
 difficulty = 4
-validator = 'pow'
+enabled    = true
+validator  = 'pow'
 
 [cluster]
-enabled = true
-try_default = false
-auto_infer = true
-kube_config_path = "~/.kube/config"
-challenge_node_selector = "challenge"          # default node selector for challenges, could be specified in each game.
-proxy_image = "ret2shell/container-proxy:main"
-traffic = "wsrx"                               # wsrx | plain, default traffic, could be specified in each game.
-enable_capture = true
-capture_directory = "./data/captures"
-cleanup_interval = 60                          # in seconds
+auto_infer              = true
+capture_directory       = "./data/captures"
+challenge_node_selector = "challenge"                      # default node selector for challenges, could be specified in each game.
+cleanup_interval        = 60                               # in seconds
+enable_capture          = true
+enabled                 = true
+kube_config_path        = "~/.kube/config"
+proxy_image             = "ret2shell/container-proxy:main"
+traffic                 = "wsrx"                           # wsrx | plain, default traffic, could be specified in each game.
+try_default             = false
 
 [cluster.registry]
 external = "ctf.xidian.edu.cn"
-server = "ctf.xidian.edu.cn"
 insecure = false
+server   = "ctf.xidian.edu.cn"
 #username =
 #password =
 
 [database]
-db = 'ret2shell'
-host = '127.0.0.1'
-port = 5432
-user = 'ret2shell'
+db       = 'ret2shell'
+host     = '127.0.0.1'
 password = 'P@ssw02dInD3v3l0pm3nt'
+port     = 5432
 ssl_mode = 'disable'               # disable, allow, prefer, require, verify-ca, verify-full
+user     = 'ret2shell'
 
 [email]
-enabled = false
-host = 'smtp.example.com'
-port = 587
-sender = 'Ret2Shell'
-username = 'dev@ret.sh.cn'
+enabled  = false
+host     = 'smtp.example.com'
 password = 'P@ssw0rdInD3v3l0pm3nt'
-tls = 'starttls'                   #  'none' | 'tls' | 'starttls'
+port     = 587
+sender   = 'Ret2Shell'
+tls      = 'starttls'              #  'none' | 'tls' | 'starttls'
+username = 'dev@ret.sh.cn'
 
 [logging]
-directory = './data/log'
-level = 'info,tower_http=info,sqlx=warn'
+compress   = true
+directory  = './data/log'
 files_kept = 3
-compress = true
+level      = 'info,tower_http=info,sqlx=warn'
 
 [media]
-path = './data/media'
 anti_theft = true
-limit = 50            # one user could upload per week
+limit      = 50             # one user could upload per week
+path       = './data/media'
 
 [queue]
 host = '127.0.0.1'
@@ -84,13 +84,13 @@ port = 4222
 #tls = false
 
 [server]
-host = '127.0.0.1'
-port = 8080
+api_base_path   = '/api'
+api_rate_limit  = 10              # in 5 seconds
+cors_origins    = '*'
 external_domain = 'dev.ret.sh.cn'
-external_https = true
-api_base_path = '/api'
-cors_origins = '*'
-api_rate_limit = 10               # in 5 seconds
+external_https  = true
+host            = '127.0.0.1'
+port            = 8080
 
 ### the Following settings could be changed at web admin panel.
 ### configuration in database will overwrite the following settings.
@@ -103,5 +103,5 @@ api_rate_limit = 10               # in 5 seconds
 # hide_maker = false
 
 [server.frontend]
-serve_type = 'static'    # static | proxy
-path = './frontend/dist'
+path       = './frontend/dist'
+serve_type = 'static'          # static | proxy

@@ -1,7 +1,7 @@
 [[hints]]
 content = "This is a hint"
-cost = 0
+cost    = 0
 
 [[hints]]
 content = "This is another hint"
-cost = 15                        # score
+cost    = 15                     # score

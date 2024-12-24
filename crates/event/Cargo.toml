@@ -1,28 +1,28 @@
 [package]
-name = "r2s-event"
-version = "3.4.2"
-edition = "2021"
+authors      = ["Reverier-Xu <reverier.xu@woooo.tech>"]
+description  = "Event pusher for Ret2Shell - A feature-riches CTF challenge platform."
+edition      = "2021"
+homepage     = "https://ret.sh.cn/"
+keywords     = ["ctf", "challenge", "platform", "security", "education"]
+name         = "r2s-event"
+publish      = false
+resolver     = "2"
 rust-version = "1.80.0"
-description = "Event pusher for Ret2Shell - A feature-riches CTF challenge platform."
-authors = ["Reverier-Xu <reverier.xu@woooo.tech>"]
-publish = false
-homepage = "https://ret.sh.cn/"
-keywords = ["ctf", "challenge", "platform", "security", "education"]
-resolver = "2"
+version      = "3.4.2"
 
 [dependencies]
-axum = { workspace = true }
-serde = { workspace = true }
-tokio = { workspace = true }
-chrono = { workspace = true }
-tracing = { workspace = true }
-futures = { workspace = true }
-once_cell = { workspace = true }
-thiserror = { workspace = true }
-serde_json = { workspace = true }
 async-nats = { workspace = true }
+axum       = { workspace = true }
+chrono     = { workspace = true }
+futures    = { workspace = true }
+once_cell  = { workspace = true }
+serde      = { workspace = true }
+serde_json = { workspace = true }
+thiserror  = { workspace = true }
+tokio      = { workspace = true }
+tracing    = { workspace = true }
 
-r2s-config = { workspace = true }
+r2s-config   = { workspace = true }
 r2s-database = { workspace = true }
 
 [lib]

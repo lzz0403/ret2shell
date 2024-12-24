@@ -1,24 +1,21 @@
 [package]
-name = "r2s-config"
-version = "3.4.2"
-edition = "2021"
+authors      = ["Reverier-Xu <reverier.xu@woooo.tech>"]
+description  = "Config provider for Ret2Shell - A feature-riches CTF challenge platform."
+edition      = "2021"
+homepage     = "https://ret.sh.cn/"
+keywords     = ["ctf", "challenge", "platform", "security", "education"]
+name         = "r2s-config"
+publish      = false
+resolver     = "2"
 rust-version = "1.80.0"
-description = "Config provider for Ret2Shell - A feature-riches CTF challenge platform."
-authors = ["Reverier-Xu <reverier.xu@woooo.tech>"]
-publish = false
-homepage = "https://ret.sh.cn/"
-keywords = ["ctf", "challenge", "platform", "security", "education"]
-resolver = "2"
+version      = "3.4.2"
 
 [dependencies]
-toml = { workspace = true }
-serde = { workspace = true }
-thiserror = { workspace = true }
+sea-orm    = { workspace = true, features = ["macros", "with-json"] }
+serde      = { workspace = true }
 serde_json = { workspace = true }
-sea-orm = { workspace = true, features = [
-  "macros",
-  "with-json",
-] }
+thiserror  = { workspace = true }
+toml       = { workspace = true }
 
 [lib]
 path = "src/lib.rs"

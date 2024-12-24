@@ -1,76 +1,76 @@
 [package]
-name = "r2s-server"
-version = "3.4.2"
-edition = "2021"
+authors      = ["Reverier-Xu <reverier.xu@woooo.tech>"]
+description  = "Server for Ret2Shell - A feature-riches CTF challenge platform."
+edition      = "2021"
+homepage     = "https://ret.sh.cn/"
+keywords     = ["ctf", "challenge", "platform", "security", "education"]
+name         = "r2s-server"
+publish      = false
+resolver     = "2"
 rust-version = "1.80.0"
-description = "Server for Ret2Shell - A feature-riches CTF challenge platform."
-authors = ["Reverier-Xu <reverier.xu@woooo.tech>"]
-publish = false
-homepage = "https://ret.sh.cn/"
-keywords = ["ctf", "challenge", "platform", "security", "education"]
-resolver = "2"
+version      = "3.4.2"
 
 [dependencies]
-hex = { workspace = true }
-clap = { workspace = true }
-ring = { workspace = true }
-heck = { workspace = true }
-rand = { workspace = true }
-tokio = { workspace = true }
-serde = { workspace = true }
-tower = { workspace = true }
-base64 = { workspace = true }
-anyhow = { workspace = true }
-chrono = { workspace = true }
-argon2 = { workspace = true }
-bcrypt = { workspace = true }
-rustls = { workspace = true }
-nanoid = { workspace = true }
-sea-orm = { workspace = true }
-colored = { workspace = true }
-futures = { workspace = true }
-thiserror = { workspace = true }
-once_cell = { workspace = true }
-deunicode = { workspace = true }
-axum-extra = { workspace = true }
-tower-http = { workspace = true }
-serde_json = { workspace = true }
-async-nats = { workspace = true }
-tokio-util = { workspace = true }
-hyper-util = { workspace = true }
-tokio-stream = { workspace = true }
+anyhow       = { workspace = true }
+argon2       = { workspace = true }
+async-nats   = { workspace = true }
+axum         = { workspace = true, features = ["multipart", "macros"] }
+axum-extra   = { workspace = true }
+base64       = { workspace = true }
+bcrypt       = { workspace = true }
+chrono       = { workspace = true }
+clap         = { workspace = true }
+colored      = { workspace = true }
+deunicode    = { workspace = true }
+futures      = { workspace = true }
+heck         = { workspace = true }
+hex          = { workspace = true }
+hyper-util   = { workspace = true }
 jsonwebtoken = { workspace = true }
-axum = { workspace = true, features = ["multipart", "macros"] }
+nanoid       = { workspace = true }
+once_cell    = { workspace = true }
+rand         = { workspace = true }
+ring         = { workspace = true }
+rustls       = { workspace = true }
+sea-orm      = { workspace = true }
+serde        = { workspace = true }
+serde_json   = { workspace = true }
+thiserror    = { workspace = true }
+tokio        = { workspace = true }
+tokio-stream = { workspace = true }
+tokio-util   = { workspace = true }
+tower        = { workspace = true }
+tower-http   = { workspace = true }
 
 # System stat
 systemstat = { workspace = true }
 
 # Logger
-tracing = { workspace = true }
-tracing-core = { workspace = true }
+tracing            = { workspace = true }
+tracing-appender   = { workspace = true }
+tracing-core       = { workspace = true }
 tracing-subscriber = { workspace = true }
-tracing-appender = { workspace = true }
 
 # local crates
-r2s-cache = { workspace = true }
-r2s-email = { workspace = true }
-r2s-event = { workspace = true }
-r2s-media = { workspace = true }
-r2s-oauth = { workspace = true }
-r2s-queue = { workspace = true }
-r2s-bucket = { workspace = true }
-r2s-config = { workspace = true }
-r2s-captcha = { workspace = true }
-r2s-auditor = { workspace = true }
-r2s-checker = { workspace = true }
-r2s-cluster = { workspace = true }
-r2s-license = { workspace = true }
+r2s-auditor  = { workspace = true }
+r2s-bucket   = { workspace = true }
+r2s-cache    = { workspace = true }
+r2s-captcha  = { workspace = true }
+r2s-checker  = { workspace = true }
+r2s-cluster  = { workspace = true }
+r2s-config   = { workspace = true }
 r2s-database = { workspace = true }
+r2s-email    = { workspace = true }
+r2s-event    = { workspace = true }
+r2s-license  = { workspace = true }
+r2s-media    = { workspace = true }
 r2s-migrator = { workspace = true }
+r2s-oauth    = { workspace = true }
+r2s-queue    = { workspace = true }
 
 [build-dependencies]
-git-version = { workspace = true }
-build-target = { workspace = true }
+build-target  = { workspace = true }
+git-version   = { workspace = true }
 rustc_version = { workspace = true }
 
 [lib]
