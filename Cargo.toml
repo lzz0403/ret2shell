@@ -140,6 +140,6 @@ features = ["config", "client", "rustls-tls", "runtime", "derive", "ws"]
 version  = "0.98"
 
 [workspace.dependencies.wsrx]
-default_features = false
+default-features = false
 features         = ["server"]
 version          = "0.2"
