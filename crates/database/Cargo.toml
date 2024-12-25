@@ -1,30 +1,30 @@
 [package]
-name = "r2s-database"
-version = "3.4.2"
-edition = "2021"
+authors      = ["Reverier-Xu <reverier.xu@woooo.tech>"]
+description  = "Database for Ret2Shell - A feature-riches CTF challenge platform."
+edition      = "2021"
+homepage     = "https://ret.sh.cn/"
+keywords     = ["ctf", "challenge", "platform", "security", "education"]
+name         = "r2s-database"
+publish      = false
+resolver     = "2"
 rust-version = "1.80.0"
-description = "Database for Ret2Shell - A feature-riches CTF challenge platform."
-authors = ["Reverier-Xu <reverier.xu@woooo.tech>"]
-publish = false
-homepage = "https://ret.sh.cn/"
-keywords = ["ctf", "challenge", "platform", "security", "education"]
-resolver = "2"
+version      = "3.4.2"
 
 [dependencies]
-tokio = { workspace = true }
-serde = { workspace = true }
 chrono = { workspace = true }
-tracing = { workspace = true }
+num-derive = { workspace = true }
+num-traits = { workspace = true }
 sea-orm = { workspace = true, features = [
   "sqlx-postgres",
   "runtime-tokio-rustls",
 ] }
-sea-query = { workspace = true }
-serde_repr = { workspace = true }
-serde_json = { workspace = true }
-num-derive = { workspace = true }
-num-traits = { workspace = true }
 sea-orm-migration = { workspace = true }
+sea-query = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_repr = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
 
 r2s-config = { workspace = true }
 

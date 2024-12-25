@@ -1,11 +1,11 @@
-name = "Example Challenge"
 hidden = false
+name = "Example Challenge"
 tag = [
   { name = "Crypto", primary = true },
   { name = "Advanced", primary = false },
 ]
 
 [score_rule]
+decay   = 10
 initial = 1000
 minimum = 500
-decay = 10

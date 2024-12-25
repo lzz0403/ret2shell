@@ -361,8 +361,8 @@ async fn submission_worker_exec(
         reason: None,
       })),
     };
-    queue.publish("event", event).await.ok(); // publish scoreboard update event if nessary
     txn.commit().await?;
+    queue.publish("event", event).await.ok(); // publish scoreboard update event if nessary
     if changed {
       queue.publish("scoreboard", challenge.clone()).await.ok();
       cache.at("challenge").del(challenge.id).await.ok();
@@ -380,6 +380,7 @@ async fn submission_worker_exec(
       game.id,
       game.name
     );
+    txn.commit().await?;
   }
 
   let txn = db.conn.begin().await?;

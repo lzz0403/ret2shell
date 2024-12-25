@@ -1,16 +1,16 @@
-name = "Example Game"
-brief = "Example Game brief"
-register_at = 1713630259
-start_at = 1713630263
-end_at = 1713630266
-archive_at = 1713630268
-team_size = 1
-host_type = 1                     # CTFTraining: 0, CTFGame: 1
-cover = "./cover.webp"
-logo = "./logo.svg"
+archive_at                 = 1713630268
+award_rate                 = 5
+brief                      = "Example Game brief"
 can_register_after_started = true
-award_rate = 5
-weight = 3
+cover                      = "./cover.webp"
+end_at                     = 1713630266
+host_type                  = 1                    # CTFTraining: 0, CTFGame: 1
+logo                       = "./logo.svg"
+name                       = "Example Game"
+register_at                = 1713630259
+start_at                   = 1713630263
+team_size                  = 1
+weight                     = 3
 
 [access_policy]
 sync = 0
