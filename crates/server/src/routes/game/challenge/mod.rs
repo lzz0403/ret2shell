@@ -1066,7 +1066,7 @@ async fn start_challenge_env(
           ),
           ("ret.sh.cn/game", game.id.to_string()),
           ("ret.sh.cn/user", token.id.to_string()),
-          ("ret.sh.cn/wsrx", nanoid!(21, &LABEL_ALPHABET)),
+          ("ret.sh.cn/traffic", nanoid!(21, &LABEL_ALPHABET)),
           ("ret.sh.cn/internet", env_config.internet.to_string()),
         ]
         .iter()

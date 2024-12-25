@@ -407,7 +407,7 @@ impl TryFrom<Pod> for Instance {
         .ok_or(ResponseError::Gone("pod status not found".to_owned()))?
         .clone(),
       name: value.metadata.name.clone().unwrap_or_default(),
-      wsrx: get_pod_field!(value, labels, "ret.sh.cn/wsrx"),
+      wsrx: get_pod_field!(value, labels, "ret.sh.cn/traffic"),
       ports: get_pod_field!(value, annotations, "ret.sh.cn/ports")
         .split(',')
         .map(|p| p.parse().unwrap_or(0))

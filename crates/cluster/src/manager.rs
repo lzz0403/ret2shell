@@ -511,7 +511,7 @@ impl Cluster {
 
   pub async fn wsrx_link(&self, token: &str, port: u16, ws: WebSocket) -> Result<(), ClusterError> {
     let pod = self
-      .get_pods_by_label(&format!("ret.sh.cn/wsrx={token}"))
+      .get_pods_by_label(&format!("ret.sh.cn/traffic={token}"))
       .await?;
     let pod = pod
       .first()
