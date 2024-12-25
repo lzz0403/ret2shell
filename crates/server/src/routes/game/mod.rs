@@ -12,10 +12,10 @@ use futures::TryStreamExt;
 use nanoid::nanoid;
 use r2s_bucket::Bucket;
 use r2s_cache::Cache;
-use r2s_cluster::{Cluster, Pod, CHALLENGE_NS};
+use r2s_cluster::{traffic::MappedPort, Cluster, ClusterError, Pod, CHALLENGE_NS};
 use r2s_config::GlobalConfig;
 use r2s_database::{
-  article, audit, challenge as challenge_db, game, institute, submission, team as team_db,
+  article, audit, challenge as challenge_db, config, game, institute, submission, team as team_db,
   user::{self, Permission},
 };
 use r2s_event::{
@@ -56,6 +56,14 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .route(
           "/administrator",
           get(get_game_administrator).patch(update_game_administrator),
+        )
+        .route(
+          "/traffic",
+          patch(update_game_traffic).delete(delete_game_traffic),
+        )
+        .route(
+          "/node-selector",
+          patch(update_game_node_selector).delete(delete_game_node_selector),
         )
         .nest(
           "/registry",
@@ -221,6 +229,8 @@ async fn update_game(
     game::Model {
       id: game.id,
       bucket: game.bucket.clone(),
+      traffic: game.traffic.clone(),
+      node_selector: game.node_selector.clone(),
       introduction_id: game.introduction_id,
       ..model
     },
@@ -363,7 +373,7 @@ async fn update_game_intro(
 struct Instance {
   pub state: String,
   pub name: String,
-  pub wsrx: String,
+  pub traffic: String,
   pub ports: Vec<u16>,
   pub renew_count: i32,
   #[serde(with = "ts_seconds")]
@@ -376,6 +386,7 @@ struct Instance {
   pub challenge_name: String,
   pub game_id: i64,
   pub game_name: String,
+  pub exposed_ports: Option<Vec<MappedPort>>,
 }
 
 macro_rules! get_pod_field {
@@ -407,7 +418,7 @@ impl TryFrom<Pod> for Instance {
         .ok_or(ResponseError::Gone("pod status not found".to_owned()))?
         .clone(),
       name: value.metadata.name.clone().unwrap_or_default(),
-      wsrx: get_pod_field!(value, labels, "ret.sh.cn/traffic"),
+      traffic: get_pod_field!(value, labels, "ret.sh.cn/traffic"),
       ports: get_pod_field!(value, annotations, "ret.sh.cn/ports")
         .split(',')
         .map(|p| p.parse().unwrap_or(0))
@@ -439,6 +450,7 @@ impl TryFrom<Pod> for Instance {
         .parse()
         .map_err(|_| ResponseError::Gone("game id not found".to_owned()))?,
       game_name: get_pod_field!(value, annotations, "ret.sh.cn/game"),
+      exposed_ports: None,
     })
   }
 }
@@ -477,7 +489,8 @@ async fn get_self_solves(
 }
 
 async fn get_self_envs(
-  State(cluster): State<Cluster>, Extension(game): Extension<game::Model>,
+  State(cluster): State<Cluster>, State(cache): State<Cache>,
+  Extension(config): Extension<config::Model>, Extension(game): Extension<game::Model>,
   Extension(token): Extension<Token>, team_ext: Option<Extension<team_db::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
@@ -494,13 +507,83 @@ async fn get_self_envs(
       .map(|pod| Vec::from([pod]))
       .unwrap_or_default()
   };
+  let config = if let Some(config) = &config.cluster {
+    config
+  } else {
+    return Err(ResponseError::PreconditionFailed(
+      "cluster is disabled".to_owned(),
+    ));
+  };
+  let (traffic_key, traffic_script) = if game.archive_at > Utc::now() {
+    if let Some(traffic) = game.traffic.clone() {
+      (
+        game
+          .bucket
+          .clone()
+          .ok_or(ResponseError::PreconditionFailed(
+            "game bucket not found".to_string(),
+          ))?,
+        Some(traffic),
+      )
+    } else {
+      ("default".to_string(), config.traffic.clone())
+    }
+  } else {
+    ("default".to_string(), config.traffic.clone())
+  };
+  let mut result: Vec<Instance> = Vec::new();
 
-  Ok(Json(
-    envs
-      .into_iter()
-      .map(|env| env.try_into())
-      .collect::<Result<Vec<Instance>, _>>()?,
-  ))
+  let traffic_mapper = cluster
+    .traffic
+    .clone()
+    .ok_or(ResponseError::InternalServerError(
+      "traffic mapper is not initialized".to_string(),
+      "traffic mapper is not initialized".to_string(),
+    ))?;
+
+  for env in envs {
+    let mut i: Instance = match env.clone().try_into() {
+      Ok(i) => i,
+      Err(e) => return Err(e),
+    };
+
+    if traffic_script.is_none() {
+      result.push(i);
+      continue;
+    }
+
+    let traffic_script = traffic_script.clone().unwrap();
+
+    let traffic_id = i.traffic.clone();
+
+    if cache.at("traffic").exists(&traffic_id).await? {
+      i.exposed_ports = cache.at("traffic").get(&traffic_id).await?;
+      result.push(i);
+      continue;
+    }
+
+    let service = cluster
+      .at(CHALLENGE_NS)
+      .get_service(
+        &env
+          .metadata
+          .name
+          .clone()
+          .ok_or(ResponseError::PreconditionFailed(
+            "the env has no name".to_string(),
+          ))?,
+      )
+      .await?;
+    traffic_mapper
+      .preload(&traffic_key, &traffic_script)
+      .await?;
+    let exposed_ports = traffic_mapper.expose(&traffic_key, env, service).await?;
+    cache.at("traffic").set(&traffic_id, &exposed_ports).await?;
+    i.exposed_ports = Some(exposed_ports);
+    result.push(i);
+  }
+
+  Ok(Json(result))
 }
 
 async fn delay_self_env(
@@ -901,4 +984,127 @@ async fn get_cluster_registry_config(
   } else {
     Ok(Json(None))
   }
+}
+
+#[derive(Deserialize)]
+struct GameTraffic {
+  pub traffic: String,
+}
+
+#[derive(Serialize)]
+struct GameTrafficResponse {
+  pub lint: Option<String>,
+}
+
+async fn update_game_traffic(
+  State(cluster): State<Cluster>, State(ref db): State<Database>,
+  Extension(game): Extension<game::Model>, Json(req): Json<GameTraffic>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let traffic_mapper = cluster
+    .traffic
+    .clone()
+    .ok_or(ResponseError::NotFound("traffic".to_string()))?;
+  let lint = traffic_mapper.lint(&req.traffic).await;
+  let lint = if let Err(lint) = lint {
+    match lint {
+      ClusterError::CompileError(diagnostics) => Some(diagnostics),
+      err => {
+        warn!("failed to lint script: {:?}", err);
+        Some(err.to_string())
+      }
+    }
+  } else {
+    None
+  };
+  game::update(
+    &db.conn,
+    game::Model {
+      id: game.id,
+      traffic: Some(req.traffic.clone()),
+      ..game.clone()
+    },
+  )
+  .await?;
+  traffic_mapper
+    .expire(
+      &game
+        .bucket
+        .clone()
+        .ok_or(ResponseError::PreconditionFailed(
+          "game bucket does not exist".to_owned(),
+        ))?,
+    )
+    .await;
+  traffic_mapper
+    .preload(
+      &game.bucket.ok_or(ResponseError::PreconditionFailed(
+        "game bucket does not exist".to_owned(),
+      ))?,
+      &req.traffic,
+    )
+    .await?;
+
+  Ok(Json(GameTrafficResponse { lint }))
+}
+
+async fn delete_game_traffic(
+  State(cluster): State<Cluster>, State(ref db): State<Database>,
+  Extension(game): Extension<game::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let traffic_mapper = cluster
+    .traffic
+    .clone()
+    .ok_or(ResponseError::NotFound("traffic".to_string()))?;
+  game::update(
+    &db.conn,
+    game::Model {
+      id: game.id,
+      traffic: None,
+      ..game.clone()
+    },
+  )
+  .await?;
+  traffic_mapper
+    .expire(&game.bucket.ok_or(ResponseError::PreconditionFailed(
+      "game bucket not exist".to_owned(),
+    ))?)
+    .await;
+  Ok(())
+}
+
+#[derive(Deserialize)]
+struct GameNodeSelector {
+  pub node_selector: String,
+}
+
+async fn update_game_node_selector(
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+  Json(req): Json<GameNodeSelector>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let node_selector = req.node_selector.clone();
+  game::update(
+    &db.conn,
+    game::Model {
+      id: game.id,
+      node_selector: Some(node_selector.clone()),
+      ..game.clone()
+    },
+  )
+  .await?;
+  Ok(Json(node_selector))
+}
+
+async fn delete_game_node_selector(
+  State(ref db): State<Database>, Extension(game): Extension<game::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  game::update(
+    &db.conn,
+    game::Model {
+      id: game.id,
+      node_selector: None,
+      ..game.clone()
+    },
+  )
+  .await?;
+  Ok(())
 }

@@ -39,7 +39,7 @@ export type ClusterConfig = {
   try_default: boolean;
   auto_infer: boolean;
   kube_config_path: string | null;
-  challenge_node_selector: string | null;
+  node_selector: string | null;
   proxy_image: string | null;
   traffic: string | null;
   enable_capture: boolean | null;

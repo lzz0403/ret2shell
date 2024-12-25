@@ -1,0 +1,44 @@
+const NODE_MAP = #{
+    node1: "10.0.0.1",
+    node2: "10.0.0.2",
+};
+
+// Traffic exposing API
+//
+// Args:
+// 
+// * node:string : k8s node name
+// * service: { traffic:string, created_at:u64, lifetime:u64, ports:Vec<#{name:string, node_port:u16}> }
+//   * traffic:string : the traffic id
+//   * created_at:u64 : the traffic was created at, in unix timestamps (seconds)
+//   * lifetime:u64 : the traffic should live (seconds)
+//   * ports:Vec<#{name:string, node_port:u16}>
+//     * name: the service name on this port
+//     * node_port: the exposed port
+//
+// Returns:
+//
+// * Vec<#{name:string, address:string}>
+//   * name: the service name on this port
+//   * address: the actual address for this service
+//
+// NOTE: This function will be called when user first requesting the challenge environment.
+// 
+// Ret 2 Shell will automatically cache the result of this function, but it is still possible
+// to call this function twice on the same traffic.
+//
+// If you use some external controller like RESTful-controlled FRP, you should ensure that
+// your external controller will check duplicated traffic at first, then create it if not exist.
+// also, Ret 2 Shell does not provide API for traffic-cleanup, you should use `create_at` /
+// `lifetime` to calculate and manage the traffic in your external controller.
+pub async fn expose(node, service) {
+    let node_base = NODE_MAP.get(node)?;
+    let result = Vec::new();
+    for port in service.ports {
+        result.push({
+            name: port.name,
+            address: format!("{}:{}", node_base, port.node_port),
+        });
+    }
+    result
+}

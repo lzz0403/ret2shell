@@ -30,7 +30,7 @@ pub struct Config {
   /// `challenge_node_selector` is the node selector for challenge pods.
   /// it will be used as `ret.sh.cn/workload=<challenge_node_selector>`,
   /// you should setup the node selector in your kubernetes cluster first.
-  pub challenge_node_selector: Option<String>,
+  pub node_selector: Option<String>,
   /// the `traffic` script for challenge routes.
   pub traffic: Option<String>,
   /// `enable_capture` is a flag to enable the stream capture feature.
@@ -52,7 +52,7 @@ impl Merge for Option<Config> {
         try_default: a.try_default,
         auto_infer: a.auto_infer,
         kube_config_path: a.kube_config_path,
-        challenge_node_selector: a.challenge_node_selector,
+        node_selector: a.node_selector,
         traffic: b.traffic.or(a.traffic),
         enable_capture: b.enable_capture.or(a.enable_capture),
         capture_directory: b.capture_directory.or(a.capture_directory),

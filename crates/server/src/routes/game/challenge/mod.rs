@@ -1047,12 +1047,16 @@ async fn start_challenge_env(
       )
       .await?;
     debug!("env_map: {:?}", env_map);
-    let node_selector = if game.in_progress() {
+    let node_selector = if game.archive_at > Utc::now() {
       game.node_selector.clone()
     } else {
-      config.challenge_node_selector.clone()
+      config.node_selector.clone()
     };
-    let need_service = game.traffic.is_some() || config.traffic.is_some();
+    let need_expose = if game.archive_at > Utc::now() {
+      game.traffic.is_some() || config.traffic.is_some()
+    } else {
+      config.traffic.is_some()
+    };
     cluster
       .at(CHALLENGE_NS)
       .create_challenge_env(
@@ -1094,7 +1098,7 @@ async fn start_challenge_env(
         env_map,
         env_config,
         node_selector,
-        need_service,
+        need_expose,
       )
       .await?;
     cache

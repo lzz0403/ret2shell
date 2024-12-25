@@ -210,7 +210,7 @@ export default function (props: { inGame?: boolean }) {
                   <Switch fallback={<span class="opacity-80 flex-1 truncate">{t("game.challenge.envNotStart")}</span>}>
                     <Match when={instance()?.state === "Running"}>
                       <span class="flex-1 truncate">
-                        {t("game.challenge.envIsRunning")}: {instance()?.wsrx}
+                        {t("game.challenge.envIsRunning")}: {instance()?.traffic}
                       </span>
                     </Match>
                     <Match when={instance()?.state === "Pending"}>
@@ -334,7 +334,7 @@ export default function (props: { inGame?: boolean }) {
                         <ClipboardBtn
                           size="sm"
                           title={image.description!}
-                          value={getWsrxLink(instance()!.wsrx, image.port!)}
+                          value={getWsrxLink(instance()!.traffic, image.port!)}
                           label="WSRX"
                         />
                         <Show when={wsrx.getTrafficLocal(instance()!, image.port!)}>
@@ -343,6 +343,14 @@ export default function (props: { inGame?: boolean }) {
                             title={image.description!}
                             value={wsrx.getTrafficLocal(instance()!, image.port!)?.local}
                             label={wsrx.getTrafficLocal(instance()!, image.port!)?.local}
+                          />
+                        </Show>
+                        <Show when={instance()?.exposed_ports?.find((v) => v.name === image.name)}>
+                          <ClipboardBtn
+                            size="sm"
+                            title={image.description!}
+                            value={instance()?.exposed_ports?.find((v) => v.name === image.name)?.address}
+                            label={instance()?.exposed_ports?.find((v) => v.name === image.name)?.address}
                           />
                         </Show>
                       </section>

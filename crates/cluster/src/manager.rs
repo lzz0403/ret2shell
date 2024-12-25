@@ -24,7 +24,7 @@ use tokio_util::codec::Framed;
 use tracing::{debug, error, warn};
 
 use super::traits::ClusterError;
-use crate::registry::Registry;
+use crate::{registry::Registry, traffic::TrafficMapper};
 
 pub const CHALLENGE_NS: &str = "ret2shell-challenge";
 
@@ -33,6 +33,7 @@ pub struct Cluster {
   client: Option<Client>,
   pub registry: Option<Registry>,
   namespace: Option<String>,
+  pub traffic: Option<TrafficMapper>,
 }
 
 macro_rules! with_namespace {
@@ -63,6 +64,7 @@ impl Cluster {
       client,
       registry,
       namespace: Some(String::from("default")),
+      traffic: Some(TrafficMapper::default()),
     }
   }
 
@@ -185,6 +187,14 @@ impl Cluster {
     );
     api.delete(name, &Default::default()).await?;
     Ok(())
+  }
+
+  pub async fn get_service(&self, name: &str) -> Result<Service, ClusterError> {
+    let client = check_enabled!(self.client)?;
+    let api: Api<Service> =
+      Api::namespaced(client, &with_namespace!(&self.namespace, "get service")?);
+    let service = api.get(name).await?;
+    Ok(service)
   }
 
   pub async fn create_service(&self, service: Service) -> Result<Service, ClusterError> {
@@ -320,15 +330,7 @@ impl Cluster {
               },
             )
             .await?;
-          match self.delete_service(&pod.name().unwrap()).await {
-            Ok(_) => {}
-            Err(err) => {
-              warn!(
-                "Failed to delete service for pod '{}': {err:?}",
-                pod.name().unwrap()
-              );
-            }
-          };
+          self.delete_service(&pod.name().unwrap()).await?;
         }
         Ok(false) => {
           debug!("Pod is alive: {}", pod.name().unwrap());
@@ -376,7 +378,7 @@ impl Cluster {
   pub async fn create_challenge_env(
     &self, labels: BTreeMap<String, String>, annotations: BTreeMap<String, String>,
     envs: HashMap<String, String>, env_config: ChallengeEnv, node_selector: Option<String>,
-    need_service: bool,
+    need_expose: bool,
   ) -> Result<(), ClusterError> {
     let challenge_id = labels
       .get("ret.sh.cn/challenge")
@@ -384,6 +386,9 @@ impl Cluster {
     let user_id = labels
       .get("ret.sh.cn/user")
       .ok_or(ClusterError::MissingField("user".to_string()))?;
+    let traffic = labels
+      .get("ret.sh.cn/traffic")
+      .ok_or(ClusterError::MissingField("traffic".to_string()))?;
     let pod_name = format!("ret2shell-{challenge_id}-{user_id}");
     let node_selector = if let Some(node_selector) = node_selector {
       let mut n = BTreeMap::new();
@@ -482,39 +487,46 @@ impl Cluster {
       ..Default::default()
     };
     self.create_pod(pod).await?;
-
-    if need_service {
-      let service = Service {
-        metadata: ObjectMeta {
-          name: Some(pod_name.clone()),
-          labels: Some(labels.clone()),
-          ..Default::default()
-        },
-        spec: Some(k8s_openapi::api::core::v1::ServiceSpec {
-          selector: Some(labels),
-          ports: Some(
-            env_config
-              .images
-              .iter()
-              .filter_map(|image| {
-                image
-                  .port
-                  .map(|port| k8s_openapi::api::core::v1::ServicePort {
-                    port: port as i32,
-                    target_port: Some(
-                      k8s_openapi::apimachinery::pkg::util::intstr::IntOrString::Int(port as i32),
-                    ),
-                    ..Default::default()
-                  })
-              })
-              .collect(),
-          ),
-          ..Default::default()
-        }),
+    let service_type = if need_expose { "NodePort" } else { "ClusterIP" };
+    let service = Service {
+      metadata: ObjectMeta {
+        name: Some(pod_name.clone()),
+        labels: Some(labels.clone()),
         ..Default::default()
-      };
-      self.create_service(service).await?;
-    }
+      },
+      spec: Some(k8s_openapi::api::core::v1::ServiceSpec {
+        // use ret.sh.cn/traffic as selector
+        selector: Some(
+          [("ret.sh.cn/traffic".to_owned(), traffic.clone())]
+            .iter()
+            .cloned()
+            .map(|(k, v)| (k.to_owned(), v.to_owned()))
+            .collect(),
+        ),
+        type_: Some(service_type.to_owned()),
+        ports: Some(
+          env_config
+            .images
+            .iter()
+            .filter_map(|image| {
+              image
+                .port
+                .map(|port| k8s_openapi::api::core::v1::ServicePort {
+                  name: Some(image.name.clone()),
+                  port: port as i32,
+                  target_port: Some(
+                    k8s_openapi::apimachinery::pkg::util::intstr::IntOrString::Int(port as i32),
+                  ),
+                  ..Default::default()
+                })
+            })
+            .collect(),
+        ),
+        ..Default::default()
+      }),
+      ..Default::default()
+    };
+    self.create_service(service).await?;
     Ok(())
   }
 
@@ -555,15 +567,9 @@ impl Cluster {
       .await?;
     for p in pod {
       self.delete_pod(p.metadata.name.as_ref().unwrap()).await?;
-      match self.delete_service(p.metadata.name.as_ref().unwrap()).await {
-        Ok(_) => {}
-        Err(err) => {
-          warn!(
-            "Failed to delete service for pod '{}': {err:?}",
-            p.metadata.name.unwrap()
-          );
-        }
-      };
+      self
+        .delete_service(p.metadata.name.as_ref().unwrap())
+        .await?;
     }
     Ok(())
   }
