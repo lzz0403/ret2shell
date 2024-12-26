@@ -163,7 +163,10 @@ export default function Traffic() {
           <Divider />
           <h2 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
             <span class="icon-[fluent--cloud-flow-20-regular] w-5 h-5" />
-            <span class="flex-1 text-start">{t("game.admin.traffic.title")}</span>
+            <span class="flex-1 flex items-center justify-start space-x-2">
+              <span>{t("game.admin.traffic.title")}</span>
+              <span class="opacity-60">$GLOBAL/traffic.rx</span>
+            </span>
             <Select
               class="w-60 hidden lg:flex"
               placeholder={t("game.admin.traffic.selectPresetScripts")}

@@ -65,6 +65,21 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           "/node-selector",
           patch(update_game_node_selector).delete(delete_game_node_selector),
         )
+        // .nest(
+        //   "/repo",
+        //   Router::new().route("/", get(get_game_repo_git)).nest(
+        //     "/:repo",
+        //     Router::new()
+        //       .route(
+        //         "/git-upload-pack",
+        //         post(game_repo_git_upload_pack).options(game_repo_git_upload_pack),
+        //       )
+        //       .route(
+        //         "/info/refs",
+        //         get(game_repo_info_refs).options(game_repo_info_refs),
+        //       ),
+        //   ),
+        // )
         .nest(
           "/registry",
           Router::new()
