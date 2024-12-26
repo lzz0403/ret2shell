@@ -1052,7 +1052,9 @@ async fn start_challenge_env(
       game.node_selector.clone()
     } else {
       config.node_selector.clone()
-    };
+    }
+    .and_then(|ns| if ns.is_empty() { None } else { Some(ns) });
+
     let need_expose = if game.archive_at > Utc::now() {
       game.traffic.is_some() || config.traffic.is_some()
     } else {
