@@ -7,7 +7,7 @@ import { createEffect, createSignal, Show } from "solid-js";
 import singleNodeDirect from "./scripts/single_node_direct.rx";
 import multiNodeDirect from "./scripts/multi_node_direct.rx";
 import { EditorBare } from "@widgets/editor";
-import { gameStore } from "@storage/game";
+import { gameStore, setGameStore } from "@storage/game";
 import { deleteGameNodeSelector, deleteGameTraffic, updateGameNodeSelector, updateGameTraffic } from "@api/game";
 import { addToast } from "@storage/toast";
 import { handleHttpError } from "@api";
@@ -61,6 +61,7 @@ export default function Traffic() {
           description: t("form.saveSuccess")!,
           duration: 5000,
         });
+        setGameStore({ current: { ...gameStore.current, traffic: script() } });
       } catch (err) {
         handleHttpError(err as Error, t("form.saveFailed")!);
       }
@@ -79,6 +80,7 @@ export default function Traffic() {
           description: t("form.deleteSuccess")!,
           duration: 5000,
         });
+        setGameStore({ current: { ...gameStore.current, traffic: "" } });
       } catch (err) {
         handleHttpError(err as Error, t("form.deleteFailed")!);
       }
@@ -96,6 +98,7 @@ export default function Traffic() {
           description: t("form.saveSuccess")!,
           duration: 5000,
         });
+        setGameStore({ current: { ...gameStore.current, node_selector: nodeSelector() } });
       } catch (err) {
         handleHttpError(err as Error, t("form.saveFailed")!);
       }
@@ -113,6 +116,7 @@ export default function Traffic() {
           description: t("form.deleteSuccess")!,
           duration: 5000,
         });
+        setGameStore({ current: { ...gameStore.current, node_selector: "" } });
       } catch (err) {
         handleHttpError(err as Error, t("form.deleteFailed")!);
       }
