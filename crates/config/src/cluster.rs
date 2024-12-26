@@ -53,7 +53,7 @@ impl Merge for Option<Config> {
         auto_infer: a.auto_infer,
         kube_config_path: a.kube_config_path,
         node_selector: a.node_selector,
-        traffic: b.traffic.or(a.traffic),
+        traffic: b.traffic,
         enable_capture: b.enable_capture.or(a.enable_capture),
         capture_directory: b.capture_directory.or(a.capture_directory),
         cleanup_interval: b.cleanup_interval.or(a.cleanup_interval),

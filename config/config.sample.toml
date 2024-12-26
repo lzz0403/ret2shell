@@ -1,17 +1,23 @@
+# Auditor config, for team name auditing.
 [auditor]
+# the sensitive word list file path
 sensitive_word_list = './config/sensitive_word_list.txt'
 
+# Auth config, recommended to replace the signing_key with a random string, such as UUID/nanoid.
 [auth]
-buffer_time  = 21600
-expires_time = 86400
-signing_key  = 'K3yInD3v3l0pm3nt'
+buffer_time  = 21600              # token will be re-distributed before it expires
+expires_time = 86400              # token will expire after this time
+signing_key  = 'K3yInD3v3l0pm3nt' # the key to sign the token
 
+# OAuth2 config
 [auth.oauth_keys]
 #xdu_cas = { id = "https://ctf.xidian.edu.cn/account/oauth", key = "NOTNEEDED" }
 
+# Bucket config, for game/challenge file storage.
 [bucket]
 path = './data/bucket'
 
+# Cache config
 [cache]
 # Cluster supports here.
 # redis://username:password@foo.com:6379/1
@@ -26,21 +32,23 @@ enabled    = true
 validator  = 'pow'
 
 [cluster]
-auto_infer              = true
-capture_directory       = "./data/captures"
-challenge_node_selector = "challenge"                      # default node selector for challenges, could be specified in each game.
-cleanup_interval        = 60                               # in seconds
-enable_capture          = true
-enabled                 = true
-kube_config_path        = "~/.kube/config"
-proxy_image             = "ret2shell/container-proxy:main"
-traffic                 = "wsrx"                           # wsrx | plain, default traffic, could be specified in each game.
-try_default             = false
+auto_infer        = true
+capture_directory = "./data/captures"
+cleanup_interval  = 60                # in seconds
+enable_capture    = true              # currently not working
+enabled           = true
+kube_config_path  = "~/.kube/config"
+node_selector     = "challenge"       # default node selector for challenges, could be specified in each game.
+try_default       = false
+# deprecated, please use runtime config in the admin panel.
+#traffic          = "pub async fn expose(node, service) { Ok(()) }"
 
 [cluster.registry]
+# external is used for k8s pulling
 external = "ctf.xidian.edu.cn"
 insecure = false
-server   = "ctf.xidian.edu.cn"
+# server is used for platform pushing
+server = "ctf.xidian.edu.cn"
 #username =
 #password =
 
