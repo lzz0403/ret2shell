@@ -8,7 +8,7 @@ name         = "r2s-bucket"
 publish      = false
 resolver     = "2"
 rust-version = "1.80.0"
-version      = "3.4.2"
+version      = "3.4.3"
 
 [dependencies]
 chrono     = { workspace = true }
