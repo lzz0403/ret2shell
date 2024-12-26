@@ -1,14 +1,21 @@
 use axum::{
-  extract::State, middleware, response::IntoResponse, routing::get, Extension, Json, Router,
+  extract::State,
+  middleware,
+  response::IntoResponse,
+  routing::{get, patch},
+  Extension, Json, Router,
 };
 use r2s_cache::Cache;
-use r2s_cluster::Cluster;
-use r2s_database::user::Permission;
+use r2s_cluster::{Cluster, ClusterError};
+use r2s_config::cluster;
+use r2s_database::{config, user::Permission};
 use r2s_event::{
   events::{DevopsEvent, DevopsEventType, EventContainer},
   Event,
 };
+use r2s_migrator::Database;
 use r2s_queue::Queue;
+use serde::{Deserialize, Serialize};
 use tracing::{debug, error, info, warn};
 
 use crate::{
@@ -21,6 +28,10 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     let cluster = state.cluster.clone();
     let queue = state.queue.clone();
     tokio::spawn(cluster_maintain_worker(state.clone(), cluster, queue));
+    let cluster = state.cluster.clone();
+    tokio::spawn(async move {
+      cluster.traffic.unwrap().cleanup_worker().await;
+    });
   }
   Router::new()
     .nest(
@@ -28,6 +39,14 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       Router::new()
         .route("/config", get(get_cluster_config))
         .route("/node", get(get_cluster_nodes))
+        .route(
+          "/node-selector",
+          patch(update_default_node_selector).delete(delete_default_node_selector),
+        )
+        .route(
+          "/traffic",
+          patch(update_traffic_script).delete(delete_traffic_script),
+        )
         .route_layer(middleware::from_fn(auth::permission_required_all!(
           Permission::DevOps
         ))),
@@ -110,4 +129,119 @@ async fn get_calmdown_status(
 ) -> Result<impl IntoResponse, ResponseError> {
   let timestamp = cache.at("cluster").get::<i64>(token.id).await?;
   Ok(Json(timestamp))
+}
+
+#[derive(Deserialize)]
+struct NodeSelector {
+  node_selector: String,
+}
+
+async fn update_default_node_selector(
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(config): Extension<config::Model>,
+  Json(NodeSelector { node_selector }): Json<NodeSelector>,
+) -> Result<impl IntoResponse, ResponseError> {
+  config::update(
+    &db.conn,
+    config::Model {
+      cluster: Some(cluster::Config {
+        node_selector: Some(node_selector),
+        ..config.cluster.unwrap_or_default()
+      }),
+      ..config
+    },
+  )
+  .await?;
+  cache.at("platform").del("config").await?;
+
+  Ok(())
+}
+
+async fn delete_default_node_selector(
+  State(ref db): State<Database>, State(cache): State<Cache>,
+  Extension(config): Extension<config::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  config::update(
+    &db.conn,
+    config::Model {
+      cluster: Some(cluster::Config {
+        node_selector: None,
+        ..config.cluster.unwrap_or_default()
+      }),
+      ..config
+    },
+  )
+  .await?;
+  cache.at("platform").del("config").await?;
+  Ok(())
+}
+
+#[derive(Deserialize)]
+struct TrafficScriptRequest {
+  traffic: String,
+}
+
+#[derive(Serialize)]
+struct TrafficScriptResponse {
+  pub lint: Option<String>,
+}
+
+async fn update_traffic_script(
+  State(ref cluster): State<Cluster>, State(cache): State<Cache>, State(ref db): State<Database>,
+  Extension(config): Extension<config::Model>, Json(req): Json<TrafficScriptRequest>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let traffic_mapper = cluster
+    .traffic
+    .clone()
+    .ok_or(ResponseError::NotFound("traffic".to_string()))?;
+  let lint = traffic_mapper.lint(&req.traffic).await;
+  let lint = if let Err(lint) = lint {
+    match lint {
+      ClusterError::CompileError(diagnostics) => Some(diagnostics),
+      err => {
+        warn!("failed to lint script: {:?}", err);
+        Some(err.to_string())
+      }
+    }
+  } else {
+    None
+  };
+  config::update(
+    &db.conn,
+    config::Model {
+      cluster: Some(cluster::Config {
+        traffic: Some(req.traffic.clone()),
+        ..config.cluster.unwrap_or_default()
+      }),
+      ..config
+    },
+  )
+  .await?;
+  traffic_mapper.expire("default").await;
+  cache.at("platform").del("config").await?;
+  Ok(Json(TrafficScriptResponse { lint }))
+}
+
+async fn delete_traffic_script(
+  State(ref cluster): State<Cluster>, State(cache): State<Cache>, State(ref db): State<Database>,
+  Extension(config): Extension<config::Model>,
+) -> Result<impl IntoResponse, ResponseError> {
+  let traffic_mapper = cluster
+    .traffic
+    .clone()
+    .ok_or(ResponseError::NotFound("traffic".to_string()))?;
+  config::update(
+    &db.conn,
+    config::Model {
+      cluster: Some(cluster::Config {
+        traffic: None,
+        ..config.cluster.unwrap_or_default()
+      }),
+      ..config
+    },
+  )
+  .await?;
+  traffic_mapper.expire("default").await;
+  cache.at("platform").del("config").await?;
+  Ok(())
 }

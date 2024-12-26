@@ -17,3 +17,21 @@ export async function getCalmdownStatus() {
   }
   return null;
 }
+
+export async function updateGlobalTrafficScript(traffic: string) {
+  return await api.patch(`${api_root}/cluster/traffic`, { json: { traffic } }).json<{
+    lint: string | null;
+  }>();
+}
+
+export async function deleteGlobalTrafficScript() {
+  return await api.delete(`${api_root}/cluster/traffic`).json<void>();
+}
+
+export async function updateDefaultNodeSelector(node_selector: string) {
+  return await api.patch(`${api_root}/cluster/node-selector`, { json: { node_selector } }).json<void>();
+}
+
+export async function deleteDefaultNodeSelector() {
+  return await api.delete(`${api_root}/cluster/node-selector`).json<void>();
+}

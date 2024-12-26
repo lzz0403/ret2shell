@@ -165,13 +165,17 @@ export class Service implements Command {
         );
         if (image.port) {
           const local = wsrx.getTrafficLocal(inst, image.port!);
-          if (local) {
+          if (inst.exposed_ports?.find((p) => p.name === image.name)) {
+            io.println(
+              `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(link(`${image.service_type}://${inst.exposed_ports.find((p) => p.name === image.name)?.address}`, `${image.service_type}://${inst.exposed_ports.find((p) => p.name === image.name)?.address}`))}`
+            );
+          } else if (local) {
             io.println(
               `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(link(`${image.service_type}://${local.local}`, `${image.service_type}://${local.local}`))} *-> wsrx_local.service`
             );
           } else {
             io.println(
-              `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(getWsrxLink(inst.wsrx, image.port!))}`
+              `          ${ansiColors.dim("Connection")}: ${ansiColors.blue(getWsrxLink(inst.traffic, image.port!))}`
             );
           }
         }

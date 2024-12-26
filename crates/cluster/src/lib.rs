@@ -12,6 +12,7 @@ use kube::{
 
 mod manager;
 mod registry;
+pub mod traffic;
 mod traits;
 
 pub use k8s_openapi::api::core::v1::{ConfigMap, Namespace, Node, Pod};

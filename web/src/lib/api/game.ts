@@ -580,3 +580,33 @@ export async function getRegistryRepositories(game_id: number) {
 export async function getRegistryImageTags(game_id: number, repo: string) {
   return await api.get(`${api_root}/game/${game_id}/registry/${repo}`).json<string[]>();
 }
+
+export async function updateGameTraffic(game_id: number, traffic: string) {
+  return await api
+    .patch(`${api_root}/game/${game_id}/traffic`, {
+      json: {
+        traffic,
+      },
+    })
+    .json<{
+      lint: string | null;
+    }>();
+}
+
+export async function deleteGameTraffic(game_id: number) {
+  return await api.delete(`${api_root}/game/${game_id}/traffic`).json<void>();
+}
+
+export async function updateGameNodeSelector(game_id: number, node_selector: string) {
+  return await api
+    .patch(`${api_root}/game/${game_id}/node-selector`, {
+      json: {
+        node_selector,
+      },
+    })
+    .json<void>();
+}
+
+export async function deleteGameNodeSelector(game_id: number) {
+  return await api.delete(`${api_root}/game/${game_id}/node-selector`).json<void>();
+}

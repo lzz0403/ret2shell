@@ -17,9 +17,9 @@ use r2s_bucket::{
 use r2s_cache::Cache;
 use r2s_checker::{traits::CheckerError, Checker};
 use r2s_cluster::{Cluster, CHALLENGE_NS};
-use r2s_config::{cluster::ChallengeEnv, GlobalConfig};
+use r2s_config::cluster::ChallengeEnv;
 use r2s_database::{
-  challenge, extra, game, hint, submission, team,
+  challenge, config, extra, game, hint, submission, team,
   user::{self, Permission},
 };
 use r2s_event::{
@@ -983,8 +983,8 @@ async fn get_challenge_env(
 
 #[allow(clippy::too_many_arguments)]
 async fn start_challenge_env(
-  State(config): State<GlobalConfig>, State(bucket): State<Bucket>, State(cluster): State<Cluster>,
-  State(cache): State<Cache>, State(mut checker): State<Checker>,
+  State(bucket): State<Bucket>, State(cluster): State<Cluster>, State(cache): State<Cache>,
+  State(mut checker): State<Checker>, Extension(config): Extension<config::Model>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
   Extension(token): Extension<Token>, team_ext: Option<Extension<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
@@ -1047,11 +1047,19 @@ async fn start_challenge_env(
       )
       .await?;
     debug!("env_map: {:?}", env_map);
-    let node_selector = if game.in_progress() {
+    debug!("game: {:?}", game);
+    let node_selector = if game.archive_at > Utc::now() {
       game.node_selector.clone()
     } else {
-      config.challenge_node_selector.clone()
+      config.node_selector.clone()
     };
+    let need_expose = if game.archive_at > Utc::now() {
+      game.traffic.is_some() || config.traffic.is_some()
+    } else {
+      config.traffic.is_some()
+    };
+    debug!("node_selector: {:?}", node_selector);
+    debug!("need_expose: {:?}", need_expose);
     cluster
       .at(CHALLENGE_NS)
       .create_challenge_env(
@@ -1066,7 +1074,7 @@ async fn start_challenge_env(
           ),
           ("ret.sh.cn/game", game.id.to_string()),
           ("ret.sh.cn/user", token.id.to_string()),
-          ("ret.sh.cn/wsrx", nanoid!(21, &LABEL_ALPHABET)),
+          ("ret.sh.cn/traffic", nanoid!(21, &LABEL_ALPHABET)),
           ("ret.sh.cn/internet", env_config.internet.to_string()),
         ]
         .iter()
@@ -1093,6 +1101,7 @@ async fn start_challenge_env(
         env_map,
         env_config,
         node_selector,
+        need_expose,
       )
       .await?;
     cache

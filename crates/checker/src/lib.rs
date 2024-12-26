@@ -18,7 +18,7 @@ pub mod traits;
 
 type CheckerContext = (Arc<Unit>, Arc<RuntimeContext>, DateTime<Utc>);
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Checker {
   contexts: Arc<RwLock<HashMap<String, CheckerContext>>>,
 }
@@ -41,20 +41,8 @@ macro_rules! to_rune_object {
     };
 }
 
-impl Default for Checker {
-  fn default() -> Self {
-    Self::new()
-  }
-}
-
 impl Checker {
-  pub fn new() -> Self {
-    Self {
-      contexts: Arc::new(RwLock::new(HashMap::new())),
-    }
-  }
-
-  async fn context() -> Result<Context, CheckerError> {
+  async fn build_context() -> Result<Context, CheckerError> {
     let mut context = Context::with_default_modules()?;
     context.install(rune_modules::http::module(true)?)?;
     context.install(rune_modules::json::module(true)?)?;
@@ -80,7 +68,7 @@ impl Checker {
   }
 
   pub async fn lint(&self, bucket: &ChallengeBucket) -> Result<(), CheckerError> {
-    let context = Self::context().await?;
+    let context = Self::build_context().await?;
     let mut sources = Self::sources(bucket).await?;
     let mut diagnostics = Diagnostics::new();
     let _ = rune::prepare(&mut sources)
@@ -115,7 +103,7 @@ impl Checker {
     if contexts.contains_key(&bucket.hash()) && challenge.updated_at < contexts[&bucket.hash()].2 {
       return Ok(());
     }
-    let context = Self::context().await?;
+    let context = Self::build_context().await?;
     let mut sources = Self::sources(bucket).await?;
 
     let unit = rune::prepare(&mut sources).with_context(&context).build()?;
@@ -246,7 +234,7 @@ impl Checker {
 }
 
 pub async fn initialize() -> Checker {
-  let checker = Checker::new();
+  let checker = Checker::default();
   let mut checker_worker = checker.clone();
   tokio::spawn(async move { checker_worker.cleanup_worker().await });
   checker

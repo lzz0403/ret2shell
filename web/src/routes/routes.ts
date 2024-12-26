@@ -284,6 +284,10 @@ export const routes = {
           path: "/oauth",
           component: lazy(() => import("./admin/oauth/index")),
         },
+        {
+          path: "/traffic",
+          component: lazy(() => import("./admin/traffic/index")),
+        },
       ],
     },
     {

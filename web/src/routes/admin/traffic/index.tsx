@@ -3,12 +3,10 @@ import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Popover from "@widgets/popover";
 import Select from "@widgets/select";
-import { createEffect, createSignal, Show } from "solid-js";
+import { createEffect, createSignal, onMount, Show } from "solid-js";
 import singleNodeDirect from "./scripts/single_node_direct.rx";
 import multiNodeDirect from "./scripts/multi_node_direct.rx";
 import { EditorBare } from "@widgets/editor";
-import { gameStore, setGameStore } from "@storage/game";
-import { deleteGameNodeSelector, deleteGameTraffic, updateGameNodeSelector, updateGameTraffic } from "@api/game";
 import { addToast } from "@storage/toast";
 import { handleHttpError } from "@api";
 import Input from "@widgets/input";
@@ -16,6 +14,14 @@ import Splitter from "@widgets/splitter";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { AnsiUp } from "ansi_up";
 import Divider from "@widgets/divider";
+import { getPlatformConfig } from "@api/platform";
+import type { Config } from "@models/config";
+import {
+  deleteDefaultNodeSelector,
+  deleteGlobalTrafficScript,
+  updateDefaultNodeSelector,
+  updateGlobalTrafficScript,
+} from "@api/cluster";
 
 type PresetTraffic = "single-node-direct" | "multi-node-direct";
 
@@ -25,6 +31,15 @@ const trafficMap = {
 };
 
 export default function Traffic() {
+  const [config, setConfig] = createSignal(null as null | Config);
+  onMount(async () => {
+    try {
+      const resp = await getPlatformConfig();
+      setConfig(resp);
+    } catch (err) {
+      handleHttpError(err as Error, t("errors.500")!);
+    }
+  });
   const [preset, setPreset] = createSignal(null as PresetTraffic | null);
 
   const [script, setScript] = createSignal("");
@@ -41,87 +56,75 @@ export default function Traffic() {
   });
 
   createEffect(() => {
-    if (gameStore.current) {
-      setScript(gameStore.current.traffic || "");
-      setNodeSelector(gameStore.current.node_selector || "");
+    if (config()?.cluster) {
+      setScript(config()?.cluster.traffic || "");
+      setNodeSelector(config()?.cluster.node_selector || "");
     }
   });
 
   async function handleUpdateTraffic() {
-    if (gameStore.current) {
-      setSaving(true);
-      try {
-        const resp = await updateGameTraffic(gameStore.current.id, script());
-        setLint(resp.lint);
-        if (resp.lint) {
-          setRenderedLint(ansi_up.ansi_to_html(resp.lint));
-        }
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-        setGameStore({ current: { ...gameStore.current, traffic: script() } });
-      } catch (err) {
-        handleHttpError(err as Error, t("form.saveFailed")!);
+    setSaving(true);
+    try {
+      const resp = await updateGlobalTrafficScript(script());
+      setLint(resp.lint);
+      if (resp.lint) {
+        setRenderedLint(ansi_up.ansi_to_html(resp.lint));
       }
-      setSaving(false);
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
     }
+    setSaving(false);
   }
 
   async function handleDeleteTraffic() {
-    if (gameStore.current) {
-      setSaving(true);
-      try {
-        await deleteGameTraffic(gameStore.current.id);
-        setLint(null);
-        addToast({
-          level: "success",
-          description: t("form.deleteSuccess")!,
-          duration: 5000,
-        });
-        setGameStore({ current: { ...gameStore.current, traffic: "" } });
-      } catch (err) {
-        handleHttpError(err as Error, t("form.deleteFailed")!);
-      }
-      setSaving(false);
+    setSaving(true);
+    try {
+      await deleteGlobalTrafficScript();
+      setLint(null);
+      addToast({
+        level: "success",
+        description: t("form.deleteSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.deleteFailed")!);
     }
+    setSaving(false);
   }
 
   async function handleUpdateNodeSelector() {
-    if (gameStore.current) {
-      setSaving(true);
-      try {
-        await updateGameNodeSelector(gameStore.current.id, nodeSelector());
-        addToast({
-          level: "success",
-          description: t("form.saveSuccess")!,
-          duration: 5000,
-        });
-        setGameStore({ current: { ...gameStore.current, node_selector: nodeSelector() } });
-      } catch (err) {
-        handleHttpError(err as Error, t("form.saveFailed")!);
-      }
-      setSaving(false);
+    setSaving(true);
+    try {
+      await updateDefaultNodeSelector(nodeSelector());
+      addToast({
+        level: "success",
+        description: t("form.saveSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.saveFailed")!);
     }
+    setSaving(false);
   }
 
   async function handleDeleteNodeSelector() {
-    if (gameStore.current) {
-      setSaving(true);
-      try {
-        await deleteGameNodeSelector(gameStore.current.id);
-        addToast({
-          level: "success",
-          description: t("form.deleteSuccess")!,
-          duration: 5000,
-        });
-        setGameStore({ current: { ...gameStore.current, node_selector: "" } });
-      } catch (err) {
-        handleHttpError(err as Error, t("form.deleteFailed")!);
-      }
-      setSaving(false);
+    setSaving(true);
+    try {
+      await deleteDefaultNodeSelector();
+      addToast({
+        level: "success",
+        description: t("form.deleteSuccess")!,
+        duration: 5000,
+      });
+    } catch (err) {
+      handleHttpError(err as Error, t("form.deleteFailed")!);
     }
+    setSaving(false);
   }
   return (
     <>
@@ -137,7 +140,7 @@ export default function Traffic() {
             <Button size="sm" level="primary" onClick={handleUpdateNodeSelector} loading={saving()}>
               {t("form.save")}
             </Button>
-            <Show when={gameStore.current?.node_selector}>
+            <Show when={config()?.cluster.node_selector}>
               <Popover
                 level="error"
                 ghost
@@ -184,7 +187,7 @@ export default function Traffic() {
             <Button size="sm" level="primary" onClick={handleUpdateTraffic} loading={saving()}>
               {t("form.save")}
             </Button>
-            <Show when={gameStore.current?.traffic}>
+            <Show when={config()?.cluster.traffic}>
               <Popover
                 level="error"
                 ghost

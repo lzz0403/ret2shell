@@ -138,7 +138,7 @@ export class Wsrx {
       for (const { local, remote } of this.traffic()) {
         if (
           remote.startsWith(`${prefix}://${host}`) &&
-          !this.instances().some((instance) => remote.includes(instance.wsrx))
+          !this.instances().some((instance) => remote.includes(instance.traffic))
         ) {
           await this.deleteTraffic(local);
         }
@@ -188,7 +188,7 @@ export class Wsrx {
       const prefix = location.protocol === "https:" ? "wss" : "ws";
       const host = location.host;
       for (const port of instance.ports) {
-        const remote = `${prefix}://${host}/api/traffic/${instance.wsrx}?port=${port}`;
+        const remote = `${prefix}://${host}/api/traffic/${instance.traffic}?port=${port}`;
         if (!this.traffic().some((t) => t.remote === remote)) await this.openTraffic(remote);
       }
       this.refreshTraffic();
@@ -205,7 +205,7 @@ export class Wsrx {
   }
 
   public getTrafficLocal(instance: Instance, port: number) {
-    return this.traffic().find((t) => t.remote === getWsrxLink(instance.wsrx, port));
+    return this.traffic().find((t) => t.remote === getWsrxLink(instance.traffic, port));
   }
 }
 

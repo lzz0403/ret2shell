@@ -145,6 +145,19 @@ export default function SideBar() {
           <span>{t("admin.cluster.title")}</span>
         </Link>
       </li>
+      <li class="w-full">
+        <Link
+          activeMatch="exact"
+          class="w-full"
+          ghost
+          href="/admin/traffic"
+          justify="start"
+          disabled={!accountStore.permissions.includes(Permission.DevOps)}
+        >
+          <span class="icon-[fluent--airplane-20-regular] w-5 h-5" />
+          <span>{t("admin.traffic.title")}</span>
+        </Link>
+      </li>
       <Divider />
       <li class="w-full">
         <Link activeMatch="exact" class="w-full" ghost href="/magic/about" justify="start">
