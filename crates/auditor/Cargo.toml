@@ -12,7 +12,6 @@ version      = "3.4.3"
 
 [dependencies]
 aho-corasick = { workspace = true }
-once_cell    = { workspace = true }
 r2s-config   = { workspace = true }
 thiserror    = { workspace = true }
 tokio        = { workspace = true }

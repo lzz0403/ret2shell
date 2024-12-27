@@ -10,6 +10,9 @@ resolver     = "2"
 rust-version = "1.80.0"
 version      = "3.4.3"
 
+[package.metadata.cargo-machete]
+ignored = ["rune", "rune-modules"] # required by sea-orm `FromJsonResult`
+
 [dependencies]
 async-trait  = { workspace = true }
 reqwest      = { workspace = true }

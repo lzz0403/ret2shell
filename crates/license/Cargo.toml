@@ -13,7 +13,6 @@ version      = "3.4.3"
 [dependencies]
 chrono     = { workspace = true }
 clap       = { workspace = true }
-hex        = { workspace = true }
 ring       = { workspace = true }
 serde      = { workspace = true }
 serde_json = { workspace = true }

@@ -17,16 +17,12 @@ deunicode    = { workspace = true }
 futures-io   = { workspace = true }
 k8s-openapi  = { workspace = true }
 kube         = { workspace = true }
-nanoid       = { workspace = true }
-num-derive   = { workspace = true }
-num-traits   = { workspace = true }
 regex        = { workspace = true }
 reqwest      = { workspace = true }
 rune         = { workspace = true }
 rune-modules = { workspace = true }
 serde        = { workspace = true }
 serde_json   = { workspace = true }
-serde_repr   = { workspace = true }
 tempdir      = { workspace = true }
 thiserror    = { workspace = true }
 tokio        = { workspace = true }

@@ -10,6 +10,13 @@ resolver     = "2"
 rust-version = "1.80.0"
 version      = "3.4.3"
 
+[package.metadata.cargo-machete]
+ignored = [
+  "serde_json",
+  "tracing",
+  "num-traits",
+] # required by sea-orm `FromJsonResult`
+
 [dependencies]
 chrono = { workspace = true }
 num-derive = { workspace = true }
@@ -18,12 +25,10 @@ sea-orm = { workspace = true, features = [
   "sqlx-postgres",
   "runtime-tokio-rustls",
 ] }
-sea-orm-migration = { workspace = true }
 sea-query = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 serde_repr = { workspace = true }
-tokio = { workspace = true }
 tracing = { workspace = true }
 
 r2s-config = { workspace = true }

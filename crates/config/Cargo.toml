@@ -10,6 +10,9 @@ resolver     = "2"
 rust-version = "1.80.0"
 version      = "3.4.3"
 
+[package.metadata.cargo-machete]
+ignored = ["serde_json"] # required by sea-orm `FromJsonResult`
+
 [dependencies]
 sea-orm    = { workspace = true, features = ["macros", "with-json"] }
 serde      = { workspace = true }
