@@ -85,7 +85,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           Router::new()
             .route("/config", get(get_cluster_registry_config))
             .route("/", get(get_cluster_registry_repo).post(upload_image))
-            .route_layer(DefaultBodyLimit::max(1024 * 1024 * 1024))
+            .route_layer(DefaultBodyLimit::max(2 * 1024 * 1024 * 1024))
             .route("/:image", get(get_cluster_registry_image)),
         )
         .route("/device", get(get_connected_devices))
