@@ -479,7 +479,7 @@ export default function (props: { children?: JSX.Element }) {
         });
       }
       console.log(
-        `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - 2024 %cRet 2 Shell%c, All rights reserved.\n`,
+        `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - ${new Date().getFullYear()} %cRet 2 Shell%c, All rights reserved.\n`,
         "color: #0078D6; font-weight: bold; font-size: 1.5rem;",
         "color: currentColor; font-weight: bold; font-size: 1.5rem;",
         "color: #808080; font-weight: bold; font-size: 1.5rem;",
