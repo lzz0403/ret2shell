@@ -903,9 +903,15 @@ async fn export_statistics(
 }
 
 async fn get_cluster_registry_repo(
-  State(cluster): State<Cluster>, State(cache): State<Cache>,
+  State(config): State<GlobalConfig>, State(cluster): State<Cluster>, State(cache): State<Cache>,
   Extension(game): Extension<game::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  if config
+    .cluster
+    .is_none_or(|c| c.registry.is_none_or(|r| r.enabled.is_none_or(|i| !i)))
+  {
+    return Ok(Json(vec![]));
+  };
   let repos: Option<Vec<String>> = cache
     .at("registry")
     .get(&game.bucket.clone().unwrap_or("_".to_string()))

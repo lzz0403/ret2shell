@@ -51,6 +51,7 @@ insecure = false
 server = "ctf.xidian.edu.cn"
 #username =
 #password =
+enabled = true
 
 [database]
 db       = 'ret2shell'

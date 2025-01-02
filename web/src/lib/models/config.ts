@@ -34,6 +34,7 @@ export type RegistryConfig = {
   password: string;
   server: string;
   insecure: boolean;
+  enabled: boolean | null;
 };
 export type ClusterConfig = {
   try_default: boolean;

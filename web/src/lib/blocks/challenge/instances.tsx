@@ -34,17 +34,11 @@ import { For, Match, Show, Switch, createEffect, createSignal, onMount, untrack 
 
 function CreateForm(fnProps: {
   repos: string[];
+  registryConfig: RegistryConfig | null;
   onDone?: () => void;
 }) {
   const [loading, setLoading] = createSignal(false);
-  const [registryConfig, setRegistryConfig] = createSignal<RegistryConfig | null>(null);
-  onMount(async () => {
-    try {
-      setRegistryConfig(await getRegistryConfig(gameStore.current!.id));
-    } catch (err) {
-      handleHttpError(err as Error, t("game.challenge.fetchEnvRegistryConfigFailed")!);
-    }
-  });
+
   const [tags, setTags] = createSignal<string[]>([]);
   const [form, { Form, Field }] = createForm<ChallengeImage>();
   setValue(form, "cpu", 0.5);
@@ -52,6 +46,9 @@ function CreateForm(fnProps: {
   const [searchedRepo, setSearchedRepo] = createSignal("");
   const [selected, setSelected] = createSignal(false);
   async function fetchTags(repo: string) {
+    if (!fnProps.registryConfig?.enabled) {
+      return;
+    }
     setLoading(true);
     try {
       setTags(await getRegistryImageTags(gameStore.current!.id, repo));
@@ -115,110 +112,126 @@ function CreateForm(fnProps: {
         </Field>
         <Field name="tag" validate={[required(t("game.challenge.envContainerTagRequired")!)]}>
           {(field, props) => (
-            <>
-              <input hidden {...props} value={field.value} class="hidden" />
-              <div class="flex-1 relative">
-                <ArkPopover.Root
-                  autoFocus={false}
-                  open={!!searchedRepo() && !selected()}
-                  closeOnInteractOutside={false}
-                >
-                  <ArkPopover.Anchor class="w-full">
-                    <Input
-                      class="w-full"
-                      icon={<span class="icon-[fluent--flag-20-regular] w-5 h-5" />}
-                      title={t("game.challenge.envContainerTag")}
-                      placeholder={t("game.challenge.envContainerTag")}
-                      error={field.error}
-                      required
-                      value={searchedRepo()}
-                      onInput={(e) => {
-                        setSearchedRepo(e.target.value);
-                        setSelected(false);
-                        setValue(form, "tag", "");
-                      }}
-                    />
-                  </ArkPopover.Anchor>
-                  <ArkPopover.Positioner class="w-full">
-                    <ArkPopover.Content class="popover card w-full z-50">
-                      <OverlayScrollbarsComponent
-                        options={{
-                          scrollbars: {
-                            theme: `os-theme-${fullTheme()}`,
-                            autoHide: "scroll",
-                          },
-                        }}
-                        class="relative w-full print:h-auto print:overflow-auto max-h-48"
-                        defer
-                      >
-                        <div class="card-content p-2 flex flex-col space-y-2">
-                          <Show when={loading()}>
-                            <LoadingTips />
-                          </Show>
-                          <For each={fnProps.repos.filter((repo) => repo.includes(searchedRepo()))}>
-                            {(repo) => (
-                              <Button
-                                class="btn-sm"
-                                ghost
-                                justify="start"
-                                type="button"
-                                onClick={() => {
-                                  setSearchedRepo(repo);
-                                  setSelected(true);
-                                  fetchTags(repo);
-                                }}
-                              >
-                                <span class="icon-[fluent--beaker-20-regular] w-5 h-5" />
-                                <span>{repo}</span>
-                              </Button>
-                            )}
-                          </For>
-                        </div>
-                      </OverlayScrollbarsComponent>
-                    </ArkPopover.Content>
-                  </ArkPopover.Positioner>
-                </ArkPopover.Root>
-              </div>
-              <div class="flex-1 flex flex-row space-x-2">
-                <Select
-                  label={t("game.challenge.envContainerTagVersion")!}
-                  error={field.error}
+            <Show
+              when={fnProps.registryConfig?.enabled}
+              fallback={
+                <Input
                   class="flex-1"
-                  placeholder={t("game.challenge.selectEnvContainerTagVersion")}
-                  items={
-                    tags().map((tag) => ({
-                      value: tag,
-                      label: tag,
-                      icon: "icon-[fluent--tag-20-regular]",
-                    })) || []
-                  }
-                  // inputProps={props}
-                  onValueChange={(e) => {
-                    setValue(
-                      form,
-                      "tag",
-                      `${registryConfig()?.external}/${gameStore.current!.bucket}/${searchedRepo()}:${e.value.at(0)}`
-                    );
-                  }}
+                  icon={<span class="icon-[fluent--flag-20-regular] w-5 h-5" />}
+                  title={t("game.challenge.envContainerTag")}
+                  placeholder={t("game.challenge.envContainerTag")}
+                  error={field.error}
+                  required
+                  {...props}
+                  value={field.value}
                 />
-                <Field name="restricted" type="boolean">
-                  {(field, props) => (
-                    <div class="flex flex-col space-y-1">
-                      <header class="label">CAP</header>
-                      <IconCheckbox
-                        inputProps={props}
-                        title={t("game.challenge.dropCap")}
-                        checked={field.value ?? false}
-                        uncheckedIcon="icon-[fluent--live-20-regular]"
-                        checkedIcon="icon-[fluent--live-off-20-filled]"
+              }
+            >
+              <>
+                <input hidden {...props} value={field.value} class="hidden" />
+                <div class="flex-1 relative">
+                  <ArkPopover.Root
+                    autoFocus={false}
+                    open={!!searchedRepo() && !selected()}
+                    closeOnInteractOutside={false}
+                  >
+                    <ArkPopover.Anchor class="w-full">
+                      <Input
+                        class="w-full"
+                        icon={<span class="icon-[fluent--flag-20-regular] w-5 h-5" />}
+                        title={t("game.challenge.envContainerTag")}
+                        placeholder={t("game.challenge.envContainerTag")}
                         error={field.error}
-                        name="restricted"
+                        required
+                        value={searchedRepo()}
+                        onInput={(e) => {
+                          setSearchedRepo(e.target.value);
+                          setSelected(false);
+                          setValue(form, "tag", "");
+                        }}
                       />
-                    </div>
-                  )}
-                </Field>
-              </div>
-            </>
+                    </ArkPopover.Anchor>
+                    <ArkPopover.Positioner class="w-full">
+                      <ArkPopover.Content class="popover card w-full z-50">
+                        <OverlayScrollbarsComponent
+                          options={{
+                            scrollbars: {
+                              theme: `os-theme-${fullTheme()}`,
+                              autoHide: "scroll",
+                            },
+                          }}
+                          class="relative w-full print:h-auto print:overflow-auto max-h-48"
+                          defer
+                        >
+                          <div class="card-content p-2 flex flex-col space-y-2">
+                            <Show when={loading()}>
+                              <LoadingTips />
+                            </Show>
+                            <For each={fnProps.repos.filter((repo) => repo.includes(searchedRepo()))}>
+                              {(repo) => (
+                                <Button
+                                  class="btn-sm"
+                                  ghost
+                                  justify="start"
+                                  type="button"
+                                  onClick={() => {
+                                    setSearchedRepo(repo);
+                                    setSelected(true);
+                                    fetchTags(repo);
+                                  }}
+                                >
+                                  <span class="icon-[fluent--beaker-20-regular] w-5 h-5" />
+                                  <span>{repo}</span>
+                                </Button>
+                              )}
+                            </For>
+                          </div>
+                        </OverlayScrollbarsComponent>
+                      </ArkPopover.Content>
+                    </ArkPopover.Positioner>
+                  </ArkPopover.Root>
+                </div>
+                <div class="flex-1 flex flex-row space-x-2">
+                  <Select
+                    label={t("game.challenge.envContainerTagVersion")!}
+                    error={field.error}
+                    class="flex-1"
+                    placeholder={t("game.challenge.selectEnvContainerTagVersion")}
+                    items={
+                      tags().map((tag) => ({
+                        value: tag,
+                        label: tag,
+                        icon: "icon-[fluent--tag-20-regular]",
+                      })) || []
+                    }
+                    // inputProps={props}
+                    onValueChange={(e) => {
+                      setValue(
+                        form,
+                        "tag",
+                        `${fnProps.registryConfig?.external}/${gameStore.current!.bucket}/${searchedRepo()}:${e.value.at(0)}`
+                      );
+                    }}
+                  />
+                  <Field name="restricted" type="boolean">
+                    {(field, props) => (
+                      <div class="flex flex-col space-y-1">
+                        <header class="label">CAP</header>
+                        <IconCheckbox
+                          inputProps={props}
+                          title={t("game.challenge.dropCap")}
+                          checked={field.value ?? false}
+                          uncheckedIcon="icon-[fluent--live-20-regular]"
+                          checkedIcon="icon-[fluent--live-off-20-filled]"
+                          error={field.error}
+                          name="restricted"
+                        />
+                      </div>
+                    )}
+                  </Field>
+                </div>
+              </>
+            </Show>
           )}
         </Field>
       </div>
@@ -407,10 +420,18 @@ function InstanceList() {
   );
 }
 
-export default function (_props: {
+export default function(_props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {
+  const [registryConfig, setRegistryConfig] = createSignal<RegistryConfig | null>(null);
+  onMount(async () => {
+    try {
+      setRegistryConfig(await getRegistryConfig(gameStore.current!.id));
+    } catch (err) {
+      handleHttpError(err as Error, t("game.challenge.fetchEnvRegistryConfigFailed")!);
+    }
+  });
   const [repos, setRepos] = createSignal<string[]>([]);
   async function fetchRepos() {
     try {
@@ -494,19 +515,21 @@ export default function (_props: {
       <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
         <span class="icon-[fluent--settings-20-regular] w-5 h-5 flex-shrink-0" />
         <span class="flex-1 text-start">{t("game.challenge.envImages")}</span>
-        <span class="font-bold">{t("game.challenge.uploadImageToRegistry")}:</span>
-        <UploadButton
-          size="sm"
-          url={`${api_root}/game/${gameStore.current!.id}/registry`}
-          onDone={() => {
-            addToast({
-              level: "success",
-              description: t("game.challenge.uploadImageToRegistrySuccess")!,
-              duration: 5000,
-            });
-            fetchRepos();
-          }}
-        />
+        <Show when={registryConfig()?.enabled}>
+          <span class="font-bold">{t("game.challenge.uploadImageToRegistry")}:</span>
+          <UploadButton
+            size="sm"
+            url={`${api_root}/game/${gameStore.current!.id}/registry`}
+            onDone={() => {
+              addToast({
+                level: "success",
+                description: t("game.challenge.uploadImageToRegistrySuccess")!,
+                duration: 5000,
+              });
+              fetchRepos();
+            }}
+          />
+        </Show>
         <Dialog
           size="sm"
           btnContent={<span>{t("game.challenge.addEnvImage")}</span>}
@@ -521,6 +544,7 @@ export default function (_props: {
         >
           <CreateForm
             repos={repos()}
+            registryConfig={registryConfig()}
             onDone={() => {
               setFormOpen(false);
             }}
