@@ -38,7 +38,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             .delete(frontend_proxy_handler),
         )
         .route(
-          "/*path",
+          "/{*path}",
           get(frontend_proxy_handler)
             .post(frontend_proxy_handler)
             .put(frontend_proxy_handler)
@@ -50,7 +50,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
   } else {
     Router::new()
       .route("/", get(no_frontend_proxy_handler))
-      .route("/*path", get(no_frontend_proxy_handler))
+      .route("/{*path}", get(no_frontend_proxy_handler))
   }
 }
 

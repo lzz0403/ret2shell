@@ -38,7 +38,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         )),
     )
     .nest(
-      "/:challenge",
+      "/{challenge}",
       Router::new()
         .route("/", get(player_get_chat_session).post(player_send_chat))
         .route_layer(middleware::from_fn_with_state(
@@ -84,8 +84,17 @@ async fn admin_get_chat_list(
 
 async fn player_get_chat_session(
   State(ref db): State<Database>, Extension(challenge): Extension<challenge::Model>,
-  Extension(team): Extension<team::Model>,
+  Extension(token): Extension<Token>, Extension(team): Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| {
+    ResponseError::Forbidden(
+      "team not found".into(),
+      format!(
+        "user {}:'{}' ({}) want to access chat session without participate game",
+        token.id, token.account, token.nickname
+      ),
+    )
+  })?;
   let chats = chat::get_list(&db.conn, team.id, challenge.id).await?;
   if chats.first().is_some_and(|c| c.is_admin && !c.checked) {
     chat::mark_checked(&db.conn, team.id, challenge.id).await?;
@@ -96,9 +105,10 @@ async fn player_get_chat_session(
 async fn player_send_chat(
   State(ref db): State<Database>, State(ref queue): State<Queue>,
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
-  Extension(challenge): Extension<challenge::Model>, Extension(team): Extension<team::Model>,
-  Json(chat): Json<SendChatRequest>,
+  Extension(challenge): Extension<challenge::Model>,
+  Extension(team): Extension<Option<team::Model>>, Json(chat): Json<SendChatRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let chats = chat::get_list(&db.conn, team.id, challenge.id).await?;
   let mut sent_count = 3;
   for i in chats {
@@ -193,8 +203,9 @@ async fn admin_send_chat(
 }
 
 async fn check_unread_chats(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(team): Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   // team should check admin's message, so we should filter is_admin == true
   let chats = chat::get_unchecked(&db.conn, team.id, true).await?;
   Ok(Json(chats))

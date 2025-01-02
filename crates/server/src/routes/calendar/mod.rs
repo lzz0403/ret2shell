@@ -17,12 +17,15 @@ use crate::{
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
   Router::new()
-    .route("/:calendar", patch(update_calendar).delete(delete_calendar))
+    .route(
+      "/{calendar}",
+      patch(update_calendar).delete(delete_calendar),
+    )
     .route("/", post(create_calendar))
     .route_layer(middleware::from_fn(auth::permission_required_all!(
       Permission::Calendar
     )))
-    .route("/:calendar", get(get_calendar))
+    .route("/{calendar}", get(get_calendar))
     .route("/", get(get_calendar_list))
 }
 

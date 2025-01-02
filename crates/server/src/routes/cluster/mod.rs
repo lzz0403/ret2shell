@@ -34,8 +34,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     });
   }
   Router::new()
-    .nest(
-      "/",
+    .merge(
       Router::new()
         .route("/config", get(get_cluster_config))
         .route("/node", get(get_cluster_nodes))

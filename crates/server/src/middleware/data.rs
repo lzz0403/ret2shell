@@ -60,7 +60,11 @@ pub async fn prepare_team_info(
   if let Some(team) = team {
     req
       .extensions_mut()
-      .insert::<r2s_database::team::Model>(team);
+      .insert::<Option<r2s_database::team::Model>>(Some(team));
+  } else {
+    req
+      .extensions_mut()
+      .insert::<Option<r2s_database::team::Model>>(None);
   }
 
   Ok(next.run(req).await)
@@ -144,7 +148,7 @@ macro_rules! extract_team {
           .0
           .contains(&r2s_database::user::Permission::Game))
     {
-      if let Some(axum::extract::Extension(team)) = $team_ext {
+      if let axum::Extension(Some(team)) = $team_ext {
         if team.state == r2s_database::team::State::Banned {
           return Err(crate::traits::ResponseError::Forbidden(
             "you are banned in this game".to_owned(),

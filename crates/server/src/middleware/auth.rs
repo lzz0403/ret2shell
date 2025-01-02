@@ -281,7 +281,7 @@ pub async fn game_admin_required(
 
 pub async fn game_access_required(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
-  team_ext: Option<Extension<team::Model>>, req: Request, next: Next,
+  team_ext: Extension<Option<team::Model>>, req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
   if is_game_admin!(token, game) {
     return Ok(next.run(req).await);
@@ -302,7 +302,7 @@ pub async fn game_access_required(
     return Ok(next.run(req).await);
   }
 
-  let team = if let Some(Extension(team)) = team_ext {
+  let team = if let Extension(Some(team)) = team_ext {
     Some(team)
   } else {
     None
@@ -322,7 +322,7 @@ pub async fn game_access_required(
 
 pub async fn challenge_access_required(
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
-  Extension(challenge): Extension<challenge::Model>, team_ext: Option<Extension<team::Model>>,
+  Extension(challenge): Extension<challenge::Model>, team_ext: Extension<Option<team::Model>>,
   req: Request, next: Next,
 ) -> Result<impl IntoResponse, ResponseError> {
   if game.id != challenge.game_id {

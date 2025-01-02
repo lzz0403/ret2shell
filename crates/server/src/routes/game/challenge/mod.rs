@@ -60,7 +60,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     ))
     .route("/", get(get_challenge_list))
     .nest(
-      "/:challenge",
+      "/{challenge}",
       Router::new()
         .nest(
           "/file",
@@ -479,7 +479,7 @@ struct SolvesStatus {
 
 async fn get_challenge_solves_status(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
-  Extension(game): Extension<game::Model>, team_ext: Option<Extension<team::Model>>,
+  Extension(game): Extension<game::Model>, team_ext: Extension<Option<team::Model>>,
   Extension(challenge): Extension<challenge::Model>, Query(query): Query<SolvesStatusQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
   if let Some(id) = query.id {
@@ -544,7 +544,7 @@ struct SubmitRequest {
 async fn submit_flag(
   State(ref db): State<Database>, State(cache): State<Cache>, State(ref queue): State<Queue>,
   Extension(token): Extension<Token>, Extension(game): Extension<game::Model>,
-  team_ext: Option<Extension<team::Model>>, Extension(challenge): Extension<challenge::Model>,
+  team_ext: Extension<Option<team::Model>>, Extension(challenge): Extension<challenge::Model>,
   Json(req): Json<SubmitRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   // Only game in progress and has a team, the submission record will be marked as
@@ -636,7 +636,7 @@ struct FileResponse {
 async fn get_player_attachment(
   State(ref bucket): State<Bucket>, Extension(game): Extension<game::Model>,
   Extension(challenge): Extension<challenge::Model>, Extension(token): Extension<Token>,
-  team_ext: Option<Extension<team::Model>>, Query(query): Query<FileRequest>,
+  team_ext: Extension<Option<team::Model>>, Query(query): Query<FileRequest>,
 ) -> Result<Response, ResponseError> {
   let team = extract_team!(game, team_ext, token);
   let challenge_bucket = get_challenge_bucket!(bucket, game.clone(), challenge);
@@ -799,7 +799,7 @@ async fn delete_challenge_attachment(
 async fn get_challenge_hints(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
-  team_ext: Option<Extension<team::Model>>,
+  team_ext: Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
   let hints = hint::get_list(&db.conn, challenge.id).await?;
@@ -827,9 +827,10 @@ struct UnlockHintRequest {
 }
 
 async fn unlock_hint(
-  State(db): State<Database>, Extension(team): Extension<team::Model>,
+  State(db): State<Database>, Extension(team): Extension<Option<team::Model>>,
   Extension(challenge): Extension<challenge::Model>, Json(req): Json<UnlockHintRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let txn = db.conn.begin().await?;
   let hint = hint::get(&txn, req.id).await?;
   if let Some(hint) = hint {
@@ -986,7 +987,7 @@ async fn start_challenge_env(
   State(bucket): State<Bucket>, State(cluster): State<Cluster>, State(cache): State<Cache>,
   State(mut checker): State<Checker>, Extension(config): Extension<config::Model>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
-  Extension(token): Extension<Token>, team_ext: Option<Extension<team::Model>>,
+  Extension(token): Extension<Token>, team_ext: Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
   let config = if let Some(config) = &config.cluster {

@@ -151,4 +151,4 @@ version  = "0.98"
 [workspace.dependencies.wsrx]
 default-features = false
 features         = ["server"]
-version          = "0.2"
+version          = "0.3"

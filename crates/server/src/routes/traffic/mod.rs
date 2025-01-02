@@ -11,7 +11,10 @@ use tracing::debug;
 use crate::traits::{GlobalState, ResponseError};
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
-  Router::new().route("/:token", get(link_challenge_env))
+  Router::new().route(
+    "/{token}",
+    get(link_challenge_env).options(ping_challenge_env),
+  )
 }
 
 #[derive(Deserialize)]
@@ -21,12 +24,8 @@ struct LinkQuery {
 
 async fn link_challenge_env(
   State(cluster): State<Cluster>, Path(token): Path<String>,
-  Query(LinkQuery { port }): Query<LinkQuery>, ws: Option<WebSocketUpgrade>,
+  Query(LinkQuery { port }): Query<LinkQuery>, ws: WebSocketUpgrade,
 ) -> Result<impl IntoResponse, ResponseError> {
-  if ws.is_none() {
-    return Err(ResponseError::BadRequest("WebSocket required".to_string()));
-  }
-  let ws = ws.unwrap();
   Ok(ws.on_upgrade(move |socket| async move {
     let result = cluster
       .at(CHALLENGE_NS)
@@ -36,4 +35,8 @@ async fn link_challenge_env(
       debug!("Failed to link challenge env: {:?}", e);
     }
   }))
+}
+
+async fn ping_challenge_env() -> impl IntoResponse {
+  "pong"
 }

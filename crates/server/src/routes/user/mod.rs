@@ -24,7 +24,7 @@ use crate::{
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()
     .nest(
-      "/:user",
+      "/{user}",
       Router::new()
         .route("/oauth", get(get_oauth_list))
         .route("/ip", get(get_user_ip_list))

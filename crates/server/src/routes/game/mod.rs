@@ -51,7 +51,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
       Permission::Host
     )))
     .nest(
-      "/:game",
+      "/{game}",
       Router::new()
         .route(
           "/administrator",
@@ -68,7 +68,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         // .nest(
         //   "/repo",
         //   Router::new().route("/", get(get_game_repo_git)).nest(
-        //     "/:repo",
+        //     "/{repo}",
         //     Router::new()
         //       .route(
         //         "/git-upload-pack",
@@ -86,7 +86,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
             .route("/config", get(get_cluster_registry_config))
             .route("/", get(get_cluster_registry_repo).post(upload_image))
             .route_layer(DefaultBodyLimit::max(2 * 1024 * 1024 * 1024))
-            .route("/:image", get(get_cluster_registry_image)),
+            .route("/{image}", get(get_cluster_registry_image)),
         )
         .route("/device", get(get_connected_devices))
         .route("/introduction", patch(update_game_intro))
@@ -94,7 +94,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .nest(
           "/audit",
           Router::new()
-            .route("/:audit", patch(update_audit))
+            .route("/{audit}", patch(update_audit))
             .route_layer(middleware::from_fn_with_state(
               state.clone(),
               data::prepare_data!(audit, false),
@@ -472,7 +472,7 @@ impl TryFrom<Pod> for Instance {
 
 async fn get_self_solves(
   State(ref db): State<Database>, Extension(token): Extension<Token>,
-  Extension(game): Extension<game::Model>, team_ext: Option<Extension<team_db::Model>>,
+  Extension(game): Extension<game::Model>, team_ext: Extension<Option<team_db::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   if is_game_admin!(token, game) {
     let solves = submission::get_list_ex(
@@ -506,7 +506,7 @@ async fn get_self_solves(
 async fn get_self_envs(
   State(cluster): State<Cluster>, State(cache): State<Cache>,
   Extension(config): Extension<config::Model>, Extension(game): Extension<game::Model>,
-  Extension(token): Extension<Token>, team_ext: Option<Extension<team_db::Model>>,
+  Extension(token): Extension<Token>, team_ext: Extension<Option<team_db::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
   let envs = if let Some(team) = team {

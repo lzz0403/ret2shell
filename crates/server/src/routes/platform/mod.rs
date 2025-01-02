@@ -34,16 +34,14 @@ use crate::{
 
 pub fn router(_state: &GlobalState) -> Router<GlobalState> {
   Router::new()
-    .nest(
-      "/",
+    .merge(
       Router::new()
         .route("/config", get(get_config).patch(update_config))
         .route_layer(middleware::from_fn(auth::permission_required_all!(
           Permission::DevOps
         ))),
     )
-    .nest(
-      "/",
+    .merge(
       Router::new()
         .route("/statistics", get(get_platform_statistics))
         .route("/logs", get(get_logs_list))
@@ -239,12 +237,12 @@ async fn _stream_logs_worker(mut ws: WebSocket, config: GlobalConfig) -> Result<
             break;
           }
         };
-        let result = ws.send(Message::Text(log)).await;
+        let result = ws.send(Message::Text(log.into())).await;
         if result.is_err() {
           return Ok(());
         }
       }
-      let result = ws.send(Message::Ping(vec![])).await;
+      let result = ws.send(Message::Ping(vec![].into())).await;
       if result.is_err() {
         return Ok(());
       }
@@ -252,7 +250,7 @@ async fn _stream_logs_worker(mut ws: WebSocket, config: GlobalConfig) -> Result<
       timer.tick().await;
     }
   } else {
-    ws.close().await.ok();
+    ws.send(Message::Close(None)).await.ok();
   }
 
   Ok(())

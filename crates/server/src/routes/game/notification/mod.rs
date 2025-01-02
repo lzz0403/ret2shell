@@ -25,7 +25,7 @@ use crate::{
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()
     .nest(
-      "/:notification",
+      "/{notification}",
       Router::new()
         .route("/", delete(delete_notification))
         .route_layer(middleware::from_fn_with_state(

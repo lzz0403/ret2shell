@@ -1,7 +1,10 @@
 use std::{net::IpAddr, sync::Arc};
 
 use async_nats::jetstream::consumer::pull::Stream;
-use axum::extract::ws::{Message, WebSocket};
+use axum::{
+  body::Bytes,
+  extract::ws::{Message, WebSocket},
+};
 use chrono::{DateTime, Utc};
 use events::{Broadcast, EventContainer};
 use futures::{SinkExt, StreamExt};
@@ -63,7 +66,7 @@ impl EventManager {
             Some(message) => message,
             None => continue,
           };
-          match sink.send(Message::Text(message)).await {
+          match sink.send(Message::Text(message.into())).await {
             Ok(_) => {}
             Err(err) => {
               warn!("Failed to send message to client: {:?}", err);
@@ -71,7 +74,7 @@ impl EventManager {
             }
           }
         }
-        Broadcast::Heartbeat => match sink.send(Message::Ping(vec![])).await {
+        Broadcast::Heartbeat => match sink.send(Message::Ping(Bytes::new())).await {
           Ok(_) => {}
           Err(err) => {
             warn!("Failed to send heartbeat to client: {:?}", err);

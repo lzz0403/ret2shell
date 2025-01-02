@@ -19,10 +19,7 @@ use tracing::info;
 
 use super::worker;
 use crate::{
-  middleware::{
-    auth::{self, is_game_admin, Token},
-    data,
-  },
+  middleware::{auth, data},
   traits::{GlobalState, ResponseError},
 };
 
@@ -45,7 +42,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
     )))
     .route("/", get(get_team_list))
     .nest(
-      "/:team",
+      "/{team}",
       Router::new()
         .route("/extra", post(create_team_extra).delete(delete_team_extra))
         .route("/", patch(update_team_info).delete(delete_team))
@@ -66,9 +63,11 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
 }
 
 async fn get_self_team(
-  State(ref db): State<Database>, team_ext: Option<Extension<team::Model>>,
+  State(ref db): State<Database>, team_ext: Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let team = team_ext.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
+  let team = team_ext
+    .0
+    .ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let team = team::get_ex(&db.conn, team.id).await?;
   Ok(Json(team))
 }
@@ -81,10 +80,10 @@ struct UpdateTeamRequest {
 
 async fn update_self_team(
   State(ref db): State<Database>, State(ref auditor): State<Auditor>,
-  Extension(game): Extension<game::Model>, Extension(team): Extension<team::Model>,
+  Extension(game): Extension<game::Model>, Extension(team): Extension<Option<team::Model>>,
   Json(req): Json<UpdateTeamRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let mut team = team;
+  let mut team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   if game.team_size > 1 {
     team.name = req.name;
   }
@@ -120,8 +119,9 @@ async fn update_self_team(
 
 async fn leave_self_team(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(team): Extension<team::Model>, Extension(token): Extension<Token>,
+  Extension(team): Extension<Option<team::Model>>, Extension(token): Extension<auth::Token>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   if game.in_progress() {
     return Err(ResponseError::PreconditionFailed(
       "game is in progress, can not leave team".to_owned(),
@@ -147,9 +147,10 @@ struct TeamInfoQuery {
 
 async fn get_team_info(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(team): Extension<team::Model>, Extension(token): Extension<Token>,
+  Extension(team): Extension<Option<team::Model>>, Extension(token): Extension<auth::Token>,
   Query(query): Query<TeamInfoQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   if game.id != team.game_id {
     return Err(ResponseError::NotFound("team not found".to_owned()));
   }
@@ -160,7 +161,7 @@ async fn get_team_info(
   } else {
     team.into()
   };
-  if is_game_admin!(token, game) {
+  if auth::is_game_admin!(token, game) {
     Ok(Json(result))
   } else {
     Ok(Json(result.desensitize()))
@@ -168,8 +169,9 @@ async fn get_team_info(
 }
 
 async fn get_team_solves(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(team): Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   Ok(Json(
     submission::get_list_ex(
       &db.conn,
@@ -187,8 +189,9 @@ async fn get_team_solves(
 
 async fn get_team_rank(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(team): Extension<team::Model>,
+  Extension(team): Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   if team.state < team::State::Hidden {
     return Err(ResponseError::PreconditionFailed(
       "team is not valid".to_owned(),
@@ -207,10 +210,11 @@ async fn get_team_rank(
 
 async fn get_team_members(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(team): Extension<team::Model>, Extension(token): Extension<Token>,
+  Extension(team): Extension<Option<team::Model>>, Extension(token): Extension<auth::Token>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let result = team::get_members(&db.conn, team.id).await?;
-  if is_game_admin!(token, game) {
+  if auth::is_game_admin!(token, game) {
     Ok(Json(result))
   } else {
     Ok(Json(result.into_iter().map(|m| m.desensitize()).collect()))
@@ -230,13 +234,13 @@ struct TeamListQuery {
 
 async fn get_team_list(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(token): Extension<Token>, Query(query): Query<TeamListQuery>,
+  Extension(token): Extension<auth::Token>, Query(query): Query<TeamListQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
   let min_state = if query
     .min_state
     .clone()
     .is_some_and(|s| s < team::State::Hidden)
-    && !is_game_admin!(token, game)
+    && !auth::is_game_admin!(token, game)
   {
     Some(team::State::Hidden)
   } else {
@@ -254,7 +258,7 @@ async fn get_team_list(
     query.asc.unwrap_or(true),
   )
   .await?;
-  let teams = if is_game_admin!(token, game) {
+  let teams = if auth::is_game_admin!(token, game) {
     teams
   } else {
     teams.into_iter().map(|t| t.desensitize()).collect()
@@ -263,8 +267,9 @@ async fn get_team_list(
 }
 
 async fn get_team_extra(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(team): Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   Ok(Json(extra::get_list_ex(&db.conn, team.id).await?))
 }
 
@@ -275,7 +280,7 @@ struct CreateTeamRequest {
 
 async fn create_team(
   State(ref db): State<Database>, State(ref auditor): State<Auditor>,
-  Extension(game): Extension<game::Model>, Extension(token): Extension<Token>,
+  Extension(game): Extension<game::Model>, Extension(token): Extension<auth::Token>,
   Json(req): Json<CreateTeamRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   if game.register_at > Utc::now() {
@@ -346,7 +351,7 @@ struct JoinTeamRequest {
 
 async fn join_team(
   State(ref db): State<Database>, Extension(game): Extension<game::Model>,
-  Extension(token): Extension<Token>, Json(req): Json<JoinTeamRequest>,
+  Extension(token): Extension<auth::Token>, Json(req): Json<JoinTeamRequest>,
 ) -> Result<impl IntoResponse, ResponseError> {
   if game.register_at > Utc::now() {
     return Err(ResponseError::PreconditionFailed(
@@ -403,9 +408,10 @@ async fn join_team(
 }
 
 async fn update_team_info(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(team): Extension<Option<team::Model>>,
   Json(req): Json<team::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   // TODO: update scoreboard when team state changed
   let result = team::update(
     &db.conn,
@@ -420,16 +426,18 @@ async fn update_team_info(
 }
 
 async fn delete_team(
-  State(ref db): State<Database>, Extension(team): Extension<team::Model>,
+  State(ref db): State<Database>, Extension(team): Extension<Option<team::Model>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   team::delete(&db.conn, team.id).await?;
   Ok(())
 }
 
 async fn create_team_extra(
-  State(db): State<Database>, Extension(team): Extension<team::Model>,
+  State(db): State<Database>, Extension(team): Extension<Option<team::Model>>,
   Json(req): Json<extra::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let result = extra::create(
     &db.conn,
     extra::Model {
@@ -451,9 +459,10 @@ struct DeleteTeamExtraQuery {
 }
 
 async fn delete_team_extra(
-  State(db): State<Database>, Extension(team): Extension<team::Model>,
+  State(db): State<Database>, Extension(team): Extension<Option<team::Model>>,
   Query(req): Query<DeleteTeamExtraQuery>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let team = team.ok_or_else(|| ResponseError::NotFound("team not found".to_owned()))?;
   let extra = extra::get(&db.conn, req.id).await?;
   if extra.is_none() || extra.is_some_and(|e| e.team_id != team.id) {
     return Err(ResponseError::NotFound("extra not found".to_owned()));

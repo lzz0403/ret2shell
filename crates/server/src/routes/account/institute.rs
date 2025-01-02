@@ -16,7 +16,7 @@ use crate::{
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   Router::new()
     .route(
-      "/:institute",
+      "/{institute}",
       get(get_institute)
         .patch(update_institute)
         .delete(delete_institute),

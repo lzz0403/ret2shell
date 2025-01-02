@@ -69,7 +69,7 @@ pub async fn initialize(
             .expect("invalid CORS origins"),
         ),
     )
-    .nest("/", proxy::router(&state))
+    .merge(proxy::router(&state))
     .layer(
       TraceLayer::new_for_http()
         .make_span_with(|request: &Request<Body>| {
