@@ -3,7 +3,7 @@ use axum::{
   extract::{Request, State},
   http::Uri,
   response::IntoResponse,
-  routing::get,
+  routing::{any, get},
   Router,
 };
 use hyper_util::client::legacy::connect::HttpConnector;
@@ -27,24 +27,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           ))),
       ),
       FrontendServeType::Proxy => Router::new()
-        .route(
-          "/",
-          get(frontend_proxy_handler)
-            .post(frontend_proxy_handler)
-            .put(frontend_proxy_handler)
-            .patch(frontend_proxy_handler)
-            .connect(frontend_proxy_handler)
-            .delete(frontend_proxy_handler),
-        )
-        .route(
-          "/{*path}",
-          get(frontend_proxy_handler)
-            .post(frontend_proxy_handler)
-            .put(frontend_proxy_handler)
-            .patch(frontend_proxy_handler)
-            .connect(frontend_proxy_handler)
-            .delete(frontend_proxy_handler),
-        ),
+        .route("/", any(frontend_proxy_handler))
+        .route("/{*path}", any(frontend_proxy_handler)),
     }
   } else {
     Router::new()
