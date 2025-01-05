@@ -23,7 +23,7 @@ export default function TeamRanks(props: {
     return index + (props.page - 1) * props.pageSize + 1;
   }
   const currentPeriod = createMemo(() => {
-    return gameStore.current?.timeline_presets.find(
+    return gameStore.current?.timeline_presets?.find(
       (v) => v.start_at && v.end_at && v.start_at < DateTime.now() && v.end_at > DateTime.now()
     );
   });

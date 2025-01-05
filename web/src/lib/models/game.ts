@@ -37,11 +37,13 @@ export type Game = {
   weight: number;
   token: string | null;
   bucket: string | null;
-  timeline_presets: {
-    label: string;
-    start_at: DateTime;
-    end_at: DateTime;
-  }[];
+  timeline_presets:
+    | {
+        label: string;
+        start_at: DateTime;
+        end_at: DateTime;
+      }[]
+    | null;
   node_selector: string | null;
   traffic: string | null;
 };

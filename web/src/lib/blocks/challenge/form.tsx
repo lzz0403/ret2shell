@@ -164,7 +164,7 @@ export function FormBare(props: {
                     label={t("game.challenge.releasePeriod")}
                     class="flex-1"
                     items={
-                      gameStore.current?.timeline_presets.map((t) => {
+                      gameStore.current?.timeline_presets?.map((t) => {
                         return {
                           value: t.label,
                           label: `${t.start_at.toFormat("yyyy-MM-dd HH:mm:ss")} - ${t.end_at.toFormat("yyyy-MM-dd HH:mm:ss")}: ${t.label}`,
@@ -173,7 +173,7 @@ export function FormBare(props: {
                     }
                     value={
                       [
-                        gameStore.current?.timeline_presets.find(
+                        gameStore.current?.timeline_presets?.find(
                           (i) =>
                             i.start_at.toSeconds() === getValue(form, "release_at") &&
                             i.end_at.toSeconds() === getValue(form, "archive_at")
@@ -182,7 +182,7 @@ export function FormBare(props: {
                     }
                     onValueChange={(v) => {
                       if (v.value[0]) {
-                        const item = gameStore.current?.timeline_presets.find((i) => i.label === v.value[0]);
+                        const item = gameStore.current?.timeline_presets?.find((i) => i.label === v.value[0]);
                         setValue(form, "release_at", item?.start_at.toSeconds() ?? null);
                         setValue(form, "archive_at", item?.end_at.toSeconds() ?? null);
                       } else {
