@@ -328,7 +328,16 @@ function TitleBar() {
                   </Match>
                   <Match when={inProgress()}>
                     <div class="flex flex-col items-center justify-center px-4 relative">
-                      <Timer end={gameStore.current!.end_at} hasHours />
+                      <div class="flex flex-row space-x-2">
+                        <span class="font-bold text-primary">
+                          {
+                            gameStore.current?.timeline_presets.find(
+                              (preset) => preset.start_at < DateTime.now() && preset.end_at > DateTime.now()
+                            )?.label
+                          }
+                        </span>
+                        <Timer end={gameStore.current!.end_at} hasHours />
+                      </div>
                       <TimeProgress
                         class="w-full"
                         startAt={gameStore.current!.start_at}
