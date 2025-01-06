@@ -1,110 +1,189 @@
-pub mod adapters;
 pub mod traits;
 mod utility;
+use std::{collections::HashMap, sync::Arc};
+
+use chrono::{DateTime, Utc};
 use r2s_config::auth::Config;
+use rune::{
+  runtime::{Object, RuntimeContext},
+  termcolor::Buffer,
+  Any, Context, ContextError, Diagnostics, Module, Source, Sources, Unit, Value, Vm,
+};
+use tokio::sync::RwLock;
 pub use traits::OAuthError;
 
-#[derive(Clone, Debug)]
-pub struct OAuth {
-  pub xdu_cas: Option<adapters::xdu_cas::OAuthProvider>,
-  pub xmu_cas: Option<adapters::xmu_cas::OAuthProvider>,
-  pub jiangnan_email: Option<adapters::jiangnan_email::OAuthProvider>,
-  pub hdu_email: Option<adapters::hdu_email::OAuthProvider>,
-  pub cumt_email: Option<adapters::cumt_email::OAuthProvider>,
-  pub uestc_email: Option<adapters::uestc_email::OAuthProvider>,
-  pub seu_email: Option<adapters::seu_email::OAuthProvider>,
-  pub fudan_email: Option<adapters::fudan_email::OAuthProvider>,
-  pub jlu_email: Option<adapters::jlu_email::OAuthProvider>,
-  pub bit_email: Option<adapters::bit_email::OAuthProvider>,
-  pub tzc_email: Option<adapters::tzc_email::OAuthProvider>,
-  pub cppu_email: Option<adapters::cppu_email::OAuthProvider>,
-  pub ncu_email: Option<adapters::ncu_email::OAuthProvider>,
-}
+#[derive(Clone, Debug, Any)]
+#[rune(item = ::ret2shell::oauth)]
+pub struct RuneMap(pub HashMap<String, String>);
 
-macro_rules! map_oauth_providers {
-  ($self:ident, $ori:ident, $($provider:ident), *) => {
-    match $ori {
-      $(
-        stringify!($provider) => $self
-          .$provider
-          .as_ref()
-          .map(|x| x as &dyn traits::OAuthProvider),
-      )*
-      _ => None,
-    }
+impl RuneMap {
+  #[rune::function(path = Self::get)]
+  pub fn get(&self, key: &str) -> Option<String> {
+    self.0.get(key).cloned()
   }
 }
 
-macro_rules! gen_config {
-  ($config:ident, $provider:ident) => {
-    $config
-      .oauth_keys
-      .get(stringify!($provider))
-      .as_ref()
-      .map(|key| adapters::$provider::OAuthProvider {
-        key: key.to_owned().clone(),
-      })
-  };
+#[rune::module(::ret2shell::oauth)]
+pub fn module() -> Result<Module, ContextError> {
+  let mut module = Module::from_meta(self::module_meta)?;
+  module.ty::<RuneMap>()?;
+  module.function_meta(RuneMap::get)?;
+  Ok(module)
+}
+
+type OAuthContext = (Arc<Unit>, Arc<RuntimeContext>, DateTime<Utc>);
+
+#[derive(Debug, Clone, Default)]
+pub struct OAuth {
+  contexts: Arc<RwLock<HashMap<String, OAuthContext>>>,
 }
 
 impl OAuth {
-  pub fn from_config(config: &Config) -> Self {
-    OAuth {
-      xdu_cas: gen_config!(config, xdu_cas),
-      xmu_cas: gen_config!(config, xmu_cas),
-      jiangnan_email: gen_config!(config, jiangnan_email),
-      hdu_email: gen_config!(config, hdu_email),
-      cumt_email: gen_config!(config, cumt_email),
-      uestc_email: gen_config!(config, uestc_email),
-      seu_email: gen_config!(config, seu_email),
-      fudan_email: gen_config!(config, fudan_email),
-      jlu_email: gen_config!(config, jlu_email),
-      bit_email: gen_config!(config, bit_email),
-      tzc_email: gen_config!(config, tzc_email),
-      cppu_email: gen_config!(config, cppu_email),
-      ncu_email: gen_config!(config, ncu_email),
+  async fn build_context() -> Result<Context, OAuthError> {
+    let mut context = rune::Context::with_default_modules()?;
+    context.install(rune_modules::http::module(true)?)?;
+    context.install(rune_modules::json::module(true)?)?;
+    context.install(rune_modules::toml::module(true)?)?;
+    context.install(rune_modules::process::module(true)?)?;
+    context.install(utility::xml::module(true)?)?;
+    context.install(module()?)?;
+    Ok(context)
+  }
+
+  pub async fn expire(&self, key: &str) {
+    self.contexts.write().await.remove(key);
+  }
+
+  pub async fn preload(&self, key: &str, script: &str) -> Result<(), OAuthError> {
+    let mut contexts = self.contexts.write().await;
+    if contexts.contains_key(key) {
+      return Ok(());
+    }
+    let context = Self::build_context().await?;
+    let mut sources = rune::Sources::new();
+    sources.insert(rune::Source::memory(script)?)?;
+
+    let unit = rune::prepare(&mut sources).with_context(&context).build()?;
+    let runtime = context.runtime()?;
+
+    contexts.insert(
+      key.to_string(),
+      (Arc::new(unit), Arc::new(runtime), Utc::now()),
+    );
+    Ok(())
+  }
+
+  pub async fn lint(&self, script: &str) -> Result<(), OAuthError> {
+    let context = Self::build_context().await?;
+    let mut sources = Sources::new();
+    sources.insert(Source::memory(script)?)?;
+    let mut diagnostics = Diagnostics::new();
+    let _ = rune::prepare(&mut sources)
+      .with_context(&context)
+      .with_diagnostics(&mut diagnostics)
+      .build();
+    if !diagnostics.is_empty() {
+      let mut out = Buffer::ansi();
+      diagnostics.emit(&mut out, &sources)?;
+      return Err(OAuthError::CompileError(
+        (String::from_utf8(out.into_inner())?).to_string(),
+      ));
+    }
+    let unit = rune::prepare(&mut sources).with_context(&context).build()?;
+    let runtime = context.runtime()?;
+    let vm = Vm::new(Arc::new(runtime), Arc::new(unit));
+    vm.lookup_function(["login"])
+      .map_err(|_| OAuthError::MissingFunction("login".to_owned()))?;
+
+    vm.lookup_function(["bind"])
+      .map_err(|_| OAuthError::MissingFunction("bind".to_owned()))?;
+
+    Ok(())
+  }
+
+  pub async fn login(
+    &self, key: &str, params: &HashMap<String, String>,
+  ) -> Result<HashMap<String, String>, OAuthError> {
+    let contexts = self.contexts.read().await;
+    let (unit, runtime, _) = contexts.get(key).ok_or_else(|| {
+      OAuthError::MissingField(format!("oauth provider not found for key: {}", key))
+    })?;
+    let vm = Vm::new(runtime.clone(), unit.clone());
+    let params_object = RuneMap(params.clone());
+    let result = vm.send_execute(["login"], (params_object,))?;
+    let result = result.async_complete().await.into_result()?;
+    let output: Result<Object, Value> = rune::from_value(result)?;
+    if let Ok(object) = output {
+      let _ = object
+        .get("auth_key")
+        .ok_or_else(|| OAuthError::MissingField("auth_key".to_owned()))?;
+      let mut data: HashMap<String, String> = HashMap::new();
+      for (key, value) in object.iter() {
+        data.insert(key.to_string(), rune::from_value(value.clone())?);
+      }
+      Ok(data)
+    } else {
+      Err(OAuthError::ScriptError(
+        "unexpected value in oauth script".to_owned(),
+      ))
     }
   }
 
-  pub fn get_provider(&self, provider: &str) -> Option<&dyn traits::OAuthProvider> {
-    map_oauth_providers!(
-      self,
-      provider,
-      xdu_cas,
-      xmu_cas,
-      jiangnan_email,
-      hdu_email,
-      cumt_email,
-      uestc_email,
-      seu_email,
-      fudan_email,
-      jlu_email,
-      bit_email,
-      tzc_email,
-      cppu_email,
-      ncu_email
-    )
+  pub async fn bind(
+    &self, key: &str, params: &HashMap<String, String>, user: &HashMap<String, String>,
+  ) -> Result<HashMap<String, String>, OAuthError> {
+    let contexts = self.contexts.read().await;
+    let (unit, runtime, _) = contexts.get(key).ok_or_else(|| {
+      OAuthError::MissingField(format!("oauth provider not found for key: {}", key))
+    })?;
+    let vm = Vm::new(runtime.clone(), unit.clone());
+    let params_object = RuneMap(params.clone());
+    let user_object = RuneMap(user.clone());
+    let result = vm.send_execute(["bind"], (params_object, user_object))?;
+    let result = result.async_complete().await.into_result()?;
+    let output: Result<Object, Value> = rune::from_value(result)?;
+    if let Ok(object) = output {
+      let _ = object
+        .get("auth_key")
+        .ok_or_else(|| OAuthError::MissingField("auth_key".to_owned()))?;
+      let mut data: HashMap<String, String> = HashMap::new();
+      for (key, value) in object.iter() {
+        data.insert(key.to_string(), rune::from_value(value.clone())?);
+      }
+      Ok(data)
+    } else {
+      Err(OAuthError::ScriptError(
+        "unexpected value in oauth script".to_owned(),
+      ))
+    }
+  }
+
+  pub async fn cleanup(&mut self) {
+    let now = Utc::now();
+    self.contexts.write().await.retain(|_, (_, _, time)| {
+      let duration = now.signed_duration_since(*time);
+      duration.num_hours() < 1
+    });
+  }
+
+  pub async fn cleanup_worker(&mut self) {
+    loop {
+      tokio::time::sleep(tokio::time::Duration::from_secs(15 * 60)).await;
+      tracing::debug!("Running oauth provider scripts cleanup...");
+      self.cleanup().await;
+      tracing::trace!(
+        "Live oauth providers: {:?}",
+        self.contexts.read().await.keys()
+      );
+    }
   }
 }
 
-pub async fn initialize(config: &Option<Config>) -> OAuth {
-  if let Some(config) = config {
-    OAuth::from_config(config)
-  } else {
-    OAuth {
-      xdu_cas: None,
-      xmu_cas: None,
-      jiangnan_email: None,
-      hdu_email: None,
-      cumt_email: None,
-      uestc_email: None,
-      seu_email: None,
-      fudan_email: None,
-      jlu_email: None,
-      bit_email: None,
-      tzc_email: None,
-      cppu_email: None,
-      ncu_email: None,
-    }
-  }
+pub async fn initialize(_config: &Option<Config>) -> OAuth {
+  let client = OAuth::default();
+  let mut client_worker = client.clone();
+  tokio::spawn(async move {
+    client_worker.cleanup_worker().await;
+  });
+  client
 }

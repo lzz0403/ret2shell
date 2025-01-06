@@ -15,6 +15,7 @@ ignored = ["rune", "rune-modules"] # required by sea-orm `FromJsonResult`
 
 [dependencies]
 async-trait  = { workspace = true }
+chrono       = { workspace = true }
 reqwest      = { workspace = true }
 roxmltree    = { workspace = true }
 rune         = { workspace = true }
@@ -22,6 +23,7 @@ rune-modules = { workspace = true }
 serde        = { workspace = true }
 serde_json   = { workspace = true }
 thiserror    = { workspace = true }
+tokio        = { workspace = true }
 tracing      = { workspace = true }
 
 r2s-config = { workspace = true }
