@@ -18,13 +18,12 @@ export function remarkAlertQuote(options: Readonly<AlertBlockquoteOptions>) {
         if (firstChild.type === "paragraph" && firstChild.children && firstChild.children.length > 0) {
           const textNode = firstChild.children[0];
           if (textNode.type !== "text") return;
-          // find the `![identifier]` phrase at the first line of blockquote
-          console.log(JSON.stringify(textNode.value));
+          // find the `[!identifier]` phrase at the first line of blockquote
           const firstline = textNode.value.slice(0, textNode.value.indexOf("\n"));
           const match = firstline.match(/^\[!(.+)\]\s*(.*)$/im);
           if (!match) return;
           const identifier = match[1];
-          // if the identifier is not in the classMap, ignores it and takes no action
+          // if the identifier is not in the classMap, treat it as normal blockquote
           if (!Object.prototype.hasOwnProperty.call(options.classMap, identifier)) return;
           // strip the identifier
           textNode.value = textNode.value.slice(match[0].length).trimStart();
@@ -34,7 +33,7 @@ export function remarkAlertQuote(options: Readonly<AlertBlockquoteOptions>) {
           if (firstChild.children.length === 0) {
             node.children.shift();
           }
-          // push title
+          // insert the title at the beginning if it declares
           if (match[2].length > 0) {
             (node.children as unknown[]).unshift({
               type: "paragraph",
@@ -46,7 +45,7 @@ export function remarkAlertQuote(options: Readonly<AlertBlockquoteOptions>) {
               ],
             });
           }
-          // set blockquote class
+          // set class
           node.type = "alertBlockquote" as (typeof node)["type"];
           const element = h(
             "blockquote",
@@ -61,7 +60,6 @@ export function remarkAlertQuote(options: Readonly<AlertBlockquoteOptions>) {
           });
         }
       }
-      console.log(node);
     });
   };
 }

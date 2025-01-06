@@ -86,7 +86,7 @@ export class Markdown {
 
     this.processor?.use(remarkRehype);
 
-    // rehype
+    // rehype (the structure may be changed)
     this.processor?.use(rehypeSanitize, schema);
     this.processor?.use(rehypeExternalLinks, {
       target: "_blank",
