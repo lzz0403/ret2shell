@@ -35,7 +35,7 @@ export default function () {
 
   const brand = () => {
     const service = searchParams.service;
-    const avatar = oauthServices().find((s) => s.name === service)?.avatar;
+    const avatar = oauthServices().find((s) => s.provider === service)?.avatar;
     if (avatar) return mediaPath(avatar);
     return logo;
   };
@@ -97,7 +97,9 @@ export default function () {
           {/* <span class={`transition-all duration-700 ${animate() ? "opacity-60" : "-translate-x-8 opacity-0"}`}> */}
           {/*   -*- */}
           {/* </span> */}
-          <span class="text-2xl font-bold">+</span>
+          <span class={`text-2xl font-bold transition-all duration-700 ${animate() ? "opacity-100" : "opacity-0"}`}>
+            +
+          </span>
           <img
             src={brand()}
             alt="Brand"

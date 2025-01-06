@@ -8,7 +8,9 @@ import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
+import Card from "@widgets/card";
 import Link from "@widgets/link";
+import Popover from "@widgets/popover";
 import Tag from "@widgets/tag";
 import { For, Show, createEffect, createSignal, onMount, untrack } from "solid-js";
 
@@ -91,9 +93,14 @@ export default function () {
                     </>
                   }
                 >
-                  <span class="opacity-60">
-                    {JSON.stringify(selfOAuthItems().find((v) => v.provider === service.provider)?.data)}
-                  </span>
+                  <Popover size="sm" square btnContent={<span class="icon-[fluent--info-20-regular] w-5 h-5" />}>
+                    <Card contentClass="max-w-lg p-2 text-wrap">
+                      <p class="text-wrap break-all max-w-lg">
+                        {JSON.stringify(selfOAuthItems().find((v) => v.provider === service.provider)?.data)}
+                      </p>
+                    </Card>
+                  </Popover>
+
                   <Button
                     size="sm"
                     onClick={() => handleUnbind(selfOAuthItems().find((v) => v.provider === service.provider)!.id)}
