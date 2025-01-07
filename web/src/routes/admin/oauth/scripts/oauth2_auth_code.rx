@@ -5,7 +5,6 @@ const CLIENT_SECRET = "";
 
 pub async fn login(params) {
     let code = params.get("code")?;
-    let url = `${AUTH_SERVER_URL}?code=${code}&state=NOT_IMP0RTANT`;
     let client = http::Client::new();
     let token_resp = client.post(AUTH_SERVER_URL)
                            .header("Accept", "application/json")
@@ -14,6 +13,7 @@ pub async fn login(params) {
                                client_id: CLIENT_ID,
                                client_secret: CLIENT_SECRET,
                                code: code,
+                               state: "N0T_1MP0RT4NT",
                            })?).send().await?.json().await?;
     let token = token_resp.access_token;
     let user = client.get(DATA_SERVER_URL)
