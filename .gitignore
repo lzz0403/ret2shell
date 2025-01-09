@@ -17,3 +17,5 @@ data/*
 /config/config.toml
 /config/license
 /config/*.bin
+
+ret2shell.tar.gz

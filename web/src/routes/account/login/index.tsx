@@ -248,7 +248,7 @@ export default function () {
                   <Card contentClass="p-2 flex flex-col space-y-2">
                     <For each={oauthServices().filter((s) => s.portal)}>
                       {(service) => (
-                        <Link class="w-full" justify="start" href={service.portal} title={service.name} ghost>
+                        <Link class="w-full" justify="start" size="sm" href={service.portal} title={service.name} ghost>
                           <img src={mediaPath(service.avatar ?? "")} alt={service.name} width={24} height={24} />
                           <span>{service.name}</span>
                         </Link>
