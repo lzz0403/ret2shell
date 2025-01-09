@@ -22,6 +22,8 @@ import { accountStore } from "@storage/account";
 import { Permission } from "@models/user";
 import { handleHttpError } from "@api";
 import { Title } from "@storage/header";
+import { SubmissionList } from "@blocks/game/lists";
+import Tag from "@widgets/tag";
 
 export default function () {
   const navigate = useNavigate();
@@ -82,6 +84,7 @@ export default function () {
   const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "NaN") || null);
   const inEdit = createMemo(() => searchParams.edit === "true");
   const inStatistics = createMemo(() => searchParams.statistics === "true");
+  const inMonitor = createMemo(() => searchParams.monitor === "true");
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
       untrack(async () => {
@@ -180,6 +183,33 @@ export default function () {
                 >
                   <div class="w-full flex flex-col p-3 lg:p-6 items-center">
                     <GameStatistics />
+                  </div>
+                </OverlayScrollbarsComponent>
+              </div>
+            </div>
+          </Match>
+          <Match when={inMonitor()}>
+            <div class="flex-1 w-full relative">
+              <div class="absolute top-0 left-0 w-full h-full overflow-hidden">
+                <OverlayScrollbarsComponent
+                  options={{
+                    scrollbars: {
+                      theme: `os-theme-${fullTheme()}`,
+                      autoHide: "scroll",
+                    },
+                  }}
+                  class="relative w-full h-full print:h-auto print:overflow-auto"
+                  defer
+                >
+                  <div class="w-full flex flex-col p-3 lg:p-6 items-center">
+                    <h3 class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2">
+                      <span class="icon-[fluent--flash-flow-20-regular] w-5 h-5" />
+                      <span class="flex-1 text-start">{t("game.admin.monitor.title")}</span>
+                      <Tag level="success">
+                        <span>{t("game.monitor.autoRefreshEnabled")}</span>
+                      </Tag>
+                    </h3>
+                    <SubmissionList />
                   </div>
                 </OverlayScrollbarsComponent>
               </div>

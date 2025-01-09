@@ -21,6 +21,7 @@ export default function Tabs(props: {
   const inCreate = createMemo(() => searchParams.create === "true");
   const inEditGame = createMemo(() => searchParams.edit === "true");
   const inStatistics = createMemo(() => searchParams.statistics === "true");
+  const inMonitor = createMemo(() => searchParams.monitor === "true");
   function appendChallengeHistory(challenge: Challenge) {
     if (challengeHistory().find((c) => c.id === challenge.id)) {
       setTimeout(() => {
@@ -89,6 +90,19 @@ export default function Tabs(props: {
                   <span class="icon-[fluent--data-pie-20-regular] w-5 h-5" />
                   <Show when={challengeHistory().length === 0}>
                     <span>{t("game.admin.statistics.title")}</span>
+                  </Show>
+                </Link>
+                <Link
+                  active={inMonitor()}
+                  title={t("game.admin.monitor.title")}
+                  square={challengeHistory().length > 0}
+                  ghost
+                  class="transition-all duration-300 overflow-hidden"
+                  href={`${props.baseUrl}?monitor=true`}
+                >
+                  <span class="icon-[fluent--flash-flow-20-regular] w-5 h-5" />
+                  <Show when={challengeHistory().length === 0}>
+                    <span>{t("game.admin.monitor.title")}</span>
                   </Show>
                 </Link>
                 <Link
