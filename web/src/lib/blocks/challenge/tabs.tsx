@@ -69,7 +69,8 @@ export default function Tabs(props: {
                 selectedChallengeId() === null &&
                 inCreate() === false &&
                 inEditGame() === false &&
-                inStatistics() === false
+                inStatistics() === false &&
+                inMonitor() === false
               }
             >
               <span class="icon-[fluent--home-20-regular] w-5 h-5" />
