@@ -85,9 +85,7 @@ export default function TeamRanks(props: {
                 <Show when={props.showTime && currentPeriod()}>
                   <span class="text-success">
                     &nbsp;+
-                    {team.history
-                      .filter((h) => h.changed_at > currentPeriod()!.start_at)
-                      .reduce((a, b) => a + b.score, 0)}
+                    {team.score - (team.history.find((v) => v.changed_at > currentPeriod()!.start_at)?.score ?? 0)}
                     &nbsp;pts
                   </span>
                 </Show>
