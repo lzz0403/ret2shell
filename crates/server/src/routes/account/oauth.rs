@@ -369,6 +369,7 @@ async fn bind_oauth_account(
   Extension(user): Extension<r2s_database::user::Model>,
   Query(params): Query<HashMap<String, String>>,
 ) -> Result<impl IntoResponse, ResponseError> {
+  let txn = db.conn.begin().await?;
   let action_times = cache.at("oauth").get::<i64>(user.id).await?;
   if action_times.is_some() && action_times.unwrap() > 5 {
     return Err(ResponseError::TooManyRequests(
@@ -386,8 +387,7 @@ async fn bind_oauth_account(
     .get("service")
     .ok_or(ResponseError::BadRequest("service required".to_owned()))?;
   let provider_str = provider.as_str();
-  let provider = match r2s_database::oauth_provider::get_by_provider(&db.conn, provider_str).await?
-  {
+  let provider = match r2s_database::oauth_provider::get_by_provider(&txn, provider_str).await? {
     Some(m) => m,
     None => {
       return Err(ResponseError::NotFound("oauth service".to_owned()));
@@ -417,7 +417,16 @@ async fn bind_oauth_account(
     ))?
     .to_owned();
 
-  let bind_institute = r2s_database::institute::get_by_provider(&db.conn, provider_str).await?;
+  let bind_institute = r2s_database::institute::get_by_provider(&txn, provider_str).await?;
+
+  let check_prev_oauth =
+    r2s_database::oauth::get_by_auth_key(&txn, provider_str, &auth_key).await?;
+  if check_prev_oauth.is_some() {
+    return Err(ResponseError::Conflict(
+      "oauth account already binded".to_owned(),
+    ));
+  }
+
   let oauth_item = r2s_database::oauth::Model {
     id: 0,
     user_id: user.id,
