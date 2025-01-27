@@ -21,7 +21,7 @@ use kube::{
 };
 use r2s_config::cluster::{ChallengeEnv, Config};
 use tokio_util::codec::Framed;
-use tracing::{debug, error, warn};
+use tracing::{debug, error, info, warn};
 
 use super::traits::ClusterError;
 use crate::{registry::Registry, traffic::TrafficMapper};
@@ -320,7 +320,7 @@ impl Cluster {
       };
       match self.check_outdated_pod(&pod).await {
         Ok(true) => {
-          debug!("Deleting outdated pod: {}", pod.name().unwrap());
+          info!("Deleting outdated pod: {}", pod.name().unwrap());
           api
             .delete(
               &pod.name().unwrap(),
