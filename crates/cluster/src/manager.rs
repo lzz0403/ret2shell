@@ -403,7 +403,6 @@ impl Cluster {
         drop: Some(vec!["NET_BIND_SERVICE".to_owned()]),
         ..Default::default()
       }),
-
       ..Default::default()
     };
     let pod_security_context = PodSecurityContext {
@@ -529,8 +528,13 @@ impl Cluster {
       }),
       ..Default::default()
     };
-    self.create_service(service).await?;
-    Ok(())
+    match self.create_service(service).await {
+      Ok(_) => Ok(()),
+      Err(err) => {
+        self.delete_pod(&pod_name).await?;
+        Err(err)
+      }
+    }
   }
 
   pub async fn get_challenge_env(&self, challenge_id: i64) -> Result<Vec<Pod>, ClusterError> {
