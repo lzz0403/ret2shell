@@ -14,7 +14,7 @@ signing_key  = 'K3yInD3v3l0pm3nt' # ! REPLACE IT
 
 # * Bucket config, for game/challenge file storage.
 [bucket]
-path = '/var/lib/ret2shell/data/bucket'
+path = '/var/lib/ret2shell/bucket'
 
 # * Cache config
 [cache]
