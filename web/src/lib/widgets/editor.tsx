@@ -14,6 +14,11 @@ export type EditorProps = {
   value?: string;
   lang?: string;
   onValueChanged?: (value: string) => void;
+  commands?: {
+    name: string;
+    bindKey: string | { mac?: string | undefined; win?: string | undefined };
+    exec: () => void;
+  }[];
   onBlur?: () => void;
   readonly?: boolean;
   placeholder?: string;
@@ -40,6 +45,7 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
     "form",
     "error",
     "onFocusIn",
+    "commands",
   ]);
   const [imageFile, setImageFile] = createSignal<File | null>(null);
   const [uploading, setUploading] = createSignal(false);
@@ -97,6 +103,15 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
     editor.on("focus", () => {
       editorProps.onFocusIn?.();
     });
+
+    for (const command of editorProps.commands || []) {
+      editor.commands.addCommand({
+        name: command.name,
+        bindKey: command.bindKey,
+        exec: command.exec,
+      });
+    }
+
     editor.container.addEventListener("paste", (e) => {
       const items = e.clipboardData?.items;
       if (!items) return;
@@ -183,6 +198,7 @@ export default function Editor(props: EditorProps & ComponentProps<"div">) {
     "error",
     "onFocusIn",
     "lineNumbers",
+    "commands",
   ]);
   const [focused, setFocused] = createSignal(false);
   return (
