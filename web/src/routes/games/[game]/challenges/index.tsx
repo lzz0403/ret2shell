@@ -26,6 +26,7 @@ import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallenge
 import Button from "@widgets/button";
 import clsx from "clsx";
 import { Transition } from "solid-transition-group";
+import type { Chat } from "@models/chat";
 
 export default function () {
   const navigate = useNavigate();
@@ -116,12 +117,16 @@ export default function () {
     setCreating(false);
   }
 
+  let prevUnreadChats: Chat[] = [];
   // hammer chats timer
   const chatsRefreshTimer = setInterval(async () => {
     if (gameStore.current) {
       try {
         const unreadChats = await checkUnreadMessages(gameStore.current.id);
         for (const chat of unreadChats) {
+          if (prevUnreadChats.find((c) => chat.id === c.id)) {
+            continue;
+          }
           let msg = `${chat.user_name}: ${chat.content}`;
           if (msg.length > 64) {
             msg = `${msg.slice(0, 64)}...`;
@@ -138,6 +143,7 @@ export default function () {
             acceptLabel: t("form.goto"),
           });
         }
+        prevUnreadChats = unreadChats;
       } catch (err) {
         handleHttpError(err as Error, t("game.challenge.fetchChatError")!);
       }
