@@ -438,7 +438,10 @@ impl Cluster {
     let traffic = labels
       .get("ret.sh.cn/traffic")
       .ok_or(ClusterError::MissingField("traffic".to_string()))?;
-    let pod_name = format!("ret2shell-{challenge_id}-{user_id}");
+    let pod_name = format!(
+      "ret2shell-{challenge_id}-{user_id}-{}",
+      Utc::now().timestamp()
+    );
     let node_selector = if let Some(node_selector) = node_selector {
       let mut n = BTreeMap::new();
       n.insert("ret.sh.cn/workload".to_owned(), node_selector);
