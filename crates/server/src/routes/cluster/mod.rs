@@ -61,7 +61,7 @@ async fn cluster_maintain_worker(_state: GlobalState, cluster: Cluster, queue: Q
     tokio::time::sleep(std::time::Duration::from_secs(30)).await;
     match cluster
       .at("ret2shell-challenge")
-      .delete_outdated_pods()
+      .delete_outdated_envs()
       .await
     {
       Ok((o, running, pending)) => {

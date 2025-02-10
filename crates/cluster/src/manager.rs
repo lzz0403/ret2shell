@@ -284,7 +284,15 @@ impl Cluster {
     Ok(now - started_at > 3600 * (renew + 1) as i64)
   }
 
-  pub async fn delete_outdated_pods(&self) -> Result<(bool, i32, i32), ClusterError> {
+  pub async fn delete_outdated_envs(&self) -> Result<(bool, i32, i32), ClusterError> {
+    // cleanup unknown services first
+    self.cleanup_services().await?;
+    // then check outdated pods, when pod is outdated, the corresponding service will be deleted
+    // together
+    self.delete_outdated_pods().await
+  }
+
+  async fn delete_outdated_pods(&self) -> Result<(bool, i32, i32), ClusterError> {
     let client = check_enabled!(self.client)?;
     let api: Api<Pod> = Api::namespaced(
       client,
@@ -333,7 +341,7 @@ impl Cluster {
               },
             )
             .await?;
-          self.delete_service(&pod.name().unwrap()).await?;
+          self.delete_service(&pod.name().unwrap()).await.ok();
         }
         Ok(false) => {
           debug!("Pod is alive: {}", pod.name().unwrap());
@@ -347,6 +355,44 @@ impl Cluster {
     // if pending > 32, means that the cluster have too many pending pods
     // push a warning event to the queue
     Ok((pending > 32, running, pending))
+  }
+
+  async fn cleanup_services(&self) -> Result<(), ClusterError> {
+    let api: Api<Service> = Api::namespaced(
+      check_enabled!(self.client)?,
+      &with_namespace!(&self.namespace, "delete outdated services")?,
+    );
+    let services = api.list(&ListParams::default()).await?;
+    for service in services.items {
+      // get service's label `ret.sh.cn/traffic`, and check the pod is still alive
+      let traffic_label = service
+        .metadata
+        .labels
+        .clone()
+        .unwrap_or(BTreeMap::new())
+        .get("ret.sh.cn/traffic")
+        .cloned();
+      if let Some(traffic) = traffic_label {
+        let pod = self
+          .get_pods_by_label(&format!("ret.sh.cn/traffic={traffic}"))
+          .await?;
+        if pod.is_empty() {
+          info!("Deleting service {} without pod", service.name().unwrap());
+          api
+            .delete(
+              &service.name().unwrap(),
+              &DeleteParams {
+                grace_period_seconds: Some(0),
+                ..Default::default()
+              },
+            )
+            .await?;
+        }
+      } else {
+        warn!("Deleting unknown service {}", service.name().unwrap());
+      }
+    }
+    Ok(())
   }
 
   pub async fn get_pod(&self, name: &str) -> Result<Pod, ClusterError> {
