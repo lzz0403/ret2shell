@@ -78,6 +78,7 @@ function BottomPanel(props: {
     }
   }
   const [publishing, setPublishing] = createSignal(false);
+  const [challengeStateWarningDialogOpen, setChallengeStateWarningDialogOpen] = createSignal(false);
 
   async function handlePublishChallenge() {
     setPublishing(true);
@@ -171,6 +172,9 @@ function BottomPanel(props: {
             </Button>
             <Popover
               ghost
+              open={challengeStateWarningDialogOpen()}
+              onOpenChange={(details) => setChallengeStateWarningDialogOpen(details.open)}
+              onClick={() => setChallengeStateWarningDialogOpen(true)}
               btnContent={
                 <Show
                   when={challengeStore.current?.hidden === true}
@@ -200,7 +204,10 @@ function BottomPanel(props: {
                   level="primary"
                   size="sm"
                   class="self-end"
-                  onClick={handlePublishChallenge}
+                  onClick={async () => {
+                    await handlePublishChallenge();
+                    setChallengeStateWarningDialogOpen(false);
+                  }}
                   loading={publishing()}
                 >
                   {t("platform.accept")}
@@ -245,7 +252,7 @@ function BottomPanel(props: {
   );
 }
 
-export default function (props: {
+export default function(props: {
   onStateChange?: (challenge?: Challenge) => void;
   inGame?: boolean;
 }) {

@@ -1,10 +1,10 @@
-import { Popover } from "@ark-ui/solid";
+import { Popover, type PopoverRootProps } from "@ark-ui/solid";
 import clsx from "clsx";
 import { type ComponentProps, type JSX, createSignal, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 import type { ButtonProps } from "./button";
-export default function (
-  props: {
+export default function(
+  props: PopoverRootProps & {
     children?: JSX.Element;
     btnContent?: JSX.Element;
     popContentClass?: string;
@@ -21,11 +21,33 @@ export default function (
     "loading",
     "square",
   ]);
+  const [dialogRootProps, _2] = splitProps(_1, [
+    "closeOnEscape",
+    "closeOnInteractOutside",
+    "defaultOpen",
+    "id",
+    "ids",
+    "initialFocusEl",
+    "lazyMount",
+    "modal",
+    "onEscapeKeyDown",
+    "onExitComplete",
+    "onFocusOutside",
+    "onInteractOutside",
+    "onOpenChange",
+    "onPointerDownOutside",
+    "open",
+    "persistentElements",
+    "present",
+    "role",
+    "unmountOnExit",
+  ]);
   const [popoverProps, nativeProps] = splitProps(_1, ["children", "btnContent", "popContentClass"]);
   const [opened, setOpened] = createSignal(false);
 
   return (
     <Popover.Root
+      {...dialogRootProps}
       autoFocus={false}
       onOpenChange={(detail) => {
         setOpened(detail.open);
