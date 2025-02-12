@@ -11,7 +11,15 @@ import LoadingTips from "@widgets/loading-tips";
 import Tag from "@widgets/tag";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import { For, Match, Show, Switch, createSignal, onCleanup, onMount } from "solid-js";
+import {
+  For,
+  Match,
+  Show,
+  Switch,
+  createSignal,
+  onCleanup,
+  onMount,
+} from "solid-js";
 
 type Log = {
   timestamp: string;
@@ -59,7 +67,9 @@ export default function () {
   }
 
   function connect() {
-    ws = new WebSocket(`${api_root}/platform/logs/stream?token=${accountStore.token}`);
+    ws = new WebSocket(
+      `${api_root}/platform/logs/stream?token=${accountStore.token}`,
+    );
     setLoading(true);
     ws.onopen = () => {
       setLoading(false);
@@ -117,7 +127,8 @@ export default function () {
         return "text-layer-content";
     }
   }
-  const time = (ts: string, _format: string) => DateTime.fromISO(ts).toFormat(_format);
+  const time = (ts: string, _format: string) =>
+    DateTime.fromISO(ts).toFormat(_format);
   const matches = createBreakpoints(breakpoints);
   let bottomDiv: HTMLDivElement;
   return (
@@ -162,33 +173,56 @@ export default function () {
             {(log) => (
               <div
                 class={clsx(
-                  "group min-h-8 flex flex-row items-start h-auto hover:bg-layer-content/15",
-                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0"
+                  "group min-h-8 flex flex-col h-auto hover:bg-layer-content/15",
+                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0",
                 )}
               >
-                <span class={clsx("w-16 mr-2 inline-block", getColor(log.level))}>{log.level}</span>
-                <div class="grid grid-cols-[auto_1fr_auto] group-hover:block w-full">
-                  <span class="opacity-40 mr-2">[{log.target}]</span>
-                  {log.span?.name && <span class="opacity-60">[{log.span.name}]</span>}
-                  {log.span?.method && <span class="opacity-60">[{log.span.method}]</span>}
-                  {log.span?.from && <span class="opacity-60">[{log.span.from}]</span>}
-                  {log.span?.uri && <span class="opacity-60">[{log.span.uri}]</span>}
+                <span class="w-full flex">
                   <span
-                    class={clsx("truncate group-hover:whitespace-normal", getContentColor(log.level))}
+                    class={clsx("w-16 mr-2 inline-block", getColor(log.level))}
+                  >
+                    {log.level}
+                  </span>
+                  <span class="opacity-40 mr-2">[{log.target}]</span>
+                  {log.span?.name && (
+                    <span class="opacity-60">[{log.span.name}]</span>
+                  )}
+                  {log.span?.from && (
+                    <span class="opacity-60">[{log.span.from}]</span>
+                  )}
+                  {log.span?.method && (
+                    <span class="opacity-60">[{log.span.method}]</span>
+                  )}
+                  {log.span?.uri && (
+                    <span class="opacity-60">[{log.span.uri}]</span>
+                  )}
+                  <div class="flex-1" />
+                  <span class="opacity-60 font-bold ml-2">
+                    <Switch fallback={time(log.timestamp, "HH:mm:ss")}>
+                      <Match when={matches.xl}>
+                        {time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}
+                      </Match>
+                      <Match when={matches.lg}>
+                        {time(log.timestamp, "MM-dd HH:mm:ss")}
+                      </Match>
+                      <Match when={matches.md}>
+                        {time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}
+                      </Match>
+                      <Match when={matches.sm}>
+                        {time(log.timestamp, "MM-dd HH:mm:ss")}
+                      </Match>
+                    </Switch>
+                  </span>
+                </span>
+                <div class="grid grid-cols-[1fr] group-hover:block w-full">
+                  <span
+                    class={clsx(
+                      "truncate group-hover:whitespace-normal",
+                      getContentColor(log.level),
+                    )}
                     // title={log.fields.message}
                   >
                     {log.fields.message}
-                  </span>
-                  <span class="opacity-60 font-bold ml-2 group-hover:float-right">
-                    <span class="hidden group-hover:inline">{time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}</span>
-                    <span class="group-hover:hidden">
-                      <Switch fallback={time(log.timestamp, "HH:mm:ss")}>
-                        <Match when={matches.xl}>{time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}</Match>
-                        <Match when={matches.lg}>{time(log.timestamp, "MM-dd HH:mm:ss")}</Match>
-                        <Match when={matches.md}>{time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}</Match>
-                        <Match when={matches.sm}>{time(log.timestamp, "MM-dd HH:mm:ss")}</Match>
-                      </Switch>
-                    </span>
                   </span>
                 </div>
               </div>
