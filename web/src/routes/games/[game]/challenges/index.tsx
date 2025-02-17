@@ -21,14 +21,14 @@ import Welcome from "./_blocks/welcome";
 
 import { handleHttpError } from "@api";
 import Tabs from "@blocks/challenge/tabs";
+import type { Chat } from "@models/chat";
 import { createBreakpoints } from "@solid-primitives/media";
 import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallengeStore } from "@storage/challenge";
 import Button from "@widgets/button";
 import clsx from "clsx";
 import { Transition } from "solid-transition-group";
-import type { Chat } from "@models/chat";
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   if (accountStore.token === null) {
     navigate(`/account/login?redirect=/games/${gameStore.current ? gameStore.current.id : ""}`);

@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { type ComponentProps, type JSX, createSignal, splitProps } from "solid-js";
 import { Portal } from "solid-js/web";
 import type { ButtonProps } from "./button";
-export default function(
+export default function (
   props: PopoverRootProps & {
     children?: JSX.Element;
     btnContent?: JSX.Element;

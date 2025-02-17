@@ -156,8 +156,7 @@ export default function (props: {
     let count = 0;
     for (let i = chats().length - 1; i >= 0; i--) {
       if (chats().at(i)?.user_id === accountStore.id) count++;
-      if (chats().at(i)?.is_admin && chats().at(i)?.user_id !== 0)
-        break;
+      if (chats().at(i)?.is_admin && chats().at(i)?.user_id !== 0) break;
     }
     return 3 - count;
   });
