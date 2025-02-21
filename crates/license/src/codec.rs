@@ -45,7 +45,7 @@ pub fn decode(data: &str) -> Option<Vec<u8>> {
       continue;
     }
     let index2 = CHARS_TABLE.iter().position(|&x| x == index2)?;
-    result.push((index1 as u8) << 4 | index2 as u8);
+    result.push(((index1 as u8) << 4) | index2 as u8);
   }
   Some(result)
 }
