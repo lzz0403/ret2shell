@@ -1,9 +1,9 @@
-name: Server
+name: Binary
 
 on:
   push:
     paths:
-      - '.github/workflows/server.yml'
+      - '.github/workflows/binary.yml'
       - '.github/setup-env.sh'
       - 'crates/**'
       - 'Cargo.toml'
@@ -12,7 +12,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  server:
+  binary:
     name: Build
     runs-on: [self-hosted, linux, x64]
     strategy:
@@ -55,12 +55,12 @@ jobs:
       run: |
         key='rustc-${{ runner.os }}-${{ matrix.target }}-${{ steps.setup-env.outputs.cache_v }}'
         echo "cache-key=$key" >> $GITHUB_OUTPUT
+        rsync -aP --info=progress2 --exclude='**/.cargo-lock' --exclude='**/*.lock' '/home/runner/.cache/runner/'"$key"/ target/
 
     - name: Build on version ${{ env.app_v }}-${{ env.commit_sha }}
       run: |
         base64 -d <<< '${{ vars.PUBKEY_BASE64 }}' > config/pub.bin
-        cargo build --bin r2s-server --release --target '${{ matrix.target }}' \
-          --target-dir '/home/runner/.cache/runner/${{ steps.cache.outputs.cache-key }}'
+        cargo build --bin r2s-server --release --target '${{ matrix.target }}'
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -68,3 +68,7 @@ jobs:
         name: r2s-server
         path: '/home/runner/.cache/runner/${{ steps.cache.outputs.cache-key }}/${{ matrix.target }}/release/r2s-server'
         retention-days: 1
+
+    - name: Post Cache locally
+      run: |
+        rsync -aP --info=progress2 --exclude='**/.cargo-lock' --exclude='**/*.lock' target/ '/home/runner/.cache/runner/${{ steps.cache.outputs.cache-key }}'/
