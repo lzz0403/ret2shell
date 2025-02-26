@@ -9,7 +9,7 @@ import {
 import type { Challenge } from "@models/challenge";
 import type { Extra } from "@models/extra";
 import type { Hint } from "@models/hint";
-import { createForm, required, setValue, setValues } from "@modular-forms/solid";
+import { createForm, required, setValue, reset as resetForm, setValues } from "@modular-forms/solid";
 import { challengeStore } from "@storage/challenge";
 import { gameStore, isGameAdmin } from "@storage/game";
 import { t } from "@storage/theme";
@@ -59,6 +59,7 @@ export default function (_props: {
         description: t("form.createSuccess")!,
         duration: 5000,
       });
+      resetForm(form);
       refreshHint();
       setValues(form, {
         content: "",
