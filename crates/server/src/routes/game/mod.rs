@@ -16,7 +16,7 @@ use r2s_cluster::{CHALLENGE_NS, Cluster, ClusterError, Pod, traffic::MappedPort}
 use r2s_config::GlobalConfig;
 use r2s_database::{
   article, audit, challenge as challenge_db, config,
-  game::{self},
+  game::{self, ArchivePolicy},
   institute, submission, team as team_db,
   user::{self, Permission},
 };
@@ -45,13 +45,14 @@ mod notification;
 mod team;
 pub mod worker;
 
-#[macro_export]
-macro_rules! default_chain {
-  ($root:expr, $($key:ident).+) => {
-      $root.unwrap_or_default()
-      $(.$key.unwrap_or_default())+
-  };
-}
+// // default_chain!(game.archive_policy.clone(), challenge.show_answer)
+// #[macro_export]
+// macro_rules! default_chain {
+//   ($root:expr, $($key:ident).+) => {
+//       $root.unwrap_or_default()
+//       $(.$key.unwrap_or_default())+
+//   };
+// }
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   tokio::spawn(worker::spawn_game_workers(state.clone()));
@@ -226,7 +227,7 @@ async fn create_game(
       admins: game::Admins(vec![token.id]),
       introduction_id: None,
       token: Some(nanoid!()),
-      archive_policy: None,
+      archive_policy: ArchivePolicy::default(),
       ..model
     },
   )

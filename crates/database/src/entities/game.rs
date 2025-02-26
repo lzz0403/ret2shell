@@ -49,18 +49,28 @@ pub struct AccessPolicy {
   pub sync: i32,
 }
 
+/// ----------------------------------------------------------------------------
+/// NOTE: Archive policy
+/// Each struct must have a default implementation for all their fields.
+/// And please add `#[serde(default)]` to each field.
+/// It's because that the policy may update its fields in the future, and it's
+/// hard to update all this column in the database for all outdated games.
+/// ----------------------------------------------------------------------------
+
 /// Archive policy -> Challenge
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
 pub struct ArchivePolicyChallenge {
-  pub show_answer: Option<bool>,
-  pub show_hints: Option<bool>,
+  #[serde(default)]
+  pub show_answer: bool,
+  #[serde(default)]
+  pub show_hints: bool,
 }
 
 impl Default for ArchivePolicyChallenge {
   fn default() -> Self {
     Self {
-      show_answer: Some(false),
-      show_hints: Some(false),
+      show_answer: false,
+      show_hints: false,
     }
   }
 }
@@ -68,16 +78,19 @@ impl Default for ArchivePolicyChallenge {
 /// Archive policy
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
 pub struct ArchivePolicy {
-  pub challenge: Option<ArchivePolicyChallenge>,
+  #[serde(default)]
+  pub challenge: ArchivePolicyChallenge,
 }
 
 impl Default for ArchivePolicy {
   fn default() -> Self {
     Self {
-      challenge: Some(ArchivePolicyChallenge::default()),
+      challenge: ArchivePolicyChallenge::default(),
     }
   }
 }
+
+/// ----------------------------------------------------------------------------
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, FromJsonQueryResult)]
 pub struct Admins(pub Vec<i64>);
@@ -122,7 +135,7 @@ pub struct Model {
   pub team_size: i32,
   #[sea_orm(column_type = "JsonBinary")]
   pub access_policy: AccessPolicy,
-  pub archive_policy: Option<ArchivePolicy>,
+  pub archive_policy: ArchivePolicy,
   pub cover: Option<String>,
   pub logo: Option<String>,
   pub enable_audit: bool,

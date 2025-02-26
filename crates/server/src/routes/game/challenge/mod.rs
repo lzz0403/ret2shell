@@ -38,7 +38,6 @@ use tokio_util::io::{ReaderStream, StreamReader};
 use tracing::{debug, info, warn};
 
 use super::worker;
-use crate::default_chain;
 use crate::{
   middleware::{
     auth::{self, Token, is_game_admin},
@@ -838,8 +837,8 @@ async fn get_challenge_hints(
 ) -> Result<impl IntoResponse, ResponseError> {
   let team = extract_team!(game, team_ext, token);
   let hints = hint::get_list(&db.conn, challenge.id).await?;
-  if default_chain!(game.archive_policy.clone(), challenge.show_hints)
-    && challenge.archive_at.is_some_and(|t| t > Utc::now())
+  if game.archive_policy.challenge.show_hints
+    && challenge.archive_at.is_some_and(|t| t < Utc::now())
   {
     return Ok(Json(hints));
   }
@@ -1337,10 +1336,9 @@ async fn get_answer(
   State(bucket): State<Bucket>, Extension(token): Extension<Token>,
   Extension(game): Extension<game::Model>, Extension(challenge): Extension<challenge::Model>,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let show_answer_archived = default_chain!(game.archive_policy.clone(), challenge.show_answer);
   let not_archived_or_hide_after_archiving = if challenge.archive_at.is_some_and(|t| t < Utc::now())
   {
-    !show_answer_archived
+    !game.archive_policy.challenge.show_answer
   } else {
     true
   };
@@ -1352,7 +1350,7 @@ async fn get_answer(
     return Err(ResponseError::Forbidden(
       format!(
         "you can only get the answer after the {} is archived",
-        if show_answer_archived {
+        if game.archive_policy.challenge.show_answer {
           "game or challenge"
         } else {
           "game"
