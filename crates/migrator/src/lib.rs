@@ -61,7 +61,7 @@ pub async fn initialize(config: &Option<database::Config>) -> Result<(Database, 
     .sqlx_logging_level(LevelFilter::Debug);
 
   let conn = sea_orm::Database::connect(connect_options).await?;
-  let needs_migrate = Migrator::get_pending_migrations(&conn).await?.is_empty();
+  let needs_migrate = !Migrator::get_pending_migrations(&conn).await?.is_empty();
   if needs_migrate {
     Migrator::up(&conn, None).await?;
   }
