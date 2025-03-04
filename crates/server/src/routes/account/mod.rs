@@ -793,7 +793,13 @@ async fn change_profile(
       return Err(ResponseError::BadRequest("email is required".to_owned()));
     }
   };
-
+  if email_changed
+    && user::get_by_account_or_email(&db.conn, &email)
+      .await?
+      .is_some()
+  {
+    return Err(ResponseError::Conflict("email already used".to_owned()));
+  }
   let user = user::Model {
     nickname: body.nickname.clone(),
     email: Some(email.clone()),
