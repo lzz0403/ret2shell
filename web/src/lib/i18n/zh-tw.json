@@ -15,6 +15,7 @@
     "error": "平臺錯誤",
     "underMaintenance": "維護中...",
     "unavailable": "系統離線",
+    "updated": "回歸終端進行了一項非相容更新，將重新載入此頁面以套用更新。請注意您可能需要重新登入。",
     "hello": "你好",
     "notImplemented": "沒寫，別急",
     "notImplementedTips": "隨機獻祭一個rx，生產力提升了！",

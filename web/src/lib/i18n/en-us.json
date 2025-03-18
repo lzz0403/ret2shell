@@ -15,6 +15,7 @@
     "error": "Platform Error",
     "underMaintenance": "Under Maintenance...",
     "unavailable": "System Offline",
+    "updated": "Ret2Shell has done a major update, we will reload this page to apply it. Please note that you may need re-login.",
     "hello": "Hello",
     "notImplemented": "Not Implemented",
     "notImplementedTips": "Randomly sacrificing an rx, productivity has been boosted!",
