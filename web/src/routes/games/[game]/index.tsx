@@ -409,7 +409,9 @@ export default function () {
                 <Link
                   level="success"
                   class="flex-1"
-                  href={`/games/${gameStore.current?.id}/challenges`}
+                  href={
+                    inArchived() ? `/training/${gameStore.current?.id}` : `/games/${gameStore.current?.id}/challenges`
+                  }
                   justify="start"
                 >
                   <span class="icon-[fluent--code-20-filled] w-5 h-5" />

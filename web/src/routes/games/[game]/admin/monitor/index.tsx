@@ -1,6 +1,6 @@
 import { AuditList, SubmissionList } from "@blocks/game/lists";
 import NarrowTips from "@blocks/narrow-tips";
-import { gameStore } from "@storage/game";
+import { gameStore, inArchived } from "@storage/game";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
@@ -42,7 +42,7 @@ export default function () {
         </h3>
         <Switch>
           <Match when={tab() === "submissions"}>
-            <SubmissionList inGame />
+            <SubmissionList inGame={!inArchived()} />
           </Match>
           <Match when={tab() === "audits"}>
             <AuditList />
