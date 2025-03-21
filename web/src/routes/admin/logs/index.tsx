@@ -166,15 +166,23 @@ export default function () {
                   "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0"
                 )}
               >
-                <span class="w-full flex">
+                <span class="w-full grid grid-cols-[repeat(3,auto)_1fr]">
                   <span class={clsx("w-16 mr-2 inline-block", getColor(log.level))}>{log.level}</span>
-                  <span class="opacity-40 mr-2">[{log.target}]</span>
-                  {log.span?.name && <span class="opacity-60">[{log.span.name}]</span>}
-                  {log.span?.from && <span class="opacity-60">[{log.span.from}]</span>}
-                  {log.span?.method && <span class="opacity-60">[{log.span.method}]</span>}
-                  {log.span?.uri && <span class="opacity-60">[{log.span.uri}]</span>}
-                  <div class="flex-1" />
-                  <span class="opacity-60 font-bold ml-2">
+                  <span class="opacity-40 mr-2" title={log.target}>
+                    [{log.target}]
+                  </span>
+                  <span
+                    class="opacity-60 truncate"
+                    title={[log.span?.name, [log.span?.method, log.span?.uri].filter(Boolean).join(" "), log.span?.from]
+                      .filter(Boolean)
+                      .join(" - ")}
+                  >
+                    {log.span?.name && <span>[{log.span.name}]</span>}
+                    {log.span?.from && <span>[{log.span.from}]</span>}
+                    {log.span?.method && <span>[{log.span.method}]</span>}
+                    {log.span?.uri && <span>[{log.span.uri}]</span>}
+                  </span>
+                  <span class="opacity-60 text-right font-bold ml-2 whitespace-nowrap">
                     <Switch fallback={time(log.timestamp, "HH:mm:ss")}>
                       <Match when={matches.xl}>{time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}</Match>
                       <Match when={matches.lg}>{time(log.timestamp, "MM-dd HH:mm:ss")}</Match>
