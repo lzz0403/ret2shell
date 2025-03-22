@@ -35,7 +35,7 @@ export function PoliciesEdit(props: {
         <span>{t("game.admin.policies.challenge.title")}</span>
       </h3>
 
-      <div class="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-2">
+      <div class="grid grid-cols-fit-xs max-w-full gap-2">
         <Field name="challenge.show_answer" type="boolean">
           {(field, props) => (
             <Checkbox

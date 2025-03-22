@@ -155,7 +155,7 @@ export default function (props: { inGame?: boolean }) {
                 <span class="flex-1 truncate">{challengeStore.current?.name}</span>
               </span>
               <span class="flex-1" />
-              <div class="flex flex-row space-x-6 items-center flex-wrap">
+              <div class="flex flex-row justify-end items-center flex-wrap gap-y-2 gap-x-6">
                 <Show when={props.inGame}>
                   <span
                     class={clsx(

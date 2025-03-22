@@ -639,59 +639,66 @@ export default function (_props: {
   const [formOpen, setFormOpen] = createSignal(false);
   return (
     <div class="flex-1 flex flex-col space-y-2 p-3 lg:p-6">
-      <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2 font-bold">
-        <span class="icon-[fluent--settings-20-regular] w-5 h-5 shrink-0" />
-        <span class="flex-1 text-start">{t("game.challenge.envImages")}</span>
+      <header class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 font-bold py-2 gap-y-2">
+        <span class="flex flex-row space-x-2 items-center overflow-hidden">
+          <span class="icon-[fluent--settings-20-regular] w-5 h-5 shrink-0" />
+          <span class="flex-1 truncate text-start">{t("game.challenge.envImages")}</span>
+        </span>
+        <span class="flex-1" />
         <Show when={registryConfig()?.enabled}>
-          <span class="font-bold">{t("game.challenge.uploadImageToRegistry")}:</span>
-          <UploadButton
+          <span class="truncate font-bold">{t("game.challenge.uploadImageToRegistry")}:</span>
+        </Show>
+        <span class="flex flex-row justify-end items-center flex-wrap gap-y-2 gap-x-2">
+          <Show when={registryConfig()?.enabled}>
+            <UploadButton
+              size="sm"
+              url={`${api_root}/game/${gameStore.current!.id}/registry`}
+              onDone={() => {
+                addToast({
+                  level: "success",
+                  description: t("game.challenge.uploadImageToRegistrySuccess")!,
+                  duration: 5000,
+                });
+                fetchRepos();
+              }}
+            />
+          </Show>
+          <Dialog
             size="sm"
-            url={`${api_root}/game/${gameStore.current!.id}/registry`}
-            onDone={() => {
-              addToast({
-                level: "success",
-                description: t("game.challenge.uploadImageToRegistrySuccess")!,
-                duration: 5000,
-              });
-              fetchRepos();
+            btnContent={<span>{t("game.challenge.addEnvImage")}</span>}
+            stretched
+            open={formOpen()}
+            onOpenChange={(details) => {
+              setFormOpen(details.open);
             }}
-          />
-        </Show>
-        <Dialog
-          size="sm"
-          btnContent={<span>{t("game.challenge.addEnvImage")}</span>}
-          stretched
-          open={formOpen()}
-          onOpenChange={(details) => {
-            setFormOpen(details.open);
-          }}
-          onClick={() => {
-            setFormOpen(true);
-          }}
-        >
-          <CreateForm
-            repos={repos()}
-            registryConfig={registryConfig()}
-            onDone={() => {
-              setFormOpen(false);
+            onClick={() => {
+              setFormOpen(true);
             }}
-          />
-        </Dialog>
-        <Show when={challengeStore.env}>
-          <Popover level="error" size="sm" btnContent={<span>{t("game.challenge.deleteEnv")}</span>}>
-            <Card contentClass="p-2 flex flex-col space-x-2 max-w-96">
-              <span class="inline-block space-x-2">
-                <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
-                <span>{t("game.challenge.deleteEnvTips")}</span>
-              </span>
-              <Button level="primary" size="sm" class="self-end" onClick={onDeleteEnv}>
-                {t("platform.accept")}
-              </Button>
-            </Card>
-          </Popover>
-        </Show>
+          >
+            <CreateForm
+              repos={repos()}
+              registryConfig={registryConfig()}
+              onDone={() => {
+                setFormOpen(false);
+              }}
+            />
+          </Dialog>
+          <Show when={challengeStore.env}>
+            <Popover level="error" size="sm" btnContent={<span>{t("game.challenge.deleteEnv")}</span>}>
+              <Card contentClass="p-2 flex flex-col space-x-2 max-w-96">
+                <span class="inline-block space-x-2">
+                  <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
+                  <span>{t("game.challenge.deleteEnvTips")}</span>
+                </span>
+                <Button level="primary" size="sm" class="self-end" onClick={onDeleteEnv}>
+                  {t("platform.accept")}
+                </Button>
+              </Card>
+            </Popover>
+          </Show>
+        </span>
       </header>
-      <div class="flex flex-row space-x-2">
+      <div class="grid grid-cols-fit-xs max-w-full gap-2">
         <Checkbox
           checked={challengeStore.env?.internet}
           onChange={() => {
