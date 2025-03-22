@@ -165,7 +165,7 @@ body {
 @custom-variant hover (&:hover);
 
 @utility grid-cols-fit-* {
-  grid-template-columns: repeat(auto-fit, minmax(--value(--container-*), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(--value(--container-\*), 1fr));
   grid-template-columns: repeat(auto-fit, minmax(calc(var(--spacing) * --value(integer)), 1fr));
-  grid-template-columns: repeat(auto-fit, minmax(--value([*]), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(--value([\*]), 1fr));
 }
