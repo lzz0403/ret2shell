@@ -149,72 +149,94 @@ export default function (props: { inGame?: boolean }) {
       >
         <div class="flex flex-col items-center p-3 lg:p-6">
           <div class="flex flex-col w-full max-w-5xl">
-            <header class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-6 font-bold">
-              <span class="flex flex-row space-x-2 items-center flex-1 overflow-hidden">
+            <header class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 font-bold py-2 gap-y-2">
+              <span class="flex flex-row space-x-2 items-center overflow-hidden">
                 <span class="icon-[fluent--info-20-regular] w-5 h-5" />
                 <span class="flex-1 truncate">{challengeStore.current?.name}</span>
               </span>
-              <Show when={props.inGame}>
-                <span
-                  class={clsx(
-                    "font-bold flex flex-row space-x-2 items-center",
-                    challengeStore.status?.solved ? "text-success" : "text-warning"
-                  )}
-                >
+              <span class="flex-1" />
+              <div class="flex flex-row space-x-6 items-center flex-wrap">
+                <Show when={props.inGame}>
                   <span
-                    class={
-                      challengeStore.status?.solved
-                        ? "icon-[fluent--checkmark-circle-20-regular] w-5 h-5"
-                        : "icon-[fluent--flag-20-regular] w-5 h-5"
-                    }
-                  />
-                  <span
-                    class={
-                      challengeStore.current?.archive_at && challengeStore.current.archive_at < DateTime.now()
-                        ? "line-through"
-                        : ""
-                    }
+                    class={clsx(
+                      "font-bold flex flex-row space-x-2 items-center",
+                      challengeStore.status?.solved ? "text-success" : "text-warning"
+                    )}
                   >
-                    {challengeStore.current?.score} pts
+                    <span
+                      class={
+                        challengeStore.status?.solved
+                          ? "icon-[fluent--checkmark-circle-20-regular] w-5 h-5"
+                          : "icon-[fluent--flag-20-regular] w-5 h-5"
+                      }
+                    />
+                    <span
+                      class={
+                        challengeStore.current?.archive_at && challengeStore.current.archive_at < DateTime.now()
+                          ? "line-through"
+                          : ""
+                      }
+                    >
+                      {challengeStore.current?.score} pts
+                    </span>
+                  </span>
+                </Show>
+                <span class="font-bold flex flex-row space-x-2 items-center">
+                  <span class="icon-[fluent--data-bar-vertical-24-regular] w-5 h-5" />
+                  <span>
+                    {challengeStore.status?.solves ?? 0} solve
+                    {challengeStore.status?.solves && challengeStore.status.solves > 1 ? "s" : ""}
                   </span>
                 </span>
-              </Show>
-              <span class="font-bold flex flex-row space-x-2 items-center">
-                <span class="icon-[fluent--data-bar-vertical-24-regular] w-5 h-5" />
-                <span>
-                  {challengeStore.status?.solves ?? 0} solve
-                  {challengeStore.status?.solves && challengeStore.status.solves > 1 ? "s" : ""}
-                </span>
-              </span>
+              </div>
             </header>
             <Switch>
               <Match when={challengeStore.current?.release_at && challengeStore.current.release_at > DateTime.now()}>
-                <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2">
-                  <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-info" />
-                  <span class="text-info flex-1 text-start">{t("game.challenge.notReleased")}</span>
-                  <span>{t("game.challenge.releaseTips")}:</span>
-                  <Timer end={challengeStore.current!.release_at!} hasHours />
+                <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 py-2 gap-y-2">
+                  <span class="flex flex-row space-x-2 items-center overflow-hidden">
+                    <span class="icon-[fluent--flag-20-regular] w-5 h-5 text-info" />
+                    <span class="text-info flex-1 truncate text-start">{t("game.challenge.notReleased")}</span>
+                  </span>
+                  <span class="flex-1" />
+                  <span class="text-end">
+                    <span class="inline-block">{t("game.challenge.releaseTips")}:</span>
+                    <Timer end={challengeStore.current!.release_at!} hasHours />
+                  </span>
                 </section>
               </Match>
               <Match when={challengeStore.current?.archive_at && challengeStore.current.archive_at < DateTime.now()}>
-                <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2">
-                  <span class="icon-[fluent--archive-20-regular] w-5 h-5 text-warning" />
-                  <span class="text-warning flex-1 truncate text-start">{t("game.challenge.archivedTips")}</span>
-                  <span class="text-warning">
-                    {challengeStore.current?.release_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
-                    &nbsp;-&nbsp;
-                    {challengeStore.current?.archive_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
+                <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 py-2 gap-y-2">
+                  <span class="flex flex-row space-x-2 items-center overflow-hidden">
+                    <span class="icon-[fluent--archive-20-regular] w-5 h-5 text-warning" />
+                    <span class="text-warning flex-1 truncate text-start">{t("game.challenge.archivedTips")}</span>
+                  </span>
+                  <span class="flex-1" />
+                  <span class="text-warning text-end">
+                    <span class="inline-block">
+                      {challengeStore.current?.release_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
+                    </span>
+                    <span>&nbsp;-&nbsp;</span>
+                    <span class="inline-block">
+                      {challengeStore.current?.archive_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
+                    </span>
                   </span>
                 </section>
               </Match>
               <Match when={challengeStore.current?.archive_at}>
-                <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center space-x-2">
-                  <span class="icon-[fluent--clock-20-regular] w-5 h-5 text-info" />
-                  <span class="text-info flex-1 truncate text-start">{t("game.challenge.periodTips")}</span>
-                  <span class="text-info">
-                    {challengeStore.current?.release_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
-                    &nbsp;-&nbsp;
-                    {challengeStore.current?.archive_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
+                <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 py-2 gap-y-2">
+                  <span class="flex flex-row space-x-2 items-center overflow-hidden">
+                    <span class="icon-[fluent--clock-20-regular] w-5 h-5 text-info" />
+                    <span class="text-info flex-1 truncate text-start">{t("game.challenge.periodTips")}</span>
+                  </span>
+                  <span class="flex-1" />
+                  <span class="text-info text-end">
+                    <span class="inline-block">
+                      {challengeStore.current?.release_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
+                    </span>
+                    <span>&nbsp;-&nbsp;</span>
+                    <span class="inline-block">
+                      {challengeStore.current?.archive_at?.toFormat("yyyy-MM-dd HH:mm:ss")}
+                    </span>
                   </span>
                 </section>
               </Match>
@@ -242,44 +264,49 @@ export default function (props: { inGame?: boolean }) {
               </section>
             </Show>
             <Show when={challengeStore.env}>
-              <section class="h-12 border-b border-b-layer-content/15 flex flex-row items-center relative">
-                <Show when={instance()}>
-                  <TimeProgress
-                    class="absolute bottom-0 left-0 right-0"
-                    startAt={instance()!.created_at}
-                    endAt={instance()!.created_at.plus({
-                      hours: instance()!.renew_count + 1,
-                    })}
-                  />
-                </Show>
-                <h3 class="font-bold flex space-x-2 items-center flex-1">
-                  <span
-                    class={clsx(
-                      "icon-[fluent--play-20-regular] w-5 h-5",
-                      instance()?.state === "Running" && "text-success"
-                    )}
-                  />
-                  <Switch fallback={<span class="opacity-80 flex-1 truncate">{t("game.challenge.envNotStart")}</span>}>
-                    <Match when={instance()?.state === "Running"}>
-                      <span class="flex-1 truncate">
-                        {t("game.challenge.envIsRunning")}: {instance()?.traffic}
-                      </span>
-                    </Match>
-                    <Match when={instance()?.state === "Pending"}>
-                      <Spin width={20} height={20} />
-                      <span class="flex-1 truncate">{t("game.challenge.envIsPending")}</span>
-                    </Match>
-                    <Match when={instance()}>
-                      <Spin width={20} height={20} />
-                      <span class="flex-1 truncate text-error">{t("game.challenge.envHasError")}</span>
-                    </Match>
-                    <Match when={userExplicitInstance()}>
-                      <span class="text-warning flex-1 truncate">
-                        {t("game.challenge.otherChallengeEnvIsRunning")}: {userExplicitInstance()?.challenge_name}
-                      </span>
-                    </Match>
-                  </Switch>
-                </h3>
+              <section class="min-h-12 border-b border-b-layer-content/15 flex flex-row items-center flex-wrap justify-end space-x-2 relative py-2 gap-y-2">
+                <div class="flex flex-row items-center space-x-2 flex-nowrap whitespace-nowrap text-nowrap">
+                  <Show when={instance()}>
+                    <TimeProgress
+                      class="absolute bottom-0 left-0 right-0"
+                      startAt={instance()!.created_at}
+                      endAt={instance()!.created_at.plus({
+                        hours: instance()!.renew_count + 1,
+                      })}
+                    />
+                  </Show>
+                  <h3 class="font-bold flex space-x-2 items-center flex-1">
+                    <span
+                      class={clsx(
+                        "icon-[fluent--play-20-regular] w-5 h-5",
+                        instance()?.state === "Running" && "text-success"
+                      )}
+                    />
+                    <Switch
+                      fallback={<span class="opacity-80 flex-1 truncate">{t("game.challenge.envNotStart")}</span>}
+                    >
+                      <Match when={instance()?.state === "Running"}>
+                        <span class="flex-1 truncate">
+                          {t("game.challenge.envIsRunning")}: {instance()?.traffic}
+                        </span>
+                      </Match>
+                      <Match when={instance()?.state === "Pending"}>
+                        <Spin width={20} height={20} />
+                        <span class="flex-1 truncate">{t("game.challenge.envIsPending")}</span>
+                      </Match>
+                      <Match when={instance()}>
+                        <Spin width={20} height={20} />
+                        <span class="flex-1 truncate text-error">{t("game.challenge.envHasError")}</span>
+                      </Match>
+                      <Match when={userExplicitInstance()}>
+                        <span class="text-warning flex-1 truncate">
+                          {t("game.challenge.otherChallengeEnvIsRunning")}: {userExplicitInstance()?.challenge_name}
+                        </span>
+                      </Match>
+                    </Switch>
+                  </h3>
+                </div>
+                <span class="flex-1" />
                 <div class="flex flex-row space-x-2 items-center">
                   <Switch
                     fallback={
@@ -382,8 +409,7 @@ export default function (props: { inGame?: boolean }) {
                       <section
                         class={clsx(
                           "min-h-12 border-b border-b-layer-content/15 space-x-2 relative",
-                          "flex flex-row items-center flex-wrap justify-end",
-                          "py-2 gap-y-2"
+                          "flex flex-row items-center flex-wrap justify-end py-2 gap-y-2"
                         )}
                       >
                         <div class="flex flex-row items-center space-x-2 flex-nowrap whitespace-nowrap text-nowrap">
