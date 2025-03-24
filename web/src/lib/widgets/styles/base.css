@@ -153,6 +153,12 @@ body {
   visibility: visible !important;
 }
 
+@utility break-words {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
 @utility dir-ltr {
   direction: ltr;
 }

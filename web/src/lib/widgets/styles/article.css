@@ -32,6 +32,10 @@ article.article-compact {
   :where(blockquote p:last-of-type):after {
     @apply content-[''];
   }
+  :where(code)::before,
+  :where(code)::after {
+    @apply content-[''];
+  }
 }
 
 /* --- */
@@ -111,7 +115,6 @@ article pre > code {
 
 code:not(pre code) {
   @apply !text-[1em] !break-words !bg-layer-content/10 rounded-xs !mx-1 !px-1 !font-normal;
-  @apply before:!content-[''] after:!content-[''];
 }
 
 pre code {
