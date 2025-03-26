@@ -93,7 +93,7 @@ function mergeChats(
   return [changed, aa.sort((x, y) => x.created_at.toMillis() - y.created_at.toMillis())];
 }
 
-export default function() {
+export default function () {
   const [searchParams, _] = useSearchParams();
   const teamId = createMemo(() => Number.parseInt((searchParams.team as string) ?? "") || null);
   const challengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) ?? "") || null);
@@ -345,8 +345,8 @@ export default function() {
                               <span
                                 class={
                                   chat.checked
-                                    ? "icon-[fluent--circle-20-filled] w-2 h-2 text-success"
-                                    : "icon-[fluent--circle-20-regular] w-2 h-2 opacity-40"
+                                    ? "icon-[fluent--circle-20-filled] w-2 h-2 m-1 text-success"
+                                    : "icon-[fluent--circle-20-regular] w-2 h-2 m-1 opacity-40"
                                 }
                               />
                               <span class="text-xs opacity-60 self-end">{chat.created_at.toFormat("HH:mm")}</span>
