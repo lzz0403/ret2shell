@@ -31,7 +31,7 @@ passiveSupport({
   ],
 });
 
-export default function(props: { inGame?: boolean }) {
+export default function (props: { inGame?: boolean }) {
   const instance = createMemo(() => {
     if (challengeStore.current && challengeStore.env) {
       return wsrx.instances().find((s) => s.challenge_id === challengeStore.current!.id) ?? null;

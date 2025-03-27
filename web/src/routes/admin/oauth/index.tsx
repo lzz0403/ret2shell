@@ -25,7 +25,7 @@ import { For, Show, createSignal, onMount } from "solid-js";
 import InstituteForm from "./_blocks/institute-form";
 import ProviderForm from "./_blocks/provider-form";
 
-export default function() {
+export default function () {
   const [loading, setLoading] = createSignal(true);
   const [oauthServices, setOAuthServices] = createSignal([] as OAuthProvider[]);
   onMount(async () => {

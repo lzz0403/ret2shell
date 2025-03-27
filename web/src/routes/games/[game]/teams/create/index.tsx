@@ -23,7 +23,7 @@ type TeamCreateForm = {
   accepted: boolean;
 };
 
-export default function() {
+export default function () {
   const navigate = useNavigate();
   const [customDisabled, setCustomDisabled] = createSignal(false);
   const [form, { Form, Field }] = createForm<TeamCreateForm>();

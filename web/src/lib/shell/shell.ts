@@ -167,8 +167,9 @@ export class Shell {
       slicedChallengeName = challengeName;
     }
     const leftPart = `${ansiColors.green(accountStore.account || "guest")}:${ansiColors.blue(gameStore.team?.name || "wheel")} ${ansiColors.yellow(`~/${slicedChallengeName}`)}`;
-    const rightPart = `${ansiColors.dim("in")} ${ansiColors.blue(gameStore.current?.name || "unknown")}${this.code === 0 ? "" : ansiColors.redBright(` [${this.code}]`)
-      } [${DateTime.now().toFormat("HH:mm:ss")}]`;
+    const rightPart = `${ansiColors.dim("in")} ${ansiColors.blue(gameStore.current?.name || "unknown")}${
+      this.code === 0 ? "" : ansiColors.redBright(` [${this.code}]`)
+    } [${DateTime.now().toFormat("HH:mm:ss")}]`;
     // console.log(this.stdio.termWidth());
     // console.log(unicodeStrDisplayLength(leftPart));
     // console.log(unicodeStrDisplayLength(rightPart));
