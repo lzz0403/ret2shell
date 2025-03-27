@@ -1,10 +1,10 @@
-article.prose,
-article.prose * {
+article.article,
+article.article * {
   @apply scroll-m-20 break-words;
 }
 
 /* default */
-article.prose {
+article.article {
   p {
     @apply my-4;
   }
@@ -40,7 +40,7 @@ article.article-compact {
 
 /* --- */
 
-.article-compact.prose * {
+.article-compact.article * {
   @apply scroll-m-0;
 }
 
@@ -180,7 +180,7 @@ html[data-style="light"] {
   }
 }
 
-article.prose img {
+article.article img {
   @apply !rounded-lg;
 }
 
