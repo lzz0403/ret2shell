@@ -41,6 +41,7 @@ impl MigratorTrait for Migrator {
       Box::new(migrations::m_20250105_000001_create_oauth_provider::Migration),
       Box::new(migrations::m_20250114_000001_create_oauth_index::Migration),
       Box::new(migrations::m_20250226_000001_game_archive_policy::Migration),
+      Box::new(migrations::m_20250330_000001_create_team_tag::Migration),
     ]
   }
 }
