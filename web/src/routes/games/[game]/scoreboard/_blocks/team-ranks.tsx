@@ -66,7 +66,9 @@ export default function TeamRanks(props: {
                     <span class="icon-[fluent-emoji-flat--3rd-place-medal] w-6 h-6" />
                   </Match>
                   <Match when={realIndex(index()) > 3}>
-                    <span class="font-bold opacity-60">{realIndex(index())}</span>
+                    <span class="font-bold opacity-60">
+                      {realIndex(index())}
+                    </span>
                   </Match>
                 </Switch>
               </span>
@@ -80,38 +82,59 @@ export default function TeamRanks(props: {
                 <span class="flex-1" />
                 <Show when={team.state === TeamState.Hidden}>
                   <Tag level="warning">
-                    <span class="flex-1 truncate">{t("game.team.state.hidden")}</span>
+                    <span class="flex-1 truncate">
+                      {t("game.team.state.hidden")}
+                    </span>
                   </Tag>
                 </Show>
                 <Show when={props.showTime && team.institute_id}>
                   <Tag level="info">
                     <span class="flex-1 truncate">
-                      {accountStore.institutes.find((v) => v.id === team.institute_id)?.name}
+                      {
+                        accountStore.institutes.find(
+                          (v) => v.id === team.institute_id,
+                        )?.name
+                      }
                     </span>
                   </Tag>
                 </Show>
                 <Show when={team.tag}>
-                  <Tag level="info">
+                  <Tag level="success">
                     <span class="flex-1 truncate">{team.tag}</span>
                   </Tag>
                 </Show>
               </span>
-              <span class={clsx("text-end", currentTimelinePeriod() && props.showTime ? "w-48" : "w-20")}>
+              <span
+                class={clsx(
+                  "text-end",
+                  currentTimelinePeriod() && props.showTime ? "w-48" : "w-20",
+                )}
+              >
                 <span>{team.score}</span>
                 <span class="opacity-60">&nbsp;pts</span>
                 <Show when={props.showTime && currentTimelinePeriod()}>
                   <Show
                     when={getScoreDiff(team) >= 0}
-                    fallback={<span class="text-error">&nbsp;{getScoreDiff(team)}&nbsp;pts</span>}
+                    fallback={
+                      <span class="text-error">
+                        &nbsp;{getScoreDiff(team)}&nbsp;pts
+                      </span>
+                    }
                   >
-                    <span class="text-success">&nbsp;+{getScoreDiff(team)}&nbsp;pts</span>
+                    <span class="text-success">
+                      &nbsp;+{getScoreDiff(team)}&nbsp;pts
+                    </span>
                   </Show>
                 </Show>
               </span>
               <Show when={props.showTime}>
                 <span class="w-max ml-4 text-end font-bold opacity-40 hidden lg:inline-block">
-                  <Switch fallback={team.last_active_at.toFormat("MM-dd HH:mm:ss")}>
-                    <Match when={matches["2xl"]}>{team.last_active_at.toFormat("yyyy-MM-dd HH:mm:ss")}</Match>
+                  <Switch
+                    fallback={team.last_active_at.toFormat("MM-dd HH:mm:ss")}
+                  >
+                    <Match when={matches["2xl"]}>
+                      {team.last_active_at.toFormat("yyyy-MM-dd HH:mm:ss")}
+                    </Match>
                   </Switch>
                 </span>
               </Show>
