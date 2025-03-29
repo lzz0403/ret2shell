@@ -90,16 +90,23 @@ export default function (_props: {
   const [renderedLint, setRenderedLint] = createSignal(null as string | null);
   const ansi_up = new AnsiUp();
   ansi_up.use_classes = true;
+  let serverScript = "";
   async function refreshScript() {
     const resp = await getChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, true);
+    serverScript = resp.script;
     setScript(resp.script);
     setLint(resp.lint ?? null);
     if (resp.lint) {
       setRenderedLint(ansi_up.ansi_to_html(resp.lint));
     }
   }
+  function restoreScript() {
+    setScript(serverScript);
+    setLint(null);
+    setRenderedLint(null);
+  }
   createEffect(() => {
-    if (challengeStore.current) {
+    if (!challengeStore.current?.hidden) {
       untrack(refreshScript);
     }
   });
@@ -120,52 +127,61 @@ export default function (_props: {
         description: t("form.saveSuccess")!,
         duration: 5000,
       });
+      refreshScript();
     } catch (err) {
       handleHttpError(err as Error, t("form.saveFailed")!);
     }
-    refreshScript();
   }
 
   return (
-    <div class="flex-1 h-full flex flex-col">
-      <header class="h-12 border-b border-b-layer-content/10 flex flex-row space-x-2 px-2 items-center">
-        <span class="icon-[fluent--code-20-regular] w-5 h-5" />
-        <span class="font-bold hidden lg:inline-block">{t("game.challenge.checkerScript")}</span>
-        <span class="opacity-60">checker/main.rx</span>
-        <div class="flex-1" />
-        <Select
-          class="w-60 hidden lg:flex"
-          placeholder={t("game.challenge.selectPresetScripts")}
-          size="sm"
-          items={[
-            {
-              label: t("game.challenge.simpleCheckerScriptPreset")!,
-              value: "simple",
-              icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
-            },
-            {
-              label: t("game.challenge.dynamicLeetCheckerScriptPreset")!,
-              value: "dynamic-leet",
-              icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
-            },
-            {
-              label: t("game.challenge.dynamicUuidCheckerScriptPreset")!,
-              value: "dynamic-uuid",
-              icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
-            },
-            {
-              label: t("game.challenge.mappedCheckerScriptPreset")!,
-              value: "mapped",
-              icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
-            },
-          ]}
-          onValueChange={(e) => {
-            setPreset((e.value.at(0) as PresetChecker) || null);
-          }}
-        />
-        <Button level="info" size="sm" onClick={handleUpdateScript}>
-          {t("form.saveAndCompile")}
-        </Button>
+    <div class="flex-1 flex flex-col h-full space-y-2 p-3 lg:p-6">
+      <header class="min-h-12 border-b border-b-layer-content/10 flex flex-row flex-wrap justify-end space-x-2 items-center gap-y-2 py-2">
+        <span class="flex flex-row space-x-2 items-center overflow-hidden">
+          <span class="icon-[fluent--code-20-regular] w-5 h-5 shrink-0" />
+          <span class="font-bold inline-block whitespace-nowrap">{t("game.challenge.checkerScript")}</span>
+          <span class="opacity-60 truncate">checker/main.rx</span>
+        </span>
+        <span class="flex-1" />
+        <span class="flex flex-row justify-end items-center flex-wrap gap-y-2 gap-x-2">
+          <Select
+            class="w-60 min-w-10"
+            placeholder={t("game.challenge.selectPresetScripts")}
+            size="sm"
+            items={[
+              {
+                label: t("game.challenge.simpleCheckerScriptPreset")!,
+                value: "simple",
+                icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
+              },
+              {
+                label: t("game.challenge.dynamicLeetCheckerScriptPreset")!,
+                value: "dynamic-leet",
+                icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
+              },
+              {
+                label: t("game.challenge.dynamicUuidCheckerScriptPreset")!,
+                value: "dynamic-uuid",
+                icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
+              },
+              {
+                label: t("game.challenge.mappedCheckerScriptPreset")!,
+                value: "mapped",
+                icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
+              },
+            ]}
+            onValueChange={(e) => {
+              setPreset((e.value.at(0) as PresetChecker) || null);
+            }}
+          />
+          <span class="flex flex-row justify-end items-center flex-wrap gap-y-2 gap-x-2">
+            <Button size="sm" square onClick={restoreScript}>
+              <span class="icon-[fluent--arrow-reset-20-regular] w-5 h-5" />
+            </Button>
+            <Button level="info" size="sm" onClick={handleUpdateScript}>
+              {t("form.saveAndCompile")}
+            </Button>
+          </span>
+        </span>
       </header>
       <Splitter
         orientation="vertical"
