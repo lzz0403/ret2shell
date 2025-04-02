@@ -10,7 +10,7 @@ import Clipboard from "@widgets/clipboard";
 import Popover from "@widgets/popover";
 import { For, Match, Switch, createEffect, createSignal, untrack } from "solid-js";
 
-export default function() {
+export default function () {
   const [linkedDevices, setLinkedDevices] = createSignal([] as EventDeviceInfo[]);
   createEffect(() => {
     if (gameStore.current) {
@@ -66,7 +66,7 @@ export default function() {
               class="flex-1"
               value={`${window.origin.replace("http", "ws")}/api/event/connect?game_id=${gameStore.current?.id}&token=${gameStore.current?.token || undefined}`}
             />
-            <Popover square ghost btnContent={<span class="icon-[fluent--arrow-sync-20-regular] text-error w-5 h-5" />}>
+            <Popover square btnContent={<span class="icon-[fluent--arrow-sync-20-regular] text-error w-5 h-5" />}>
               <Card contentClass="p-2 flex flex-col space-y-2 max-w-96">
                 <span class="inline-block space-x-2">
                   <span class="icon-[fluent--warning-20-regular] w-5 h-5 text-warning align-middle" />
