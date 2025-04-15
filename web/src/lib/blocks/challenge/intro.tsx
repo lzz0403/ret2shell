@@ -442,7 +442,7 @@ export default function (props: { inGame?: boolean }) {
                                 size="sm"
                                 title={t("instance.copyLocalAddr")}
                                 value={local.local}
-                                label={`${local.local} +${local.latency}ms`}
+                                label={local.local}
                               />
                             )}
                           </For>
