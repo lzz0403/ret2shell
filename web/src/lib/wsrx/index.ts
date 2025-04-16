@@ -4,7 +4,16 @@ import { gameStore } from "@storage/game";
 import { platformStore } from "@storage/platform";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
-import { Wsrx, WsrxFeature, type WsrxInstance, type WsrxOptions, WsrxState } from "@xdsec/wsrx";
+import {
+  Wsrx,
+  WsrxFeature,
+  type WsrxInstance,
+  type WsrxOptions,
+  WsrxState,
+  WsrxError,
+  WsrxErrorKind,
+} from "@xdsec/wsrx";
+import { HTTPError } from "ky";
 import { DateTime } from "luxon";
 import { type Accessor, createEffect, createSignal } from "solid-js";
 
@@ -59,13 +68,29 @@ export class WsrxWrapper {
   async check() {
     try {
       await this.wsrx.check();
-    } catch {}
+      return true;
+    } catch (err) {
+      if (err instanceof WsrxError) {
+        return err;
+      }
+    }
   }
 
   async connect() {
-    try {
-      await this.wsrx.connect();
-    } catch {}
+    await this.wsrx.checkVersion().catch((err) => {
+      if (err instanceof WsrxError) {
+        switch (err.kind) {
+          case WsrxErrorKind.VersionMismatch:
+            addToast({
+              level: "error",
+              description: t("instance.wsrxVersionMismatch")!,
+              duration: 10 * 1000,
+            });
+            break;
+        }
+      }
+    });
+    await this.wsrx.connect().catch(() => {});
   }
 
   public async syncRemote() {
@@ -76,11 +101,13 @@ export class WsrxWrapper {
           result.filter((instance) => instance.created_at.plus({ hours: instance.renew_count + 1 }) > DateTime.now())
         );
       } catch (err) {
-        addToast({
-          level: "error",
-          description: `${t("traffic.fetchFailed")}: ${err}`,
-          duration: 5000,
-        });
+        if (err instanceof HTTPError) {
+          addToast({
+            level: "error",
+            description: `${t("instance.fetchFailed")}: ${await err.response.text()}`,
+            duration: 5000,
+          });
+        }
       }
     }
   }
@@ -90,11 +117,13 @@ export class WsrxWrapper {
       try {
         await this.wsrx.sync();
       } catch (err) {
-        addToast({
-          level: "error",
-          description: `${t("traffic.fetchFailed")}: ${err}`,
-          duration: 5000,
-        });
+        if (err instanceof WsrxError) {
+          addToast({
+            level: "error",
+            description: `${t("traffic.fetchFailed")}: ${err.message}`,
+            duration: 5000,
+          });
+        }
       }
     }
   }
@@ -104,11 +133,13 @@ export class WsrxWrapper {
       try {
         await this.wsrx.delete(local);
       } catch (err) {
-        addToast({
-          level: "error",
-          description: `${t("traffic.deleteFailed")}: ${err}`,
-          duration: 5000,
-        });
+        if (err instanceof WsrxError) {
+          addToast({
+            level: "error",
+            description: `${t("traffic.deleteFailed")}: ${err.message}`,
+            duration: 5000,
+          });
+        }
       }
     }
   }
@@ -143,11 +174,13 @@ export class WsrxWrapper {
               remote,
             });
           } catch (err) {
-            addToast({
-              level: "error",
-              description: `${t("traffic.openFailed")}: ${err}`,
-              duration: 5000,
-            });
+            if (err instanceof WsrxError) {
+              addToast({
+                level: "error",
+                description: `${t("traffic.openFailed")}: ${err.message}`,
+                duration: 5000,
+              });
+            }
           }
         }
       }

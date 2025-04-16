@@ -984,6 +984,8 @@
     "emailNotVerified": "你的账户邮箱尚未通过验证，功能受限"
   },
   "instance": {
+    "wsrxVersionMismatch": "WSRX 版本过低，请更新到最新版本后使用平台集成",
+    "wsrxDaemonOffline": "WSRX 守护进程未运行，如若桌面客户端已经启动，请检查平台设置中的 WSRX 控制地址是否正确",
     "disconnected": "WSRX 未连接",
     "connected": "WSRX 已连接",
     "retryLinkWsrx": "尝试连接",

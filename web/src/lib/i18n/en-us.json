@@ -985,6 +985,8 @@
     }
   },
   "instance": {
+    "wsrxDaemonOffline": "WSRX Daemon is not running. If the desktop client has started, please check if the WSRX control address in the platform settings is correct.",
+    "wsrxVersionMismatch": "WSRX version is too low, please update to the latest version before using platform integration",
     "disconnected": "WSRX Disconnected",
     "connected": "WSRX Connected",
     "retryLinkWsrx": "Retry Connecting",

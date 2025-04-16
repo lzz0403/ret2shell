@@ -5,6 +5,7 @@ import { useLocation } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { t } from "@storage/theme";
+import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import Input from "@widgets/input";
@@ -12,7 +13,7 @@ import Link from "@widgets/link";
 import Popover from "@widgets/popover";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
-import { WsrxState } from "@xdsec/wsrx";
+import { WsrxError, WsrxErrorKind, WsrxState } from "@xdsec/wsrx";
 import clsx from "clsx";
 import { For, Show, createEffect, createSignal, untrack } from "solid-js";
 
@@ -34,19 +35,34 @@ export function InstanceBoxContent() {
     return `/games/${i.game_id}/challenges?challenge=${i.challenge_id}`;
   }
 
-  async function retryConnect() {
-    await wsrx.check();
-    if (wsrx.state() !== WsrxState.Usable) {
+  async function tryConnect() {
+    const resp = await wsrx.check();
+    if (wsrx.state() !== WsrxState.Invalid || (resp instanceof WsrxError && resp.kind === WsrxErrorKind.MissingScope)) {
       setConnecting(true);
       setTimeout(async () => {
         await wsrx.connect();
         setConnecting(false);
       }, 1000);
+      return true;
+    }
+    return false;
+  }
+
+  async function retryConnect() {
+    if (!tryConnect()) {
+      setConnecting(false);
+      if (wsrx.state() === WsrxState.Invalid) {
+        addToast({
+          level: "warning",
+          description: t("instance.wsrxDaemonOffline")!,
+          duration: 10 * 1000,
+        });
+      }
     }
   }
 
   createEffect(() => {
-    if (accountStore.token) untrack(retryConnect);
+    if (accountStore.token) untrack(tryConnect);
   });
 
   return (

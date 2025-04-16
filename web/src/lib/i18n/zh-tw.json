@@ -172,6 +172,7 @@
       "otherChallengeEnvIsRunning": "另一道題目環境正在運行",
       "startEnv": "啟動！",
       "create": "創建題目",
+      "edit": "編輯題目",
       "unlockHintFailed": "解鎖提示失敗",
       "checker": "評測",
       "upChallenge": "公開",
@@ -282,8 +283,7 @@
       "hammerLastMessage": "還可發送 {{last}} 條消息",
       "hideSolved": "隱藏已解出題目",
       "scoringPeriod": "計分時段",
-      "scoringPeriodPlaceholder": "發佈前題目不可見，歸檔後題目不計分，留空則全時段有效...",
-      "edit": "編輯題目"
+      "scoringPeriodPlaceholder": "發佈前題目不可見，歸檔後題目不計分，留空則全時段有效..."
     },
     "scoreboard": {
       "title": "積分板",
@@ -984,6 +984,8 @@
     "emailNotVerified": "你的賬戶郵箱尚未通過驗證，功能受限"
   },
   "instance": {
+    "wsrxVersionMismatch": "WSRX 版本過低，請更新到最新版本後使用平臺集成",
+    "wsrxDaemonOffline": "WSRX 守護進程未運行，如若桌面客戶端已經啟動，請檢查平臺設置中的 WSRX 控制地址是否正確",
     "disconnected": "WSRX 未連接",
     "connected": "WSRX 已連接",
     "retryLinkWsrx": "嘗試連接",
