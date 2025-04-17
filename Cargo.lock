@@ -3489,9 +3489,9 @@ dependencies = [
 
 [[package]]
 name = "proc-macro2"
-version = "1.0.94"
+version = "1.0.95"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a31971752e70b8b2686d7e46ec17fb38dad4051d94024c88df49b667caea9c84"
+checksum = "02b3e5e68a3a1a02aad3ec490a98007cbc13c37cbe84a3cd7b8e406d76e7f778"
 dependencies = [
  "unicode-ident",
 ]
@@ -3664,7 +3664,7 @@ checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
 
 [[package]]
 name = "r2s-auditor"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "aho-corasick",
  "r2s-config",
@@ -3675,7 +3675,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-bucket"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "chrono",
  "deunicode",
@@ -3694,7 +3694,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cache"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "fred",
  "r2s-config",
@@ -3706,7 +3706,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-captcha"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "async-trait",
  "biosvg",
@@ -3722,7 +3722,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-checker"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "chrono",
  "r2s-bucket",
@@ -3738,7 +3738,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cluster"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "axum",
  "chrono",
@@ -3763,7 +3763,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-config"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "sea-orm",
  "serde",
@@ -3774,7 +3774,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-database"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "chrono",
  "num-derive",
@@ -3790,7 +3790,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-email"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "async-nats",
  "futures",
@@ -3805,7 +3805,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-event"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "async-nats",
  "axum",
@@ -3821,7 +3821,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-license"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "chrono",
  "clap",
@@ -3833,7 +3833,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-media"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "hex",
  "image",
@@ -3850,7 +3850,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-migrator"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "r2s-config",
  "sea-orm",
@@ -3862,7 +3862,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-oauth"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "async-trait",
  "chrono",
@@ -3880,7 +3880,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-queue"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "async-nats",
  "r2s-config",
@@ -3892,7 +3892,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-server"
-version = "3.6.1"
+version = "3.6.2"
 dependencies = [
  "anyhow",
  "argon2",
@@ -5255,9 +5255,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "14e22987355fbf8cfb813a0cf8cd97b1b4ec834b94dbd759a9e8679d41fabe83"
+checksum = "f3c3a85280daca669cfd3bcb68a337882a8bc57ec882f72c5d13a430613a738e"
 dependencies = [
  "sqlx-core",
  "sqlx-macros",
@@ -5268,9 +5268,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-core"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "55c4720d7d4cd3d5b00f61d03751c685ad09c33ae8290c8a2c11335e0604300b"
+checksum = "f743f2a3cea30a58cd479013f75550e879009e3a02f616f18ca699335aa248c3"
 dependencies = [
  "base64 0.22.1",
  "bigdecimal",
@@ -5309,9 +5309,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-macros"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "175147fcb75f353ac7675509bc58abb2cb291caf0fd24a3623b8f7e3eb0a754b"
+checksum = "7f4200e0fde19834956d4252347c12a083bdcb237d7a1a1446bffd8768417dce"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5322,9 +5322,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-macros-core"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1cde983058e53bfa75998e1982086c5efe3c370f3250bf0357e344fa3352e32b"
+checksum = "882ceaa29cade31beca7129b6beeb05737f44f82dbe2a9806ecea5a7093d00b7"
 dependencies = [
  "dotenvy",
  "either",
@@ -5348,9 +5348,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-mysql"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "847d2e5393a4f39e47e4f36cab419709bc2b83cbe4223c60e86e1471655be333"
+checksum = "0afdd3aa7a629683c2d750c2df343025545087081ab5942593a5288855b1b7a7"
 dependencies = [
  "atoi",
  "base64 0.22.1",
@@ -5395,9 +5395,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-postgres"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cc35947a541b9e0a2e3d85da444f1c4137c13040267141b208395a0d0ca4659f"
+checksum = "a0bedbe1bbb5e2615ef347a5e9d8cd7680fb63e77d9dafc0f29be15e53f1ebe6"
 dependencies = [
  "atoi",
  "base64 0.22.1",
@@ -5438,9 +5438,9 @@ dependencies = [
 
 [[package]]
 name = "sqlx-sqlite"
-version = "0.8.4"
+version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6c48291dac4e5ed32da0927a0b981788be65674aeb62666d19873ab4289febde"
+checksum = "c26083e9a520e8eb87a06b12347679b142dc2ea29e6e409f805644a7a979a5bc"
 dependencies = [
  "atoi",
  "chrono",
