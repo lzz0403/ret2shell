@@ -8,6 +8,8 @@ pub enum CheckerError {
   MissingCheckerScript(String),
   #[error("Rune context error: {0}")]
   RuneError(#[from] rune::ContextError),
+  #[error("Rune runtime error: {0}")]
+  RuneRuntimeError(#[from] rune::runtime::RuntimeError),
   #[error("Can not load script source: {0}")]
   SourceError(#[from] rune::source::FromPathError),
   #[error("Can not build script unit: {0}")]

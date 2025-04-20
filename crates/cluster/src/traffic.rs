@@ -5,6 +5,7 @@ use k8s_openapi::api::core::v1::{Pod, Service};
 use kube::ResourceExt;
 use rune::{
   Any, Context, ContextError, Diagnostics, Module, Source, Sources, Unit, Value, Vm,
+  alloc::clone::TryClone,
   runtime::{Object, RuntimeContext},
   termcolor::Buffer,
 };
@@ -27,7 +28,7 @@ pub struct MappedPort {
   pub address: String,
 }
 
-#[derive(Clone, Debug, Any)]
+#[derive(TryClone, Debug, Any)]
 #[rune(item = ::ret2shell::cluster)]
 pub struct RunePortInfo {
   #[rune(get)]
@@ -36,7 +37,7 @@ pub struct RunePortInfo {
   pub node_port: u16,
 }
 
-#[derive(Clone, Debug, Any)]
+#[derive(Debug, Any)]
 #[rune(item = ::ret2shell::cluster)]
 pub struct RuneServiceInfo {
   #[rune(get)]
@@ -46,7 +47,7 @@ pub struct RuneServiceInfo {
   #[rune(get)]
   pub lifetime: u64,
   #[rune(get)]
-  pub ports: Vec<RunePortInfo>,
+  pub ports: rune::alloc::Vec<RunePortInfo>,
 }
 
 impl RuneServiceInfo {
@@ -84,7 +85,7 @@ impl RuneServiceInfo {
         .to_owned(),
       created_at,
       lifetime,
-      ports: ports_info,
+      ports: ports_info.try_into()?,
     })
   }
 }
