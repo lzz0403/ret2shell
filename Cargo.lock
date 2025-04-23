@@ -3604,7 +3604,7 @@ checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
 
 [[package]]
 name = "r2s-auditor"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "aho-corasick",
  "r2s-config",
@@ -3615,7 +3615,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-bucket"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "chrono",
  "deunicode",
@@ -3634,7 +3634,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cache"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "fred",
  "r2s-config",
@@ -3646,7 +3646,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-captcha"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "async-trait",
  "biosvg",
@@ -3662,7 +3662,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-checker"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "chrono",
  "r2s-bucket",
@@ -3678,7 +3678,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cluster"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "axum",
  "chrono",
@@ -3703,7 +3703,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-config"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "sea-orm",
  "serde",
@@ -3714,7 +3714,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-database"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "chrono",
  "num-derive",
@@ -3730,7 +3730,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-email"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "async-nats",
  "futures",
@@ -3745,7 +3745,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-event"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "async-nats",
  "axum",
@@ -3761,7 +3761,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-license"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "chrono",
  "clap",
@@ -3773,7 +3773,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-media"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "hex",
  "image",
@@ -3790,7 +3790,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-migrator"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "r2s-config",
  "sea-orm",
@@ -3802,7 +3802,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-oauth"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "async-trait",
  "chrono",
@@ -3820,7 +3820,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-queue"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "async-nats",
  "r2s-config",
@@ -3832,7 +3832,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-server"
-version = "3.7.0"
+version = "3.7.1"
 dependencies = [
  "anyhow",
  "argon2",
@@ -6705,9 +6705,9 @@ checksum = "1e9df38ee2d2c3c5948ea468a8406ff0db0b29ae1ffde1bcf20ef305bcc95c51"
 
 [[package]]
 name = "wsrx"
-version = "0.5.0"
+version = "0.5.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79d540626fe01a3cdd3bcc5daccf496c75db7316b0e0345a62e8eac940a12871"
+checksum = "40872a73ce383e2f54374e5f33b185190293bdc4eeafcded5d77f25d58cb0a9c"
 dependencies = [
  "axum",
  "futures-util",
@@ -6715,6 +6715,7 @@ dependencies = [
  "thiserror 2.0.12",
  "tokio",
  "tokio-util",
+ "tracing",
 ]
 
 [[package]]

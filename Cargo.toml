@@ -151,5 +151,5 @@ version  = "0.99"
 
 [workspace.dependencies.wsrx]
 default-features = false
-features         = ["server"]
+features         = ["server", "log"]
 version          = "0.5"
