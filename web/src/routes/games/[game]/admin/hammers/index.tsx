@@ -16,12 +16,9 @@ import type { Challenge } from "@models/challenge";
 import type { Chat } from "@models/chat";
 import type { Team } from "@models/team";
 import { A, useSearchParams } from "@solidjs/router";
-import { accountStore } from "@storage/account";
 import { gameStore } from "@storage/game";
 import { Title } from "@storage/header";
 import { fullTheme, t, themeStore } from "@storage/theme";
-import Article from "@widgets/article";
-import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
 import Card from "@widgets/card";
 import { EditorBare } from "@widgets/editor";
@@ -30,7 +27,6 @@ import Popover from "@widgets/popover";
 import clsx from "clsx";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
-import { TransitionGroup } from "solid-transition-group";
 
 const chatConfig = await m_chat(themeStore.locale);
 
@@ -199,7 +195,7 @@ export default function () {
                       }
                       link={chat.id === 0 ? "Ciallo～(∠・ω< )⌒☆" : `/users/${chat.user_id}`}
                       nameLabel={chat.user_name || "Unknown"}
-                      labelClasses={chat.is_admin ? "text-success" : "text-warning"}
+                      labelClasses={chat.id === 0 ? "text-primary" : chat.is_admin ? "text-success" : "text-warning"}
                       content={chat.content}
                       sendAt={chat.created_at}
                       isChecked={chat.checked}

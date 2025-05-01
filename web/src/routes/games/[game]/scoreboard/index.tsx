@@ -14,11 +14,11 @@ import Card from "@widgets/card";
 import Chart from "@widgets/chart";
 import Select from "@widgets/select";
 import clsx from "clsx";
+import { DateTime } from "luxon";
 import { Match, Show, Switch, createEffect, createMemo, createSignal, onMount, untrack } from "solid-js";
 import TeamDetails from "./_blocks/team-details";
 import TeamRanks from "./_blocks/team-ranks";
 import TeamSolves from "./_blocks/team-solves";
-import { DateTime } from "luxon";
 
 function ChartOperations(props: {
   onRefresh?: () => void;

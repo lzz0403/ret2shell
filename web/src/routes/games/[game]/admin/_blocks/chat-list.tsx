@@ -6,7 +6,6 @@ import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Avatar from "@widgets/avatar";
 import Button from "@widgets/button";
-import Divider from "@widgets/divider";
 import Link from "@widgets/link";
 import { OverlayScrollbarsComponent } from "overlayscrollbars-solid";
 import { For, Show, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
