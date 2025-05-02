@@ -283,7 +283,7 @@ export default function () {
                       exec: handleSendChat,
                     },
                   ]}
-                  class={clsx("bg-layer rounded-lg", editorExpanded() ? "h-64" : "h-16")}
+                  class={clsx(editorExpanded() ? "h-64" : "h-16")}
                   value={chat()}
                   placeholder="MARKDOWN"
                   lang="markdown"
