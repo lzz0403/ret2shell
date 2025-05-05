@@ -3,7 +3,7 @@ import { onMount } from "solid-js";
 // import BgBlurNight from "@assets/imgs/bg-blur-stars.webp";
 // import BgBlurDay from "@assets/imgs/bg-blur-suzume.webp";
 
-export default function () {
+export default function() {
   let svgPath1: SVGPathElement;
   let svgPath2: SVGPathElement;
   onMount(() => {
@@ -32,7 +32,7 @@ export default function () {
       <svg
         viewBox="0 0 960 1080"
         xmlns="http://www.w3.org/2000/svg"
-        class="fixed right-0 top-0 h-screen opacity-30 print:hidden"
+        class="fixed right-0 top-0 h-screen opacity-10 print:hidden"
       >
         <path
           fill="none"
