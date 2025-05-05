@@ -448,7 +448,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
   );
 }
 
-export default function () {
+export default function() {
   const [team, setTeam] = createSignal(null as Team | null);
   const [solves, setSolves] = createSignal([] as Submission[]);
   const [extras, setExtras] = createSignal([] as Extra[]);
@@ -582,7 +582,7 @@ export default function () {
                       return Math.ceil(value.max + value.max * 0.1);
                     },
                     axisLabel: {
-                      fontFamily: "JetBrains Mono",
+                      fontFamily: "Reverier Mono",
                     },
                   },
                   series: teamChartSeries(),

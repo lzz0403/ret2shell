@@ -95,7 +95,7 @@ function ChartOperations(props: {
   );
 }
 
-export default function () {
+export default function() {
   const [showLargePanel, setShowLargePanel] = createSignal(false);
   const [showChallengeDetail, setShowChallengeDetail] = createSignal(false);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -276,7 +276,7 @@ export default function () {
                       return Math.ceil(value.max + value.max * 0.1);
                     },
                     axisLabel: {
-                      fontFamily: "JetBrains Mono",
+                      fontFamily: "Reverier Mono",
                     },
                   },
                   series: teamChartSeries(),

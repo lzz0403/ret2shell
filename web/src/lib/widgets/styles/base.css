@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@import "./fonts.css";
+
 @import "./article.css";
 @import "./avatar.css";
 @import "./button.css";
@@ -36,27 +38,27 @@
 
 @theme {
   --font-display:
-    "JetBrains Mono", "Menlo", "-apple-system", "Noto Sans",
+    "Reverier Mono", "Menlo", "-apple-system", "Noto Sans",
     "Helvetica Neue", "Helvetica", "Nimbus Sans L", "Arial", "Liberation Sans",
     "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC",
     "Source Han Sans CN", "Microsoft YaHei", "Consolas", "Courier", "monospace";
   --font-sans:
-    "JetBrains Mono", "Menlo", "-apple-system", "Noto Sans",
+    "Reverier Mono", "Menlo", "-apple-system", "Noto Sans",
     "Helvetica Neue", "Helvetica", "Nimbus Sans L", "Arial", "Liberation Sans",
     "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC",
     "Source Han Sans CN", "Microsoft YaHei", "Consolas", "Courier", "monospace";
   --font-serif:
-    "JetBrains Mono", "Menlo", "-apple-system", "Noto Sans",
+    "Reverier Mono", "Menlo", "-apple-system", "Noto Sans",
     "Helvetica Neue", "Helvetica", "Nimbus Sans L", "Arial", "Liberation Sans",
     "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC",
     "Source Han Sans CN", "Microsoft YaHei", "Consolas", "Courier", "monospace";
   --font-body:
-    "JetBrains Mono", "Menlo", "-apple-system", "Noto Sans",
+    "Reverier Mono", "Menlo", "-apple-system", "Noto Sans",
     "Helvetica Neue", "Helvetica", "Nimbus Sans L", "Arial", "Liberation Sans",
     "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC",
     "Source Han Sans CN", "Microsoft YaHei", "Consolas", "Courier", "monospace";
   --font-mono:
-    "JetBrains Mono", "Menlo", "-apple-system", "Noto Sans",
+    "Reverier Mono", "Menlo", "-apple-system", "Noto Sans",
     "Helvetica Neue", "Helvetica", "Nimbus Sans L", "Arial", "Liberation Sans",
     "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Source Han Sans SC",
     "Source Han Sans CN", "Microsoft YaHei", "Consolas", "Courier", "monospace";

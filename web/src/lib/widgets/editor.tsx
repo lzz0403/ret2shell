@@ -79,7 +79,7 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
       wrap: true,
       value: editorProps.value,
       fontSize: 16,
-      fontFamily: "JetBrains Mono",
+      fontFamily: "Reverier Mono",
       cursorStyle: "smooth",
       animatedScroll: true,
       fadeFoldWidgets: true,

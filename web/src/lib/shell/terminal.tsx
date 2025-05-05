@@ -9,7 +9,7 @@ import "@xterm/xterm/css/xterm.css";
 import { challengeStore } from "@storage/challenge";
 import clsx from "clsx";
 
-export default function (props: ComponentProps<"div">) {
+export default function(props: ComponentProps<"div">) {
   let terminal: HTMLDivElement;
   const linkHandler = {
     activate(_event: MouseEvent, text: string) {
@@ -46,7 +46,7 @@ export default function (props: ComponentProps<"div">) {
       green: colorPalette.success,
       red: colorPalette.error,
     },
-    fontFamily: "JetBrains Mono",
+    fontFamily: "Reverier Mono",
     fontSize: 16,
     lineHeight: 1.2,
     linkHandler: linkHandler,
@@ -73,7 +73,7 @@ export default function (props: ComponentProps<"div">) {
     });
     resizeObserver.observe(terminal);
 
-    shell = new Shell(term, (_cmd, _code) => {});
+    shell = new Shell(term, (_cmd, _code) => { });
     shell.run();
   });
 

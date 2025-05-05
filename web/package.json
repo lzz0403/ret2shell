@@ -16,7 +16,6 @@
   "dependencies": {
     "@ark-ui/solid": "^5.8.0",
     "@e965/xlsx": "^0.20.3",
-    "@fontsource/jetbrains-mono": "^5.2.5",
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@modular-forms/solid": "^0.25.1",
     "@rehype-pretty/transformers": "^0.13.2",
