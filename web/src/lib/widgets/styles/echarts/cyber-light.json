@@ -33,7 +33,7 @@
       "borderWidth": "1"
     },
     "lineStyle": {
-      "width": "2"
+      "width": "1"
     },
     "symbolSize": "2",
     "symbol": "roundRect",
@@ -44,7 +44,7 @@
       "borderWidth": "1"
     },
     "lineStyle": {
-      "width": "2"
+      "width": "1"
     },
     "symbolSize": "2",
     "symbol": "emptyRoundRect",

@@ -109,6 +109,7 @@ export default function () {
   const selectedInstituteId = createMemo(() => Number.parseInt((searchParams.institute as string) || "NaN") || null);
   const [loading, setLoading] = createSignal(false);
   const [showPlane, setShowPlane] = createSignal(false);
+  const [showReal, setShowReal] = createSignal(!canAccessChallenges()[0]);
   const matches = createBreakpoints(breakpoints);
 
   onMount(async () => {
@@ -193,7 +194,20 @@ export default function () {
               }
               return true;
             })
-            .map((h) => [h.changed_at.toMillis(), h.score])
+            .map((h) =>
+              h.challenge_id || showReal()
+                ? [
+                    h.changed_at.toMillis(),
+                    showReal()
+                      ? h.score
+                      : t.history
+                          .filter((i) => i.changed_at <= h.changed_at && i.challenge_id)
+                          .map((i) => challengeStore.challenges.find((c) => c.id === i.challenge_id)?.score ?? 0)
+                          .reduce((a, b) => a + b, 0),
+                  ]
+                : null
+            )
+            .filter((i) => i !== null)
         )
         .concat([[Math.min(Date.now(), gameStore.current?.end_at.toMillis() ?? Date.now()), t.score]]),
     }));
@@ -314,6 +328,19 @@ export default function () {
                   >
                     <Show when={showPlane()} fallback={<span class="icon-[fluent--airplane-20-regular] w-5 h-5" />}>
                       <span class="icon-[fluent--airplane-20-filled] w-5 h-5" />
+                    </Show>
+                  </Button>
+                  <Button
+                    ghost
+                    square
+                    level="info"
+                    onClick={() => setShowReal(!showReal())}
+                    class="hidden lg:flex"
+                    size={showChallengeDetail() ? "sm" : "md"}
+                    disabled={!canAccessChallenges()[0]}
+                  >
+                    <Show when={showReal()} fallback={<span class="icon-[fluent--group-20-regular] w-5 h-5" />}>
+                      <span class="icon-[fluent--group-20-filled] w-5 h-5" />
                     </Show>
                   </Button>
                 </Show>
