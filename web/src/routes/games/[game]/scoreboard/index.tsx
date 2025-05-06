@@ -95,7 +95,7 @@ function ChartOperations(props: {
   );
 }
 
-export default function() {
+export default function () {
   const [showLargePanel, setShowLargePanel] = createSignal(false);
   const [showChallengeDetail, setShowChallengeDetail] = createSignal(false);
   const [searchParams, setSearchParams] = useSearchParams();

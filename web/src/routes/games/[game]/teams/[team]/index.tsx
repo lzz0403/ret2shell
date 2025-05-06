@@ -448,7 +448,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
   );
 }
 
-export default function() {
+export default function () {
   const [team, setTeam] = createSignal(null as Team | null);
   const [solves, setSolves] = createSignal([] as Submission[]);
   const [extras, setExtras] = createSignal([] as Extra[]);

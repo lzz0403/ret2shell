@@ -3,7 +3,7 @@ import { onMount } from "solid-js";
 // import BgBlurNight from "@assets/imgs/bg-blur-stars.webp";
 // import BgBlurDay from "@assets/imgs/bg-blur-suzume.webp";
 
-export default function() {
+export default function () {
   let svgPath1: SVGPathElement;
   let svgPath2: SVGPathElement;
   onMount(() => {

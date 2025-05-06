@@ -1,6 +1,5 @@
 import LogoAnimate from "@assets/animates/logo-animate";
 import { mediaPath } from "@lib/utils/media";
-import { wsrx } from "@lib/wsrx";
 import { HostType } from "@models/game";
 import { Permission } from "@models/user";
 import { useLocation, useParams } from "@solidjs/router";
@@ -17,10 +16,10 @@ import LoadingTips from "@widgets/loading-tips";
 import Popover from "@widgets/popover";
 import TimeProgress from "@widgets/time-progress";
 import Timer from "@widgets/timer";
-import { WsrxState } from "@xdsec/wsrx";
 import clsx from "clsx";
 import { DateTime } from "luxon";
 import { Match, Show, Switch, createMemo, createSignal } from "solid-js";
+import I18nBox, { I18nBoxContent } from "./i18n-box";
 import InstanceBox, { InstanceBoxContent } from "./instance-box";
 import NotificationBox, { NotificationBoxContent } from "./notification-box";
 import ThemeBox, { ThemeBoxContent } from "./theme-box";
@@ -155,7 +154,9 @@ function GameNav(props: { size: "sm" | "md" }) {
 }
 
 export default function TitleBar() {
-  const [additionalMobileBox, setAdditionalMobileBox] = createSignal<"wsrx" | "notification" | "diy" | null>(null);
+  const [additionalMobileBox, setAdditionalMobileBox] = createSignal<"wsrx" | "notification" | "theme" | "i18n" | null>(
+    null
+  );
   const params = useParams();
   const location = useLocation();
   const inDocs = () => location.pathname.startsWith("/docs");
@@ -204,26 +205,6 @@ export default function TitleBar() {
                       </Match>
                     </Switch>
                     <Divider direction="horizontal" />
-                    <Show when={platformStore.isOnline && accountStore.token !== null && gameStore.current}>
-                      <Button
-                        justify="start"
-                        size="sm"
-                        ghost={additionalMobileBox() !== "wsrx"}
-                        onClick={() => setAdditionalMobileBox("wsrx")}
-                      >
-                        <span
-                          class={clsx(
-                            wsrx.instances().length > 0
-                              ? "icon-[fluent--fluid-20-filled]"
-                              : "icon-[fluent--fluid-20-regular]",
-                            "w-5 h-5",
-                            wsrx.instances().length > 0 &&
-                              (wsrx.state() === WsrxState.Usable ? "text-success" : "text-warning")
-                          )}
-                        />
-                        <span>{t("wsrx.title")}</span>
-                      </Button>
-                    </Show>
                     <li>
                       <Button
                         justify="start"
@@ -248,11 +229,27 @@ export default function TitleBar() {
                         justify="start"
                         class="w-full"
                         size="sm"
-                        ghost={additionalMobileBox() !== "diy"}
-                        onClick={() => setAdditionalMobileBox("diy")}
+                        ghost={additionalMobileBox() !== "theme"}
+                        onClick={() => setAdditionalMobileBox("theme")}
                       >
                         <span class="icon-[fluent--wand-20-regular] w-5 h-5" />
                         <span>{t("platform.theme.title")}</span>
+                      </Button>
+                    </li>
+                    <li>
+                      <Button
+                        justify="start"
+                        class="w-full"
+                        size="sm"
+                        ghost={additionalMobileBox() !== "i18n"}
+                        onClick={() => setAdditionalMobileBox("i18n")}
+                      >
+                        <span class="icon-[fluent--local-language-20-regular] w-5 h-5" />
+                        <span class="icon-[fluent-emoji-flat--construction-worker] w-5 h-5" />
+                        <span class="icon-[fluent-emoji-flat--construction-worker-dark] w-5 h-5" />
+                        <span class="icon-[fluent-emoji-flat--construction-worker-light] w-5 h-5" />
+                        <span class="icon-[fluent-emoji-flat--construction-worker-medium] w-5 h-5" />
+                        <span class="icon-[fluent-emoji-flat--construction-worker-medium-dark] w-5 h-5" />
                       </Button>
                     </li>
                   </ul>
@@ -264,8 +261,11 @@ export default function TitleBar() {
                   <Match when={additionalMobileBox() === "notification"}>
                     <NotificationBoxContent />
                   </Match>
-                  <Match when={additionalMobileBox() === "diy"}>
+                  <Match when={additionalMobileBox() === "theme"}>
                     <ThemeBoxContent />
+                  </Match>
+                  <Match when={additionalMobileBox() === "i18n"}>
+                    <I18nBoxContent />
                   </Match>
                 </Switch>
               </div>
@@ -350,6 +350,7 @@ export default function TitleBar() {
               </Show>
               <NotificationBox />
               <ThemeBox />
+              <I18nBox />
             </div>
             <Switch
               fallback={
