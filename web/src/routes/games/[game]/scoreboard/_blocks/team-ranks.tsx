@@ -87,7 +87,7 @@ export default function TeamRanks(props: {
                     <span class="flex-1 truncate">{t("team.status.hidden.title")}</span>
                   </Tag>
                 </Show>
-                <Show when={props.showTime}>
+                <Show when={props.showTime && matches.lg}>
                   <div class="flex-1 flex items-center justify-end">
                     <Show when={team.institute_id} fallback={<span>&nbsp;</span>}>
                       <span
