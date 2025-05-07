@@ -1,5 +1,57 @@
 # CHANGELOG
 
+## 3.7.2
+
+### Fixed
+
+- hide institute tag in mobile view
+- fix english translations for game welcome page
+- fix registry uploading when use temdir
+- fix reactive size for button and select component
+- allow team members redo challenge in game
+
+### User Changes
+
+- English translations is manually fixed
+- Various visual fixes
+- Changes webfont from JetBrains Mono to Reverier Mono
+- move out i18n box in titlebar
+- Changes hammer chat styles
+- scoreboard will show simplified score curve by default, the real score curve still could be viewed by switch
+
+### Common Developing Changes
+
+- optimize i18n file structure (#198)
+
+## 3.7.1
+
+### Common Developing Changes
+
+- update wsrx to 0.5
+
+## 3.7.0
+
+### User Changes
+
+- show latency on wsrx proxied challenge instance
+- support refreshing registry index manually
+
+### Common Developing Changes
+
+- use @xdsec/wsrx instead of self managed wsrx client package
+
+## 3.6.2
+
+### Fixed
+
+- Fix token expires time in cache
+- Fix checker preload
+
+### User Changes
+
+- Player could use teammates environment but cannot operate it.
+- Support regeneration of game token.
+
 ## 3.6.1
 
 ### Fixed
