@@ -477,7 +477,7 @@ export default function () {
   async function refreshSolves() {
     try {
       const resp = await getTeamSolves(gameStore.current!.id, teamId()!);
-      setSolves(resp);
+      setSolves(resp.sort((a, b) => a.created_at.toMillis() - b.created_at.toMillis()));
     } catch (err) {
       handleHttpError(err as Error, t("team.errors.fetchSolves.title")!);
     }
