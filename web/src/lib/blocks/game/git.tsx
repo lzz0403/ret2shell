@@ -70,6 +70,18 @@ export default function () {
         <span class="icon-[fluent--info-20-regular] w-5 h-5 shrink-0" />
         <span>{t("game.git.cloneTip")}</span>
       </Card>
+      <Card
+        level="warning"
+        contentClass="p-2 flex flex-row space-x-2 items-center"
+      >
+        <span class="icon-[fluent--warning-20-regular] w-5 h-5 shrink-0" />
+        <Show
+          when={gameStore.current.hidden}
+          fallback={<span>{t("game.git.status.readonly.message")}</span>}
+        >
+          <span>{t("game.git.status.writable.message")}</span>
+        </Show>
+      </Card>
       <Clipboard
         value={`${window.location.origin}/api/game/${gameStore.current?.id}/repo/${repoName()}.git`}
       />
@@ -98,6 +110,13 @@ export default function () {
           <span>{t("general.loading.short")}</span>
         </Show>
       </h3>
+      <Card
+        level="warning"
+        contentClass="p-2 flex flex-row space-x-2 items-center"
+      >
+        <span class="icon-[fluent--warning-20-regular] w-5 h-5 shrink-0" />
+        <span>{t("game.git.listTip")}</span>
+      </Card>
       <div class="flex flex-col">
         <For each={objects()}>
           {(object) => (

@@ -600,7 +600,22 @@
       "audits": "Audit events"
     },
     "git": {
-      "title": "Challenge repository"
+      "title": "Challenge repository",
+      "status": {
+        "readonly": {
+          "message": "The game is public now, this repository is read-only and cannot push local changes or merge branches, please use the web function to manipulate the game."
+        },
+        "writable": {
+          "message": "The game has been hidden and the repository here is available for write operations via the Git client. Please note that direct manipulation of the raw data may result in corruption of the game bucket, make sure you know what you are doing. After pushing local changes, ret2shell will automatically perform a database synchronization and availability check, please wait for the synchronization to complete before performing any other operations."
+        }
+      },
+      "cloneTip": "Use the following link to clone your game bucket locally, the account used to access the repository is as same as your platform account. Please note that players and teams data is not included here.",
+      "listTip": "This is for viewing the basic file structure and commit history only, as repositories can be very large and organizing the Git database can take a lot of time.",
+      "errors": {
+        "fetchRepo": {
+          "title": "Failed to fetch game repository"
+        }
+      }
     },
     "form": {
       "title": "Edit Information",
