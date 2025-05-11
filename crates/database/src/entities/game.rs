@@ -224,6 +224,15 @@ where
   Entity::find_by_id(game_id).one(db).await
 }
 
+pub async fn get_by_bucket<C>(db: &C, bucket: &str) -> Result<Option<Model>, DbErr>
+where
+  C: ConnectionTrait, {
+  Entity::find()
+    .filter(Column::Bucket.eq(bucket))
+    .one(db)
+    .await
+}
+
 pub async fn get_page<C>(
   db: &C, page: u64, page_size: u64, host_type: Option<HostType>, weight: Option<i32>,
   with_hidden: bool,

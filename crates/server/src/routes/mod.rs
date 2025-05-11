@@ -41,7 +41,7 @@ mod traffic;
 mod user;
 mod wiki;
 
-mod proxy;
+mod web;
 
 pub async fn initialize(
   config: Option<server::Config>, state: GlobalState,
@@ -70,7 +70,7 @@ pub async fn initialize(
             .expect("invalid CORS origins"),
         ),
     )
-    .merge(proxy::router(&state))
+    .merge(web::router(&state))
     .layer(
       TraceLayer::new_for_http()
         .make_span_with(|request: &Request<Body>| {

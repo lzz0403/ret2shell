@@ -416,8 +416,7 @@ impl Git {
   ) -> Result<ChildStdout, BucketError>
   where
     T: IntoIterator<Item = S>,
-    S: AsRef<OsStr>,
-  {
+    S: AsRef<OsStr>, {
     let mut cmd = Command::new("git");
     cmd
       .stdin(Stdio::piped())
@@ -483,12 +482,14 @@ impl Git {
 // covert a message to PKT-LINE format
 /// Converts a message to the PKT-LINE format used in Git's protocol.
 ///
-/// This function takes a message as input and returns a string in the PKT-LINE format,
-/// which is used in Git's protocol for communication between the client and server.
+/// This function takes a message as input and returns a string in the PKT-LINE
+/// format, which is used in Git's protocol for communication between the client
+/// and server.
 ///
 /// # Arguments
 ///
-/// * `msg` - A reference to the message that needs to be converted to PKT-LINE format.
+/// * `msg` - A reference to the message that needs to be converted to PKT-LINE
+///   format.
 ///
 /// # Returns
 ///

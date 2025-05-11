@@ -1,19 +1,16 @@
 use axum::{
   Router,
-  body::Body,
   extract::{Request, State},
   http::Uri,
   response::IntoResponse,
-  routing::{any, get},
+  routing::any,
 };
-use hyper_util::client::legacy::connect::HttpConnector;
 use r2s_config::server::FrontendServeType;
 use tower_http::services::{ServeDir, ServeFile};
 use tracing::debug;
 
-use crate::traits::{GlobalState, ResponseError};
+use crate::traits::{GlobalState, HTTPClient, ResponseError};
 
-type HTTPClient = hyper_util::client::legacy::Client<HttpConnector, Body>;
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
   let frontend_config = state.config.server.clone().unwrap_or_default().frontend;
   if let Some(frontend_config) = frontend_config {
@@ -27,17 +24,17 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           ))),
       ),
       FrontendServeType::Proxy => Router::new()
-        .route("/", any(frontend_proxy_handler))
-        .route("/{*path}", any(frontend_proxy_handler)),
+        .route("/", any(proxy_to_frontend_server))
+        .route("/{*path}", any(proxy_to_frontend_server)),
     }
   } else {
     Router::new()
-      .route("/", get(no_frontend_proxy_handler))
-      .route("/{*path}", get(no_frontend_proxy_handler))
+      .route("/", any(no_frontend_proxy))
+      .route("/{*path}", any(no_frontend_proxy))
   }
 }
 
-async fn frontend_proxy_handler(
+async fn proxy_to_frontend_server(
   State(state): State<GlobalState>, State(client): State<HTTPClient>, mut req: Request,
 ) -> Result<impl IntoResponse, ResponseError> {
   // debug!("Proxying frontend request: {:?}", req);
@@ -56,7 +53,7 @@ async fn frontend_proxy_handler(
     .path_and_query()
     .map(|pq| pq.as_str())
     .unwrap_or(path);
-  let uri = format!("{}/{}", frontend_path, path_query);
+  let uri = format!("{}{}", frontend_path, path_query);
   *req.uri_mut() = Uri::try_from(uri).unwrap();
   req.headers_mut().remove("host");
 
@@ -69,7 +66,7 @@ async fn frontend_proxy_handler(
   Ok(resp)
 }
 
-async fn no_frontend_proxy_handler() -> Result<(), ResponseError> {
+async fn no_frontend_proxy() -> Result<(), ResponseError> {
   Err(ResponseError::PreconditionFailed(String::from(
     "Frontend proxy not set for ret2shell, please contact the website devops",
   )))

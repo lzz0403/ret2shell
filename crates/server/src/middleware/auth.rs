@@ -100,11 +100,11 @@ async fn extract_basic_token(
   db: &Database, cache: &Cache, token: &str,
 ) -> Result<(Token, TokenTracker), ResponseError> {
   // NOTE: we should limit login attempts here to prevent brute force attacks
-  // this auth method is not recommended, but client such as git or curl may use it, which is hard
-  // to integrate CAPTCHA protections
+  // this auth method is not recommended, but client such as git or curl may use
+  // it, which is hard to integrate CAPTCHA protections
 
-  // NOTE: the basic auth token is equivalent to a bearer token, include account operations
-  // there may exists security risk, waiting for further discussion
+  // NOTE: the basic auth token is equivalent to a bearer token, include account
+  // operations there may exists security risk, waiting for further discussion
   // limit the attempts to 5 times
 
   let (account, password) = {
