@@ -18,6 +18,8 @@ use r2s_queue::Queue;
 use serde::{Deserialize, Serialize};
 use tracing::{error, info, warn};
 
+mod registry;
+
 use crate::{
   middleware::auth::{self, Token},
   traits::{GlobalState, ResponseError},
@@ -47,6 +49,7 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
           Permission::DevOps
         ))),
     )
+    .nest("/registry", registry::router(state))
     .route("/calmdown", get(get_calmdown_status))
     .route_layer(middleware::from_fn(auth::permission_required_all!(
       Permission::Basic,
