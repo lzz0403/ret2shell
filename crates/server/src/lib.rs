@@ -1,3 +1,4 @@
+use axum::{ServiceExt, extract::Request};
 use std::{io::Write, net::SocketAddr, process};
 
 use colored::Colorize;
@@ -9,6 +10,7 @@ use r2s_event::{
 };
 use rustls::crypto;
 use tokio::signal;
+use tower_http::normalize_path::NormalizePath;
 use tracing::{error, info, warn};
 
 use crate::traits::GlobalState;
@@ -114,6 +116,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   info!("Modules loaded, constructing router...");
 
   let router = routes::initialize(config.server.clone(), state).await?;
+  let router = NormalizePath::trim_trailing_slash(router);
   info!("Router constructed.");
 
   info!(">> Server initialization finished <<");
@@ -133,7 +136,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   info!("Server started at [ {} ]", addr_str);
   axum::serve(
     addr,
-    router.into_make_service_with_connect_info::<SocketAddr>(),
+    ServiceExt::<Request>::into_make_service_with_connect_info::<SocketAddr>(router),
   )
   .with_graceful_shutdown(shutdown_signal())
   .await

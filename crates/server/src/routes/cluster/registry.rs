@@ -46,43 +46,51 @@ async fn proxy_to_registry(
     .map(|pq| pq.as_str())
     .unwrap_or(path);
   let path_query = path_query.trim_start_matches("/cluster/registry/");
-  let repo = match path_query.split('/').next() {
-    Some(repo) => repo,
-    None => {
-      return Err(ResponseError::BadRequest(
-        "invalid registry path".to_string(),
+
+  if !token.permissions.0.contains(&Permission::DevOps) {
+    let repo = match path_query.split('/').next() {
+      Some(repo) => repo,
+      None => {
+        return Err(ResponseError::BadRequest(
+          "invalid registry path".to_string(),
+        ));
+      }
+    };
+
+    let game = match game::get_by_bucket(&db.conn, repo).await? {
+      Some(game) => game,
+      None => {
+        return Err(ResponseError::NotFound(format!(
+          "game scope {} not found",
+          repo
+        )));
+      }
+    };
+
+    if !game.admins.0.contains(&token.id) {
+      return Err(ResponseError::Forbidden(
+        "access denied".to_string(),
+        format!(
+          "user {} is not allowed to access game scope {}",
+          token.id, repo
+        ),
       ));
     }
-  };
 
-  let game = match game::get_by_bucket(&db.conn, repo).await? {
-    Some(game) => game,
-    None => {
-      return Err(ResponseError::NotFound(format!(
-        "game scope {} not found",
-        repo
-      )));
-    }
-  };
-
-  if !game.admins.0.contains(&token.id) {
-    return Err(ResponseError::Forbidden(
-      "access denied".to_string(),
-      format!(
-        "user {} is not allowed to access game scope {}",
-        token.id, repo
-      ),
-    ));
+    info!(
+      "game admin {}:'{}' ({}) pushed '{}' to game scope '{}'",
+      token.id,
+      token.account,
+      token.nickname,
+      path_query.trim_start_matches(repo),
+      repo
+    );
+  } else {
+    info!(
+      "devops {}:'{}' ({}) pushed '{}' to registry",
+      token.id, token.account, token.nickname, path_query
+    );
   }
-
-  info!(
-    "game admin {}:'{}' ({}) pushed '{}' to game scope '{}'",
-    token.id,
-    token.account,
-    token.nickname,
-    path_query.trim_start_matches(repo),
-    repo
-  );
 
   let uri = format!("{}/v2/{}", registry_url.trim_matches('/'), path_query);
   *req.uri_mut() = Uri::try_from(uri).unwrap();
