@@ -22,7 +22,7 @@ export type ChallengeImage = {
   mem: string;
   storage: string | null;
   port: number | null;
-  service_type: "http" | "tcp" | null;
+  service_type: "http" | "tcp" | "udp" | null;
   description: string | null;
   restricted: boolean | null;
 };

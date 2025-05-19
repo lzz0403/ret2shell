@@ -1183,8 +1183,10 @@
               "placeholder": "請選擇服務類型",
               "items": {
                 "tcp": "原始 (TCP)",
-                "http": "HTTP"
+                "http": "HTTP",
+                "udp": "UDP"
               },
+              "udpNotWorkingWithWsrx": "由於集群的端口轉發功能不支持 UDP 轉發，UDP 服務無法使用平臺代理與WSRX訪問，請妥善配置流量轉發腳本。",
               "requiredWhenHavePort": "當填寫了服務端口時，服務類型不能為空"
             },
             "port": {

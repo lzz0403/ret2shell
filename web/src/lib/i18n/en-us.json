@@ -1183,8 +1183,10 @@
               "placeholder": "Please select a service type",
               "items": {
                 "tcp": "Raw (TCP)",
-                "http": "HTTP"
+                "http": "HTTP",
+                "udp": "UDP"
               },
+              "udpNotWorkingWithWsrx": "Kubernetes does not support port-forward with UDP, so it cannot be used with platform proxy and WSRX, please configure the traffic script to provide direct access to the service.",
               "requiredWhenHavePort": "The service type cannot be empty when a service port is open"
             },
             "port": {

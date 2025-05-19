@@ -345,6 +345,11 @@ function CreateForm(fnProps: {
                     label: t("challenge.instance.image.form.service.type.items.tcp")!,
                     icon: "icon-[fluent--globe-20-regular]",
                   },
+                  {
+                    value: "udp",
+                    label: t("challenge.instance.image.form.service.type.items.udp")!,
+                    icon: "icon-[fluent--globe-20-regular]",
+                  },
                 ]}
                 value={field.value ? [field.value as string] : []}
                 inputProps={props}
@@ -385,6 +390,12 @@ function CreateForm(fnProps: {
           </Field>
         </div>
       </div>
+      <Show when={getValue(form, "service_type") === "udp"}>
+        <Card level="warning" contentClass="p-2 flex flex-row space-x-2 items-center">
+          <span class="icon-[fluent--info-20-regular] w-5 h-5" />
+          <span>{t("challenge.instance.image.form.service.type.udpNotWorkingWithWsrx")}</span>
+        </Card>
+      </Show>
       <div class="flex flex-row space-x-2">
         <Field name="cpu" type="number" validate={[required(t("challenge.instance.image.form.service.cpu.required")!)]}>
           {(field, props) => (
