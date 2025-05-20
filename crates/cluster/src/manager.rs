@@ -424,6 +424,15 @@ impl Cluster {
     Ok(pods)
   }
 
+  fn map_protocol(&self, service: &Option<ServiceType>) -> String {
+    match service {
+      &Some(ServiceType::Tcp) => "TCP".to_owned(),
+      &Some(ServiceType::Udp) => "UDP".to_owned(),
+      &Some(ServiceType::Http) => "TCP".to_owned(),
+      &None => "TCP".to_owned(),
+    }
+  }
+
   pub async fn create_challenge_env(
     &self, labels: BTreeMap<String, String>, annotations: BTreeMap<String, String>,
     envs: HashMap<String, String>, env_config: ChallengeEnv, node_selector: Option<String>,
@@ -501,17 +510,7 @@ impl Cluster {
             ports: image.port.map(|port| {
               vec![ContainerPort {
                 container_port: port as i32,
-                protocol: Some(
-                  if image
-                    .service_type
-                    .clone()
-                    .is_some_and(|s| s == ServiceType::Udp)
-                  {
-                    "UDP".to_owned()
-                  } else {
-                    "TCP".to_owned()
-                  },
-                ),
+                protocol: Some(self.map_protocol(&image.service_type)),
                 ..Default::default()
               }]
             }),
@@ -583,6 +582,7 @@ impl Cluster {
                 .map(|port| k8s_openapi::api::core::v1::ServicePort {
                   name: Some(image.name.clone()),
                   port: port as i32,
+                  protocol: Some(self.map_protocol(&image.service_type)),
                   target_port: Some(
                     k8s_openapi::apimachinery::pkg::util::intstr::IntOrString::Int(port as i32),
                   ),
