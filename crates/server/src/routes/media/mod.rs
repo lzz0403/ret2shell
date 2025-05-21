@@ -67,8 +67,7 @@ async fn get_media(
   headers.insert(
     "Content-Type",
     media
-      .get_mime_type(&query.hash)
-      .await?
+      .get_mime_type(&query.hash)?
       .parse::<HeaderValue>()
       .map_err(|e| {
         ResponseError::InternalServerError("failed to parse mime type".to_string(), e.to_string())
