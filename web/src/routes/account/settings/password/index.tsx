@@ -29,7 +29,7 @@ export default function () {
       });
       addToast({
         level: "success",
-        description: t("account.password.errors.change.title")!,
+        description: t("general.actions.save.status.success")!,
         duration: 5000,
       });
     } catch (err) {

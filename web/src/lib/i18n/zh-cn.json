@@ -1677,12 +1677,7 @@
       "title": "用户信息"
     },
     "password": {
-      "title": "修改密码",
-      "errors": {
-        "change": {
-          "title": "更改密码失败"
-        }
-      }
+      "title": "修改密码"
     },
     "delete": {
       "title": "删号跑路",

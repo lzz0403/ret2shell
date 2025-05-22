@@ -76,6 +76,7 @@ function CreateForm(fnProps: {
     return {
       ...image,
       description: image.description || null,
+      // NOTE: do not change it to `??`, which can not be used to check "" empty string
       service_type: image.service_type || null,
       port: image.port && !Number.isNaN(image.port) && image.port > 0 && image.port < 65536 ? image.port : null,
     };

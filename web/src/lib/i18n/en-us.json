@@ -1677,12 +1677,7 @@
       "title": "User information"
     },
     "password": {
-      "title": "Change password",
-      "errors": {
-        "change": {
-          "title": "Failed to change password"
-        }
-      }
+      "title": "Change password"
     },
     "delete": {
       "title": "Delete account",
