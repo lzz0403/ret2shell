@@ -68,7 +68,7 @@ export default function UserCodeDialog() {
               <span class="text-warning inline-block align-middle">
                 <span>{t("account.code.status.unverified.message")}</span>
               </span>
-              <A href="/account/info" class="flex items-center space-x-2">
+              <A href="/account/settings/info" class="flex items-center space-x-2">
                 <span class="icon-[fluent--open-20-regular] w-5 h-5" />
                 <span>{t("account.code.status.unverified.action")}</span>
               </A>
