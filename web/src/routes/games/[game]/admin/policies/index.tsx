@@ -71,7 +71,7 @@ export function PoliciesEdit(props: {
 export default function () {
   const [loading, setLoading] = createSignal(false);
   async function onSubmit(result: ArchivePolicy) {
-    console.log(result);
+    // console.log(result);
     setLoading(true);
     try {
       const game = await updateGame(gameStore.current!.id, {
