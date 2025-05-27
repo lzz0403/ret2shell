@@ -67,9 +67,13 @@ render(() => {
               <span class="text-error">S</span>
               <span>hell</span>
               <span>&nbsp;</span>
-              <span>seems crashed.</span>
+              <span>seems load failed.</span>
             </span>
           </h1>
+          <p class="opacity-60 max-w-5xl text-wrap p-3 text-center">
+            Sometimes this error will happen after an update of frontend, just refresh this page and everything will
+            work normally.
+          </p>
           <h2 class="text-2xl flex items-center gap-2">
             <span class="icon-[fluent-emoji-flat--globe-with-meridians] w-8 h-8" />
             <span class="icon-[fluent-emoji-flat--collision] w-8 h-8" />
