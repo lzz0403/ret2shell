@@ -85,11 +85,9 @@ where
 pub async fn delete_by_user_id<C>(db: &C, user_id: i64) -> Result<(), DbErr>
 where
   C: ConnectionTrait, {
-  Entity::delete(ActiveModel {
-    uploader_id: ActiveValue::Set(user_id),
-    ..Default::default()
-  })
-  .exec(db)
-  .await
-  .map(|_| ())
+  Entity::delete_many()
+    .filter(Column::UploaderId.eq(user_id))
+    .exec(db)
+    .await
+    .map(|_| ())
 }

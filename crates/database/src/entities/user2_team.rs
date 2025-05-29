@@ -59,12 +59,10 @@ where
 pub async fn user_leave_team<C>(db: &C, user_id: i64, team_id: i64) -> Result<(), DbErr>
 where
   C: ConnectionTrait, {
-  Entity::delete(ActiveModel {
-    user_id: ActiveValue::Set(user_id),
-    team_id: ActiveValue::Set(team_id),
-    ..Default::default()
-  })
-  .exec(db)
-  .await?;
-  Ok(())
+  Entity::delete_many()
+    .filter(Column::UserId.eq(user_id))
+    .filter(Column::TeamId.eq(team_id))
+    .exec(db)
+    .await
+    .map(|_| ())
 }
