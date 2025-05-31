@@ -179,15 +179,17 @@ export default function () {
             {(notification) => (
               <>
                 <div class="flex flex-col">
-                  <h2
-                    class="flex flex-row items-center py-2 space-x-2 font-bold"
-                    title={`${notification.publisher_name} at ${notification.published_at.toFormat(
-                      "yyyy-MM-dd HH:mm:ss"
-                    )}`}
-                  >
+                  <h2 class="flex flex-row items-center py-2 space-x-2 font-bold">
                     <span class="shrink-0 icon-[fluent--alert-20-regular] w-5 h-5" />
-                    <span class="flex-1 truncate">{notification.title}</span>
-                    <span class="shrink-0 icon-[fluent--calendar-20-regular] w-5 h-5" />
+                    <span class="flex-1 truncate" title={notification.title}>
+                      {notification.title}
+                    </span>
+                    <span
+                      class="shrink-0 icon-[fluent--calendar-20-regular] w-5 h-5"
+                      title={`${notification.publisher_name} at ${notification.published_at.toFormat(
+                        "yyyy-MM-dd HH:mm:ss"
+                      )}`}
+                    />
                     <A class="shrink-0 flex items-center" href={`/users/${notification.publisher_id}`}>
                       <span class="icon-[fluent--person-20-regular] w-5 h-5" />
                     </A>

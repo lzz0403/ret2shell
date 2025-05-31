@@ -282,6 +282,14 @@ export default function () {
                     : "UNKNOWN"}
                 </span>
               </Tag>
+              <button
+                class="absolute w-full h-full top-0 left-0 !m-0 cursor-pointer"
+                onClick={() => {
+                  if (selectedGame()) setGameStore({ current: selectedGame() || null });
+                  return false;
+                }}
+                type="button"
+              />
             </Card>
             <Card
               class="w-full lg:w-3/5 relative transform transition-all lg:-translate-y-[2rem] lg:translate-x-1/2 rounded-t-none lg:rounded-t-lg border-t-0 lg:border-t-[1px] flex"
@@ -318,7 +326,7 @@ export default function () {
                 </Tag>
               </div>
               <button
-                class="absolute w-full h-full top-0 left-0 !m-0"
+                class="absolute w-full h-full top-0 left-0 !m-0 cursor-pointer"
                 onClick={() => {
                   if (selectedGame()) setGameStore({ current: selectedGame() || null });
                   return false;
