@@ -162,13 +162,13 @@ pub async fn down(config: GlobalConfig) -> anyhow::Result<()> {
   );
   print!(
     "Are you sure to continue? [{}/{}]: ",
-    "yes".red(),
+    "I am sure to do that".red(),
     "NO".bold().green()
   );
   std::io::stdout().flush()?;
   let mut input = String::new();
   std::io::stdin().read_line(&mut input)?;
-  if !input.trim().to_lowercase().eq("yes") {
+  if !input.trim().to_lowercase().eq("i am sure to do that") {
     warn!("Cleanup aborted");
     return Ok(());
   }

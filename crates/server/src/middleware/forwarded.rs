@@ -320,16 +320,20 @@ pub async fn ip_record(
     }
   };
   debug!("Client IP address: {ip}");
-  queue
-    .publish(
-      "ip-record",
-      IpRecord {
-        ip: ip.clone(),
-        user_id: token.id,
-      },
-    )
-    .await?;
-  debug!("IP record message published");
+  if token.id != 0 {
+    queue
+      .publish(
+        "ip-record",
+        IpRecord {
+          ip: ip.clone(),
+          user_id: token.id,
+        },
+      )
+      .await?;
+    debug!("IP record message published");
+  } else {
+    debug!("Token ID is 0, skipping IP record");
+  }
   let span =
     info_span!("http",from = %ip.to_string(), method = %req.method(), uri = %req.uri().path());
   async move {
