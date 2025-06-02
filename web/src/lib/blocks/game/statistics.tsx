@@ -140,6 +140,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
       "Tag",
       "Institute",
       "State",
+      "Score",
       ...Array.from({ length: gameStore.current?.team_size ?? 0 }, (_, i) => `PLAYER ${i}`),
       ...Array.from({ length: challenges().length }, (_, i) => challenges()[i].name),
     ];
@@ -158,6 +159,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
       }
     }
     for (const [index, [team, members]] of data.scoreboard.entries()) {
+      const paddedMembers = members.slice(0, gameStore.current?.team_size ?? 0);
       const row = [
         index + 1,
         team.id,
@@ -165,7 +167,8 @@ export default function GameStatistics(props: { inGame?: boolean }) {
         team.tag,
         accountStore.institutes.find((i) => i.id === team.institute_id)?.name ?? "",
         convertTeamState(team.state),
-        ...members.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
+        team.score,
+        ...paddedMembers.map((m) => `${m.id}:${m.account} (${m.nickname}) <${m.email}>`),
         ...challenges().map((c) => (team.history.find((h) => h.challenge_id === c.id) ? "*" : "")),
       ];
       scoreboardArr.push(row);
