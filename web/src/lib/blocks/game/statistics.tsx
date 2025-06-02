@@ -159,7 +159,10 @@ export default function GameStatistics(props: { inGame?: boolean }) {
       }
     }
     for (const [index, [team, members]] of data.scoreboard.entries()) {
-      const paddedMembers = members.slice(0, gameStore.current?.team_size ?? 0);
+      const paddedMembers = JSON.parse(JSON.stringify(members));
+      while (paddedMembers.length < gameStore.current?.team_size ?? 0) {
+        paddedMembers.push({ id: "", account: "", nickname: "", email: "" });
+      }
       const row = [
         index + 1,
         team.id,
