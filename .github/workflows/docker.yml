@@ -55,7 +55,7 @@ jobs:
         id: export
         run: |
           image='${{ steps.build.outputs.image }}'
-          output_fn="$(echo "$image" | tr ':' '_').tar"
+          output_fn="$(echo "$image" | tr ':' '_')"
           echo "output_fn=$output_fn" >> "$GITHUB_OUTPUT"
           docker save "$image" -o '${{ runner.temp }}/image.tar'
           sha256sum '${{ runner.temp }}/image.tar' > '${{ runner.temp }}/image.tar.sha256'
