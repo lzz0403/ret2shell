@@ -3,7 +3,8 @@ import type { ServerConfig } from "@models/config";
 import { makePersisted } from "@solid-primitives/storage";
 import { createStore } from "solid-js/store";
 
-export const frontendCompatVersion = import.meta.env.VITE_COMPAT_VERSION as string;
+export const frontendCompatVersion = import.meta.env
+  .VITE_COMPAT_VERSION as string;
 
 export const [platformStore, setPlatformStore] = makePersisted(
   createStore({
@@ -21,6 +22,7 @@ export const [platformStore, setPlatformStore] = makePersisted(
       footer_info: null as string | null,
       record: null as string | null,
       hide_maker: false as boolean | null,
+      zen_game: null as number | null,
     } as ServerConfig,
     version: `${frontendCompatVersion}-UNKNOWN-0.0.0`,
     accept_cookies: false,
@@ -35,5 +37,5 @@ export const [platformStore, setPlatformStore] = makePersisted(
       return this.version === frontendCompatVersion;
     },
   }),
-  { name: "platform" }
+  { name: "platform" },
 );

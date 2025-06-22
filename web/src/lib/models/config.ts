@@ -98,6 +98,7 @@ export type ServerConfig = {
   record: string | null;
   hide_maker: boolean | null;
   highlight_banner: string | null;
+  zen_game: number | null;
 };
 export type Config = {
   auditor: AuditorConfig;

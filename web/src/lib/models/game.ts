@@ -20,6 +20,12 @@ export type ArchivePolicy = {
   challenge: ArchivePolicyChallenge;
 };
 
+export type HammerPolicy = {
+  enabled: boolean;
+  outer_label: string | null;
+  outer_url: string | null;
+};
+
 export type Game = {
   id: number;
   updated_at: DateTime;
@@ -56,4 +62,5 @@ export type Game = {
     | null;
   node_selector: string | null;
   traffic: string | null;
+  hammer_policy: HammerPolicy | null;
 };

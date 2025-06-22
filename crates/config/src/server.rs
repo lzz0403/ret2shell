@@ -55,6 +55,7 @@ pub struct Config {
   pub record: Option<String>,
   pub hide_maker: Option<bool>,
   pub highlight_banner: Option<String>,
+  pub zen_game: Option<i64>,
 }
 
 impl Config {
@@ -101,6 +102,7 @@ impl Config {
       highlight_banner: self.highlight_banner.clone(),
       // api_rate_limit: self.api_rate_limit,
       rate_limit: None,
+      zen_game: self.zen_game,
     }
   }
 }
@@ -127,6 +129,7 @@ impl Merge for Option<Config> {
         highlight_banner: b.highlight_banner.or(a.highlight_banner),
         // api_rate_limit: b.api_rate_limit.or(a.api_rate_limit),
         rate_limit: a.rate_limit,
+        zen_game: b.zen_game,
       }),
       (Some(a), None) => Some(a),
       (None, Some(b)) => Some(b),

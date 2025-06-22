@@ -25,6 +25,11 @@ export default function () {
           result.second_blood_award ?? ((result.award_rate ?? 0) * 2) / 3,
           result.third_blood_award ?? (result.award_rate ?? 0) / 3,
         ],
+        hammer_policy: {
+          enabled: !!result.enable_hammer,
+          outer_label: result.outer_hammer_label || null,
+          outer_url: result.outer_hammer_url || null,
+        },
       });
       setGameStore({ current: game });
       addToast({
@@ -39,9 +44,17 @@ export default function () {
   }
   return (
     <>
-      <Title page={t("game.form.title")} route={`/games/${gameStore.current?.id}/admin/edit`} />
+      <Title
+        page={t("game.form.title")}
+        route={`/games/${gameStore.current?.id}/admin/edit`}
+      />
       <div class="flex flex-col p-3 lg:p-6 w-full items-center">
-        <GameEdit onDone={onSubmit} editSource={gameStore.current || undefined} loading={loading()} inGame />
+        <GameEdit
+          onDone={onSubmit}
+          editSource={gameStore.current || undefined}
+          loading={loading()}
+          inGame
+        />
       </div>
     </>
   );

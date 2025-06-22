@@ -14,7 +14,16 @@ import LoadingTips from "@widgets/loading-tips";
 import { checkUnreadMessages, createChallenge, getChallenge } from "@api/game";
 import { addToast, removeToast } from "@storage/toast";
 import { DateTime } from "luxon";
-import { Match, Show, Switch, createEffect, createMemo, createSignal, onCleanup, untrack } from "solid-js";
+import {
+  Match,
+  Show,
+  Switch,
+  createEffect,
+  createMemo,
+  createSignal,
+  onCleanup,
+  untrack,
+} from "solid-js";
 import Notifications from "./_blocks/notifications";
 import Team from "./_blocks/team";
 import Welcome from "./_blocks/welcome";
@@ -23,7 +32,12 @@ import { handleHttpError } from "@api";
 import Tabs from "@blocks/challenge/tabs";
 import type { Chat } from "@models/chat";
 import { createBreakpoints } from "@solid-primitives/media";
-import { challengeStore, refreshChallengeAssets, refreshChallenges, setChallengeStore } from "@storage/challenge";
+import {
+  challengeStore,
+  refreshChallengeAssets,
+  refreshChallenges,
+  setChallengeStore,
+} from "@storage/challenge";
 import Button from "@widgets/button";
 import clsx from "clsx";
 import { Transition } from "solid-transition-group";
@@ -31,12 +45,16 @@ import { Transition } from "solid-transition-group";
 export default function () {
   const navigate = useNavigate();
   if (accountStore.token === null) {
-    navigate(`/account/login?redirect=/games/${gameStore.current ? gameStore.current.id : ""}`);
+    navigate(
+      `/account/login?redirect=/games/${gameStore.current ? gameStore.current.id : ""}`,
+    );
     return null;
   }
   const [loadingChallenge, setLoadingChallenge] = createSignal(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const selectedChallengeId = createMemo(() => Number.parseInt((searchParams.challenge as string) || "NaN") || null);
+  const selectedChallengeId = createMemo(
+    () => Number.parseInt((searchParams.challenge as string) || "NaN") || null,
+  );
   const inCreate = createMemo(() => searchParams.create === "true");
   const [creating, setCreating] = createSignal(false);
 
@@ -53,7 +71,11 @@ export default function () {
 
   createEffect(() => {
     if (selectedChallengeId() && gameStore.current) {
-      if (gameStore.current && gameStore.current.start_at > DateTime.now() && !isGameAdmin()) {
+      if (
+        gameStore.current &&
+        gameStore.current.start_at > DateTime.now() &&
+        !isGameAdmin()
+      ) {
         addToast({
           level: "warning",
           description: t("game.notStarted")!,
@@ -65,7 +87,10 @@ export default function () {
       untrack(async () => {
         setLoadingChallenge(true);
         try {
-          const resp = await getChallenge(gameStore.current!.id, selectedChallengeId()!);
+          const resp = await getChallenge(
+            gameStore.current!.id,
+            selectedChallengeId()!,
+          );
           setChallengeStore({ current: resp });
           refreshChallengeAssets();
         } catch (err) {
@@ -101,8 +126,12 @@ export default function () {
       },
       score: result.initial,
       bucket: null,
-      release_at: result.release_at ? DateTime.fromSeconds(result.release_at) : null,
-      archive_at: result.archive_at ? DateTime.fromSeconds(result.archive_at) : null,
+      release_at: result.release_at
+        ? DateTime.fromSeconds(result.release_at)
+        : null,
+      archive_at: result.archive_at
+        ? DateTime.fromSeconds(result.archive_at)
+        : null,
     } as ChallengeModel;
     try {
       const result = await createChallenge(gameStore.current!.id, challenge);
@@ -120,6 +149,9 @@ export default function () {
   let prevUnreadChats: Chat[] = [];
   // hammer chats timer
   const chatsRefreshTimer = setInterval(async () => {
+    if (gameStore.current?.hammer_policy?.enabled !== true || !gameStore.team) {
+      return;
+    }
     if (gameStore.current && gameStore.team) {
       try {
         const unreadChats = await checkUnreadMessages(gameStore.current.id);
@@ -134,10 +166,15 @@ export default function () {
           const toastId = addToast({
             level: "info",
             description: `${t("game.hammer.newMessages", {
-              challenge: challengeStore.challenges.find((v) => v.id === chat.challenge_id)?.name ?? "[DELETED]",
+              challenge:
+                challengeStore.challenges.find(
+                  (v) => v.id === chat.challenge_id,
+                )?.name ?? "[DELETED]",
             })}: ${msg}`,
             accept: () => {
-              navigate(`/games/${gameStore.current?.id}/challenges?challenge=${chat.challenge_id}&tab=hammer`);
+              navigate(
+                `/games/${gameStore.current?.id}/challenges?challenge=${chat.challenge_id}&tab=hammer`,
+              );
               setTimeout(() => {
                 removeToast(toastId);
               }, 50);
@@ -147,7 +184,10 @@ export default function () {
         }
         prevUnreadChats = unreadChats;
       } catch (err) {
-        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title")!);
+        handleHttpError(
+          err as Error,
+          t("challenge.hammer.errors.fetch.title")!,
+        );
       }
     }
   }, 30 * 1000);
@@ -161,13 +201,21 @@ export default function () {
   const [showRightSidebar, setShowRightSidebar] = createSignal(false);
   return (
     <>
-      <Title page={t("challenge.title")} route={`/games/${gameStore.current?.id}/challenges`} />
+      <Title
+        page={t("challenge.title")}
+        route={`/games/${gameStore.current?.id}/challenges`}
+      />
       <SidebarLayout
         showLeftBar={showLeftSidebar()}
         leftBar={() => (
           <div class="h-full flex flex-col">
             <div class="border-b border-b-layer-content/10 px-2 h-16 flex items-center justify-center">
-              <Link class="w-full" ghost justify="start" href={`/games/${gameStore.current?.id}/challenges`}>
+              <Link
+                class="w-full"
+                ghost
+                justify="start"
+                href={`/games/${gameStore.current?.id}/challenges`}
+              >
                 <span class="shrink-0 icon-[fluent--flag-20-filled] w-5 h-5 text-primary" />
                 <span>{t("challenge.list")}</span>
               </Link>
@@ -184,7 +232,11 @@ export default function () {
         )}
       >
         <div class="flex-1 flex flex-col w-0">
-          <Tabs baseUrl={`/games/${gameStore.current?.id}/challenges`} loading={loadingChallenge()} inGame />
+          <Tabs
+            baseUrl={`/games/${gameStore.current?.id}/challenges`}
+            loading={loadingChallenge()}
+            inGame
+          />
           <Switch fallback={<Welcome />}>
             <Match when={loadingChallenge()}>
               <div class="flex-1 flex flex-row space-x-2 items-center justify-center">
@@ -200,7 +252,8 @@ export default function () {
                 onStateChange={refreshChallenges}
                 archived={
                   !!gameStore.current?.archive_policy.challenge.show_answer &&
-                  (challengeStore.current?.archive_at?.toMillis() || Number.POSITIVE_INFINITY) < Date.now()
+                  (challengeStore.current?.archive_at?.toMillis() ||
+                    Number.POSITIVE_INFINITY) < Date.now()
                 }
               />
             </Match>
@@ -222,8 +275,10 @@ export default function () {
               class={clsx(
                 "transition-transform",
                 showLeftSidebar() && "rotate-90",
-                showLeftSidebar() ? "icon-[fluent--dismiss-20-regular]" : "icon-[fluent--code-20-regular]",
-                "w-5 h-5"
+                showLeftSidebar()
+                  ? "icon-[fluent--dismiss-20-regular]"
+                  : "icon-[fluent--code-20-regular]",
+                "w-5 h-5",
               )}
             />
           </Button>
@@ -244,8 +299,10 @@ export default function () {
               class={clsx(
                 "transition-transform",
                 showRightSidebar() && "rotate-90",
-                showRightSidebar() ? "icon-[fluent--dismiss-20-regular]" : "icon-[fluent--alert-20-regular]",
-                "w-5 h-5"
+                showRightSidebar()
+                  ? "icon-[fluent--dismiss-20-regular]"
+                  : "icon-[fluent--alert-20-regular]",
+                "w-5 h-5",
               )}
             />
           </Button>

@@ -43,6 +43,7 @@ pub enum Game {
   TimelinePresets,
   Traffic,
   NodeSelector,
+  HammerPolicy,
 }
 
 #[async_trait::async_trait]

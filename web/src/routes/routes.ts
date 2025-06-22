@@ -54,7 +54,9 @@ export const routes = {
             },
             {
               path: "/password",
-              component: lazy(() => import("./account/settings/password/index")),
+              component: lazy(
+                () => import("./account/settings/password/index"),
+              ),
             },
             {
               path: "/oauth",
@@ -62,7 +64,9 @@ export const routes = {
             },
             {
               path: "/mov-esp-ebp-pop-ebp",
-              component: lazy(() => import("./account/settings/mov-esp-ebp-pop-ebp/index")),
+              component: lazy(
+                () => import("./account/settings/mov-esp-ebp-pop-ebp/index"),
+              ),
             },
           ],
         },
@@ -140,55 +144,81 @@ export const routes = {
                 },
                 {
                   path: "/statistics",
-                  component: lazy(() => import("./games/[game]/admin/statistics/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/statistics/index"),
+                  ),
                 },
                 {
                   path: "/edit",
-                  component: lazy(() => import("./games/[game]/admin/edit/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/edit/index"),
+                  ),
                 },
                 {
                   path: "/policies",
-                  component: lazy(() => import("./games/[game]/admin/policies/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/policies/index"),
+                  ),
                 },
                 {
                   path: "/organize",
-                  component: lazy(() => import("./games/[game]/admin/organize/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/organize/index"),
+                  ),
                 },
                 {
                   path: "/hammers",
-                  component: lazy(() => import("./games/[game]/admin/hammers/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/hammers/index"),
+                  ),
                 },
                 {
                   path: "/teams",
-                  component: lazy(() => import("./games/[game]/admin/teams/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/teams/index"),
+                  ),
                 },
                 {
                   path: "/monitor",
-                  component: lazy(() => import("./games/[game]/admin/monitor/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/monitor/index"),
+                  ),
                 },
                 {
                   path: "/events",
-                  component: lazy(() => import("./games/[game]/admin/events/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/events/index"),
+                  ),
                 },
                 {
                   path: "/git",
-                  component: lazy(() => import("./games/[game]/admin/git/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/git/index"),
+                  ),
                 },
                 {
                   path: "/traffic",
-                  component: lazy(() => import("./games/[game]/admin/traffic/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/traffic/index"),
+                  ),
                 },
                 {
                   path: "/captures",
-                  component: lazy(() => import("./games/[game]/admin/captures/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/captures/index"),
+                  ),
                 },
                 {
                   path: "/timeline",
-                  component: lazy(() => import("./games/[game]/admin/timeline/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/timeline/index"),
+                  ),
                 },
                 {
                   path: "/delete",
-                  component: lazy(() => import("./games/[game]/admin/delete/index")),
+                  component: lazy(
+                    () => import("./games/[game]/admin/delete/index"),
+                  ),
                 },
               ],
             },
@@ -210,15 +240,27 @@ export const routes = {
                 },
                 {
                   path: "/:team",
-                  component: lazy(() => import("./games/[game]/teams/[team]/index")),
+                  component: lazy(
+                    () => import("./games/[game]/teams/[team]/index"),
+                  ),
                 },
                 {
                   path: "/create",
-                  component: lazy(() => import("./games/[game]/teams/create/index")),
+                  component: lazy(
+                    () => import("./games/[game]/teams/create/index"),
+                  ),
                 },
                 {
                   path: "/join",
-                  component: lazy(() => import("./games/[game]/teams/join/index")),
+                  component: lazy(
+                    () => import("./games/[game]/teams/join/index"),
+                  ),
+                },
+                {
+                  path: "/choose",
+                  component: lazy(
+                    () => import("./games/[game]/teams/choose/index"),
+                  ),
                 },
               ],
             },

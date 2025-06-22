@@ -56,7 +56,7 @@
       "04": "Downloading more RAM from Internet...",
       "05": "Sorting 1 and 0...",
       "06": "Enumerating ML neural network...",
-      "07": "Importing artificial incompetence...",
+      "07": "Importing artificial intelligence...",
       "08": "Cracking Alice and Bob's one-time pads...",
       "09": "Trying to exit from VIM..."
     },
@@ -140,14 +140,6 @@
           "fail": "Failed to reset"
         }
       },
-      "leave": {
-        "title": "Leave",
-        "message": "Are you sure to leave?",
-        "status": {
-          "success": "Successfully left",
-          "fail": "Failed to leave"
-        }
-      },
       "search": {
         "title": "Search"
       },
@@ -156,6 +148,14 @@
         "status": {
           "success": "Successfully refreshed",
           "fail": "Failed to refresh"
+        }
+      },
+      "leave": {
+        "title": "Leave",
+        "message": "Are you sure to leave?",
+        "status": {
+          "success": "Leaved successfully",
+          "fail": "Failed to leave"
         }
       },
       "loadMore": {
@@ -540,6 +540,7 @@
     "archived": "Archived",
     "archive": "Archive",
     "welcome": "Welcome",
+    "join": "Join game",
     "introduction": {
       "title": "Game introduction",
       "empty": "The organizer is lazy, nothing is here",
@@ -611,17 +612,17 @@
       "title": "Challenge repository",
       "status": {
         "readonly": {
-          "message": "The game is public now, this repository is read-only and cannot push local changes or merge branches, please use the web function to manipulate the game."
+          "message": "When the game is visible to players, the repository is in read-only mode and local changes cannot be pushed or branches merged. Please use the web interface to manage game data."
         },
         "writable": {
-          "message": "The game has been hidden and the repository here is available for write operations via the Git client. Please note that direct manipulation of the raw data may result in corruption of the game bucket, make sure you know what you are doing. After pushing local changes, ret2shell will automatically perform a database synchronization and availability check, please wait for the synchronization to complete before performing any other operations."
+          "message": "The game has been hidden, and the repository here can be written to via a Git client. Please note that directly operating on the original data may cause damage to the game data. Please make sure you know what you are doing. After pushing local changes, the platform will automatically perform database synchronization and availability checks. Please wait for the synchronization to complete before performing other operations."
         }
       },
-      "cloneTip": "Use the following link to clone your game bucket locally, the account used to access the repository is as same as your platform account. Please note that players and teams data is not included here.",
-      "listTip": "This is for viewing the basic file structure and commit history only, as repositories can be very large and organizing the Git database can take a lot of time.",
+      "cloneTip": "Using the following link, you can clone the game data to your local machine. The account used to access the repository should be consistent with the platform account, which makes it easier to back up and migrate later. Please note that user and team information is not included here.",
+      "listTip": "This area is for viewing the basic file structure and commit history. Due to the potentially large size of the repository, organizing the Git database may take a long time.",
       "errors": {
         "fetchRepo": {
-          "title": "Failed to fetch game repository"
+          "title": "Failed to fetch repository"
         }
       }
     },
@@ -712,6 +713,21 @@
       "introduction": {
         "label": "Game introduction",
         "required": "Game introduction cannot be empty"
+      },
+      "enableHammer": {
+        "label": "Enable hammer",
+        "placeholder": "Whether to enable hammer",
+        "message": "After enabling, participants can communicate with the challenge setter through the hammer feedback system"
+      },
+      "outerHammerUrl": {
+        "label": "Outer feedback URL",
+        "placeholder": "Please input the outer feedback URL",
+        "message": "If the hammer feedback is not enabled, the platform will guide the player to an external feedback system through the link here."
+      },
+      "outerHammerLabel": {
+        "label": "Outer feedback label",
+        "placeholder": "Please input the outer feedback label",
+        "message": "If the hammer feedback is not enabled, the platform will guide the player to the external feedback system based on the label here."
       }
     },
     "admin": {
@@ -784,8 +800,7 @@
       "errors": {
         "fetchSessions": {
           "title": "Failed to fetch chat sessions"
-        },
-        "fetchChats": {}
+        }
       },
       "empty": "No chats yet",
       "status": {
@@ -1054,6 +1069,8 @@
       "title": "Hammer",
       "solved": "The challenge has been solved, congratulations!",
       "adminGoto": "Administrators please go to the game management page to view hammer chat messages.",
+      "outerGoto": "Hammer is not enabled for this game. Please send your ticket or feedback here",
+      "outerFollow": "Hammer is not enabled for this game. Please follow the organizer's requirements and provide feedback through other channels.",
       "tips": {
         "0": "The message you send here will be forwarded to the challenge setter along with your status. The challenge setter may reply here or contact you through other IMs.",
         "1": "Please note that before the challenge setter replies, you can only send three messages, so please try to combine your questions in one message.",
@@ -1191,7 +1208,7 @@
                 "http": "HTTP",
                 "udp": "UDP"
               },
-              "udpNotWorkingWithWsrx": "Kubernetes does not support port-forward with UDP, so it cannot be used with platform proxy and WSRX, please configure the traffic script to provide direct access to the service.",
+              "udpNotWorkingWithWsrx": "Because the cluster's port forwarding feature does not support UDP forwarding, UDP services cannot be accessed with platform proxy and WSRX. Please configure the traffic forwarding script properly.",
               "requiredWhenHavePort": "The service type cannot be empty when a service port is open"
             },
             "port": {
@@ -1275,8 +1292,8 @@
         },
         "singleton": {
           "title": "You have reached the limit of challenge instances you can start at the same time",
-          "current": "Currently running instances",
-          "action": "Do you want to stop other challenge instances and start the current one?",
+          "current": "The instance currently running",
+          "action": "Stop other challenge instances and start the current one?",
           "stop": "Please select a challenge instance to stop and start the current one"
         },
         "noAction": {
@@ -1919,6 +1936,7 @@
     "empty": "No teams here",
     "join": {
       "title": "Join team",
+      "tips": "Join an existing team. You can join a team by entering the team token shared by other teammates.",
       "form": {
         "token": {
           "required": "Team token cannot be empty",
@@ -1928,7 +1946,11 @@
       }
     },
     "create": {
-      "title": "Create team"
+      "title": "Create team",
+      "tips": "Create a new team. After creating the team, you will become the team leader and have the authority to manage the team."
+    },
+    "choose": {
+      "title": "Choose join method"
     },
     "solo": "Solo game",
     "collab": "{{size}}-person collab game",
@@ -2021,7 +2043,8 @@
     "unknownPublisher": "Unknown"
   },
   "admin": {
-    "title": "Admin"
+    "title": "Admin",
+    "platformTitle": "Platform Management"
   },
   "traffic": {
     "title": "Traffic",
