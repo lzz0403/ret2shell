@@ -190,8 +190,7 @@ async fn platform_stream_logs(
     return Err(ResponseError::Forbidden(
       "permission denied".to_owned(),
       format!(
-        "somebody try to access platform logs with bad token {:?}.",
-        token
+        "somebody try to access platform logs with bad token {token:?}."
       ),
     ));
   }

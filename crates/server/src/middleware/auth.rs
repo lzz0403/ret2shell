@@ -133,7 +133,7 @@ async fn extract_basic_token(
   if attempts.is_some_and(|attempts| attempts > 5) {
     return Err(ResponseError::TooManyRequests(
       "this account is frozen in 30 mins".to_owned(),
-      format!("account {} has too many login attempts", account),
+      format!("account {account} has too many login attempts"),
     ));
   }
   cache.at("login").incr(&account).await?;
@@ -145,7 +145,7 @@ async fn extract_basic_token(
     None => {
       return Err(ResponseError::Forbidden(
         "account or password is wrong".to_owned(),
-        format!("user requested account {} does not exist", account),
+        format!("user requested account {account} does not exist"),
       ));
     }
   };

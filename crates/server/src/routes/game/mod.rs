@@ -1233,7 +1233,7 @@ async fn game_repo_info_refs(
 
   headers.insert(
     CONTENT_TYPE,
-    format!("application/x-git-{}-advertisement", service)
+    format!("application/x-git-{service}-advertisement")
       .parse()
       .unwrap(),
   );
@@ -1282,7 +1282,7 @@ async fn game_repo_info_refs(
   let stdout_stream = ReaderStream::new(stdout);
   let header = tokio_stream::once(Ok(Bytes::from(format!(
     "{}0000",
-    to_pkt_line(format!("# service=git-{}\n", service))
+    to_pkt_line(format!("# service=git-{service}\n"))
   ))));
   let stream = header.chain(stdout_stream);
 
@@ -1292,7 +1292,7 @@ async fn game_repo_info_refs(
 async fn game_repo_git_rpc(
   service_name: &str, bucket: Bucket, game: game::Model, headers: HeaderMap, body: Body,
 ) -> Result<impl IntoResponse, ResponseError> {
-  let expected_content_type = format!("application/x-git-{}-request", service_name);
+  let expected_content_type = format!("application/x-git-{service_name}-request");
   let content_type = headers.get(CONTENT_TYPE).ok_or(ResponseError::BadRequest(
     "missing content type for git rpc".to_owned(),
   ))?;
@@ -1310,7 +1310,7 @@ async fn game_repo_git_rpc(
   let mut headers = HeaderMap::new();
   headers.insert(
     CONTENT_TYPE,
-    format!("application/x-git-{}-result", service_name)
+    format!("application/x-git-{service_name}-result")
       .parse()
       .unwrap(),
   );

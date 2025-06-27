@@ -76,8 +76,7 @@ async fn cluster_maintain_worker(_state: GlobalState, cluster: Cluster, queue: Q
               running: Some(running as i64),
               pending: Some(pending as i64),
               message: Some(format!(
-                "Cluster is overloaded: running={}, pending={}",
-                running, pending
+                "Cluster is overloaded: running={running}, pending={pending}"
               )),
             })),
           };
@@ -94,8 +93,7 @@ async fn cluster_maintain_worker(_state: GlobalState, cluster: Cluster, queue: Q
               running: Some(running as i64),
               pending: Some(pending as i64),
               message: Some(format!(
-                "Cluster is recovered: running={}, pending={}",
-                running, pending
+                "Cluster is recovered: running={running}, pending={pending}"
               )),
             })),
           };

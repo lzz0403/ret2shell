@@ -61,8 +61,7 @@ async fn proxy_to_registry(
       Some(game) => game,
       None => {
         return Err(ResponseError::NotFound(format!(
-          "game scope {} not found",
-          repo
+          "game scope {repo} not found"
         )));
       }
     };
@@ -99,7 +98,7 @@ async fn proxy_to_registry(
   let resp = client
     .request(req)
     .await
-    .map_err(|err| ResponseError::BadRequest(format!("registry proxy failed: {}", err)))?
+    .map_err(|err| ResponseError::BadRequest(format!("registry proxy failed: {err}")))?
     .into_response();
   tracing::debug!("Proxying registry request: {:?}", resp);
   Ok(resp)

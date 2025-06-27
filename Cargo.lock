@@ -2306,9 +2306,9 @@ checksum = "d0263a3d970d5c054ed9312c0057b4f3bde9c0b33836d3637361d4a9e6e7a408"
 
 [[package]]
 name = "indexmap"
-version = "2.9.0"
+version = "2.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cea70ddb795996207ad57735b50c5982d8844f38ba9ee5f1aedcfb708a2aa11e"
+checksum = "fe4cd85333e22411419a0bcae1297d25e58c9443848b11dc6a86fefe8c78a661"
 dependencies = [
  "equivalent",
  "hashbrown 0.15.4",
@@ -3631,7 +3631,7 @@ checksum = "69cdb34c158ceb288df11e18b4bd39de994f6657d83847bdffdbd7f346754b0f"
 
 [[package]]
 name = "r2s-auditor"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "aho-corasick",
  "r2s-config",
@@ -3642,7 +3642,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-bucket"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "chrono",
  "deunicode",
@@ -3661,7 +3661,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cache"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "fred",
  "r2s-config",
@@ -3673,7 +3673,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-captcha"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "async-trait",
  "biosvg",
@@ -3689,7 +3689,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-checker"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "chrono",
  "r2s-bucket",
@@ -3705,7 +3705,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-cluster"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "axum",
  "chrono",
@@ -3729,7 +3729,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-config"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "sea-orm",
  "serde",
@@ -3740,7 +3740,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-database"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "chrono",
  "num-derive",
@@ -3756,7 +3756,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-email"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "async-nats",
  "futures",
@@ -3771,7 +3771,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-event"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "async-nats",
  "axum",
@@ -3787,7 +3787,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-license"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "chrono",
  "clap",
@@ -3799,7 +3799,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-media"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "hex",
  "image",
@@ -3816,7 +3816,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-migrator"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "r2s-config",
  "sea-orm",
@@ -3828,7 +3828,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-oauth"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "async-trait",
  "chrono",
@@ -3846,7 +3846,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-queue"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "async-nats",
  "r2s-config",
@@ -3858,7 +3858,7 @@ dependencies = [
 
 [[package]]
 name = "r2s-server"
-version = "3.8.0"
+version = "3.8.1"
 dependencies = [
  "anyhow",
  "argon2",

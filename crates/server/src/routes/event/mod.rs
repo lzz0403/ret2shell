@@ -52,8 +52,7 @@ async fn connect_game(
   Err(ResponseError::Forbidden(
     "permission denied".to_owned(),
     format!(
-      "event api was called with invalid token for game {}",
-      game_id
+      "event api was called with invalid token for game {game_id}"
     ),
   ))
 }
