@@ -70,14 +70,14 @@ async fn proxy_to_registry(
       return Err(ResponseError::Forbidden(
         "access denied".to_string(),
         format!(
-          "user {} is not allowed to access game scope {}",
-          token.id, repo
+          "user {}:{} ({}) is not allowed to access game scope {}",
+          token.id, token.account, token.nickname, repo
         ),
       ));
     }
 
     info!(
-      "game admin {}:'{}' ({}) pushed '{}' to game scope '{}'",
+      "game admin {}:{} ({}) pushed {} to game scope {}",
       token.id,
       token.account,
       token.nickname,
@@ -86,7 +86,7 @@ async fn proxy_to_registry(
     );
   } else {
     info!(
-      "devops {}:'{}' ({}) pushed '{}' to registry",
+      "devops {}:{} ({}) pushed {} to registry",
       token.id, token.account, token.nickname, path_query
     );
   }

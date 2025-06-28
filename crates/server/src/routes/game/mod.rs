@@ -163,7 +163,7 @@ macro_rules! get_game_bucket_mut {
           .ok_or(ResponseError::InternalServerError(
             "bucket is not exist for this game".into(),
             format!(
-              "game {}:'{}' does not have a valid bucket",
+              "game {}:{} does not have a valid bucket",
               $game.id, $game.name
             ),
           ))?,
@@ -210,7 +210,7 @@ async fn get_game(
 ) -> Result<impl IntoResponse, ResponseError> {
   if game.hidden && !is_game_admin!(token, game) {
     warn!(
-      "unauthorized user {}:'{}' ({}) trying to get a hidden game {}:'{}'",
+      "unauthorized user {}:{} ({}) trying to get a hidden game {}:{}",
       token.id, token.account, token.nickname, game.id, game.name
     );
     return Err(ResponseError::NotFound("game not found".to_owned()));
@@ -286,7 +286,7 @@ async fn update_game(
   txn.commit().await?;
   if game.frozen != model.frozen {
     info!(
-      "user {}:'{}' ({}) {} the game {}:'{}'",
+      "user {}:{} ({}) {} the game {}:{}",
       token.id,
       token.account,
       token.nickname,
@@ -594,8 +594,6 @@ async fn get_self_instances(
       continue;
     }
 
-    let traffic_script = traffic_script.clone().unwrap();
-
     let traffic_id = i.traffic.clone();
 
     if cache.at("traffic").exists(&traffic_id).await? {
@@ -604,7 +602,9 @@ async fn get_self_instances(
       continue;
     }
 
-    let service = cluster
+    let traffic_script = traffic_script.clone().unwrap();
+
+    let service = match cluster
       .at(CHALLENGE_NS)
       .get_service(
         &env
@@ -615,7 +615,23 @@ async fn get_self_instances(
             "the env has no name".to_string(),
           ))?,
       )
-      .await?;
+      .await
+    {
+      Ok(service) => service,
+      Err(ClusterError::KubeError(e)) => {
+        warn!(
+          "service not found for env {} in game {}:{}, maybe not initialized? original error is {e:?}",
+          env.metadata.name.clone().unwrap_or_default(),
+          game.id,
+          game.name
+        );
+        result.push(i);
+        continue;
+      }
+      Err(e) => {
+        return Err(e.into());
+      }
+    };
     traffic_mapper
       .preload(&traffic_key, &traffic_script)
       .await?;
