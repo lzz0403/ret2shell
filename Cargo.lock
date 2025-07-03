@@ -4205,9 +4205,9 @@ checksum = "95325155c684b1c89f7765e30bc1c42e4a6da51ca513615660cb8a62ef9a88e3"
 
 [[package]]
 name = "ret2script"
-version = "1.8.4"
+version = "1.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1781344b1533be685b9552b921038342d00b6e18b9d508c2dd8a307de87f4a3"
+checksum = "4a1f3802d6e48c2ec13f9d1fdd76a294e56bcb7d3afae6964dd059ffdd6d350e"
 dependencies = [
  "aes",
  "async-trait",
