@@ -14,7 +14,7 @@
     "lint": "biome lint"
   },
   "dependencies": {
-    "@ark-ui/solid": "^5.17.0",
+    "@ark-ui/solid": "^5.18.2",
     "@e965/xlsx": "^0.20.3",
     "@jsdevtools/rehype-toc": "^3.0.2",
     "@modular-forms/solid": "^0.25.1",
@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.1.1",
-    "@iconify-json/fluent": "^1.2.27",
+    "@iconify-json/fluent": "^1.2.28",
     "@iconify-json/fluent-emoji-flat": "^1.2.3",
     "@iconify-json/meteocons": "^1.2.2",
     "@iconify/tailwind4": "^1.0.6",
@@ -81,7 +81,7 @@
     "@tailwindcss/vite": "^4.1.11",
     "@types/howler": "^2.2.12",
     "@types/luxon": "^3.6.2",
-    "@types/node": "^24.0.15",
+    "@types/node": "^24.1.0",
     "@types/shell-quote": "^1.7.5",
     "kubernetes-types": "^1.30.0",
     "tailwindcss": "^4.1.11",
