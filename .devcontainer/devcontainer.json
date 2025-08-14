@@ -51,6 +51,7 @@
 				"vadimcn.vscode-lldb",
 				"mutantdino.resourcemonitor",
 				"rust-lang.rust-analyzer",
+				"ms-vscode.vscode-typescript-next",
 				"tamasfe.even-better-toml",
 				"fill-labs.dependi",
 				"biomejs.biome",
