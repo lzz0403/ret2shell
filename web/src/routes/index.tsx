@@ -17,7 +17,7 @@ export default function () {
   onMount(() => {
     if (searchParams.event) {
       try {
-        const result = Number.parseInt(searchParams.event as string);
+        const result = Number.parseInt(searchParams.event as string, 10);
         if (result) {
           setTimeout(() => {
             calendarSection!.scrollIntoView({ behavior: "smooth" });

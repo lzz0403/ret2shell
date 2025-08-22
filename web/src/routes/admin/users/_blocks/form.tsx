@@ -163,7 +163,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
       email: result.email,
       avatar: result.avatar,
       description: result.description,
-      institute_id: Number.parseInt(result.institute_id || "NONE") || null,
+      institute_id: Number.parseInt(result.institute_id || "NONE", 10) || null,
       hidden: result.hidden,
       banned: result.banned,
       permissions,
