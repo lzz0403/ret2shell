@@ -27,7 +27,7 @@ pub struct GameBucket {
 #[repr(i32)]
 pub enum HostType {
   CTFTraining = 0,
-  CTFGame     = 1,
+  CTFGame = 1,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -202,11 +202,11 @@ impl GameBucket {
     {
       Ok(bucket) => Ok(bucket),
       Err(BucketError::PathConflict(_)) => {
-        error!("challenge bucket path conflict: {}", challenge_name);
+        error!(challenge=?challenge_name, "challenge bucket path conflict");
         Err(BucketError::PathConflict(challenge_name))
       }
       Err(e) => {
-        error!("create challenge bucket error: {:?}", e);
+        error!(error=?e, "failed to create challenge bucket");
         // cleanup the failed created challenge bucket
         // it may not exist so we ignore the error
         remove_dir_all(self.path.join("challenges").join(&challenge_name))

@@ -40,11 +40,11 @@ impl Bucket {
     match game::GameBucket::new(&self.path, &game_bucket_name, game_config).await {
       Ok(bucket) => Ok(bucket),
       Err(BucketError::PathConflict(_)) => {
-        error!("game bucket path conflict: {}", game_bucket_name);
+        error!(game=?game_name, bucket=?game_bucket_name, "game bucket path conflict");
         Err(BucketError::PathConflict(game_bucket_name))
       }
       Err(e) => {
-        error!("create game bucket error: {:?}", e);
+        error!(game=?game_name, bucket=?game_bucket_name, error=?e, "failed to create game bucket");
         // cleanup the failed created game bucket
         // it may not exist so we ignore the error
         remove_dir_all(self.path.join(&game_bucket_name)).await.ok();

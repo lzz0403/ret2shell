@@ -4197,9 +4197,9 @@ checksum = "95325155c684b1c89f7765e30bc1c42e4a6da51ca513615660cb8a62ef9a88e3"
 
 [[package]]
 name = "ret2script"
-version = "1.8.7"
+version = "1.8.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5511ea245efe3825b4ebdd9e2e3ed9a18801dd0762b49d680d8e013092f43f30"
+checksum = "1cff1f27464e3397ba43962e4f5e8dab9566f4e2f12c9d221356a5612c176c42"
 dependencies = [
  "async-trait",
  "chrono",
@@ -4214,7 +4214,6 @@ dependencies = [
  "thiserror 2.0.16",
  "tokio",
  "tracing",
- "uuid",
 ]
 
 [[package]]
@@ -6074,9 +6073,7 @@ version = "1.18.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f33196643e165781c20a5ead5582283a7dacbb87855d867fbc2df3f81eddc1be"
 dependencies = [
- "getrandom 0.3.3",
  "js-sys",
- "rand 0.9.2",
  "serde",
  "wasm-bindgen",
 ]
