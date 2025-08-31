@@ -59,13 +59,20 @@ async fn check_namespace(client: &Cluster) -> Result<(), ClusterError> {
     }
   }
   if !found {
-    info!("Creating namespace `ret2shell-challenge` in cluster...");
+    info!(
+      namespace = "ret2shell-challenge",
+      "creating namespace in cluster..."
+    );
     client.create_namespace(CHALLENGE_NS).await?;
   } else {
-    info!("Namespace `ret2shell-challenge` already exists in cluster, skipping...");
+    info!(
+      namespace = "ret2shell-challenge",
+      "namespace already exists in cluster, skipping..."
+    );
   }
   info!(
-    "Note: `ret2shell-challenge` namespace is used for challenge deployment, the pod will be managed automatically by Ret2Shell, please don't operate on it manually."
+    namespace = "ret2shell-challenge",
+    "NOTE: this namespace is used for challenge deployment, the pod will be managed automatically by Ret2Shell, please don't operate on it manually."
   );
   Ok(())
 }
@@ -74,10 +81,18 @@ async fn check_network_policy(client: &Cluster) -> Result<(), ClusterError> {
   let api = client.at(CHALLENGE_NS);
   match api.get_network_policy("internet-disabled").await {
     Ok(Some(_)) => {
-      info!("Network policy `internet-disabled` already exists in cluster, skipping...");
+      info!(
+        namespace = "ret2shell-challenge",
+        policy = "internet-disabled",
+        "network policy already exists in cluster, skipping..."
+      );
     }
     Ok(None) => {
-      info!("Creating network policy `internet-disabled` in cluster...");
+      info!(
+        namespace = "ret2shell-challenge",
+        policy = "internet-disabled",
+        "creating network policy in cluster..."
+      );
       let policy = NetworkPolicy {
         metadata: ObjectMeta {
           name: Some("internet-disabled".to_owned()),
@@ -101,7 +116,7 @@ async fn check_network_policy(client: &Cluster) -> Result<(), ClusterError> {
       api.create_network_policy(policy).await?;
     }
     Err(err) => {
-      error!("Failed to get network policy `internet-disabled` in cluster: {err:?}");
+      error!(error=?err, policy="internet-disabled", "failed to get network policy in cluster");
       return Err(err);
     }
   }

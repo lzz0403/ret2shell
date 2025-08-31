@@ -162,7 +162,7 @@ impl TrafficMapper {
     &self, key: &str, pod: Pod, service: Service,
   ) -> Result<Vec<MappedPort>, ClusterError> {
     let contexts = self.contexts.read().await;
-    debug!("Exposing traffic mapper for pod: {pod:?}, service: {service:?}");
+    debug!(?pod, ?service, "exposing traffic mapper");
     let (unit, runtime, _) = contexts.get(key).ok_or_else(|| {
       ClusterError::MissingField(format!("traffic mapper not found for key: {key}"))
     })?;
@@ -189,7 +189,7 @@ impl TrafficMapper {
       Ok(result)
     } else {
       Err(ClusterError::ScriptError(
-        "Early returns from script".to_owned(),
+        "early returns from script".to_owned(),
       ))
     }
   }
@@ -207,7 +207,8 @@ impl TrafficMapper {
       tokio::time::sleep(tokio::time::Duration::from_secs(15 * 60)).await;
       tracing::debug!("Running traffic mapper cleanup...");
       self.cleanup().await;
-      tracing::trace!("Live mappers: {:?}", self.contexts.read().await.keys());
+      let keys = self.contexts.read().await;
+      tracing::trace!(mappers = ?keys.keys(), "live traffic mappers");
     }
   }
 }
