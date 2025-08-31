@@ -10,7 +10,7 @@ use rune::{
 };
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
-use tracing::debug;
+use tracing::{debug, trace};
 use traits::CheckerError;
 
 pub mod traits;
@@ -195,17 +195,17 @@ impl Checker {
     &self, bucket: &ChallengeBucket, user: &user::Model, team: &Option<team::Model>,
     submission: &submission::Model,
   ) -> Result<(bool, String, Option<AuditMessage>), CheckerError> {
-    debug!("checking submission: {:?}", submission);
+    debug!(?submission, "checking submission");
     let contexts = self.contexts.read().await;
     let (unit, runtime, _) = contexts
       .get(&bucket.hash())
       .ok_or(CheckerError::MissingCheckerScript(bucket.name.clone()))?;
     let vm = Vm::new(runtime.clone(), unit.clone());
-    debug!("load user: {:?}", user);
+    debug!(?user, "loading user");
     let user_object: RuneUser = user.into();
-    debug!("load submission: {:?}", submission);
+    debug!(?submission, "loading submission");
     let submission_object: RuneSubmission = submission.into();
-    debug!("load team: {:?}", team);
+    debug!(?team, "loading team");
     let team_object = match team {
       Some(team) => RuneTeam::from(team),
       None => RuneTeam::default(),
@@ -216,7 +216,7 @@ impl Checker {
       (bucket, user_object, team_object, submission_object),
     )?;
     let output = output.async_complete().await.into_result()?;
-    debug!("check output: {:?}", output);
+    debug!(?output, function = "check", "checker finished");
     let output: Result<(bool, String, Option<Object>), Value> = rune::from_value(output)?;
     if let Ok((result, message, audit)) = output {
       let audit = if let Some(audit) = audit {
@@ -244,7 +244,7 @@ impl Checker {
       Ok((result, message, audit))
     } else {
       Err(CheckerError::ScriptError(
-        "Early returns from script".to_owned(),
+        "early returns from script".to_owned(),
       ))
     }
   }
@@ -267,7 +267,7 @@ impl Checker {
     debug!("calling environ");
     let output = vm.send_execute(["environ"], (bucket, user_object, team_object))?;
     let output = output.async_complete().await.into_result()?;
-    debug!("environ output: {:?}", output);
+    debug!(?output, function = "environ", "checker finished");
     let object: Result<Object, Value> = rune::from_value(output)?;
     if let Ok(object) = object {
       let mut environ = HashMap::new();
@@ -277,7 +277,7 @@ impl Checker {
       Ok(environ)
     } else {
       Err(CheckerError::ScriptError(
-        "Early returns from script".to_owned(),
+        "early returns from script".to_owned(),
       ))
     }
   }
@@ -293,9 +293,10 @@ impl Checker {
   pub async fn cleanup_worker(&mut self) {
     loop {
       tokio::time::sleep(tokio::time::Duration::from_secs(15 * 60)).await;
-      tracing::debug!("Running checker cleanup...");
+      debug!("running checker cleanup...");
       self.cleanup().await;
-      tracing::trace!("Live checkers: {:?}", self.contexts.read().await.keys());
+      let live_checkers = self.contexts.read().await;
+      trace!(checkers = ?live_checkers.keys(),  "live checkers");
     }
   }
 }
