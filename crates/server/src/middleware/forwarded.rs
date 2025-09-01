@@ -334,7 +334,8 @@ pub async fn ip_record(
   } else {
     debug!("token ID is 0, skipping IP record");
   }
-  let span = error_span!("http", from=%ip, method=%req.method(), uri=%req.uri().path());
+  let event_id = nanoid::nanoid!();
+  let span = error_span!("http", from=%ip, method=%req.method(), uri=%req.uri().path(), %event_id);
   async move { Ok(next.run(req).await) }
     .instrument(span)
     .await
