@@ -449,7 +449,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
         <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
         <span class="flex-1 text-start">{t("account.form.ips.label")}</span>
       </h3>
-      <Card level="info" contentClass="p-2 flex flex-row space-x-2 items-center">
+      <Card level="info" contentClass="p-2 flex flex-row space-x-2 items-center w-full">
         <span class="shrink-0 icon-[fluent--info-20-regular] w-5 h-5" />
         <span>{t("account.form.ips.tips")}</span>
       </Card>

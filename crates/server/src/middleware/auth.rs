@@ -47,7 +47,7 @@ pub async fn decode_token(token: &str, key: &str) -> Token {
   ) {
     Ok(c) => c,
     Err(err) => {
-      debug!("decode token failed: {err:?}, token is {token:?}");
+      debug!(error=?err, token=?token, "decode token failed");
       return Token::default();
     }
   };
@@ -85,7 +85,7 @@ async fn extract_bearer_token(
   } else {
     Token::default()
   };
-  debug!("user requested with token {token:?}, {token_obj:?}");
+  debug!(?token, decoded=?token_obj, "user requested with token");
 
   let last_time = token_obj.exp - Utc::now().timestamp();
 
@@ -97,7 +97,7 @@ async fn extract_bearer_token(
     original: Some(token.to_owned()),
   };
 
-  debug!("extracted token: {token:?}");
+  debug!(?token, "extracted token");
 
   Ok((token_obj, token_tracker))
 }
@@ -105,29 +105,19 @@ async fn extract_bearer_token(
 async fn extract_basic_token(
   db: &Database, cache: &Cache, token: &str,
 ) -> Result<(Token, TokenTracker), ResponseError> {
-  // NOTE: we should limit login attempts here to prevent brute force attacks
-  // this auth method is not recommended, but client such as git or curl may use
-  // it, which is hard to integrate CAPTCHA protections
-
-  // NOTE: the basic auth token is equivalent to a bearer token, include account
-  // operations there may exists security risk, waiting for further discussion
-  // limit the attempts to 5 times
-
   let (account, password) = {
     let decoded = base64::engine::general_purpose::STANDARD
       .decode(token.split_whitespace().nth(1).unwrap_or_default())
-      .map_err(|_| ResponseError::BadRequest("Invalid basic token".to_owned()))?;
+      .map_err(|_| ResponseError::BadRequest("invalid basic token".to_owned()))?;
     let result = String::from_utf8(decoded)
-      .map_err(|_| ResponseError::BadRequest("Invalid basic token".to_owned()))?;
+      .map_err(|_| ResponseError::BadRequest("invalid basic token".to_owned()))?;
     match result.split_once(':') {
       Some((account, password)) => (account.to_owned(), password.to_owned()),
       None => {
-        return Err(ResponseError::BadRequest("Invalid basic token".to_owned()));
+        return Err(ResponseError::BadRequest("invalid basic token".to_owned()));
       }
     }
   };
-
-  // debug!("user auth requested with basic auth: {account:?}, {password:?}");
 
   let attempts = cache.at("login").get::<i64>(&account).await?;
   if attempts.is_some_and(|attempts| attempts > 5) {
@@ -136,8 +126,6 @@ async fn extract_basic_token(
       format!("account {account} has too many login attempts"),
     ));
   }
-  cache.at("login").incr(&account).await?;
-  cache.at("login").expire(&account, 60 * 30).await?;
 
   let user = user::get_by_account_or_email(&db.conn, &account).await?;
   let user = match user {
@@ -165,12 +153,14 @@ async fn extract_basic_token(
   match verify_password(&password, &password_hash)? {
     true => {
       info!(
-        "User logged in with basic auth (oneshot): {}:{} ({}) <{}>",
-        user.id,
-        user.account,
-        user.nickname,
-        user.email.unwrap_or_default()
+        id=%user.id,
+        account=%user.account,
+        nickname=%user.nickname,
+        email=%user.email.unwrap_or_default(),
+        "user logged in with basic auth (oneshot)",
       );
+      // NOTE: clear login attempts on successful login
+      cache.at("login").del(&account).await.ok();
 
       let token = Token {
         id: user.id,
@@ -187,13 +177,18 @@ async fn extract_basic_token(
       };
       Ok((token, token_tracker))
     }
-    false => Err(ResponseError::Forbidden(
-      "account or password is wrong".to_owned(),
-      format!(
-        "user {}:{} ({}) requested with wrong password",
-        user.id, user.account, user.nickname
-      ),
-    )),
+    false => {
+      // NOTE: record login attempts on failed login
+      cache.at("login").incr(&account).await.ok();
+      cache.at("login").expire(&account, 60 * 30).await.ok();
+      Err(ResponseError::Forbidden(
+        "account or password is wrong".to_owned(),
+        format!(
+          "user {}:{} ({}) requested with wrong password",
+          user.id, user.account, user.nickname
+        ),
+      ))
+    }
   }
 }
 
@@ -208,7 +203,6 @@ pub async fn extract_user_info(
       "auth config missing".into(),
       "auth section is not configured.".into(),
     ))?;
-  debug!("auth req: {req:?}");
   let auth_header = req
     .headers()
     .get(header::AUTHORIZATION)
@@ -226,7 +220,7 @@ pub async fn extract_user_info(
     Some("Basic") => extract_basic_token(database, cache, token_str).await?,
     Some(_) => {
       return Err(ResponseError::Unauthorized(
-        "Unsupported auth method".to_owned(),
+        "unsupported auth method".to_owned(),
       ));
     }
     None => (
@@ -273,8 +267,8 @@ pub async fn extract_user_info(
       .at("token")
       .set_ex(&token_str, token_stored.id, auth_config.expires_time)
       .await
-      .map_err(|err| {
-        error!("failed to store new token: {:?}", err);
+      .inspect_err(|err| {
+        error!(error=?err, "failed to store new token");
       })
       .ok();
     cache

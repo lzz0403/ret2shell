@@ -57,7 +57,8 @@ impl ActiveModelBehavior for ActiveModel {}
 
 pub async fn get_list<C>(db: &C, challenge_id: i64) -> Result<Vec<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find()
     .filter(Column::ChallengeId.eq(challenge_id))
     .all(db)
@@ -66,13 +67,15 @@ where
 
 pub async fn get<C>(db: &C, hint_id: i64) -> Result<Option<Model>, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::find_by_id(hint_id).one(db).await
 }
 
 pub async fn create<C>(db: &C, hint: Model) -> Result<Model, DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   let hint = ActiveModel {
     id: ActiveValue::NotSet,
     created_at: ActiveValue::Set(Utc::now()),
@@ -83,25 +86,7 @@ where
 
 pub async fn delete<C>(db: &C, hint_id: i64) -> Result<(), DbErr>
 where
-  C: ConnectionTrait, {
+  C: ConnectionTrait,
+{
   Entity::delete_by_id(hint_id).exec(db).await.map(|_| ())
 }
-
-// #[cfg(test)]
-// mod tests {
-//     use super::get_list;
-//     use sea_orm::{ConnectOptions, Database, DatabaseConnection};
-
-//     #[tokio::test]
-//     async fn test_get_hints() {
-//         let mut connect_options = ConnectOptions::new(
-//             // development only
-//
-// "postgresql://ret2shell:P@ssw02dInD3v3l0pm3nt@localhost:5432/ret2shell",
-//         );
-//         connect_options.acquire_timeout(std::time::Duration::from_secs(15));
-
-//         let db: DatabaseConnection =
-// Database::connect(connect_options).await.unwrap();         println!("{:?}",
-// get_list(&db, 1, false).await.unwrap());     }
-// }

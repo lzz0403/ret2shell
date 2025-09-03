@@ -30,8 +30,7 @@ fn construct_email(
 
 async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(), EmailError> {
   let smtp_credentials = Credentials::new(config.username.clone(), config.password.clone());
-  debug!("smtp_credentials: {} {}", config.username, config.password);
-  debug!("smtp host: {} {}:{}", config.tls, config.host, config.port);
+  debug!(?config, "connect smtp server with smtp_credentials");
   let mailer: AsyncSmtpTransport<Tokio1Executor> = match config.tls.as_str() {
     "starttls" => AsyncSmtpTransport::<Tokio1Executor>::starttls_relay(&config.host),
     "tls" => Ok(
@@ -49,9 +48,9 @@ async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(),
   .timeout(Some(std::time::Duration::from_secs(10)))
   .build();
 
-  debug!("mailer: {:?}", mailer);
+  debug!(?mailer, "send with mailer");
   let email = construct_email(email, &config.sender, &config.username)?;
-  debug!("email: {:?}", email);
+  debug!(?email, "constructed email");
   mailer.send(email).await?;
   debug!("email sent");
   Ok(())
@@ -64,28 +63,32 @@ async fn process_message(message: jetstream::Message) -> Result<(), EmailError> 
   while retry_count > 0 {
     if let Err(err) = send_email_impl(&req.config, &req.email).await {
       warn!(
-        "Failed to send email '{}' to <{}>, error with: {:?}, retrying...",
-        req.email.subject, req.email.email, err
+        email = %req.email.email,
+        subject = %req.email.subject,
+        error = ?err,
+        "failed to send email, retrying...",
       );
       retry_count -= 1;
     } else {
       info!(
-        "Successfully sent email: '{}' to <{}>",
-        req.email.subject, req.email.email
+        email = %req.email.email,
+        subject = %req.email.subject,
+        "successfully sent email",
       );
       break;
     }
   }
   if retry_count < 0 {
     error!(
-      "Failed to send email '{}' to <{}> after 3 retries, dropped.",
-      req.email.subject, req.email.email
+      email = %req.email.email,
+      subject = %req.email.subject,
+      "failed to send email after 3 retries, dropped.",
     );
   }
   message
     .ack()
     .await
-    .inspect_err(|e| error!("Failed to drop message: {:?}", e))
+    .inspect_err(|e| error!(error=?e, "failed to drop NATS email message"))
     .ok();
   Ok(())
 }
@@ -98,18 +101,18 @@ pub async fn email_worker(mut messages: Stream) {
       if let Ok(message) = message {
         process_message(message)
           .await
-          .inspect_err(|e| error!("Failed to process message: {:?}", e))
+          .inspect_err(|error| error!(?error, "failed to process NATS email message"))
           .ok();
       } else {
-        error!("Failed to receive message from nats: {:?}", message);
+        error!(?message, "failed to receive email message from nats");
       }
     }
     retries += 1;
     if retries < 5 {
-      warn!("Email worker stopped unexpectedly! Maybe a message queue issue? Trying to restart...");
+      warn!("email worker stopped unexpectedly! maybe a message queue issue? trying to restart...");
       continue;
     } else {
-      error!("Email worker stopped unexpectedly for 5 times, exiting...");
+      error!("email worker stopped unexpectedly for 5 times, exiting...");
       return;
     }
   }

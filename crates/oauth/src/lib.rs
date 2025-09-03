@@ -10,6 +10,7 @@ use rune::{
   termcolor::Buffer,
 };
 use tokio::sync::RwLock;
+use tracing::{debug, trace};
 pub use traits::OAuthError;
 
 #[derive(Clone, Debug, Any)]
@@ -169,11 +170,12 @@ impl OAuth {
   pub async fn cleanup_worker(&mut self) {
     loop {
       tokio::time::sleep(tokio::time::Duration::from_secs(15 * 60)).await;
-      tracing::debug!("Running oauth provider scripts cleanup...");
+      debug!("running oauth provider scripts cleanup...");
       self.cleanup().await;
-      tracing::trace!(
-        "Live oauth providers: {:?}",
-        self.contexts.read().await.keys()
+      let keys = self.contexts.read().await;
+      trace!(
+        providers = ?keys.keys(),
+        "live oauth providers",
       );
     }
   }

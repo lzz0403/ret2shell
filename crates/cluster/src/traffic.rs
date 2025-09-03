@@ -11,7 +11,7 @@ use rune::{
 };
 use serde::{Deserialize, Serialize};
 use tokio::sync::RwLock;
-use tracing::debug;
+use tracing::{debug, trace};
 
 use crate::ClusterError;
 
@@ -205,10 +205,10 @@ impl TrafficMapper {
   pub async fn cleanup_worker(&mut self) {
     loop {
       tokio::time::sleep(tokio::time::Duration::from_secs(15 * 60)).await;
-      tracing::debug!("Running traffic mapper cleanup...");
+      debug!("running traffic mapper cleanup...");
       self.cleanup().await;
       let keys = self.contexts.read().await;
-      tracing::trace!(mappers = ?keys.keys(), "live traffic mappers");
+      trace!(mappers = ?keys.keys(), "live traffic mappers");
     }
   }
 }
