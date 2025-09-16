@@ -317,6 +317,12 @@ async fn submission_worker_exec(
   )
   .await?;
 
+  if solved {
+    info!(correct = true, "submission is correct");
+  } else {
+    info!(correct = false, "submission is incorrect");
+  }
+
   if team.is_none() || prev_submitted {
     txn.commit().await?;
     return Ok(submission);
@@ -328,8 +334,7 @@ async fn submission_worker_exec(
 
   // stage 3: update team score and create extra or audit if necessary
   if submission.solved.unwrap_or(false) {
-    info!(correct = true, "submission is corrent");
-
+    info!("updating score and creating events");
     // stage 3.1: update challenge score
     let (changed, decay, challenge) = challenge::maintain_score(&txn, challenge.clone()).await?;
 
@@ -394,7 +399,6 @@ async fn submission_worker_exec(
       cache.at("challenge").del(challenge.id).await.ok();
     }
   } else {
-    info!(correct = false, "submission is incorrect");
     txn.commit().await?;
   }
 
