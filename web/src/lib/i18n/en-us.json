@@ -394,6 +394,9 @@
         "fetchList": {
           "title": "Failed to fetch log list"
         },
+        "fetchLogs": {
+          "title": "Failed to fetch logs"
+        },
         "socketClosed": {
           "title": "Log pipe has been disconnected, will automatically retry connection..."
         }

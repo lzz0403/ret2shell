@@ -1,64 +1,27 @@
 import { api_root, handleHttpError } from "@api";
-import { getPlatformLogs } from "@api/platform";
+import { getPlatformLogs, queryPlatformLog, type Log } from "@api/platform";
 import DownloadButton from "@blocks/download-button";
+import Button from "@widgets/button";
 import { createBreakpoints } from "@solid-primitives/media";
 import { A, useSearchParams } from "@solidjs/router";
-import { accountStore } from "@storage/account";
 import { Title } from "@storage/header";
 import { breakpoints, t } from "@storage/theme";
-import { addToast } from "@storage/toast";
-import Button from "@widgets/button";
+import { useQuery } from "@tanstack/solid-query";
+import Input from "@widgets/input";
 import LoadingTips from "@widgets/loading-tips";
-import Tag from "@widgets/tag";
+import Select from "@widgets/select";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import {
-  createSignal,
-  For,
-  Match,
-  onCleanup,
-  onMount,
-  Show,
-  Switch,
-} from "solid-js";
-
-type LogSpan = {
-  name: string;
-  [key: string]: unknown;
-};
-
-type Log = {
-  timestamp: string;
-  level: string;
-  target: string;
-  fields: Record<string, unknown>;
-  span?: LogSpan;
-  spans?: LogSpan[];
-};
+import { For, Match, Show, Switch, createSignal, onCleanup } from "solid-js";
 
 function LogField(log: Log) {
-  if (!log.fields) return null;
+  if (!log) return null;
   return (
-    <For each={Object.entries(log.fields)}>
-      {([key, value]) => (
-        <>
-          <span class="italic opacity-60">{key}</span>
-          <span class="opacity-60">=</span>
-          <span>{value as string}&nbsp;&nbsp;</span>
-        </>
-      )}
-    </For>
-  );
-}
-
-function DataSpanField(log: Log) {
-  if (!log.span) return null;
-  return (
-    <For each={Object.entries(log.span)}>
+    <For each={Object.entries(log)}>
       {([key, value]) =>
-        key.startsWith("data-") && (
+        key.startsWith("fields.") && (
           <>
-            <span class="italic opacity-60">{key.replace("data-", "")}</span>
+            <span class="italic opacity-60">{key}</span>
             <span class="opacity-60">=</span>
             <span>{value as string}&nbsp;&nbsp;</span>
           </>
@@ -68,69 +31,84 @@ function DataSpanField(log: Log) {
   );
 }
 
-export default function () {
-  const [loading, setLoading] = createSignal(false);
-  const [enableStreamLogs, setEnableStreamLogs] = createSignal(false);
-  const [logs, setLogs] = createSignal([] as Log[]);
+function DataSpanField(log: Log) {
+  if (!log.span) return null;
+  return (
+    <For each={Object.entries(log.span)}>
+      {([key, value]) =>
+        key.startsWith("span.data-") && (
+          <>
+            <span class="italic opacity-60">{key.replace("span.data-", "")}</span>
+            <span class="opacity-60">=</span>
+            <span>{value as string}&nbsp;&nbsp;</span>
+          </>
+        )
+      }
+    </For>
+  );
+}
+
+export default function() {
   const [searchParams, setSearchParams] = useSearchParams();
-  let ws: WebSocket;
 
-  const [logFiles, setLogFiles] = createSignal([] as string[]);
-  onMount(async () => {
-    try {
-      const resp = await getPlatformLogs();
-      setLogFiles((resp as string[]).sort());
-    } catch (err) {
-      handleHttpError(err as Error, t("platform.logs.errors.fetchList.title")!);
-    }
-  });
+  const logFiles = useQuery(() => ({
+    queryKey: ["platform", "logs", "files"],
+    queryFn: getPlatformLogs,
+    onError: (err: Error) => {
+      handleHttpError(err, t("platform.logs.errors.fetchList.title")!);
+    },
+  }));
 
-  function disable() {
-    if (ws) {
-      ws.onclose = null;
-      ws.close();
-    }
-    setLogs([]);
-    setEnableStreamLogs(false);
-  }
+  const logs = useQuery(() => ({
+    queryKey: [
+      "platform",
+      "logs",
+      "stream",
+      searchParams.started_at,
+      searchParams.ended_at,
+      searchParams.limit,
+      searchParams.level,
+      searchParams.trace,
+      searchParams.from,
+    ].filter((i) => i),
+    queryFn: async () => {
+      return (
+        await queryPlatformLog({
+          started_at: searchParams.started_at
+            ? DateTime.fromSeconds(Number.parseInt(searchParams.started_at as string, 10))
+            : DateTime.now().minus({ day: 1 }),
+          ended_at: searchParams.ended_at
+            ? DateTime.fromSeconds(Number.parseInt(searchParams.ended_at as string, 10))
+            : DateTime.now(),
+          limit: searchParams.limit ? Number.parseInt((searchParams.limit as string) || "NaN", 10) : 50,
+          level: searchParams.level as string | undefined,
+          trace: searchParams.trace as string | undefined,
+          from: searchParams.from as string | undefined,
+          query: searchParams.query as string | undefined,
+        })
+      ).reverse();
+    },
+    onError: (err: Error) => {
+      handleHttpError(err, t("platform.logs.errors.fetchLogs.title")!);
+    },
+  }));
 
-  function enable() {
-    connect();
-    setEnableStreamLogs(true);
-  }
+  const [enableTimer, setEnableTimer] = createSignal(false);
 
-  function connect() {
-    ws = new WebSocket(
-      `${api_root}/platform/logs/stream?token=${accountStore.token}`,
-    );
-    setLoading(true);
-    ws.onopen = () => {
-      setLoading(false);
-      setLogs([]);
-    };
-    ws.onmessage = (event) => {
-      const log = JSON.parse(event.data as string) as Log;
-      setLogs(logs().concat(log));
-      setTimeout(() => {
-        bottomDiv!.scrollIntoView({ behavior: "smooth" });
-      }, 100);
-    };
-    ws.onclose = () => {
-      addToast({
-        level: "error",
-        description: t("platform.logs.errors.socketClosed.title")!,
-        duration: 5000,
+  const timer = setInterval(() => {
+    if (enableTimer()) {
+      setSearchParams({
+        started_at: Math.floor(DateTime.now().minus({ day: 1 }).toSeconds()).toString(),
+        ended_at: Math.floor(DateTime.now().toSeconds()).toString(),
+        limit: searchParams.limit,
+        level: searchParams.level,
+        trace: searchParams.trace,
+        from: searchParams.from,
       });
-      setTimeout(() => {
-        connect();
-      }, 5000);
-    };
-    ws.onerror = () => {
-      ws.close();
-    };
-  }
+    }
+  }, 5000);
 
-  onCleanup(disable);
+  onCleanup(() => clearInterval(timer));
 
   function getColor(level: string) {
     switch (level) {
@@ -160,43 +138,73 @@ export default function () {
         return "text-layer-content";
     }
   }
-  const time = (ts: string, format: string) =>
-    DateTime.fromISO(ts).toFormat(format);
+  const time = (ts: string, format: string) => DateTime.fromISO(ts).toFormat(format);
   const matches = createBreakpoints(breakpoints);
   let bottomDiv: HTMLDivElement;
   return (
     <>
       <Title page={t("platform.logs.title")} route="/admin/logs" />
       <div class="flex-1 flex flex-col">
-        <div class="sticky top-16 h-16 z-20 backdrop-blur-sm border-b border-b-layer-content/10 flex flex-row space-x-4 items-center px-3 lg:px-6">
+        <div class="sticky top-16 h-16 z-20 backdrop-blur-sm border-b border-b-layer-content/10 flex flex-row space-x-4 items-center pr-4 pl-3 lg:pl-6">
           <h1 class="flex-1 font-bold flex flex-row space-x-2 items-center">
             <span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />
             <span>{t("platform.logs.title")}</span>
           </h1>
-          <Show when={searchParams.filter}>
-            <Button
-              size="sm"
-              onClick={() => setSearchParams({ filter: undefined })}
-            >
-              <span class="icon-[fluent--dismiss-16-regular]" />
-              <span class="text-error">TRACE: {searchParams.filter}</span>
-            </Button>
-          </Show>
-          <Show when={enableStreamLogs()}>
-            <Tag level="success">
-              <span>{t("platform.logs.streamingEnabled")}</span>
-            </Tag>
-          </Show>
-          <Button
-            onClick={() => (enableStreamLogs() ? disable() : enable())}
+          <Input
             size="sm"
-            level={enableStreamLogs() ? "error" : "info"}
+            class="w-48"
+            icon={<span class="icon-[fluent--filter-16-regular]" />}
+            value={searchParams.trace ?? ""}
+            placeholder="Trace ID"
+            onInput={(e) => setSearchParams({ trace: e.currentTarget.value })}
+          />
+          <Input
+            size="sm"
+            class="w-48"
+            icon={<span class="icon-[fluent--filter-16-regular]" />}
+            value={searchParams.from ?? ""}
+            placeholder="IP"
+            onInput={(e) => setSearchParams({ from: e.currentTarget.value })}
+          />
+          <Select
+            class="w-36"
+            placeholder="LEVEL"
+            size="sm"
+            items={[
+              { label: "ALL", value: "" },
+              { label: "DEBUG", value: "DEBUG" },
+              { label: "INFO", value: "INFO" },
+              { label: "WARN", value: "WARN" },
+              { label: "ERROR", value: "ERROR" },
+            ]}
+            value={[(searchParams.limit as string) ?? "50"]}
+            onValueChange={(val) => setSearchParams({ level: val.value.at(0) })}
+          />
+          <Select
+            class="w-36"
+            placeholder="LIMIT"
+            size="sm"
+            items={[
+              { label: "10", value: "10" },
+              { label: "20", value: "20" },
+              { label: "50", value: "50" },
+              { label: "100", value: "100" },
+              { label: "1000", value: "1000" },
+            ]}
+            value={[(searchParams.level as string) ?? ""]}
+            onValueChange={(val) => setSearchParams({ limit: val.value.at(0) })}
+          />
+          <Button
+            square
+            size="sm"
+            level={enableTimer() ? "error" : "success"}
+            onClick={() => setEnableTimer(!enableTimer())}
           >
-            <span>{`${enableStreamLogs() ? t("general.actions.stop.title")! : t("general.actions.start.title")!}`}</span>
+            <span class={clsx(enableTimer() ? "icon-[fluent--stop-16-regular]" : "icon-[fluent--play-16-regular]")} />
           </Button>
         </div>
         <div class="inline-flex flex-row items-center flex-wrap p-3 lg:p-6 !pb-0">
-          <For each={logFiles()}>
+          <For each={logFiles.data}>
             {(file) => (
               <DownloadButton
                 class="m-1 overflow-hidden"
@@ -211,95 +219,58 @@ export default function () {
           </For>
         </div>
         <div class="flex-1 flex flex-col p-3 lg:p-6">
-          <For each={logs()}>
+          <For each={logs.data}>
             {(log) => (
               <div
                 class={clsx(
-                  "group min-h-8 flex flex-col h-auto hover:bg-layer-content/15",
-                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0",
-                  searchParams.filter &&
-                    searchParams.filter !== log.span?.trace &&
-                    "hidden",
+                  "group min-h-8 flex flex-col h-auto",
+                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0"
                 )}
               >
                 <span class="w-full grid grid-cols-[repeat(3,auto)_1fr]">
-                  <span
-                    class={clsx("w-16 mr-2 inline-block", getColor(log.level))}
-                  >
-                    {log.level}
-                  </span>
+                  <span class={clsx("w-16 mr-2 inline-block", getColor(log.level))}>{log.level}</span>
                   <span class="mr-2 text-success font-bold" title={log.target}>
                     {log.target}
                   </span>
-                  <span class="truncate">
-                    {(log.span?.method as string) && (
-                      <span class="opacity-60">
-                        {log.span?.method as string}&nbsp;
-                      </span>
-                    )}
-                    {(log.span?.uri as string) && (
-                      <span class="opacity-60">
-                        {log.span?.uri as string}&nbsp;
-                      </span>
-                    )}
+                  <span class={clsx("truncate", getContentColor(log.level))}>
+                    {(log["span.method"] as string) && <span>{log["span.method"] as string}&nbsp;</span>}
+                    {(log["span.uri"] as string) && <span>{log["span.uri"] as string}&nbsp;</span>}
                   </span>
                   <span class="text-right font-bold ml-2 whitespace-nowrap">
-                    {(log.span?.["user-id"] as string) && (
+                    {(log["span.user-id"] as string) && (
                       <span class="font-bold mr-2">
                         <span class="icon-[fluent--person-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A href={`/admin/users?user=${log.span?.["user-id"]}`}>
-                          {log.span?.["user-account"] as string}
-                        </A>
+                        <A href={`/admin/users?user=${log["span.user-id"]}`}>{log["span.user-account"] as string}</A>
                       </span>
                     )}
-                    {(log.span?.from as string) && (
+                    {(log["span.from"] as string) && (
                       <>
                         <span class="icon-[fluent--location-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A
-                          href={`/admin/users?filter=${log.span?.from as string}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          class="hover:underline mr-2"
-                        >
-                          {log.span?.from as string}
+                        <A href={`/admin/logs?from=${log["span.from"] as string}`} class="hover:underline mr-2">
+                          {log["span.from"] as string}
                         </A>
                       </>
                     )}
-                    {(log.span?.trace as string) && (
+                    {(log["span.trace"] as string) && (
                       <>
                         <span class="icon-[fluent--fire-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A
-                          href={`/admin/logs?filter=${log.span?.trace as string}`}
-                          class="hover:underline mr-2"
-                        >
+                        <A href={`/admin/logs?trace=${log["span.trace"] as string}`} class="hover:underline mr-2">
                           TRACE
                         </A>
                       </>
                     )}
                     <span class="icon-[fluent--clock-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                    <Switch fallback={time(log.timestamp, "HH:mm:ss")}>
-                      <Match when={matches.xl}>
-                        {time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}
-                      </Match>
-                      <Match when={matches.lg}>
-                        {time(log.timestamp, "MM-dd HH:mm:ss")}
-                      </Match>
-                      <Match when={matches.md}>
-                        {time(log.timestamp, "yyyy-MM-dd HH:mm:ss")}
-                      </Match>
-                      <Match when={matches.sm}>
-                        {time(log.timestamp, "MM-dd HH:mm:ss")}
-                      </Match>
+                    <Switch fallback={time(log._time, "HH:mm:ss")}>
+                      <Match when={matches.xl}>{time(log._time, "yyyy-MM-dd HH:mm:ss")}</Match>
+                      <Match when={matches.lg}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
+                      <Match when={matches.md}>{time(log._time, "yyyy-MM-dd HH:mm:ss")}</Match>
+                      <Match when={matches.sm}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
                     </Switch>
                   </span>
                 </span>
                 <div class="grid grid-cols-[1fr] group-hover:block w-full">
-                  <span
-                    class={clsx(
-                      "truncate break-words group-hover:whitespace-normal",
-                      getContentColor(log.level),
-                    )}
-                  >
+                  <span class={clsx("truncate break-words group-hover:whitespace-normal")}>
+                    <span>{log._msg}</span>
                     {LogField(log)}
                     {DataSpanField(log)}
                   </span>
@@ -307,12 +278,12 @@ export default function () {
               </div>
             )}
           </For>
-          <Show when={loading()}>
+          <Show when={logs.isLoading || logFiles.isLoading}>
             <div class="h-8 flex flex-row items-center space-x-2 border-b border-b-layer-content/10 overflow-hidden min-w-0">
               <LoadingTips />
             </div>
           </Show>
-          <Show when={logs().length === 0}>
+          <Show when={logs.data?.length === 0}>
             <div class="flex-1 flex flex-col items-center justify-center space-y-8 opacity-60">
               <span class="shrink-0 icon-[fluent--code-20-regular] w-24 h-24" />
               <span>{t("platform.logs.notStreaming")}</span>

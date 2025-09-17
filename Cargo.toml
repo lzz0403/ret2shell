@@ -72,6 +72,7 @@ tracing            = "0.1"
 tracing-appender   = "0.2"
 tracing-core       = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter", "json"] }
+urlencoding        = "2.1"
 
 r2s-auditor  = { version = "3", path = "crates/auditor" }
 r2s-bucket   = { version = "3", path = "crates/bucket" }

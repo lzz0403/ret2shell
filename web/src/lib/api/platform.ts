@@ -3,6 +3,7 @@ import type { HostType } from "@models/game";
 import type { Institute } from "@models/institute";
 import type { DateTime } from "luxon";
 import api, { api_root } from ".";
+import { luxonReplacer } from "@models/utils";
 
 export async function getPlatformInfo() {
   return await api.get(`${api_root}/platform/info`).json<ServerConfig>();
@@ -45,11 +46,41 @@ export type PlatformStatistics = {
 };
 
 export async function getPlatformStatistics() {
-  return await api.get(`${api_root}/platform/statistics`).json<PlatformStatistics>();
+  return await api
+    .get(`${api_root}/platform/statistics`)
+    .json<PlatformStatistics>();
 }
 
 export async function getPlatformLogs() {
   return await api.get(`${api_root}/platform/logs`).json<string[]>();
+}
+
+export type Log = {
+  _time: string;
+  _msg: string;
+  level: string;
+  target: string;
+  [key: string]: string;
+};
+
+export async function queryPlatformLog(req: {
+  started_at: DateTime;
+  ended_at: DateTime;
+  limit?: number;
+  level?: string;
+  trace?: string;
+  from?: string;
+  query?: string;
+}) {
+  const result = await api
+    .get(`${api_root}/platform/logs/query`, {
+      searchParams: {
+        ...JSON.parse(JSON.stringify(req, luxonReplacer)),
+      },
+    })
+    .text();
+  const logs = result.split("\n").filter((line) => line.trim() !== "");
+  return logs.map((line) => JSON.parse(line) as Log);
 }
 
 export type PlatformLicense = {
@@ -68,5 +99,7 @@ export async function getPlatformConfig() {
 }
 
 export async function updatePlatformConfig(config: Config) {
-  return await api.patch(`${api_root}/platform/config`, { json: config }).json<Config>();
+  return await api
+    .patch(`${api_root}/platform/config`, { json: config })
+    .json<Config>();
 }

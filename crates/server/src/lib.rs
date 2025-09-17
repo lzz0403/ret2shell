@@ -38,7 +38,7 @@ pub fn greet() {
 }
 
 pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
-  let (console_guard, file_guard) = logger::initialize(&config.logging).await?;
+  let guards = logger::initialize(&config.logging).await?;
   info!(">> server initialization started <<");
   let license = match r2s_license::check_license(PUB_KEY) {
     Ok(license) => license,
@@ -142,8 +142,7 @@ pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   .await
   .expect("failed to start server.");
 
-  drop(console_guard);
-  drop(file_guard);
+  drop(guards);
   Ok(())
 }
 
@@ -172,7 +171,7 @@ pub async fn down(config: GlobalConfig) -> anyhow::Result<()> {
     warn!("cleanup aborted");
     return Ok(());
   }
-  let (console_guard, file_guard) = logger::initialize(&config.logging).await?;
+  let guards = logger::initialize(&config.logging).await?;
   warn!(">> server cleanup started <<");
   r2s_migrator::down(&config.database).await?;
   info!("cleanup done: < Database >");
@@ -183,8 +182,7 @@ pub async fn down(config: GlobalConfig) -> anyhow::Result<()> {
 
   warn!(">> server cleanup finished <<");
 
-  drop(console_guard);
-  drop(file_guard);
+  drop(guards);
   Ok(())
 }
 

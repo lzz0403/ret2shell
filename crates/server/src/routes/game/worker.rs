@@ -15,7 +15,7 @@ use r2s_event::{
 use r2s_migrator::Database;
 use r2s_queue::{Queue, TracedMessage};
 use sea_orm::TransactionTrait;
-use tracing::{error, error_span, info, warn};
+use tracing::{Instrument, Span, error, error_span, info, warn};
 
 use crate::traits::{GlobalState, ResponseError};
 
@@ -36,12 +36,12 @@ pub async fn spawn_game_workers(state: GlobalState) {
 }
 
 async fn score_maintenance_worker(queue: Queue, db: Database) {
-  info!("Score maintenance worker started");
+  info!("score maintenance worker started");
   let messages = queue
     .subscribe("scoreboard")
     .await
     .inspect_err(|err| {
-      error!("Failed to subscribe to submission-check queue: {:?}", err);
+      error!(error=?err, "failed to subscribe to submission-check queue");
     })
     .ok();
   let mut messages = if let Some(messages) = messages {
@@ -53,7 +53,7 @@ async fn score_maintenance_worker(queue: Queue, db: Database) {
     if let Ok(message) = message {
       let req = String::from_utf8(message.message.payload.to_vec())
         .inspect_err(|e| {
-          error!("Failed to parse message from nats: {:?}", e);
+          error!(error=?e, "failed to parse message from nats");
         })
         .ok();
       if req.is_none() {
@@ -62,11 +62,10 @@ async fn score_maintenance_worker(queue: Queue, db: Database) {
       }
       let challenge = serde_json::from_str::<TracedMessage<challenge::Model>>(&req.unwrap())
         .inspect_err(|e| {
-          error!("Failed to parse message from nats: {:?}", e);
+          error!(error=?e, "failed to parse message from nats");
         })
         .ok();
       let span = error_span!("request", trace=%challenge.as_ref().map(|c| &c.trace).unwrap_or(&"UNKNOWN".to_owned()));
-      let span_guard = span.enter();
       let challenge = challenge.map(|c| c.payload);
       if challenge.is_none() {
         message.ack().await.ok();
@@ -74,11 +73,11 @@ async fn score_maintenance_worker(queue: Queue, db: Database) {
       }
       let challenge = challenge.unwrap();
       score_maintenance_worker_exec(db.clone(), challenge.clone())
+        .instrument(span)
         .await
-        .inspect_err(|e| error!("Failed to process message: {:?}", e))
+        .inspect_err(|e| error!(error=?e, "failed to process message"))
         .ok();
       message.ack().await.ok();
-      drop(span_guard);
     }
   }
 }
@@ -139,7 +138,7 @@ async fn submission_worker(
     .subscribe("check")
     .await
     .inspect_err(|err| {
-      error!("Failed to subscribe to submission-check queue: {:?}", err);
+      error!(error=?err, "failed to subscribe to submission-check queue");
     })
     .ok();
   let mut messages = if let Some(messages) = messages {
@@ -151,7 +150,7 @@ async fn submission_worker(
     if let Ok(message) = message {
       let req = String::from_utf8(message.message.payload.to_vec())
         .inspect_err(|e| {
-          error!("Failed to parse message from nats: {:?}", e);
+          error!(error=?e, "failed to parse message from nats");
         })
         .ok();
       if req.is_none() {
@@ -160,33 +159,50 @@ async fn submission_worker(
       }
       let submission = serde_json::from_str::<TracedMessage<submission::Model>>(&req.unwrap())
         .inspect_err(|e| {
-          error!("Failed to parse message from nats: {:?}", e);
+          error!(error=?e, "failed to parse message from nats");
         })
         .ok();
       if submission.is_none() {
         message.ack().await.ok();
         continue;
       }
+      let trace = submission.as_ref().unwrap().trace.to_owned();
+      let submission = submission.as_ref().unwrap().payload.to_owned();
+      let span = error_span!(
+        "request", trace=%trace,
+        "data-submission-id"=%submission.id,
+        "data-submission-content"=?submission.content,
+        "user-id"=tracing::field::Empty,
+        "user-account"=tracing::field::Empty,
+        "user-nickname"=tracing::field::Empty,
+        "team-id"=tracing::field::Empty,
+        "team-name"=tracing::field::Empty,
+        "data-challenge-id"=%submission.challenge_id,
+        "data-challenge-name"=tracing::field::Empty,
+        "data-game-id"=tracing::field::Empty,
+        "data-game-name"=tracing::field::Empty
+      );
       let result = submission_worker_exec(
         queue.clone(),
         db.clone(),
         cache.clone(),
         checker.clone(),
         bucket.clone(),
-        &submission.as_ref().unwrap().payload,
-        &submission.as_ref().unwrap().trace,
+        &submission,
+        &trace,
       )
+      .instrument(span)
       .await
-      .inspect_err(|e| error!("Failed to process message: {:?}", e))
+      .inspect_err(|e| error!(error=?e, "failed to process message"))
       .ok();
       if result.is_none() {
         submission::update(
           &db.conn,
           submission::Model {
-            id: submission.clone().unwrap().payload.id,
+            id: submission.id,
             solved: Some(false),
             result: Some("checker fails on your input, incorrect.".to_owned()),
-            ..submission.unwrap().payload
+            ..submission
           },
         )
         .await
@@ -196,7 +212,7 @@ async fn submission_worker(
       }
       message.ack().await.ok();
     } else {
-      error!("Failed to receive message from nats: {:?}", message);
+      error!(error=?message, "failed to receive message from nats");
     }
   }
 }
@@ -217,21 +233,6 @@ async fn submission_worker_exec(
   queue: Queue, db: Database, cache: Cache, mut checker: Checker, bucket: Bucket,
   submission: &submission::Model, trace: impl AsRef<str>,
 ) -> Result<submission::Model, ResponseError> {
-  let span = error_span!(
-    "request", trace=%trace.as_ref(),
-    "data-submission-id"=%submission.id,
-    "data-submission-content"=?submission.content,
-    "user-id"=tracing::field::Empty,
-    "user-account"=tracing::field::Empty,
-    "user-nickname"=tracing::field::Empty,
-    "team-id"=tracing::field::Empty,
-    "team-name"=tracing::field::Empty,
-    "data-challenge-id"=%submission.challenge_id,
-    "data-challenge-name"=tracing::field::Empty,
-    "data-game-id"=tracing::field::Empty,
-    "data-game-name"=tracing::field::Empty
-  );
-  let span_guard = span.enter();
   // stage 1: get all necessary data
   let txn = db.conn.begin().await?;
   let challenge = challenge::get(&txn, submission.challenge_id).await?;
@@ -240,8 +241,8 @@ async fn submission_worker_exec(
   } else {
     return Err(ResponseError::BadRequest("challenge not found".to_owned()));
   };
-  span.record("data-challenge-name", challenge.name.as_str());
-  span.record("data-game-id", challenge.game_id);
+  Span::current().record("data-challenge-name", challenge.name.as_str());
+  Span::current().record("data-game-id", challenge.game_id);
   let prev_submitted = submission::count(
     &txn,
     true,
@@ -268,16 +269,16 @@ async fn submission_worker_exec(
   } else {
     return Err(ResponseError::BadRequest("game not found".to_owned()));
   };
-  span.record("data-game-name", game.name.as_str());
+  Span::current().record("data-game-name", game.name.as_str());
 
   let user = if let Some(user) = user {
     user
   } else {
     return Err(ResponseError::BadRequest("user not found".to_owned()));
   };
-  span.record("user-id", user.id);
-  span.record("user-account", user.account.as_str());
-  span.record("user-nickname", user.nickname.as_str());
+  Span::current().record("user-id", user.id);
+  Span::current().record("user-account", user.account.as_str());
+  Span::current().record("user-nickname", user.nickname.as_str());
 
   let challenge_bucket = bucket
     .at(
@@ -329,8 +330,8 @@ async fn submission_worker_exec(
   }
 
   let team = team.unwrap();
-  span.record("team-id", team.id);
-  span.record("team-name", team.name.as_str());
+  Span::current().record("team-id", team.id);
+  Span::current().record("team-name", team.name.as_str());
 
   // stage 3: update team score and create extra or audit if necessary
   if submission.solved.unwrap_or(false) {
@@ -448,7 +449,6 @@ async fn submission_worker_exec(
   }
 
   txn.commit().await?;
-  drop(span_guard);
 
   Ok(submission)
 }

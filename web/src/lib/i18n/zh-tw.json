@@ -394,6 +394,9 @@
         "fetchList": {
           "title": "獲取日誌列表失敗"
         },
+        "fetchLogs": {
+          "title": "獲取日誌失敗"
+        },
         "socketClosed": {
           "title": "日誌管道已斷開，將自動重試連接..."
         }
