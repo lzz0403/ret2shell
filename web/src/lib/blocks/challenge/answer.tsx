@@ -12,26 +12,13 @@ import { EditorBare } from "@widgets/editor";
 import LoadingTips from "@widgets/loading-tips";
 import { createSignal, Show, Suspense } from "solid-js";
 
-export default function (props: {
-  onStateChange?: (challenge?: Challenge) => void;
-  inGame?: boolean;
-}) {
+export default function (props: { onStateChange?: (challenge?: Challenge) => void; inGame?: boolean }) {
   const [answer, setAnswer] = createSignal("");
   const [inEdit, setInEdit] = createSignal(false);
 
   const answerQuery = useQuery(() => ({
-    queryKey: [
-      "game",
-      challengeStore.current?.game_id,
-      "challenge",
-      challengeStore.current?.id,
-      "answer",
-    ],
-    queryFn: async () =>
-      await getChallengeAnswer(
-        challengeStore.current!.game_id,
-        challengeStore.current!.id,
-      ),
+    queryKey: ["game", challengeStore.current?.game_id, "challenge", challengeStore.current?.id, "answer"],
+    queryFn: async () => await getChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id),
     enabled: !!challengeStore.current,
     throwOnError: (err: Error) => {
       handleHttpError(err, t("challenge.answer.errors.fetchAnswer.title")!);
@@ -44,11 +31,7 @@ export default function (props: {
       if (!challengeStore.current) {
         return Promise.reject("No challenge selected");
       }
-      return updateChallengeAnswer(
-        challengeStore.current!.game_id,
-        challengeStore.current!.id,
-        newAnswer,
-      );
+      return updateChallengeAnswer(challengeStore.current!.game_id, challengeStore.current!.id, newAnswer);
     },
     onSuccess: () => {
       addToast({
