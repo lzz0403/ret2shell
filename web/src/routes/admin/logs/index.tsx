@@ -32,9 +32,9 @@ function LogField(log: Log) {
 }
 
 function DataSpanField(log: Log) {
-  if (!log.span) return null;
+  if (!log) return null;
   return (
-    <For each={Object.entries(log.span)}>
+    <For each={Object.entries(log)}>
       {([key, value]) =>
         key.startsWith("span.data-") && (
           <>
