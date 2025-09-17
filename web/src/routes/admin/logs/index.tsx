@@ -21,7 +21,7 @@ function LogField(log: Log) {
       {([key, value]) =>
         key.startsWith("fields.") && (
           <>
-            <span class="italic opacity-60">{key}</span>
+            <span class="italic opacity-60">{key.replace("fields.", "")}</span>
             <span class="opacity-60">=</span>
             <span>{value as string}&nbsp;&nbsp;</span>
           </>
@@ -80,7 +80,7 @@ export default function () {
           ended_at: searchParams.ended_at
             ? DateTime.fromSeconds(Number.parseInt(searchParams.ended_at as string, 10))
             : DateTime.now(),
-          limit: searchParams.limit ? Number.parseInt((searchParams.limit as string) || "NaN", 10) : 50,
+          limit: searchParams.limit ? Number.parseInt((searchParams.limit as string) || "NaN", 10) : 20,
           level: searchParams.level as string | undefined,
           trace: searchParams.trace as string | undefined,
           from: searchParams.from as string | undefined,
@@ -177,7 +177,7 @@ export default function () {
               { label: "WARN", value: "WARN" },
               { label: "ERROR", value: "ERROR" },
             ]}
-            value={[(searchParams.limit as string) ?? "50"]}
+            value={[(searchParams.limit as string) ?? "20"]}
             onValueChange={(val) => setSearchParams({ level: val.value.at(0) })}
           />
           <Select
@@ -270,7 +270,7 @@ export default function () {
                 </span>
                 <div class="grid grid-cols-[1fr] group-hover:block w-full">
                   <span class={clsx("truncate break-words group-hover:whitespace-normal")}>
-                    <span>{log._msg}</span>
+                    <span>{log._msg}&nbsp;&nbsp;</span>
                     {LogField(log)}
                     {DataSpanField(log)}
                   </span>
