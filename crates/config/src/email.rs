@@ -22,7 +22,7 @@ pub struct Config {
   /// The TLS configuration for secure email communication.
   /// could be "none", "tls", "starttls"
   pub tls: String,
-  /// The email body for reset password emails
+  /// The email body for reset password emails.
   pub reset_password_email_body: Option<String>,
   /// The email subject for reset password emails.
   pub reset_password_email_subject: Option<String>,

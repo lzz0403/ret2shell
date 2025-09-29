@@ -53,7 +53,7 @@ async fn send_email_impl(config: &email::Config, email: &EmailCtx) -> Result<(),
   let email = construct_email(
     email,
     &config.sender,
-    &config.sender_address.clone().unwrap_or(config.username.clone()),
+    config.sender_address.as_ref().unwrap_or(&config.username),
   )?;
   debug!(?email, "constructed email");
   mailer.send(email).await?;
