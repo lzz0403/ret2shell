@@ -49,6 +49,6 @@ RUN mkdir -p \
 
 # if you changes the server port in deployment, maybe you should request for a new distribution
 HEALTHCHECK --interval=5m --timeout=3s --start-period=10s --retries=1 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/api/ping || exit 1
+    CMD curl -fsSL http://localhost:8080/api/ping || exit 1
 
 ENTRYPOINT ["/bin/r2s-server"]
