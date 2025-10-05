@@ -18,7 +18,7 @@ function checkCookiePolicy() {
   if (!platformStore.accept_cookies) {
     const toastId = addToast({
       level: "info",
-      description: t("platform.cookiePolicy")!,
+      description: t("platform.cookiePolicy"),
       accept: () => {
         setPlatformStore({ accept_cookies: true });
         setTimeout(() => {
@@ -49,7 +49,7 @@ export default function (props: { children?: JSX.Element }) {
     if (accountStore.token && !accountStore.permissions.includes(Permission.Verified)) {
       addToast({
         level: "warning",
-        description: t("account.status.unverified.message")!,
+        description: t("account.status.unverified.message"),
         accept: () => {
           navigate("/account/settings");
         },
@@ -83,7 +83,7 @@ export default function (props: { children?: JSX.Element }) {
         });
         navigate(`/sigtrap/${err.response?.status || 500}`);
       } else {
-        handleHttpError(err as Error, t("platform.errors.internal.title")!);
+        handleHttpError(err as Error, t("platform.errors.internal.title"));
         navigate("/sigtrap/unknown");
       }
       setPlatformStore({ backend_online: false });

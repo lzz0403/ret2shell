@@ -25,7 +25,7 @@ export default function () {
             onDone={(resp) => {
               addToast({
                 level: "success",
-                description: t("general.actions.create.status.success")!,
+                description: t("general.actions.create.status.success"),
                 duration: 5000,
               });
               navigate(`/training/${resp.id}`);

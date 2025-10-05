@@ -31,7 +31,7 @@ export default function AdministratorsManagement() {
         try {
           setAdmins(await getGameAdmins(gameStore.current!.id));
         } catch (err) {
-          handleHttpError(err as Error, t("game.administrator.errors.fetchList.title")!);
+          handleHttpError(err as Error, t("game.administrator.errors.fetchList.title"));
         }
         setLoading(false);
       });
@@ -49,7 +49,7 @@ export default function AdministratorsManagement() {
         try {
           setSearchedUsers((await getUserList(1, 30, "id", adminSearch()))[0]);
         } catch (err) {
-          handleHttpError(err as Error, t("user.errors.fetchList.title")!);
+          handleHttpError(err as Error, t("user.errors.fetchList.title"));
         }
         setSearching(false);
       });
@@ -62,7 +62,7 @@ export default function AdministratorsManagement() {
       const resp = await updateGameAdmins(gameStore.current!.id, [...gameStore.current!.admins, user.id]);
       setGameStore({ current: resp });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.add.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.add.status.fail"));
     }
     setAdding(false);
     setSearching(false);
@@ -78,7 +78,7 @@ export default function AdministratorsManagement() {
       );
       setGameStore({ current: resp });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
     setLoading(false);
   }

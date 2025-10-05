@@ -50,12 +50,12 @@ export default function Traffic() {
         setLint(resp.lint);
         addToast({
           level: "success",
-          description: t("general.actions.save.status.success")!,
+          description: t("general.actions.save.status.success"),
           duration: 5000,
         });
         setGameStore({ current: { ...gameStore.current, traffic: script() } });
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.save.status.fail"));
       }
       setSaving(false);
     }
@@ -69,12 +69,12 @@ export default function Traffic() {
         setLint(null);
         addToast({
           level: "success",
-          description: t("general.actions.delete.status.success")!,
+          description: t("general.actions.delete.status.success"),
           duration: 5000,
         });
         setGameStore({ current: { ...gameStore.current, traffic: "" } });
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.delete.status.fail"));
       }
       setSaving(false);
     }
@@ -87,14 +87,14 @@ export default function Traffic() {
         await updateGameNodeSelector(gameStore.current.id, nodeSelector());
         addToast({
           level: "success",
-          description: t("general.actions.save.status.success")!,
+          description: t("general.actions.save.status.success"),
           duration: 5000,
         });
         setGameStore({
           current: { ...gameStore.current, node_selector: nodeSelector() },
         });
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.save.status.fail"));
       }
       setSaving(false);
     }
@@ -107,12 +107,12 @@ export default function Traffic() {
         await deleteGameNodeSelector(gameStore.current.id);
         addToast({
           level: "success",
-          description: t("general.actions.delete.status.success")!,
+          description: t("general.actions.delete.status.success"),
           duration: 5000,
         });
         setGameStore({ current: { ...gameStore.current, node_selector: "" } });
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.delete.status.fail"));
       }
       setSaving(false);
     }
@@ -165,12 +165,12 @@ export default function Traffic() {
               size="sm"
               items={[
                 {
-                  label: t("traffic.preset.singleNodeDirectScript")!,
+                  label: t("traffic.preset.singleNodeDirectScript"),
                   value: "single-node-direct",
                   icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
                 },
                 {
-                  label: t("traffic.preset.multiNodeDirectScript")!,
+                  label: t("traffic.preset.multiNodeDirectScript"),
                   value: "multi-node-direct",
                   icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
                 },

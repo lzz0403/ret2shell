@@ -34,7 +34,7 @@ export default function () {
   if (!accountStore.permissions.includes(Permission.Verified)) {
     addToast({
       level: "warning",
-      description: t("account.status.unverified.message")!,
+      description: t("account.status.unverified.message"),
       duration: 5000,
     });
     navigate("/account/settings/info");
@@ -76,7 +76,7 @@ export default function () {
       });
       refreshChallenges();
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail"));
     }
     setCreating(false);
   }
@@ -95,7 +95,7 @@ export default function () {
           setChallengeStore({ current: resp });
           refreshChallengeAssets();
         } catch (err) {
-          handleHttpError(err as Error, t("challenge.errors.fetch.title")!);
+          handleHttpError(err as Error, t("challenge.errors.fetch.title"));
           setSearchParams({ challenge: null, create: null });
         }
         setLoadingChallenge(false);
@@ -135,11 +135,11 @@ export default function () {
       setGameStore({ current: resp });
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
     }
     setEditing(false);
   }
@@ -230,7 +230,12 @@ export default function () {
             <Form onDone={onCreateChallenge} loading={creating()} />
           </Match>
           <Match when={challengeStore.current}>
-            <Challenge onStateChange={refreshChallenges} archived />
+            <Challenge
+              onStateChange={refreshChallenges}
+              archived
+              challengeId={selectedChallengeId()}
+              gameId={gameStore.current!.id}
+            />
           </Match>
         </Switch>
       </div>

@@ -25,7 +25,7 @@ export default function () {
       setArticles(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("bulletin.errors.fetchList.title")!);
+      handleHttpError(err as Error, t("bulletin.errors.fetchList.title"));
     }
     setLoading(false);
   }

@@ -48,13 +48,13 @@ export default function IntroForm(props: { onDone: (article: Article) => Promise
         weight: 0,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">
-      <Field name="content" validate={[required(t("game.form.introduction.required")!)]}>
+      <Field name="content" validate={[required(t("game.form.introduction.required"))]}>
         {(field) => (
           <Editor
             form={form}

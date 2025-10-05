@@ -22,12 +22,12 @@ export default function () {
       await deleteGame(gameStore.current.id);
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
       navigate("/games", { replace: true });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
     setLoading(false);
   }

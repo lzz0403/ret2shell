@@ -32,7 +32,7 @@ export default function () {
     if (gameStore.current && !canParticipate()) {
       addToast({
         level: "warning",
-        description: t("game.canNotParticipate")!,
+        description: t("game.canNotParticipate"),
         duration: 5000,
       });
       navigate(`/games/${gameStore.current.id}`, { replace: true });
@@ -48,7 +48,7 @@ export default function () {
         navigate(`/games/${gameStore.current?.id}`);
       }, 2000);
     } catch (err) {
-      handleHttpError(err as Error, t("team.errors.join.title")!);
+      handleHttpError(err as Error, t("team.errors.join.title"));
     }
     setLoading(false);
   }
@@ -73,7 +73,7 @@ export default function () {
         >
           <Form onSubmit={onSubmit} class="md:w-0 flex-1 shrink-0 flex flex-col space-y-2">
             <h2 class="font-bold text-center">{t("team.join.title")}</h2>
-            <Field name="token" validate={[required(t("team.join.form.token.required")!)]}>
+            <Field name="token" validate={[required(t("team.join.form.token.required"))]}>
               {(field, props) => (
                 <Input
                   icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
@@ -86,7 +86,7 @@ export default function () {
                 />
               )}
             </Field>
-            <Field name="accepted" type="boolean" validate={[required(t("team.form.acceptRules.required")!)]}>
+            <Field name="accepted" type="boolean" validate={[required(t("team.form.acceptRules.required"))]}>
               {(field, props) => (
                 <>
                   <input type="checkbox" class="hidden" {...props} checked={field.value} />

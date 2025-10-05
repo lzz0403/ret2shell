@@ -73,7 +73,7 @@ export default function ChatList() {
         const result = mergeChats(sessions(), resp[0]);
         setSessions([...result]);
       } catch (err) {
-        handleHttpError(err as Error, t("game.hammer.errors.fetchSessions.title")!);
+        handleHttpError(err as Error, t("game.hammer.errors.fetchSessions.title"));
       }
     }
   }

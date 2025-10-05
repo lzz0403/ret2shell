@@ -16,7 +16,7 @@ import type { Command } from "./interface";
 
 export class Submit implements Command {
   name = "submit";
-  man = t("shell.submit.man")!;
+  man = t("shell.submit.man");
   func = async (io: Stdio, _args: ParseEntry[], origin: string) => {
     const flag = origin.replace("submit", "").trim();
     io.info(`${t("shell.submit.submitting")}: ${ansiColors.blue(flag)}`);
@@ -44,7 +44,7 @@ export class Submit implements Command {
           checked = true;
           break;
         }
-        io.print(ansiColors.yellow("."));
+        io.print(ansiColors.green("."));
         await new Promise((resolve) => setTimeout(resolve, 1000));
         iter--;
       }

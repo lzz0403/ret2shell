@@ -34,7 +34,7 @@ export default function () {
     if (!config()) {
       addToast({
         level: "error",
-        description: t("platform.errors.fetchConfig.title")!,
+        description: t("platform.errors.fetchConfig.title"),
         duration: 5000,
       });
       return;
@@ -60,11 +60,11 @@ export default function () {
       setPlatformStore({ config: mergedConfig.server });
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -84,7 +84,7 @@ export default function () {
         zen_game: resp.server.zen_game || null,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title")!);
+      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title"));
     }
   });
   return (
@@ -203,7 +203,7 @@ export default function () {
                     return false;
                   }
                   return true;
-                }, t("platform.form.hideMaker.disabled")!),
+                }, t("platform.form.hideMaker.disabled")),
               ]}
             >
               {(field, props) => (

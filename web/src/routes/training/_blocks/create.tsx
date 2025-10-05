@@ -52,7 +52,7 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
     try {
       props.onDone(await createGame(req));
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail"));
     }
     setLoading(false);
   }
@@ -62,12 +62,12 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
         {t("general.actions.create.title")} - {t("training.title")}
       </h1>
       <Form onSubmit={onSubmit} class="flex flex-col space-y-2 py-3 lg:py-6">
-        <Field name="name" validate={[required(t("game.form.name.required")!)]}>
+        <Field name="name" validate={[required(t("game.form.name.required"))]}>
           {(field, props) => (
             <Input
               icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
-              placeholder={t("game.form.name.placeholder")!}
-              title={t("game.form.name.label")!}
+              placeholder={t("game.form.name.placeholder")}
+              title={t("game.form.name.label")}
               {...props}
               value={field.value}
               error={field.error}
@@ -76,12 +76,12 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
             />
           )}
         </Field>
-        <Field name="brief" validate={[required(t("game.form.brief.required")!)]}>
+        <Field name="brief" validate={[required(t("game.form.brief.required"))]}>
           {(field, props) => (
             <Input
               icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
-              placeholder={t("game.form.brief.placeholder")!}
-              title={t("game.form.brief.label")!}
+              placeholder={t("game.form.brief.placeholder")}
+              title={t("game.form.brief.label")}
               {...props}
               value={field.value}
               error={field.error}

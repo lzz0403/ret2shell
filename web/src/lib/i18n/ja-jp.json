@@ -1330,6 +1330,9 @@
       "errors": {
         "fetchCheckerScript": {
           "title": "評価スクリプトの取得に失敗しました"
+        },
+        "fetchScript": {
+          "title": "スクリプト構成を取得できませんでした"
         }
       }
     },
@@ -2105,6 +2108,9 @@
     "errors": {
       "fetchNodes": {
         "title": "クラスターノード情報の取得に失敗しました"
+      },
+      "fetchConfig": {
+        "title": "クラスター構成の取得に失敗しました"
       }
     }
   },

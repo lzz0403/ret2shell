@@ -40,11 +40,11 @@ export default function () {
       refreshInstitutes();
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -54,11 +54,11 @@ export default function () {
       await createInstitute(result);
       addToast({
         level: "success",
-        description: t("general.actions.create.status.success")!,
+        description: t("general.actions.create.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.create.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.create.status.fail"));
     }
     setTimeout(async () => {
       await refreshInstitutes();
@@ -73,11 +73,11 @@ export default function () {
       refreshInstitutes();
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.delete.status.fail"));
     }
     setLoading(false);
   }
@@ -86,7 +86,7 @@ export default function () {
     try {
       setOAuthServices(await getOAuthProviders());
     } catch (err) {
-      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title")!);
+      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title"));
     }
   }
 
@@ -96,11 +96,11 @@ export default function () {
       createOAuthProvider(result);
       addToast({
         level: "success",
-        description: t("general.actions.create.status.success")!,
+        description: t("general.actions.create.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.create.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.create.status.fail"));
     }
     setTimeout(async () => {
       await refreshProviders();
@@ -115,11 +115,11 @@ export default function () {
       updateOAuthProvider(result.provider, result);
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
     }
     setTimeout(async () => {
       await refreshProviders();
@@ -134,11 +134,11 @@ export default function () {
       deleteOAuthProvider(result.provider);
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.delete.status.fail"));
     }
     setTimeout(async () => {
       await refreshProviders();

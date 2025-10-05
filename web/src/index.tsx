@@ -36,7 +36,7 @@ function postUpdated() {
     setTimeout(() => {
       addToast({
         level: "warning",
-        description: t("platform.updated")!,
+        description: t("platform.updated"),
         duration: 10000,
       });
     }, 1000);
@@ -47,6 +47,7 @@ const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
     },
   },
 });

@@ -44,7 +44,7 @@ export default function () {
     try {
       setOAuthServices(await getOAuthProviders());
     } catch (err) {
-      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title")!);
+      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title"));
     }
   });
 
@@ -58,7 +58,7 @@ export default function () {
         await login(result);
         addToast({
           level: "success",
-          description: t("account.login.status.success.message")!,
+          description: t("account.login.status.success.message"),
           duration: 5000,
           // img: xdsecMascotHappy,
         });
@@ -75,7 +75,7 @@ export default function () {
           navigate("/", { replace: true });
         }
       } catch (err) {
-        handleHttpError(err as Error, t("account.login.errors.login.title")!);
+        handleHttpError(err as Error, t("account.login.errors.login.title"));
         setTimestamp(DateTime.now().toMillis());
         setValue(form, "password", "");
         // setTimeout(() => {
@@ -98,8 +98,8 @@ export default function () {
             <Field
               name="account"
               validate={[
-                required(t("account.form.account.required")!),
-                minLength(4, t("account.form.account.minimumLength")!),
+                required(t("account.form.account.required")),
+                minLength(4, t("account.form.account.minimumLength")),
               ]}
             >
               {(field, props) => (
@@ -124,12 +124,12 @@ export default function () {
             <Field
               name="password"
               validate={[
-                required(t("account.form.password.required")!),
-                minLength(8, t("account.form.password.minimumLength")!),
+                required(t("account.form.password.required")),
+                minLength(8, t("account.form.password.minimumLength")),
                 pattern(
                   // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
                   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
-                  t("account.form.password.tooWeak")!
+                  t("account.form.password.tooWeak")
                 ),
               ]}
             >
@@ -163,8 +163,8 @@ export default function () {
                 <Field
                   name="captcha_answer"
                   validate={[
-                    required(t("captcha.form.answer.required")!),
-                    minLength(4, t("captcha.form.answer.minimumLength")!),
+                    required(t("captcha.form.answer.required")),
+                    minLength(4, t("captcha.form.answer.minimumLength")),
                   ]}
                 >
                   {(answerField, props) => (

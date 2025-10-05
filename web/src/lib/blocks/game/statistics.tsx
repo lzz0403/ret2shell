@@ -42,7 +42,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
         try {
           setStats(await getGameStatistics(gameStore.current!.id, props.inGame, selectedInstituteId() ?? undefined));
         } catch (err) {
-          handleHttpError(err as Error, t("game.statistics.errors.fetch")!);
+          handleHttpError(err as Error, t("game.statistics.errors.fetch"));
         }
         setLoading(false);
       });
@@ -102,7 +102,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
         link.click();
         URL.revokeObjectURL(url);
       } catch (err) {
-        handleHttpError(err as Error, t("game.statistics.errors.export")!);
+        handleHttpError(err as Error, t("game.statistics.errors.export"));
       }
       setExporting(false);
     }
@@ -214,7 +214,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
           await getGameStatisticsExport(gameStore.current.id, props.inGame, selectedInstituteId() ?? undefined)
         );
       } catch (err) {
-        handleHttpError(err as Error, t("game.statistics.errors.export")!);
+        handleHttpError(err as Error, t("game.statistics.errors.export"));
       }
       setExporting(false);
     }
@@ -493,7 +493,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
                       type: "category",
                       data: Object.entries(stats()!.institute_players)
                         .map(([i, _]) => accountStore.institutes.find((v) => v.id === Number.parseInt(i, 10))?.name)
-                        .concat(t("game.statistics.others")!),
+                        .concat(t("game.statistics.others")),
                     },
                     yAxis: {
                       type: "value",
@@ -589,7 +589,7 @@ export default function GameStatistics(props: { inGame?: boolean }) {
                     type: "category",
                     data: Object.entries(stats()!.institute_teams)
                       .map(([i, _]) => accountStore.institutes.find((v) => v.id === Number.parseInt(i, 10))?.name)
-                      .concat(t("game.statistics.others")!),
+                      .concat(t("game.statistics.others")),
                   },
                   yAxis: {
                     type: "value",

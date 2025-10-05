@@ -45,7 +45,7 @@ function UserList() {
       setUsers(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("user.errors.fetchList.title")!);
+      handleHttpError(err as Error, t("user.errors.fetchList.title"));
     }
     setLoading(false);
   }
@@ -83,17 +83,17 @@ function UserList() {
             },
             {
               value: "account",
-              label: t("account.form.account.label")!,
+              label: t("account.form.account.label"),
               icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
             },
             {
               value: "institute_id",
-              label: t("account.form.institute.label")!,
+              label: t("account.form.institute.label"),
               icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
             },
             {
               value: "registered_at",
-              label: t("account.form.registeredAt.label")!,
+              label: t("account.form.registeredAt.label"),
               icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
             },
           ]}
@@ -106,7 +106,7 @@ function UserList() {
         <Select
           class="flex-1 max-w-64 min-w-48"
           size="sm"
-          placeholder={t("account.form.institute.label")!}
+          placeholder={t("account.form.institute.label")}
           items={institutesSelect()}
           onValueChange={(v) => {
             setSearchParams({ institute: (v.value.at(0) && Number.parseInt(v.value.at(0)!, 10)) || null });
@@ -196,7 +196,7 @@ export default function () {
           const resp = await getUser(inEdit()!);
           setUser(resp);
         } catch (err) {
-          handleHttpError(err as Error, t("user.errors.fetch.title")!);
+          handleHttpError(err as Error, t("user.errors.fetch.title"));
         }
       });
     } else {
@@ -211,12 +211,12 @@ export default function () {
       await updateUser(user);
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
       setUser(user);
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setUpdatingUser(false);
   }

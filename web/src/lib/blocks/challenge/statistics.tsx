@@ -35,7 +35,7 @@ function StatisticsPanel() {
       setSolves(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("challenge.statistics.errors.fetchSubmission.title")!);
+      handleHttpError(err as Error, t("challenge.statistics.errors.fetchSubmission.title"));
     }
     setLoading(false);
   }
@@ -138,7 +138,7 @@ function HistoryPanel() {
         try {
           setHistory(await getChallengeCommitHistory(gameStore.current!.id, challengeStore.current!.id));
         } catch (err) {
-          handleHttpError(err as Error, t("challenge.statistics.errors.fetchCommitHistory")!);
+          handleHttpError(err as Error, t("challenge.statistics.errors.fetchCommitHistory"));
         }
         setLoading(false);
       });

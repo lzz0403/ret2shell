@@ -35,7 +35,7 @@ export default function Traffic() {
       const resp = await getPlatformConfig();
       setConfig(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("platform.errors.fetchConfig.title")!);
+      handleHttpError(err as Error, t("platform.errors.fetchConfig.title"));
     }
   });
   const [preset, setPreset] = createSignal(null as PresetTraffic | null);
@@ -64,11 +64,11 @@ export default function Traffic() {
       setLint(resp.lint);
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setSaving(false);
   }
@@ -81,11 +81,11 @@ export default function Traffic() {
       setScript("");
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
     setSaving(false);
   }
@@ -96,11 +96,11 @@ export default function Traffic() {
       await updateDefaultNodeSelector(nodeSelector());
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setSaving(false);
   }
@@ -111,11 +111,11 @@ export default function Traffic() {
       await deleteDefaultNodeSelector();
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
     setSaving(false);
   }
@@ -163,16 +163,16 @@ export default function Traffic() {
             </span>
             <Select
               class="w-60 hidden lg:flex"
-              placeholder={t("traffic.preset.title")!}
+              placeholder={t("traffic.preset.title")}
               size="sm"
               items={[
                 {
-                  label: t("traffic.preset.singleNodeDirectScript")!,
+                  label: t("traffic.preset.singleNodeDirectScript"),
                   value: "single-node-direct",
                   icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
                 },
                 {
-                  label: t("traffic.preset.multiNodeDirectScript")!,
+                  label: t("traffic.preset.multiNodeDirectScript"),
                   value: "multi-node-direct",
                   icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
                 },

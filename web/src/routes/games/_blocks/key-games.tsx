@@ -62,7 +62,7 @@ export default function () {
       appendGames(game);
       setTotal(total);
     } catch (err) {
-      handleHttpError(err as Error, t("game.errors.fetchList.title")!);
+      handleHttpError(err as Error, t("game.errors.fetchList.title"));
     }
     setLoading(false);
   }

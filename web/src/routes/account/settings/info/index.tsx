@@ -71,7 +71,7 @@ export default function () {
         setValue(form, "avatar", resp.hash);
         setAvatarSet(true);
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.upload.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.upload.status.fail"));
       }
       setAvatarUploading(false);
     }
@@ -82,11 +82,11 @@ export default function () {
       await resendEmail();
       addToast({
         level: "success",
-        description: t("general.actions.send.status.success")!,
+        description: t("general.actions.send.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.send.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.send.status.fail"));
     }
     setSendingEmail(false);
   }
@@ -99,12 +99,12 @@ export default function () {
       });
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
       refreshUser();
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -126,7 +126,7 @@ export default function () {
                 value={accountStore.account!}
                 disabled
               />
-              <Field name="nickname" validate={[required(t("account.form.nickname.required")!)]}>
+              <Field name="nickname" validate={[required(t("account.form.nickname.required"))]}>
                 {(field, props) => (
                   <Input
                     icon={<span class="shrink-0 icon-[fluent--emoji-20-regular] w-5 h-5" />}
@@ -189,7 +189,7 @@ export default function () {
           </div>
           <Field
             name="email"
-            validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid")!)]}
+            validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid"))]}
           >
             {(field, props) => (
               <Input

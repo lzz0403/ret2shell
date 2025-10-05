@@ -31,7 +31,7 @@ export default function () {
         await forgotPassword(data);
         addToast({
           level: "success",
-          description: t("account.forgot.status.success.message")!,
+          description: t("account.forgot.status.success.message"),
           duration: 5000,
         });
         navigate("/", { replace: true });
@@ -39,11 +39,11 @@ export default function () {
         if (err instanceof HTTPError && err.response.status === 429) {
           addToast({
             level: "error",
-            description: t("account.forgot.status.rateExceeded.message")!,
+            description: t("account.forgot.status.rateExceeded.message"),
             duration: 5000,
           });
         } else {
-          handleHttpError(err as Error, t("general.actions.create.status.fail")!);
+          handleHttpError(err as Error, t("general.actions.create.status.fail"));
           setTimestamp(DateTime.now().toMillis());
         }
       }
@@ -63,8 +63,8 @@ export default function () {
             <Field
               name="email"
               validate={[
-                required(t("account.forgot.form.email.required")!),
-                email(t("account.forgot.form.email.invalid")!),
+                required(t("account.forgot.form.email.required")),
+                email(t("account.forgot.form.email.invalid")),
               ]}
             >
               {(field, props) => (
@@ -86,8 +86,8 @@ export default function () {
                 <Field
                   name="captcha_answer"
                   validate={[
-                    required(t("captcha.form.answer.required")!),
-                    minLength(4, t("captcha.form.answer.required")!),
+                    required(t("captcha.form.answer.required")),
+                    minLength(4, t("captcha.form.answer.required")),
                   ]}
                 >
                   {(answerField, props) => (

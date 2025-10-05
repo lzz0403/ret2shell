@@ -11,24 +11,24 @@ import type { Command } from "./interface";
 
 export class Wget implements Command {
   name = "wget";
-  man = t("shell.wget.man")!;
+  man = t("shell.wget.man");
   func = async (io: Stdio, args: ParseEntry[], _origin: string) => {
     if (!gameStore.current) {
-      io.error(t("shell.errors.noGameSpecified.title")!);
+      io.error(t("shell.errors.noGameSpecified.title"));
       return 1;
     }
     if (!challengeStore.current) {
-      io.error(t("shell.errors.noChallengeSpecified.title")!);
+      io.error(t("shell.errors.noChallengeSpecified.title"));
       return 1;
     }
     if (args.length !== 1) {
-      io.error(t("shell.wget.usage")!);
+      io.error(t("shell.wget.usage"));
       return 1;
     }
     const file = args[0].toString().trim();
     const found = challengeStore.files.find((f) => f.file === file);
     if (!found) {
-      io.error(t("shell.wget.errors.fileNotFound.title")!);
+      io.error(t("shell.wget.errors.fileNotFound.title"));
       return 1;
     }
     try {
@@ -46,7 +46,7 @@ export class Wget implements Command {
         }
       );
       io.println("");
-      io.success(t("general.actions.download.status.success")!);
+      io.success(t("general.actions.download.status.success"));
       const url = window.URL.createObjectURL(blob as Blob);
       const a = document.createElement("a");
       a.href = url;

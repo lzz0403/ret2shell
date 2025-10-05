@@ -27,7 +27,7 @@ export function AuditList() {
       setAudits(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("game.monitor.errors.fetchAudit.title")!);
+      handleHttpError(err as Error, t("game.monitor.errors.fetchAudit.title"));
     }
     setLoading(false);
   }
@@ -51,11 +51,11 @@ export function AuditList() {
       refreshAudits();
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
   }
 
@@ -68,11 +68,11 @@ export function AuditList() {
       refreshAudits();
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
   }
   const matches = createBreakpoints(breakpoints);
@@ -194,7 +194,7 @@ export function SubmissionList(props: { inGame?: boolean; archived?: boolean }) 
       setSubmissions(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("game.monitor.errors.fetchSubmission.title")!);
+      handleHttpError(err as Error, t("game.monitor.errors.fetchSubmission.title"));
     }
     setLoading(false);
   }

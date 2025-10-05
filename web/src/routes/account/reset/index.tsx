@@ -30,7 +30,7 @@ export default function () {
   if (!emailPredef || !tokenPredef) {
     addToast({
       level: "error",
-      description: t("account.reset.errors.invalidLink.title")!,
+      description: t("account.reset.errors.invalidLink.title"),
       duration: 5000,
     });
     navigate("/sigtrap/403", { replace: true });
@@ -47,12 +47,12 @@ export default function () {
         await resetPassword(data);
         addToast({
           level: "success",
-          description: t("account.reset.status.success.message")!,
+          description: t("account.reset.status.success.message"),
           duration: 5000,
         });
         navigate("/", { replace: true });
       } catch (err) {
-        handleHttpError(err as Error, t("account.reset.errors.reset.title")!);
+        handleHttpError(err as Error, t("account.reset.errors.reset.title"));
         setTimestamp(DateTime.now().toMillis());
       }
       setLoading(false);
@@ -78,7 +78,7 @@ export default function () {
             />
             <Field
               name="email"
-              validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid")!)]}
+              validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid"))]}
             >
               {(field, props) => (
                 <Input
@@ -95,7 +95,7 @@ export default function () {
                 />
               )}
             </Field>
-            <Field name="token" validate={[required(t("account.reset.form.token.required")!)]}>
+            <Field name="token" validate={[required(t("account.reset.form.token.required"))]}>
               {(field, props) => (
                 <Input
                   icon={<span class="shrink-0 icon-[fluent--key-20-regular] w-5 h-5" />}
@@ -114,12 +114,12 @@ export default function () {
             <Field
               name="password"
               validate={[
-                required(t("account.form.password.required")!),
-                minLength(8, t("account.form.password.minimumLength")!),
+                required(t("account.form.password.required")),
+                minLength(8, t("account.form.password.minimumLength")),
                 pattern(
                   // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
                   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
-                  t("account.form.password.tooWeak")!
+                  t("account.form.password.tooWeak")
                 ),
               ]}
             >
@@ -143,8 +143,8 @@ export default function () {
                 <Field
                   name="captcha_answer"
                   validate={[
-                    required(t("captcha.form.answer.required")!),
-                    minLength(4, t("captcha.form.answer.minimumLength")!),
+                    required(t("captcha.form.answer.required")),
+                    minLength(4, t("captcha.form.answer.minimumLength")),
                   ]}
                 >
                   {(answerField, props) => (

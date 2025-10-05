@@ -29,7 +29,7 @@ export default function () {
       });
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
       setTimeout(() => {
@@ -37,7 +37,7 @@ export default function () {
         navigate("/account/login");
       }, 1000);
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -58,7 +58,7 @@ export default function () {
             autocomplete="username"
             disabled
           />
-          <Field name="old_password" validate={[required(t("account.form.oldPassword.required")!)]}>
+          <Field name="old_password" validate={[required(t("account.form.oldPassword.required"))]}>
             {(field, props) => (
               <Input
                 icon={<span class="shrink-0 icon-[fluent--password-20-regular] w-5 h-5" />}
@@ -76,12 +76,12 @@ export default function () {
           <Field
             name="new_password"
             validate={[
-              required(t("account.form.password.required")!),
-              minLength(8, t("account.form.password.minimumLength")!),
+              required(t("account.form.password.required")),
+              minLength(8, t("account.form.password.minimumLength")),
               pattern(
                 // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
                 /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
-                t("account.form.password.tooWeak")!
+                t("account.form.password.tooWeak")
               ),
             ]}
           >
@@ -102,13 +102,13 @@ export default function () {
           <Field
             name="confirm_password"
             validate={[
-              required(t("account.form.password.confirmRequired")!),
+              required(t("account.form.password.confirmRequired")),
               custom((v) => {
                 if (v !== getValue(form, "new_password")) {
                   return false;
                 }
                 return true;
-              }, t("account.form.password.confirmMismatch")!),
+              }, t("account.form.password.confirmMismatch")),
             ]}
           >
             {(field, props) => (

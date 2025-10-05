@@ -56,15 +56,15 @@ export default function () {
   const inEdit = () => searchParams.edit === "true";
   const period = () => {
     if (inProgress()) {
-      return t("game.end")!;
+      return t("game.end");
     }
     if (inRegister()) {
-      return t("game.start")!;
+      return t("game.start");
     }
     if (inArchiving()) {
-      return t("game.archive")!;
+      return t("game.archive");
     }
-    return t("game.register")!;
+    return t("game.register");
   };
 
   const timeEnd = () => {
@@ -104,7 +104,7 @@ export default function () {
             const resp = await getGameIntroduction(gameStore.current.id);
             setIntroduction(resp);
           } catch (err) {
-            handleHttpError(err as Error, t("game.errors.fetchIntroduction.title")!);
+            handleHttpError(err as Error, t("game.errors.fetchIntroduction.title"));
           }
           setLoading(false);
         }
@@ -148,12 +148,12 @@ export default function () {
           setGameStore({ current: game });
           addToast({
             level: "success",
-            description: t("general.actions.upload.status.success")!,
+            description: t("general.actions.upload.status.success"),
             duration: 5000,
           });
         }
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.upload.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.upload.status.fail"));
       }
       setCoverUploading(false);
       setCoverFile(null);
@@ -196,12 +196,12 @@ export default function () {
           setGameStore({ current: game });
           addToast({
             level: "success",
-            description: t("general.actions.upload.status.success")!,
+            description: t("general.actions.upload.status.success"),
             duration: 5000,
           });
         }
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.upload.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.upload.status.fail"));
       }
       setLogoUploading(false);
       setLogoFile(null);
@@ -215,7 +215,7 @@ export default function () {
       setIntroduction(resp);
       setSearchParams({ edit: null });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
   }
 

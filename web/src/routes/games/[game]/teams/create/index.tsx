@@ -35,7 +35,7 @@ export default function () {
     if (gameStore.current && !canParticipate()) {
       addToast({
         level: "warning",
-        description: t("game.canNotParticipate")!,
+        description: t("game.canNotParticipate"),
         duration: 5000,
       });
       navigate(`/games/${gameStore.current.id}`, { replace: true });
@@ -59,7 +59,7 @@ export default function () {
         navigate(`/games/${gameStore.current?.id}`);
       }, 2000);
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail"));
     }
     setLoading(false);
   }
@@ -87,7 +87,7 @@ export default function () {
             <h2 class="font-bold text-center">{t("team.create.title")}</h2>
             <Field
               name="name"
-              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength")!)]}
+              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength"))]}
             >
               {(field, props) => (
                 <Input
@@ -152,7 +152,7 @@ export default function () {
                 />
               )}
             </Field>
-            <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength")!)]}>
+            <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength"))]}>
               {(field, props) => (
                 <Input
                   icon={<span class="shrink-0 icon-[fluent--tag-20-regular] w-5 h-5" />}
@@ -164,7 +164,7 @@ export default function () {
                 />
               )}
             </Field>
-            <Field name="accepted" type="boolean" validate={[required(t("team.form.acceptRules.required")!)]}>
+            <Field name="accepted" type="boolean" validate={[required(t("team.form.acceptRules.required"))]}>
               {(field, props) => (
                 <>
                   <input type="checkbox" class="hidden" {...props} checked={field.value} />

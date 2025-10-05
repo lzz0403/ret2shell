@@ -28,7 +28,7 @@ export default function () {
       const resp = await getBulletin(article_id);
       setArticle(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("bulletin.errors.fetch.title")!);
+      handleHttpError(err as Error, t("bulletin.errors.fetch.title"));
       if (err instanceof HTTPError) navigate(`/sigtrap/${err.response.status}`, { replace: true });
       else navigate("/sigtrap/unknown", { replace: true });
     }
@@ -39,11 +39,11 @@ export default function () {
       await deleteBulletin(article_id);
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.delete.status.fail"));
     }
   }
 
@@ -51,7 +51,7 @@ export default function () {
     try {
       setArticle(await getBulletin(article.id));
     } catch (err) {
-      handleHttpError(err as Error, t("bulletin.errors.fetch.title")!);
+      handleHttpError(err as Error, t("bulletin.errors.fetch.title"));
       if (err instanceof HTTPError) navigate(`/sigtrap/${err.response.status}`, { replace: true });
       else navigate("/sigtrap/unknown", { replace: true });
     }
@@ -76,7 +76,7 @@ export default function () {
       <div class="flex flex-row items-center justify-center space-x-6 print:space-x-2 opacity-60 flex-wrap py-3">
         <A
           class="hover:underline font-bold flex flex-row space-x-2 items-center"
-          title={article()?.publisher_name || t("bulletin.unknownPublisher")!}
+          title={article()?.publisher_name || t("bulletin.unknownPublisher")}
           href={`/users/${article()?.publisher_id}`}
         >
           <span class="shrink-0 icon-[fluent--person-20-regular] w-5 h-5 print:hidden" />

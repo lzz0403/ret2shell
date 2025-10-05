@@ -65,19 +65,19 @@ export default function (props: { onDone: (article: Article) => void; editSource
     } catch (err) {
       handleHttpError(
         err as Error,
-        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")!
+        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")
       );
     }
     setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">
-      <Field name="title" validate={[required(t("wiki.form.title.required")!)]}>
+      <Field name="title" validate={[required(t("wiki.form.title.required"))]}>
         {(field, props) => (
           <Input
             icon={<span class="shrink-0 icon-[fluent--book-20-regular] w-5 h-5" />}
-            placeholder={t("wiki.form.title.placeholder")!}
-            title={t("wiki.form.title.label")!}
+            placeholder={t("wiki.form.title.placeholder")}
+            title={t("wiki.form.title.label")}
             {...props}
             value={field.value}
             error={field.error}
@@ -131,12 +131,12 @@ export default function (props: { onDone: (article: Article) => void; editSource
           />
         )}
       </Field>
-      <Field name="path" validate={[required(t("wiki.form.path.required")!)]}>
+      <Field name="path" validate={[required(t("wiki.form.path.required"))]}>
         {(field, props) => (
           <Input
             icon={<span class="shrink-0 icon-[fluent--code-20-regular] w-5 h-5" />}
-            placeholder={t("wiki.form.path.placeholder")!}
-            title={t("wiki.form.path.label")!}
+            placeholder={t("wiki.form.path.placeholder")}
+            title={t("wiki.form.path.label")}
             {...props}
             value={field.value}
             error={field.error}
@@ -144,7 +144,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
           />
         )}
       </Field>
-      <Field name="content" validate={[required(t("wiki.form.content.required")!)]}>
+      <Field name="content" validate={[required(t("wiki.form.content.required"))]}>
         {(field) => (
           <Editor
             form={form}
@@ -152,7 +152,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
             class="flex-1"
             lang="markdown"
             placeholder="MARKDOWN"
-            title={t("wiki.form.content.label")!}
+            title={t("wiki.form.content.label")}
             name="content"
             value={field.value}
             error={field.error}

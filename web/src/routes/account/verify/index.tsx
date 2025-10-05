@@ -20,18 +20,18 @@ export default function () {
           await verifyEmail({ email: email()!, token: token()! });
           addToast({
             level: "success",
-            description: t("account.verify.status.success.title")!,
+            description: t("account.verify.status.success.title"),
             duration: 5000,
           });
           navigate("/account/settings", { replace: true });
         } catch (err) {
-          handleHttpError(err as HTTPError, t("account.verify.errors.verify.title")!);
+          handleHttpError(err as HTTPError, t("account.verify.errors.verify.title"));
           navigate("/sigtrap/412", { replace: true });
         }
       } else {
         addToast({
           level: "error",
-          description: t("account.verify.status.broken.title")!,
+          description: t("account.verify.status.broken.title"),
           duration: 5000,
         });
         navigate("/sigtrap/418", { replace: true });

@@ -63,7 +63,7 @@ export default function GameEdit(props: {
         <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
         <span>{t("game.form.title")}</span>
       </h3>
-      <Field name="name" validate={[required(t("game.form.name.required")!)]}>
+      <Field name="name" validate={[required(t("game.form.name.required"))]}>
         {(field, props) => (
           <Input
             title={t("game.form.name.label")}
@@ -75,7 +75,7 @@ export default function GameEdit(props: {
           />
         )}
       </Field>
-      <Field name="brief" validate={[required(t("game.form.brief.required")!)]}>
+      <Field name="brief" validate={[required(t("game.form.brief.required"))]}>
         {(field, props) => (
           <Input
             title={t("game.form.brief.label")}
@@ -88,13 +88,13 @@ export default function GameEdit(props: {
         )}
       </Field>
       <Show when={props.inGame}>
-        <Field name="start_at" type="number" validate={[required(t("game.form.startAt.required")!)]}>
+        <Field name="start_at" type="number" validate={[required(t("game.form.startAt.required"))]}>
           {(startAtField) => (
-            <Field name="end_at" type="number" validate={[required(t("game.form.endAt.required")!)]}>
+            <Field name="end_at" type="number" validate={[required(t("game.form.endAt.required"))]}>
               {(endAtField) => (
-                <Field name="register_at" type="number" validate={[required(t("game.form.registerAt.required")!)]}>
+                <Field name="register_at" type="number" validate={[required(t("game.form.registerAt.required"))]}>
                   {(registerAtField) => (
-                    <Field name="archive_at" type="number" validate={[required(t("game.form.archiveAt.required")!)]}>
+                    <Field name="archive_at" type="number" validate={[required(t("game.form.archiveAt.required"))]}>
                       {(archiveAtField) => (
                         <div class="flex flex-col lg:flex-row space-y-2 lg:space-y-0 lg:space-x-4">
                           <TimePicker
@@ -187,9 +187,9 @@ export default function GameEdit(props: {
             name="team_size"
             type="number"
             validate={[
-              required(t("game.form.teamSize.required")!),
-              minRange(1, t("game.form.teamSize.minimum")!),
-              maxRange(99, t("game.form.teamSize.maximum")!),
+              required(t("game.form.teamSize.required")),
+              minRange(1, t("game.form.teamSize.minimum")),
+              maxRange(99, t("game.form.teamSize.maximum")),
             ]}
           >
             {(field, props) => (
@@ -199,7 +199,7 @@ export default function GameEdit(props: {
                 error={field.error}
                 class="flex-1"
                 title={t("game.form.teamSize.label")}
-                placeholder={t("game.form.teamSize.placeholder")!}
+                placeholder={t("game.form.teamSize.placeholder")}
                 type="number"
               />
             )}

@@ -75,13 +75,13 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
           const resp = await getUserIpList(compProps.editSource!.id);
           setIps(resp);
         } catch (err) {
-          handleHttpError(err as Error, t("user.errors.fetchIpList.title")!);
+          handleHttpError(err as Error, t("user.errors.fetchIpList.title"));
         }
         try {
           const resp = await getUserOAuthList(compProps.editSource!.id);
           setOauthes(resp);
         } catch (err) {
-          handleHttpError(err as Error, t("user.errors.fetchOAuth.title")!);
+          handleHttpError(err as Error, t("user.errors.fetchOAuth.title"));
         }
       });
     }
@@ -113,7 +113,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
         setValue(form, "avatar", resp.hash);
         setAvatarSet(true);
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.upload.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.upload.status.fail"));
       }
       setAvatarUploading(false);
     }
@@ -127,11 +127,11 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
       setDeleteLoading(false);
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
   }
 
@@ -219,7 +219,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
         <div class="flex flex-row space-x-4 items-center">
           <div class="flex flex-col space-y-2 flex-1">
             <div class="flex flex-row space-x-2">
-              <Field name="account" validate={[required(t("account.form.account.required")!)]}>
+              <Field name="account" validate={[required(t("account.form.account.required"))]}>
                 {(field, props) => (
                   <Input
                     class="flex-1"
@@ -233,7 +233,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
                   />
                 )}
               </Field>
-              <Field name="nickname" validate={[required(t("account.form.nickname.required")!)]}>
+              <Field name="nickname" validate={[required(t("account.form.nickname.required"))]}>
                 {(field, props) => (
                   <Input
                     class="flex-1"
@@ -251,7 +251,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
             <div class="flex flex-row space-x-2">
               <Field
                 name="email"
-                validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid")!)]}
+                validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid"))]}
               >
                 {(field, props) => (
                   <Input
@@ -334,7 +334,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
               class="h-80"
               lang="markdown"
               placeholder="MARKDOWN"
-              title={t("account.form.description.label")!}
+              title={t("account.form.description.label")}
               name="description"
               value={field.value}
               error={field.error}

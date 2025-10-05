@@ -38,7 +38,7 @@ export default function () {
         try {
           setChallenge(await getChallenge(gameStore.current!.id, challengeId()!));
         } catch (err) {
-          handleHttpError(err as Error, t("challenge.errors.fetch.title")!);
+          handleHttpError(err as Error, t("challenge.errors.fetch.title"));
         }
       });
     }
@@ -47,7 +47,7 @@ export default function () {
         try {
           setTeam(await getTeamInfo(gameStore.current!.id, teamId()!));
         } catch (err) {
-          handleHttpError(err as Error, t("team.errors.fetch.title")!);
+          handleHttpError(err as Error, t("team.errors.fetch.title"));
         }
       });
     }
@@ -63,7 +63,7 @@ export default function () {
       setChat("");
       refreshChats();
     } catch (err) {
-      handleHttpError(err as Error, t("challenge.hammer.errors.send.title")!);
+      handleHttpError(err as Error, t("challenge.hammer.errors.send.title"));
     }
     setSending(false);
   }
@@ -86,7 +86,7 @@ export default function () {
             chatBottomEl! && chatBottomEl.scrollIntoView({ behavior: "smooth" });
           }, 700);
       } catch (err) {
-        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title")!);
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title"));
       }
       setLoading(false);
     }
@@ -111,7 +111,7 @@ export default function () {
         const s = resp.find((x) => x.challenge_id === challengeId());
         return s?.created_at ?? null;
       } catch (err) {
-        handleHttpError(err as Error, t("challenge.hammer.errors.fetchSolve.title")!);
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetchSolve.title"));
       }
       return null;
     }
@@ -186,8 +186,8 @@ export default function () {
                         chat.id === 0
                           ? ">_<"
                           : chat.is_admin
-                            ? t("challenge.hammer.role.admin")!
-                            : t("challenge.hammer.role.player")!
+                            ? t("challenge.hammer.role.admin")
+                            : t("challenge.hammer.role.player")
                       }
                       link={chat.id === 0 ? "Ciallo～(∠・ω< )⌒☆" : `/users/${chat.user_id}`}
                       nameLabel={chat.user_name || "Unknown"}

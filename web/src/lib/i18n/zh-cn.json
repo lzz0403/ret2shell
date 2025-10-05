@@ -1330,6 +1330,9 @@
       "errors": {
         "fetchCheckerScript": {
           "title": "获取评测脚本失败"
+        },
+        "fetchScript": {
+          "title": "获取脚本配置失败"
         }
       }
     },
@@ -2105,6 +2108,9 @@
     "errors": {
       "fetchNodes": {
         "title": "获取集群节点信息失败"
+      },
+      "fetchConfig": {
+        "title": "获取集群配置失败"
       }
     }
   },

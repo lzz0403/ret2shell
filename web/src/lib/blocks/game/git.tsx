@@ -45,7 +45,7 @@ export default function () {
             })
           );
         } catch (err) {
-          handleHttpError(err as Error, t("game.git.errors.fetchRepo.title")!);
+          handleHttpError(err as Error, t("game.git.errors.fetchRepo.title"));
         }
         setLoading(false);
       });

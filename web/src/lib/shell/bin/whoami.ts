@@ -7,7 +7,7 @@ import type { Command } from "./interface";
 
 export class Whoami implements Command {
   name = "whoami";
-  man = t("shell.whoami.man")!;
+  man = t("shell.whoami.man");
   func = async (io: Stdio) => {
     const email = ansiColors.dim(
       link(accountStore.info?.email || "guest@private.ret.sh.cn", `mailto:${accountStore.info?.email}`)

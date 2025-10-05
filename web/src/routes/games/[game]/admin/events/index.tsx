@@ -19,7 +19,7 @@ export default function () {
           const devices = await getGameDevices(gameStore.current!.id);
           setLinkedDevices(devices);
         } catch (err) {
-          handleHttpError(err as Error, t("game.events.errors.fetchDevices.title")!);
+          handleHttpError(err as Error, t("game.events.errors.fetchDevices.title"));
         }
       });
     }
@@ -30,7 +30,7 @@ export default function () {
       const resp = await regenerateGameToken(gameStore.current!.id);
       setGameStore({ current: { ...gameStore.current!, token: resp.token } });
     } catch (err) {
-      handleHttpError(err as Error, t("game.errors.regenerateToken.title")!);
+      handleHttpError(err as Error, t("game.errors.regenerateToken.title"));
     }
   }
 

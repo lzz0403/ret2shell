@@ -55,7 +55,7 @@ export default function Timeline() {
       const game = await updateGame(gameStore.current!.id, payload);
       setGameStore({ current: game });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
   }
 
@@ -77,7 +77,7 @@ export default function Timeline() {
       const game = await updateGame(gameStore.current!.id, payload);
       setGameStore({ current: game });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -86,12 +86,12 @@ export default function Timeline() {
       <Title page={t("game.timeline.title")} route={`/games/${gameStore.current?.id}/admin/timeline`} />
       <div class="flex flex-col space-y-4 xl:flex-row xl:space-y-0 xl:space-x-4 p-3 lg:p-6 w-full">
         <Form onSubmit={onSubmit} class="flex flex-col space-y-2">
-          <Field name="label" validate={[required(t("game.timeline.form.label.required")!)]}>
+          <Field name="label" validate={[required(t("game.timeline.form.label.required"))]}>
             {(field, props) => (
               <Input
                 icon={<span class="shrink-0 icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
-                placeholder={t("game.timeline.form.label.placeholder")!}
-                title={t("game.timeline.form.label.label")!}
+                placeholder={t("game.timeline.form.label.placeholder")}
+                title={t("game.timeline.form.label.label")}
                 {...props}
                 value={field.value}
                 error={field.error}
@@ -99,16 +99,16 @@ export default function Timeline() {
               />
             )}
           </Field>
-          <Field name="start_at" type="number" validate={[required(t("game.timeline.form.startAt.required")!)]}>
+          <Field name="start_at" type="number" validate={[required(t("game.timeline.form.startAt.required"))]}>
             {(startAtField) => (
-              <Field name="end_at" type="number" validate={[required(t("game.timeline.form.endAt.required")!)]}>
+              <Field name="end_at" type="number" validate={[required(t("game.timeline.form.endAt.required"))]}>
                 {(endAtField) => (
                   <TimePicker
                     form={form}
                     type="time"
                     range
-                    title={t("game.timeline.form.startEndTime.label")!}
-                    placeholder={t("game.timeline.form.startEndTime.placeholder")!}
+                    title={t("game.timeline.form.startEndTime.label")}
+                    placeholder={t("game.timeline.form.startEndTime.placeholder")}
                     name={startAtField.name}
                     value={startAtField.value}
                     nameNext={endAtField.name}

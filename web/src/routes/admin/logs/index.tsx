@@ -55,7 +55,7 @@ export default function () {
     queryKey: ["platform", "logs", "files"],
     queryFn: async () => (await getPlatformLogs()).sort((a, b) => b.localeCompare(a)),
     throwOnError: (err) => {
-      handleHttpError(err, t("platform.logs.errors.fetchList.title")!);
+      handleHttpError(err, t("platform.logs.errors.fetchList.title"));
       return true;
     },
   }));
@@ -93,7 +93,7 @@ export default function () {
       });
     },
     throwOnError: (err: Error) => {
-      handleHttpError(err, t("platform.logs.errors.fetchLogs.title")!);
+      handleHttpError(err, t("platform.logs.errors.fetchLogs.title"));
       return false;
     },
   }));

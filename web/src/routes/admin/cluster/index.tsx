@@ -43,7 +43,7 @@ export default function () {
       const resp = await getClusterNodes();
       setClusterNodes(resp.items);
     } catch (err) {
-      handleHttpError(err as Error, t("cluster.errors.fetchNodes.title")!);
+      handleHttpError(err as Error, t("cluster.errors.fetchNodes.title"));
     }
   });
 

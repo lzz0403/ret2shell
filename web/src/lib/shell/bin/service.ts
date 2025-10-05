@@ -15,7 +15,7 @@ import type { Command } from "./interface";
 
 export class Service implements Command {
   name = "service";
-  man = t("shell.service.man")!;
+  man = t("shell.service.man");
   func = async (io: Stdio, args: ParseEntry[], _origin: string) => {
     const action = {
       start: this.start,
@@ -25,8 +25,8 @@ export class Service implements Command {
       delay: this.delay,
     };
     if (args.length !== 1 || !Object.keys(action).includes(args[0].toString().trim())) {
-      io.error(t("shell.service.errors.needAction.title")!);
-      io.info(t("shell.service.usage")!);
+      io.error(t("shell.service.errors.needAction.title"));
+      io.info(t("shell.service.usage"));
       io.info(
         `\t${ansiColors.green(link("start", "rnix://command/service start"))}\t${t("shell.service.actions.start.title")}`
       );
@@ -54,9 +54,9 @@ export class Service implements Command {
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();
-        io.error(`${t("challenge.instance.errors.fetchInstances.title")!}: ${text}`);
+        io.error(`${t("challenge.instance.errors.fetchInstances.title")}: ${text}`);
       } else {
-        io.error(`${t("challenge.instance.errors.fetchInstances.title")!}: ${e}`);
+        io.error(`${t("challenge.instance.errors.fetchInstances.title")}: ${e}`);
       }
       return null;
     }
@@ -64,7 +64,7 @@ export class Service implements Command {
 
   async start(io: Stdio) {
     if (!challengeStore.env) {
-      io.error(t("challenge.instance.errors.noConfig.title")!);
+      io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
     if (wsrx.instances().length > (inProgress() ? (gameStore.current?.team_size ?? 1) : 1)) {
@@ -72,7 +72,7 @@ export class Service implements Command {
         await this.status(io);
         return 0;
       }
-      io.warning(t("challenge.instance.errors.singleton.title")!);
+      io.warning(t("challenge.instance.errors.singleton.title"));
       io.info(
         `${t("challenge.instance.errors.singleton.current")}:\n\t${wsrx
           .instances()
@@ -83,26 +83,26 @@ export class Service implements Command {
           .join("\n\t")}`
       );
       io.print(
-        `${t("challenge.instance.errors.singleton.stop")!} [${ansiColors.green("<id>")}/${ansiColors.red(link("quit", "rnix://command/quit"))}]: `
+        `${t("challenge.instance.errors.singleton.stop")} [${ansiColors.green("<id>")}/${ansiColors.red(link("quit", "rnix://command/quit"))}]: `
       );
       const choice = await io.input();
       io.println("");
       const chall_id = Number.parseInt(choice, 10);
       if (!chall_id) {
-        io.warning(t("challenge.instance.errors.noAction.title")!);
+        io.warning(t("challenge.instance.errors.noAction.title"));
         return 1;
       }
       try {
         const inst = wsrx.instances().find((v) => v.challenge_id === chall_id);
         if (!inst) {
-          io.warning(t("challenge.instance.errors.noAction.title")!);
+          io.warning(t("challenge.instance.errors.noAction.title"));
           return 1;
         }
         await stopChallengeInstance(inst.game_id, inst.challenge_id);
       } catch (e) {
         if (e instanceof HTTPError) {
           const text = await e.response.text();
-          io.error(`${t("challenge.instance.errors.stop.title")!}: ${text}`);
+          io.error(`${t("challenge.instance.errors.stop.title")}: ${text}`);
         }
       }
     }
@@ -118,7 +118,7 @@ export class Service implements Command {
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();
-        io.error(`${t("challenge.instance.errors.start.title")!}: ${text}`);
+        io.error(`${t("challenge.instance.errors.start.title")}: ${text}`);
       }
     }
     await this.status(io);
@@ -127,7 +127,7 @@ export class Service implements Command {
 
   async stop(io: Stdio) {
     if (!challengeStore.env) {
-      io.error(t("challenge.instance.errors.noConfig.title")!);
+      io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
     const d_service_name = await deunicode(challengeStore.current!.name);
@@ -141,7 +141,7 @@ export class Service implements Command {
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();
-        io.error(`${t("challenge.instance.errors.stop.title")!}: ${text}`);
+        io.error(`${t("challenge.instance.errors.stop.title")}: ${text}`);
       }
     }
     await new Promise((r) => setTimeout(r, 500));
@@ -152,7 +152,7 @@ export class Service implements Command {
 
   async restart(io: Stdio) {
     if (!challengeStore.env) {
-      io.error(t("challenge.instance.errors.noConfig.title")!);
+      io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
     await this.stop(io);
@@ -163,7 +163,7 @@ export class Service implements Command {
 
   async status(io: Stdio) {
     if (!challengeStore.env) {
-      io.error(t("challenge.instance.errors.noConfig.title")!);
+      io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
     await wsrx.syncRemote();
@@ -229,7 +229,7 @@ export class Service implements Command {
 
   async delay(io: Stdio) {
     if (!challengeStore.env) {
-      io.error(t("challenge.instance.errors.noConfig.title")!);
+      io.error(t("challenge.instance.errors.noConfig.title"));
       return 1;
     }
     try {
@@ -237,7 +237,7 @@ export class Service implements Command {
     } catch (e) {
       if (e instanceof HTTPError) {
         const text = await e.response.text();
-        io.error(`${t("challenge.instance.errors.delay.title")!}: ${text}`);
+        io.error(`${t("challenge.instance.errors.delay.title")}: ${text}`);
       }
     }
     await this.status(io);

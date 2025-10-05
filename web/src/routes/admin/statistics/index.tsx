@@ -19,7 +19,7 @@ export default function () {
       const resp = await getPlatformStatistics();
       setStatistics(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("platform.statistics.errors.fetch.title")!);
+      handleHttpError(err as Error, t("platform.statistics.errors.fetch.title"));
     }
     setLoading(false);
   });
@@ -31,7 +31,7 @@ export default function () {
         <div class="flex md:col-span-6 lg:col-span-3 items-center justify-start space-x-12 px-3 lg:px-6 xl:px-9">
           <LogoAnimate class="m-0 w-16 h-16 md:w-32 md:h-32 xl:w-36 xl:h-36" />
           <h1 class="ml-6 text-2xl md:text-4xl xl:text-5xl font-bold">
-            {platformStore.config.name || t("platform.name")!}
+            {platformStore.config.name || t("platform.name")}
           </h1>
         </div>
         <Divider class="flex col-span-1 md:col-span-6 lg:hidden" />
@@ -375,7 +375,7 @@ export default function () {
                   top: "48px",
                 },
                 title: {
-                  text: t("platform.statistics.instituteUsers.title")!,
+                  text: t("platform.statistics.instituteUsers.title"),
                   right: "center",
                 },
                 tooltip: {
@@ -394,7 +394,7 @@ export default function () {
                   type: "category",
                   data: statistics()!
                     .users.institutes.map((i) => statistics()!.institutes.find((ii) => ii.id === i[0])!.name)
-                    .concat(t("platform.statistics.instituteUsers.others")!),
+                    .concat(t("platform.statistics.instituteUsers.others")),
                 },
                 yAxis: {
                   type: "value",

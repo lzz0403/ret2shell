@@ -1,11 +1,9 @@
-import { handleHttpError } from "@api";
-import { getChallengeCheckerScript, updateChallengeCheckerScript } from "@api/game";
+import { useChallengeCheckerScript, useUpdateChallengeCheckerScriptMutation } from "@api/challenge";
 import type { Challenge } from "@models/challenge";
-import { challengeStore } from "@storage/challenge";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Button from "@widgets/button";
-import { type DiagnosticMarker, EditorBare } from "@widgets/editor";
+import { EditorBare } from "@widgets/editor";
 import Select from "@widgets/select";
 import { createEffect, createMemo, createSignal, untrack } from "solid-js";
 import dynamicLeetChecker from "./scripts/dynamic-leet.rx";
@@ -73,30 +71,38 @@ const checkerCtx = {
   },
 } as const;
 
-export default function (_props: { onStateChange?: (challenge?: Challenge) => void; inGame?: boolean }) {
+export default function (props: {
+  onStateChange?: (challenge?: Challenge) => void;
+  inGame?: boolean;
+  gameId: number;
+  challengeId: number;
+}) {
   const [preset, setPreset] = createSignal(null as PresetChecker | null);
   const presetChecker = createMemo(() => {
     if (!preset()) return null;
     return Tmpl.withContext(checkerCtx).execute(checkerMap[preset()!]);
   });
   const [script, setScript] = createSignal("");
-  const [lint, setLint] = createSignal([] as DiagnosticMarker[] | null);
-  let serverScript = "";
-  async function refreshScript() {
-    const resp = await getChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, true);
-    serverScript = resp.script;
-    setScript(resp.script);
-    setLint(resp.lint ?? null);
-  }
-  function restoreScript() {
-    setScript(serverScript);
-  }
-  refreshScript();
-  createEffect(() => {
-    if (!challengeStore.current?.hidden) {
-      untrack(refreshScript);
-    }
+
+  const scriptQuery = useChallengeCheckerScript({
+    game_id: () => props.gameId,
+    challenge_id: () => props.challengeId,
   });
+
+  const updateScriptMutation = useUpdateChallengeCheckerScriptMutation({
+    onSuccess: () => {
+      addToast({
+        level: "success",
+        description: t("general.actions.save.status.success"),
+        duration: 5000,
+      });
+      scriptQuery.refetch();
+    },
+  });
+
+  function restoreScript() {
+    setScript(scriptQuery.data?.script || "");
+  }
 
   createEffect(() => {
     if (presetChecker()) {
@@ -105,20 +111,6 @@ export default function (_props: { onStateChange?: (challenge?: Challenge) => vo
       });
     }
   });
-
-  async function handleUpdateScript() {
-    try {
-      await updateChallengeCheckerScript(challengeStore.current!.game_id, challengeStore.current!.id, script());
-      addToast({
-        level: "success",
-        description: t("general.actions.save.status.success")!,
-        duration: 5000,
-      });
-      refreshScript();
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
-    }
-  }
 
   return (
     <div class="flex-1 flex flex-col h-full space-y-2 p-3 lg:p-6 lg:pb-3">
@@ -136,22 +128,22 @@ export default function (_props: { onStateChange?: (challenge?: Challenge) => vo
             size="sm"
             items={[
               {
-                label: t("challenge.checker.preset.simple.label")!,
+                label: t("challenge.checker.preset.simple.label"),
                 value: "simple",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
               {
-                label: t("challenge.checker.preset.leet.label")!,
+                label: t("challenge.checker.preset.leet.label"),
                 value: "dynamic-leet",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
               {
-                label: t("challenge.checker.preset.uuid.label")!,
+                label: t("challenge.checker.preset.uuid.label"),
                 value: "dynamic-uuid",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
               {
-                label: t("challenge.checker.preset.mapped.label")!,
+                label: t("challenge.checker.preset.mapped.label"),
                 value: "mapped",
                 icon: "icon-[fluent--number-symbol-20-regular] w-5 h-5",
               },
@@ -164,7 +156,17 @@ export default function (_props: { onStateChange?: (challenge?: Challenge) => vo
             <Button size="sm" square onClick={restoreScript}>
               <span class="shrink-0 icon-[fluent--arrow-reset-20-regular] w-5 h-5" />
             </Button>
-            <Button level="info" size="sm" onClick={handleUpdateScript}>
+            <Button
+              level="info"
+              size="sm"
+              onClick={() => updateScriptMutation.mutate({
+                game_id: props.gameId,
+                challenge_id: props.challengeId,
+                content: script(),
+              })}
+              loading={updateScriptMutation.isPending || scriptQuery.isLoading}
+              disabled={updateScriptMutation.isPending || scriptQuery.isLoading}
+            >
               {t("general.actions.save.title")}
               <span>&</span>
               {t("general.actions.compile.title")}
@@ -177,18 +179,18 @@ export default function (_props: { onStateChange?: (challenge?: Challenge) => vo
         lineNumbers
         lang="rust"
         value={script()}
-        lints={lint() ?? []}
+        lints={scriptQuery.data?.lint ?? []}
         onValueChanged={(e) => {
           setScript(e);
         }}
       />
       <footer class="min-h-12 border-t border-t-layer-content/10 flex flex-col lg:flex-row flex-wrap justify-start space-x-2 items-center gap-y-2 py-2">
         <span class="text-primary icon-[fluent--info-16-regular]" />
-        <span class="text-primary">{lint()?.filter((v) => v.kind === "info").length ?? 0}</span>
+        <span class="text-primary">{scriptQuery.data?.lint?.filter((v) => v.kind === "info").length ?? 0}</span>
         <span class="text-warning icon-[fluent--warning-16-regular]" />
-        <span class="text-warning">{lint()?.filter((v) => v.kind === "warning").length ?? 0}</span>
+        <span class="text-warning">{scriptQuery.data?.lint?.filter((v) => v.kind === "warning").length ?? 0}</span>
         <span class="text-error icon-[fluent--warning-16-regular]" />
-        <span class="text-error">{lint()?.filter((v) => v.kind === "error").length ?? 0}</span>
+        <span class="text-error">{scriptQuery.data?.lint?.filter((v) => v.kind === "error").length ?? 0}</span>
         <div class="flex-1" />
         <a href="https://rune-rs.github.io/" class="text-primary hover:underline">
           Rune Grammar <span class="icon-[fluent--open-12-regular]" />

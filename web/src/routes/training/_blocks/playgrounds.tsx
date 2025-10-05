@@ -32,7 +32,7 @@ export default function Playgrounds() {
       setPlaygrounds(playgrounds);
       setPlaygroundTotal(total);
     } catch (err) {
-      handleHttpError(err as Error, t("training.errors.fetchList.title")!);
+      handleHttpError(err as Error, t("training.errors.fetchList.title"));
     }
     setLoadingPlaygrounds(false);
   }
@@ -44,7 +44,7 @@ export default function Playgrounds() {
       setGames(games);
       setGameTotal(total);
     } catch (err) {
-      handleHttpError(err as Error, t("training.errors.fetchArchives.title")!);
+      handleHttpError(err as Error, t("training.errors.fetchArchives.title"));
     }
     setLoadingGames(false);
   }

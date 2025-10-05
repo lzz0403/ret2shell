@@ -71,7 +71,7 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
     const result = [] as { value: string; label: string; icon: string }[];
     result.push({
       value: "0",
-      label: t("institute.empty")!,
+      label: t("institute.empty"),
       icon: "icon-[fluent--earth-20-regular] w-5 h-5",
     });
     for (const institute of accountStore.institutes) {
@@ -97,11 +97,11 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
       props.onDone?.(team);
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setUpdating(false);
   }
@@ -114,11 +114,11 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
       navigate(`/games/${gameStore.current!.id}/scoreboard`);
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
   }
   return (
@@ -136,14 +136,14 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
           <div class="flex flex-row space-x-2">
             <Field
               name="name"
-              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength")!)]}
+              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength"))]}
             >
               {(field, props) => (
                 <Input
                   class="flex-1"
                   icon={<span class="shrink-0 icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
-                  title={t("team.form.name.label")!}
-                  placeholder={t("team.form.name.placeholder")!}
+                  title={t("team.form.name.label")}
+                  placeholder={t("team.form.name.placeholder")}
                   {...props}
                   value={field.value}
                   error={field.error}
@@ -155,8 +155,8 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
               {(field, props) => (
                 <Select
                   class="flex-1 min-w-0"
-                  label={t("team.form.institute.label")!}
-                  placeholder={t("team.form.institute.placeholder")!}
+                  label={t("team.form.institute.label")}
+                  placeholder={t("team.form.institute.placeholder")}
                   items={institutesSelect()}
                   name={field.name}
                   error={field.error}
@@ -169,26 +169,26 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
               {(field, props) => (
                 <Select
                   class="flex-1 min-w-0"
-                  label={t("team.status.title")!}
+                  label={t("team.status.title")}
                   items={[
                     {
                       value: "0",
-                      label: t("team.status.banned.title")!,
+                      label: t("team.status.banned.title"),
                       icon: "icon-[fluent--dismiss-circle-20-regular] w-5 h-5 text-error",
                     },
                     {
                       value: "1",
-                      label: t("team.status.pending.title")!,
+                      label: t("team.status.pending.title"),
                       icon: "icon-[fluent--question-circle-20-regular] w-5 h-5 text-warning",
                     },
                     {
                       value: "2",
-                      label: t("team.status.hidden.title")!,
+                      label: t("team.status.hidden.title"),
                       icon: "icon-[fluent--eye-off-20-regular] w-5 h-5 text-warning",
                     },
                     {
                       value: "3",
-                      label: t("team.status.passed.title")!,
+                      label: t("team.status.passed.title"),
                       icon: "icon-[fluent--checkmark-circle-20-regular] w-5 h-5 text-success",
                     },
                   ]}
@@ -200,13 +200,13 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
               )}
             </Field>
           </div>
-          <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength")!)]}>
+          <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength"))]}>
             {(field, props) => (
               <Input
                 class="flex-1"
                 icon={<span class="shrink-0 icon-[fluent--tag-20-regular] w-5 h-5" />}
-                title={t("team.form.tag.label")!}
-                placeholder={t("team.form.tag.placeholder")!}
+                title={t("team.form.tag.label")}
+                placeholder={t("team.form.tag.placeholder")}
                 {...props}
                 value={field.value}
                 error={field.error}
@@ -223,7 +223,7 @@ function AdminManagement(props: { team: Team | null; onDone?: (team: Team) => vo
               ghost
               size="sm"
               square
-              title={t("general.actions.delete.title")!}
+              title={t("general.actions.delete.title")}
               btnContent={<span class="shrink-0 icon-[fluent--delete-20-regular] w-5 h-5" />}
             >
               <Card contentClass="p-2 flex flex-col space-y-2 max-w-96">
@@ -267,7 +267,7 @@ function SelfManagement(props: { members: User[] }) {
     const result = [] as { value: string; label: string; icon: string }[];
     result.push({
       value: "0",
-      label: t("institute.empty")!,
+      label: t("institute.empty"),
       icon: "icon-[fluent--earth-20-regular] w-5 h-5",
     });
     const institute_id = props.members.at(0)?.institute_id ?? null;
@@ -296,11 +296,11 @@ function SelfManagement(props: { members: User[] }) {
       setGameStore({ team });
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.save.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.save.status.fail"));
     }
     setUpdating(false);
   }
@@ -314,11 +314,11 @@ function SelfManagement(props: { members: User[] }) {
       setGameStore({ team: null });
       addToast({
         level: "success",
-        description: t("general.actions.leave.status.success")!,
+        description: t("general.actions.leave.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.leave.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.leave.status.fail"));
     }
     setLeaving(false);
   }
@@ -338,14 +338,14 @@ function SelfManagement(props: { members: User[] }) {
           <div class="flex flex-row space-x-2">
             <Field
               name="name"
-              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength")!)]}
+              validate={[required(t("team.form.name.required")!), maxLength(32, t("team.form.name.maximumLength"))]}
             >
               {(field, props) => (
                 <Input
                   class="flex-1"
                   icon={<span class="shrink-0 icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
-                  title={t("team.form.name.label")!}
-                  placeholder={t("team.form.name.placeholder")!}
+                  title={t("team.form.name.label")}
+                  placeholder={t("team.form.name.placeholder")}
                   {...props}
                   value={field.value}
                   error={field.error}
@@ -358,8 +358,8 @@ function SelfManagement(props: { members: User[] }) {
               {(field, props) => (
                 <Select
                   class="flex-1 min-w-0"
-                  label={t("team.form.institute.label")!}
-                  placeholder={t("team.form.institute.placeholder")!}
+                  label={t("team.form.institute.label")}
+                  placeholder={t("team.form.institute.placeholder")}
                   items={institutesSelect()}
                   name={field.name}
                   error={field.error}
@@ -372,13 +372,13 @@ function SelfManagement(props: { members: User[] }) {
               )}
             </Field>
           </div>
-          <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength")!)]}>
+          <Field name="tag" validate={[maxLength(32, t("team.form.tag.maximumLength"))]}>
             {(field, props) => (
               <Input
                 class="flex-1"
                 icon={<span class="shrink-0 icon-[fluent--tag-20-regular] w-5 h-5" />}
-                title={t("team.form.tag.label")!}
-                placeholder={t("team.form.tag.placeholder")!}
+                title={t("team.form.tag.label")}
+                placeholder={t("team.form.tag.placeholder")}
                 {...props}
                 value={field.value}
                 error={field.error}
@@ -394,7 +394,7 @@ function SelfManagement(props: { members: User[] }) {
               level="error"
               ghost
               size="sm"
-              title={t("general.actions.leave.title")!}
+              title={t("general.actions.leave.title")}
               square
               btnContent={<span class="shrink-0 icon-[fluent--arrow-exit-20-regular] w-5 h-5" />}
             >
@@ -448,7 +448,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
       });
       props.onDone?.();
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail"));
     }
     setLoading(false);
   }
@@ -456,7 +456,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
   return (
     <Form onSubmit={onSubmit} class="min-h-12 border-b border-b-layer-content/10 flex flex-1 items-center space-x-2">
       <span class="shrink-0 icon-[fluent--add-circle-20-regular] w-5 h-5 text-info" />
-      <Field name="reason" validate={[required(t("team.form.extraReason.required")!)]}>
+      <Field name="reason" validate={[required(t("team.form.extraReason.required"))]}>
         {(field, props) => (
           <Input
             type="text"
@@ -475,7 +475,7 @@ function ExtraForm(props: { team: Team | null; onDone?: () => void }) {
           />
         )}
       </Field>
-      <Field name="score" type="number" validate={[required(t("team.form.extraScore.required")!)]}>
+      <Field name="score" type="number" validate={[required(t("team.form.extraScore.required"))]}>
         {(field, props) => (
           <Input
             type="text" // use text, we will convert to number manually
@@ -539,7 +539,7 @@ export default function () {
       const resp = await getTeamExtras(gameStore.current!.id, teamId()!);
       setExtras(resp);
     } catch (err) {
-      handleHttpError(err as Error, t("team.errors.fetchExtra.title")!);
+      handleHttpError(err as Error, t("team.errors.fetchExtra.title"));
     }
   }
   async function refreshInfo() {
@@ -549,7 +549,7 @@ export default function () {
       if (err instanceof HTTPError && err.response.status === 404) {
         navigate("/sigtrap/404");
       }
-      handleHttpError(err as Error, t("team.errors.fetch.title")!);
+      handleHttpError(err as Error, t("team.errors.fetch.title"));
     }
   }
   async function refreshSolves() {
@@ -557,7 +557,7 @@ export default function () {
       const resp = await getTeamSolves(gameStore.current!.id, teamId()!);
       setSolves(resp.sort((a, b) => a.created_at.toMillis() - b.created_at.toMillis()));
     } catch (err) {
-      handleHttpError(err as Error, t("team.errors.fetchSolves.title")!);
+      handleHttpError(err as Error, t("team.errors.fetchSolves.title"));
     }
   }
   createEffect(() => {
@@ -588,7 +588,7 @@ export default function () {
         try {
           setMembers(await getTeamMembers(gameStore.current!.id, team()!.id));
         } catch (err) {
-          handleHttpError(err as Error, t("team.errors.fetchMember.title")!);
+          handleHttpError(err as Error, t("team.errors.fetchMember.title"));
         }
         setLoadingMembers(false);
       });

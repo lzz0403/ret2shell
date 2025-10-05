@@ -47,13 +47,13 @@ export default function () {
         }
         addToast({
           level: "success",
-          description: t("account.register.status.success.message")!,
+          description: t("account.register.status.success.message"),
           duration: 5000,
           // img: xdsecMascotHappy,
         });
         navigate("/", { replace: true });
       } catch (err) {
-        handleHttpError(err as Error, t("account.register.errors.register.title")!);
+        handleHttpError(err as Error, t("account.register.errors.register.title"));
         setTimestamp(DateTime.now().toMillis());
       }
       setLoading(false);
@@ -83,9 +83,9 @@ export default function () {
               <Field
                 name="nickname"
                 validate={[
-                  required(t("account.form.nickname.required")!),
-                  minLength(2, t("account.form.nickname.minLength")!),
-                  maxLength(32, t("account.form.nickname.maxLength")!),
+                  required(t("account.form.nickname.required")),
+                  minLength(2, t("account.form.nickname.minLength")),
+                  maxLength(32, t("account.form.nickname.maxLength")),
                 ]}
               >
                 {(field, props) => (
@@ -112,11 +112,11 @@ export default function () {
               <Field
                 name="account"
                 validate={[
-                  required(t("account.form.account.required")!),
-                  minLength(4, t("account.form.account.minimumLength")!),
-                  maxLength(32, t("account.form.account.maximumLength")!),
+                  required(t("account.form.account.required")),
+                  minLength(4, t("account.form.account.minimumLength")),
+                  maxLength(32, t("account.form.account.maximumLength")),
                   // only ascii visible characters, no whitespaces
-                  pattern(/^[0-9a-zA-Z_]*$/, t("account.form.account.invalid")!),
+                  pattern(/^[0-9a-zA-Z_]*$/, t("account.form.account.invalid")),
                 ]}
               >
                 {(field, props) => (
@@ -152,7 +152,7 @@ export default function () {
             </div>
             <Field
               name="email"
-              validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid")!)]}
+              validate={[required(t("account.form.email.required")!), email(t("account.form.email.invalid"))]}
             >
               {(field, props) => (
                 <Input
@@ -172,12 +172,12 @@ export default function () {
               <Field
                 name="password"
                 validate={[
-                  required(t("account.form.password.required")!),
-                  minLength(8, t("account.form.password.minimumLength")!),
+                  required(t("account.form.password.required")),
+                  minLength(8, t("account.form.password.minimumLength")),
                   pattern(
                     // biome-ignore lint/correctness/noEmptyCharacterClassInRegex: password allows any characters
                     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[^]{8,40}$/,
-                    t("account.form.password.tooWeak")!
+                    t("account.form.password.tooWeak")
                   ),
                 ]}
               >
@@ -201,8 +201,8 @@ export default function () {
                   <Field
                     name="captcha_answer"
                     validate={[
-                      required(t("captcha.form.answer.required")!),
-                      minLength(4, t("captcha.form.answer.minimumLength")!),
+                      required(t("captcha.form.answer.required")),
+                      minLength(4, t("captcha.form.answer.minimumLength")),
                     ]}
                   >
                     {(answerField, props) => (

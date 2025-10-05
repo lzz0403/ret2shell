@@ -132,7 +132,7 @@ export default function () {
         )[0]
       );
     } catch (err) {
-      handleHttpError(err as Error, t("game.scoreboard.errors.fetchScoreboard.title")!);
+      handleHttpError(err as Error, t("game.scoreboard.errors.fetchScoreboard.title"));
     }
     setLoading(false);
   }
@@ -152,7 +152,7 @@ export default function () {
       setTeams(data[0]);
       setTotal(data[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("game.scoreboard.errors.fetchScoreboard.title")!);
+      handleHttpError(err as Error, t("game.scoreboard.errors.fetchScoreboard.title"));
     }
     setLoading(false);
   }

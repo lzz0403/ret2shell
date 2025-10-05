@@ -26,7 +26,7 @@ export default function () {
         ...resp.email,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title")!);
+      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title"));
     }
   });
 
@@ -42,11 +42,11 @@ export default function () {
       });
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -81,17 +81,17 @@ export default function () {
                     return false;
                   }
                   return true;
-                }, t("platform.email.form.tls.required")!),
+                }, t("platform.email.form.tls.required")),
               ]}
             >
               {(field, props) => (
                 <Select
                   name={field.name}
-                  label={t("platform.email.form.tls.label")!}
+                  label={t("platform.email.form.tls.label")}
                   disabled={getValue(form, "enabled") === false}
                   class="flex-1 max-w-64"
                   error={field.error}
-                  placeholder={t("platform.email.form.tls.placeholder")!}
+                  placeholder={t("platform.email.form.tls.placeholder")}
                   items={[
                     {
                       value: "none",
@@ -122,7 +122,7 @@ export default function () {
                     return false;
                   }
                   return true;
-                }, t("platform.email.form.host.required")!),
+                }, t("platform.email.form.host.required")),
               ]}
             >
               {(field, props) => (
@@ -130,7 +130,7 @@ export default function () {
                   class="flex-1"
                   disabled={getValue(form, "enabled") === false}
                   title={t("platform.email.form.host.label")}
-                  placeholder={t("platform.email.form.host.placeholder")!}
+                  placeholder={t("platform.email.form.host.placeholder")}
                   icon={<span class="shrink-0 icon-[fluent--server-link-20-regular] w-5 h-5" />}
                   value={field.value}
                   error={field.error}
@@ -147,13 +147,13 @@ export default function () {
                     return false;
                   }
                   return true;
-                }, t("platform.email.form.port.required")!),
+                }, t("platform.email.form.port.required")),
                 custom((value) => {
                   if (value && (value < 1 || value > 65535)) {
                     return false;
                   }
                   return true;
-                }, t("platform.email.form.port.invalid")!),
+                }, t("platform.email.form.port.invalid")),
               ]}
             >
               {(field, props) => (
@@ -161,7 +161,7 @@ export default function () {
                   type="number"
                   disabled={getValue(form, "enabled") === false}
                   title={t("platform.email.form.port.label")}
-                  placeholder={t("platform.email.form.port.placeholder")!}
+                  placeholder={t("platform.email.form.port.placeholder")}
                   class="w-36"
                   icon={<span class="shrink-0 icon-[fluent--number-symbol-20-regular] w-5 h-5" />}
                   value={field.value}
@@ -179,7 +179,7 @@ export default function () {
                   return false;
                 }
                 return true;
-              }, t("platform.email.form.sender.required")!),
+              }, t("platform.email.form.sender.required")),
             ]}
           >
             {(field, props) => (
@@ -187,7 +187,7 @@ export default function () {
                 class="flex-1"
                 disabled={getValue(form, "enabled") === false}
                 title={t("platform.email.form.sender.label")}
-                placeholder={t("platform.email.form.sender.placeholder")!}
+                placeholder={t("platform.email.form.sender.placeholder")}
                 icon={<span class="shrink-0 icon-[fluent--emoji-20-regular] w-5 h-5" />}
                 value={field.value}
                 error={field.error}
@@ -201,7 +201,7 @@ export default function () {
                 class="flex-1"
                 disabled={getValue(form, "enabled") === false}
                 title={t("platform.email.form.senderAddress.label")}
-                placeholder={t("platform.email.form.senderAddress.placeholder")!}
+                placeholder={t("platform.email.form.senderAddress.placeholder")}
                 icon={<span class="shrink-0 icon-[fluent--mail-20-regular] w-5 h-5" />}
                 value={field.value ?? undefined}
                 error={field.error}
@@ -218,7 +218,7 @@ export default function () {
                     return false;
                   }
                   return true;
-                }, t("platform.email.form.username.required")!),
+                }, t("platform.email.form.username.required")),
               ]}
             >
               {(field, props) => (
@@ -226,7 +226,7 @@ export default function () {
                   class="flex-1"
                   disabled={getValue(form, "enabled") === false}
                   title={t("platform.email.form.username.label")}
-                  placeholder={t("platform.email.form.username.placeholder")!}
+                  placeholder={t("platform.email.form.username.placeholder")}
                   icon={<span class="shrink-0 icon-[fluent--mail-20-regular] w-5 h-5" />}
                   value={field.value}
                   error={field.error}
@@ -242,7 +242,7 @@ export default function () {
                     return false;
                   }
                   return true;
-                }, t("platform.email.form.password.required")!),
+                }, t("platform.email.form.password.required")),
               ]}
             >
               {(field, props) => (
@@ -251,7 +251,7 @@ export default function () {
                   disabled={getValue(form, "enabled") === false}
                   type="password"
                   title={t("platform.email.form.password.label")}
-                  placeholder={t("platform.email.form.password.placeholder")!}
+                  placeholder={t("platform.email.form.password.placeholder")}
                   icon={<span class="shrink-0 icon-[fluent--lock-20-regular] w-5 h-5" />}
                   value={field.value}
                   error={field.error}
@@ -269,7 +269,7 @@ export default function () {
                   return false;
                 }
                 return true;
-              }, t("platform.email.form.verifyEmailSubject.required")!),
+              }, t("platform.email.form.verifyEmailSubject.required")),
             ]}
           >
             {(field, props) => (
@@ -277,7 +277,7 @@ export default function () {
                 class="flex-1"
                 disabled={getValue(form, "enabled") === false}
                 title={t("platform.email.form.verifyEmailSubject.label")}
-                placeholder={t("platform.email.form.verifyEmailSubject.placeholder")!}
+                placeholder={t("platform.email.form.verifyEmailSubject.placeholder")}
                 icon={<span class="shrink-0 icon-[fluent--emoji-20-regular] w-5 h-5" />}
                 value={field.value ?? undefined}
                 error={field.error}
@@ -293,7 +293,7 @@ export default function () {
                   return false;
                 }
                 return true;
-              }, t("platform.email.form.verifyEmailBody.required")!),
+              }, t("platform.email.form.verifyEmailBody.required")),
             ]}
           >
             {(field) => (
@@ -319,7 +319,7 @@ export default function () {
                   return false;
                 }
                 return true;
-              }, t("platform.email.form.resetPasswordEmailSubject.required")!),
+              }, t("platform.email.form.resetPasswordEmailSubject.required")),
             ]}
           >
             {(field, props) => (
@@ -327,7 +327,7 @@ export default function () {
                 class="flex-1"
                 disabled={getValue(form, "enabled") === false}
                 title={t("platform.email.form.resetPasswordEmailSubject.label")}
-                placeholder={t("platform.email.form.resetPasswordEmailSubject.placeholder")!}
+                placeholder={t("platform.email.form.resetPasswordEmailSubject.placeholder")}
                 icon={<span class="shrink-0 icon-[fluent--emoji-20-regular] w-5 h-5" />}
                 value={field.value ?? undefined}
                 error={field.error}
@@ -343,7 +343,7 @@ export default function () {
                   return false;
                 }
                 return true;
-              }, t("platform.email.form.resetPasswordEmailBody.required")!),
+              }, t("platform.email.form.resetPasswordEmailBody.required")),
             ]}
           >
             {(field) => (

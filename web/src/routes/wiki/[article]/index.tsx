@@ -28,7 +28,7 @@ export default function () {
       try {
         setWikiStore({ current: await getWiki(article_id()) });
       } catch (err) {
-        handleHttpError(err as Error, t("wiki.errors.fetch.title")!);
+        handleHttpError(err as Error, t("wiki.errors.fetch.title"));
         if (err instanceof HTTPError) {
           navigate(`/sigtrap/${err.response.status}`, { replace: true });
         } else {
@@ -47,13 +47,13 @@ export default function () {
       await deleteWiki(article_id());
       addToast({
         level: "success",
-        description: t("general.actions.delete.status.success")!,
+        description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
       await refreshWikiToc();
       navigate("/wiki", { replace: true });
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
     }
   }
 
@@ -62,7 +62,7 @@ export default function () {
       setWikiStore({ current: await getWiki(article.id) });
       await refreshWikiToc();
     } catch (err) {
-      handleHttpError(err as Error, t("wiki.errors.fetch.title")!);
+      handleHttpError(err as Error, t("wiki.errors.fetch.title"));
       if (err instanceof HTTPError) {
         navigate(`/sigtrap/${err.response.status}`, { replace: true });
       } else {
@@ -91,7 +91,7 @@ export default function () {
         <div class="flex flex-row items-center w-full max-w-5xl justify-start print:justify-center space-x-6 print:space-x-2 opacity-60 flex-wrap py-3">
           <A
             class="hover:underline font-bold flex flex-row space-x-2 items-center"
-            title={wikiStore.current?.publisher_name || t("wiki.unknownPublisher")!}
+            title={wikiStore.current?.publisher_name || t("wiki.unknownPublisher")}
             href={`/users/${wikiStore.current?.publisher_id}`}
           >
             <span class="shrink-0 icon-[fluent--person-20-regular] w-5 h-5 print:hidden" />

@@ -62,19 +62,19 @@ export default function (props: { onDone: (calendar: Article) => void; editSourc
     } catch (err) {
       handleHttpError(
         err as HTTPError,
-        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")!
+        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")
       );
     }
     setLoading(false);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 w-full max-w-5xl flex-1">
-      <Field name="title" validate={[required(t("bulletin.form.title.required")!)]}>
+      <Field name="title" validate={[required(t("bulletin.form.title.required"))]}>
         {(field, props) => (
           <Input
             icon={<span class="shrink-0 icon-[fluent--megaphone-20-regular] w-5 h-5" />}
-            placeholder={t("bulletin.form.title.placeholder")!}
-            title={t("bulletin.form.title.label")!}
+            placeholder={t("bulletin.form.title.placeholder")}
+            title={t("bulletin.form.title.label")}
             {...props}
             value={field.value}
             error={field.error}
@@ -98,7 +98,7 @@ export default function (props: { onDone: (calendar: Article) => void; editSourc
                   {(field, props) => (
                     <IconCheckbox
                       class="!rounded-l-none"
-                      title={t("bulletin.form.enableComment.label")!}
+                      title={t("bulletin.form.enableComment.label")}
                       uncheckedIcon="icon-[fluent--chat-20-regular]"
                       checkedIcon="icon-[fluent--chat-20-filled]"
                       inputProps={props}
@@ -113,7 +113,7 @@ export default function (props: { onDone: (calendar: Article) => void; editSourc
           />
         )}
       </Field>
-      <Field name="content" validate={[required(t("bulletin.form.content.required")!)]}>
+      <Field name="content" validate={[required(t("bulletin.form.content.required"))]}>
         {(field) => (
           <Editor
             form={form}
@@ -121,7 +121,7 @@ export default function (props: { onDone: (calendar: Article) => void; editSourc
             class="flex-1"
             lang="markdown"
             placeholder="MARKDOWN"
-            title={t("bulletin.form.content.label")!}
+            title={t("bulletin.form.content.label")}
             name="content"
             value={field.value}
             error={field.error}

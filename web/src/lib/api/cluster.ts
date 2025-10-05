@@ -1,14 +1,40 @@
+import { t } from "@storage/theme";
+import { useMutation, useQuery } from "@tanstack/solid-query";
 import type { DiagnosticMarker } from "@widgets/editor";
 import type { ConfigMapList, NodeList } from "kubernetes-types/core/v1";
 import { DateTime } from "luxon";
-import api, { api_root } from ".";
+import api, { api_root, handleHttpError } from ".";
 
 export async function getClusterConfig() {
   return await api.get(`${api_root}/cluster/config`).json<ConfigMapList>();
 }
 
+export function useClusterConfig({ enabled, onError }: {  enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+  return useQuery(() => ({
+    queryKey: ["cluster", "config"],
+    queryFn: async () => await getClusterConfig(),
+    enabled,
+    throwOnError: (err: Error) => {
+      handleHttpError(err, t("cluster.errors.fetchConfig.title"));
+      return onError?.(err) ?? false;
+    },
+  }));
+}
+
 export async function getClusterNodes() {
   return await api.get(`${api_root}/cluster/node`).json<NodeList>();
+}
+
+export function useClusterNodes({ enabled, onError }: { enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+  return useQuery(() => ({
+    queryKey: ["cluster", "nodes"],
+    queryFn: async () => await getClusterNodes(),
+    enabled,
+    throwOnError: (err: Error) => {
+      handleHttpError(err, t("cluster.errors.fetchNodes.title"));
+      return onError?.(err) ?? false;
+    },
+  }));
 }
 
 export async function getCalmdownStatus() {
@@ -19,20 +45,85 @@ export async function getCalmdownStatus() {
   return null;
 }
 
+export function useCalmdownStatus({ enabled, onError }: { enabled?: () => boolean; onError?: (err: Error) => boolean } = {}) {
+  return useQuery(() => ({
+    queryKey: ["cluster", "calmdown"],
+    queryFn: async () => await getCalmdownStatus(),
+    enabled,
+    throwOnError: (err: Error) => {
+      return onError?.(err) ?? false;
+    },
+  }));
+}
+
 export async function updateGlobalTrafficScript(traffic: string) {
   return await api.patch(`${api_root}/cluster/traffic`, { json: { traffic } }).json<{
     lint: DiagnosticMarker[] | null;
   }>();
 }
 
+export function useUpdateGlobalTrafficScriptMutation(
+  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
+  return useMutation(() => ({
+    mutationFn: (traffic: string) => updateGlobalTrafficScript(traffic),
+    onSuccess: () => {
+      props.onSuccess?.();
+    },
+    onError: (err: Error) => {
+      handleHttpError(err, t("general.actions.save.status.fail"));
+      props.onError?.(err);
+    },
+  }));
+}
+
 export async function deleteGlobalTrafficScript() {
   return await api.delete(`${api_root}/cluster/traffic`).json<void>();
+}
+
+export function useDeleteGlobalTrafficScriptMutation(
+  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
+  return useMutation(() => ({
+    mutationFn: deleteGlobalTrafficScript,
+    onSuccess: () => props.onSuccess?.(),
+    onError: (err: Error) => {
+      handleHttpError(err, t("general.actions.delete.status.fail"));
+      props.onError?.(err);
+    },
+  }));
 }
 
 export async function updateDefaultNodeSelector(node_selector: string) {
   return await api.patch(`${api_root}/cluster/node-selector`, { json: { node_selector } }).json<void>();
 }
 
+export function useUpdateDefaultNodeSelectorMutation(
+  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
+  return useMutation(() => ({
+    mutationFn: updateDefaultNodeSelector,
+    onSuccess: () => props.onSuccess?.(),
+    onError: (err: Error) => {
+      handleHttpError(err, t("general.actions.save.status.fail"));
+      props.onError?.(err);
+    },
+  }));
+}
+
 export async function deleteDefaultNodeSelector() {
   return await api.delete(`${api_root}/cluster/node-selector`).json<void>();
+}
+
+export function useDeleteDefaultNodeSelectorMutation(
+  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+) {
+  return useMutation(() => ({
+    mutationFn: deleteDefaultNodeSelector,
+    onSuccess: () => props.onSuccess?.(),
+    onError: (err: Error) => {
+      handleHttpError(err, t("general.actions.delete.status.fail"));
+      props.onError?.(err);
+    },
+  }));
 }

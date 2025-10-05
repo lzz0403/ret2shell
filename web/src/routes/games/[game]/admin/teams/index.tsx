@@ -50,7 +50,7 @@ export default function () {
       setTeams(resp[0]);
       setTotal(resp[1]);
     } catch (err) {
-      handleHttpError(err as Error, t("team.errors.fetch.title")!);
+      handleHttpError(err as Error, t("team.errors.fetch.title"));
     }
     setLoading(false);
   }
@@ -82,17 +82,17 @@ export default function () {
               },
               {
                 value: "name",
-                label: t("team.form.name.label")!,
+                label: t("team.form.name.label"),
                 icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
               },
               {
                 value: "institute_id",
-                label: t("team.form.institute.label")!,
+                label: t("team.form.institute.label"),
                 icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
               },
               {
                 value: "state",
-                label: t("team.form.state.label")!,
+                label: t("team.form.state.label"),
                 icon: "icon-[fluent--number-symbol-24-regular] w-5 h-5",
               },
             ]}

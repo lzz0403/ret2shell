@@ -26,7 +26,7 @@ export default function () {
         validator: resp.captcha.validator,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title")!);
+      handleHttpError(err as HTTPError, t("platform.errors.fetchConfig.title"));
     }
   });
   async function onSubmit(result: CaptchaConfig) {
@@ -34,7 +34,7 @@ export default function () {
     if (!config()) {
       addToast({
         level: "error",
-        description: t("platform.errors.fetchConfig.notReady")!,
+        description: t("platform.errors.fetchConfig.notReady"),
         duration: 5000,
       });
       return;
@@ -52,11 +52,11 @@ export default function () {
       setConfig(mergedConfig);
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -83,24 +83,24 @@ export default function () {
                 </Checkbox>
               )}
             </Field>
-            <Field name="validator" validate={[required(t("captcha.form.validator.required")!)]}>
+            <Field name="validator" validate={[required(t("captcha.form.validator.required"))]}>
               {(field, props) => (
                 <Select
                   name={field.name}
-                  label={t("captcha.form.validator.label")!}
+                  label={t("captcha.form.validator.label")}
                   disabled={getValue(form, "enabled") === false}
                   class="flex-1"
                   error={field.error}
-                  placeholder={t("captcha.form.validator.placeholder")!}
+                  placeholder={t("captcha.form.validator.placeholder")}
                   items={[
                     {
                       value: "pow",
-                      label: t("captcha.form.validator.type.pow")!,
+                      label: t("captcha.form.validator.type.pow"),
                       icon: "icon-[fluent--code-20-regular]",
                     },
                     {
                       value: "image",
-                      label: t("captcha.form.validator.type.image")!,
+                      label: t("captcha.form.validator.type.image"),
                       icon: "icon-[fluent--image-20-regular]",
                     },
                   ]}
@@ -115,7 +115,7 @@ export default function () {
               <Slider
                 disabled={getValue(form, "enabled") === false}
                 class="flex-1"
-                label={t("captcha.form.difficulty.label")!}
+                label={t("captcha.form.difficulty.label")}
                 max={10}
                 min={1}
                 step={1}

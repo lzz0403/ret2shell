@@ -29,12 +29,12 @@ export default function () {
     try {
       setInstitutes(await getInstitutes());
     } catch (err) {
-      handleHttpError(err as Error, t("institute.errors.fetchList.title")!);
+      handleHttpError(err as Error, t("institute.errors.fetchList.title"));
     }
     try {
       setOAuthServices(await getOAuthProviders());
     } catch (err) {
-      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title")!);
+      handleHttpError(err as Error, t("account.oauth.errors.fetchProvider.title"));
     }
   });
   async function refreshOAuthStatus() {
@@ -42,7 +42,7 @@ export default function () {
       setSelfOAuthItems(await getOAuthStatus());
     } catch (err) {
       setSelfOAuthItems([]);
-      handleHttpError(err as Error, t("account.oauth.errors.fetchStatus.title")!);
+      handleHttpError(err as Error, t("account.oauth.errors.fetchStatus.title"));
     }
   }
   createEffect(() => {
@@ -58,7 +58,7 @@ export default function () {
       await unbindWithOAuth(id);
       refreshOAuthStatus();
     } catch (err) {
-      handleHttpError(err as Error, t("account.oauth.errors.unbind.title")!);
+      handleHttpError(err as Error, t("account.oauth.errors.unbind.title"));
     }
   }
   return (

@@ -20,7 +20,7 @@ export default function SideBar() {
           const resp = await getGame(selectedGameId());
           setGameStore({ current: resp });
         } catch (err) {
-          handleHttpError(err as Error, t("game.errors.fetch.title")!);
+          handleHttpError(err as Error, t("game.errors.fetch.title"));
           if (err instanceof HTTPError) navigate(`/sigtrap/${err.response.status}`, { replace: true });
           else navigate("/sigtrap/unknown", { replace: true });
         }

@@ -33,7 +33,7 @@ export class WsrxWrapper {
       if (state === WsrxState.Invalid && this.state() !== WsrxState.Invalid) {
         addToast({
           level: "warning",
-          description: t("wsrx.errors.disconnected.title")!,
+          description: t("wsrx.errors.disconnected.title"),
           duration: 10 * 1000,
         });
       }

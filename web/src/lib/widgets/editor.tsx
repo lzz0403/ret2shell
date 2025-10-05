@@ -68,7 +68,7 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
         const resp = await uploadMedia(imageFile()!, false);
         editor?.insert(`![${imageFile()!.name}](${mediaPath(resp.hash)})`);
       } catch (err) {
-        handleHttpError(err as Error, t("general.actions.upload.status.fail")!);
+        handleHttpError(err as Error, t("general.actions.upload.status.fail"));
       }
       setUploading(false);
     }

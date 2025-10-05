@@ -44,7 +44,7 @@ export default function () {
     if (gameStore.current && gameStore.current.archive_at < DateTime.now()) {
       addToast({
         level: "warning",
-        description: t("game.gotoTraining")!,
+        description: t("game.gotoTraining"),
         duration: 5000,
       });
       navigate(`/games/${gameStore.current.id}`);
@@ -55,7 +55,7 @@ export default function () {
     if (gameStore.current && gameStore.current.start_at > DateTime.now() && !isGameAdmin()) {
       addToast({
         level: "warning",
-        description: t("game.notStarted")!,
+        description: t("game.notStarted"),
         duration: 5000,
       });
       navigate(`/games/${gameStore.current.id}`);
@@ -72,7 +72,7 @@ export default function () {
           setChallengeStore({ current: resp });
           refreshChallengeAssets();
         } catch (err) {
-          handleHttpError(err as Error, t("challenge.errors.fetch.title")!);
+          handleHttpError(err as Error, t("challenge.errors.fetch.title"));
           setSearchParams({ challenge: null, create: null });
         }
         setLoadingChallenge(false);
@@ -115,7 +115,7 @@ export default function () {
       });
       refreshChallenges();
     } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail")!);
+      handleHttpError(err as Error, t("general.actions.create.status.fail"));
     }
     setCreating(false);
   }
@@ -148,12 +148,12 @@ export default function () {
                 removeToast(toastId);
               }, 50);
             },
-            acceptLabel: t("general.actions.goto.title")!,
+            acceptLabel: t("general.actions.goto.title"),
           });
         }
         prevUnreadChats = unreadChats;
       } catch (err) {
-        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title")!);
+        handleHttpError(err as Error, t("challenge.hammer.errors.fetch.title"));
       }
     }
   }, 30 * 1000);
@@ -203,6 +203,8 @@ export default function () {
             <Match when={challengeStore.current}>
               <Challenge
                 inGame
+                challengeId={selectedChallengeId()!}
+                gameId={gameStore.current!.id}
                 onStateChange={refreshChallenges}
                 archived={
                   !!gameStore.current?.archive_policy.challenge.show_answer &&

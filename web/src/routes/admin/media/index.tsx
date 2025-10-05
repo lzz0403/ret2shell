@@ -26,7 +26,7 @@ export default function () {
         anti_theft: resp.media.anti_theft,
       });
     } catch (err) {
-      handleHttpError(err as Error, t("platform.errors.fetchConfig.title")!);
+      handleHttpError(err as Error, t("platform.errors.fetchConfig.title"));
     }
   });
   async function onSubmit(result: MediaConfig) {
@@ -34,7 +34,7 @@ export default function () {
     if (!config()) {
       addToast({
         level: "error",
-        description: t("platform.errors.fetchConfig.notReady")!,
+        description: t("platform.errors.fetchConfig.notReady"),
         duration: 5000,
       });
       return;
@@ -48,11 +48,11 @@ export default function () {
       setConfig(mergedConfig);
       addToast({
         level: "success",
-        description: t("general.actions.save.status.success")!,
+        description: t("general.actions.save.status.success"),
         duration: 5000,
       });
     } catch (err) {
-      handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+      handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
     }
     setLoading(false);
   }
@@ -70,8 +70,8 @@ export default function () {
               <Input
                 class="flex-1"
                 disabled
-                title={t("media.form.path.label")!}
-                placeholder={t("media.form.path.placeholder")!}
+                title={t("media.form.path.label")}
+                placeholder={t("media.form.path.placeholder")}
                 icon={<span class="shrink-0 icon-[fluent--server-link-20-regular] w-5 h-5" />}
                 value={field.value}
                 error={field.error}
@@ -84,7 +84,7 @@ export default function () {
               {(field, props) => (
                 <Checkbox
                   inputProps={props}
-                  title={t("media.form.antiTheft.label")!}
+                  title={t("media.form.antiTheft.label")}
                   checked={field.value ?? false}
                   error={field.error}
                 >
@@ -96,7 +96,7 @@ export default function () {
               {(field, props) => (
                 <Slider
                   class="flex-1"
-                  label={t("media.form.limit.label")!}
+                  label={t("media.form.limit.label")}
                   max={1000}
                   min={10}
                   step={10}

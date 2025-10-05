@@ -1,6 +1,4 @@
 import { useSearchParams } from "@solidjs/router";
-import { challengeStore, refreshChallenges, refreshSolves } from "@storage/challenge";
-import { gameStore } from "@storage/game";
 import { fullTheme, t } from "@storage/theme";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
@@ -36,7 +34,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
     }
     const tree = [] as TreeNode[];
     const tags = new Set(
-      challengeStore.challenges.flatMap((c) => c.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown")!)
+      challengeStore.challenges.flatMap((c) => c.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown"))
     );
     const tagsArray = Array.from(tags).sort((a, b) => a.localeCompare(b));
     for (const tag of tagsArray) {
@@ -175,7 +173,7 @@ export default function ChallengeList(props: { showScore?: boolean; paginated?: 
                 highlightPaths={
                   selectedChallengeId()
                     ? [
-                        selectedChallenge()?.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown")!,
+                        selectedChallenge()?.tag.find((t) => t.primary)?.name || t("challenge.tag.unknown"),
                         selectedChallengeId().toString(),
                       ]
                     : undefined

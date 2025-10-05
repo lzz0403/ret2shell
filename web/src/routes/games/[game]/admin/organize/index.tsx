@@ -27,12 +27,12 @@ function InstituteManagement() {
         });
         addToast({
           level: "success",
-          description: t("general.actions.save.status.success")!,
+          description: t("general.actions.save.status.success"),
           duration: 5000,
         });
         setGameStore({ current: resp });
       } catch (err) {
-        handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+        handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
       }
       setLoading(false);
     }
@@ -56,12 +56,12 @@ function InstituteManagement() {
         });
         addToast({
           level: "success",
-          description: t("general.actions.save.status.success")!,
+          description: t("general.actions.save.status.success"),
           duration: 5000,
         });
         setGameStore({ current: resp });
       } catch (err) {
-        handleHttpError(err as HTTPError, t("general.actions.save.status.fail")!);
+        handleHttpError(err as HTTPError, t("general.actions.save.status.fail"));
       }
       setLoading(false);
     }

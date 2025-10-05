@@ -41,7 +41,7 @@ export default function (
     } catch (err) {
       setCaptcha(null);
       setValue(props.captchaForm, "captcha_id", "");
-      handleHttpError(err as Error, t("captcha.errors.fetch.title")!);
+      handleHttpError(err as Error, t("captcha.errors.fetch.title"));
     }
     setLoading(false);
   }
@@ -121,10 +121,10 @@ export default function (
             type="button"
             title={
               loading()
-                ? t("captcha.fetching")!
+                ? t("captcha.fetching")
                 : calculating()
-                  ? t("captcha.calculating")!
-                  : t("general.actions.refresh.title")!
+                  ? t("captcha.calculating")
+                  : t("general.actions.refresh.title")
             }
           >
             {loading() ? null : captcha() ? getCaptchaContent() : t("captcha.errors.fetch.title")}

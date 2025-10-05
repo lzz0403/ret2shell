@@ -24,20 +24,20 @@ export class Exec {
 
     let cmd = args[0];
     if (typeof cmd !== "string") {
-      io.error(t("shell.errors.commandInvalid.title")!);
+      io.error(t("shell.errors.commandInvalid.title"));
       return { cmd: "", code: -127 };
     }
     cmd = cmd.trim();
     if (cmd === "") return { cmd, code: 0 };
     if (cmd === "cd") {
-      io.error(t("shell.errors.traversalDetected.title")!);
+      io.error(t("shell.errors.traversalDetected.title"));
       return { cmd, code: -127 };
     }
     if (this.commands.has(cmd)) {
       return { cmd, code: await this.commands.get(cmd)!.func(io, args.slice(1), origin) };
     }
 
-    io.error(t("shell.commandNotFound", { command: cmd })!);
+    io.error(t("shell.commandNotFound", { command: cmd }));
     return { cmd, code: -127 };
   }
 }

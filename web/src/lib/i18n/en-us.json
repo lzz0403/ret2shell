@@ -1330,6 +1330,9 @@
       "errors": {
         "fetchCheckerScript": {
           "title": "Failed to fetch check script"
+        },
+        "fetchScript": {
+          "title": "Failed to fetch checker script"
         }
       }
     },
@@ -2105,6 +2108,9 @@
     "errors": {
       "fetchNodes": {
         "title": "Failed to fetch cluster node information"
+      },
+      "fetchConfig": {
+        "title": "Failed to fetch cluster configuration"
       }
     }
   },

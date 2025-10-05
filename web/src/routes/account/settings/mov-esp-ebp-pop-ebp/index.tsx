@@ -34,7 +34,7 @@ export default function () {
       resetGameStore();
       navigate("/");
     } catch (err) {
-      handleHttpError(err as Error, t("account.delete.errors.delete.title")!);
+      handleHttpError(err as Error, t("account.delete.errors.delete.title"));
       setTimestamp(DateTime.now().toMillis());
     }
     setLoading(false);
@@ -80,8 +80,8 @@ export default function () {
                 <Field
                   name="captcha_answer"
                   validate={[
-                    required(t("captcha.form.answer.required")!),
-                    minLength(4, t("captcha.form.answer.minimumLength")!),
+                    required(t("captcha.form.answer.required")),
+                    minLength(4, t("captcha.form.answer.minimumLength")),
                   ]}
                 >
                   {(answerField, props) => (
