@@ -9,7 +9,13 @@ export async function getClusterConfig() {
   return await api.get(`${api_root}/cluster/config`).json<ConfigMapList>();
 }
 
-export function useClusterConfig({ enabled, onError }: {  enabled?: () => boolean; onError?: (err: Error) => boolean }={}) {
+export function useClusterConfig({
+  enabled,
+  onError,
+}: {
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+} = {}) {
   return useQuery(() => ({
     queryKey: ["cluster", "config"],
     queryFn: async () => await getClusterConfig(),
@@ -25,7 +31,13 @@ export async function getClusterNodes() {
   return await api.get(`${api_root}/cluster/node`).json<NodeList>();
 }
 
-export function useClusterNodes({ enabled, onError }: { enabled?: () => boolean; onError?: (err: Error) => boolean }={}) {
+export function useClusterNodes({
+  enabled,
+  onError,
+}: {
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+} = {}) {
   return useQuery(() => ({
     queryKey: ["cluster", "nodes"],
     queryFn: async () => await getClusterNodes(),
@@ -45,7 +57,13 @@ export async function getCalmdownStatus() {
   return null;
 }
 
-export function useCalmdownStatus({ enabled, onError }: { enabled?: () => boolean; onError?: (err: Error) => boolean } = {}) {
+export function useCalmdownStatus({
+  enabled,
+  onError,
+}: {
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+} = {}) {
   return useQuery(() => ({
     queryKey: ["cluster", "calmdown"],
     queryFn: async () => await getCalmdownStatus(),
@@ -63,12 +81,12 @@ export async function updateGlobalTrafficScript(traffic: string) {
 }
 
 export function useUpdateGlobalTrafficScriptMutation(
-  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
+  props: { onSuccess?: (resp: { lint: DiagnosticMarker[] | null }) => void; onError?: (err: Error) => void } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: (traffic: string) => updateGlobalTrafficScript(traffic),
-    onSuccess: () => {
-      props.onSuccess?.();
+    mutationFn: ({ traffic }: { traffic: string }) => updateGlobalTrafficScript(traffic),
+    onSuccess: (resp) => {
+      props.onSuccess?.(resp);
     },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.save.status.fail"));

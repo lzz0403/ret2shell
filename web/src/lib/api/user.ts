@@ -42,24 +42,22 @@ export function useUsers({
   page: () => number;
   page_size: () => number;
   order?: () => string;
-  filter?: () => string;
-  institute_id?: () => number;
+  filter?: () => string | null;
+  institute_id?: () => number | null;
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {
-  const keys = createMemo(() => [
-    "user",
-    "list",
-    page(),
-    page_size(),
-    order?.(),
-    filter?.(),
-    institute_id?.(),
-  ]);
+  const keys = createMemo(() => ["user", "list", page(), page_size(), order?.(), filter?.(), institute_id?.()]);
   return useQuery(() => ({
     queryKey: keys(),
     queryFn: async () =>
-      await getUserList(page() ?? 1, page_size() ?? 15, order?.(), filter?.(), institute_id?.()),
+      await getUserList(
+        page() ?? 1,
+        page_size() ?? 15,
+        order?.(),
+        filter?.() ?? undefined,
+        institute_id?.() ?? undefined
+      ),
     enabled,
     throwOnError: (err: Error) => {
       handleHttpError(err, t("user.errors.fetchList.title"));
@@ -72,7 +70,15 @@ export async function getUser(id: number) {
   return await api.get(`${api_root}/user/${id}`).json<User>();
 }
 
-export function useUser({ id, enabled, onError }: { id: () => number; enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+export function useUser({
+  id,
+  enabled,
+  onError,
+}: {
+  id: () => number;
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+}) {
   const keys = createMemo(() => ["user", id()]);
   return useQuery(() => ({
     queryKey: keys(),
@@ -89,7 +95,15 @@ export async function getUserTeams(id: number) {
   return await api.get(`${api_root}/user/${id}/team`).json<Team[]>();
 }
 
-export function useUserTeams({ id, enabled, onError }: { id: () => number; enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+export function useUserTeams({
+  id,
+  enabled,
+  onError,
+}: {
+  id: () => number;
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+}) {
   const keys = createMemo(() => ["user", id(), "teams"]);
   return useQuery(() => ({
     queryKey: keys(),
@@ -125,9 +139,7 @@ export async function deleteUser(id: number) {
   return await api.delete(`${api_root}/user/${id}`).json();
 }
 
-export function useDeleteUserMutation(
-  props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}
-) {
+export function useDeleteUserMutation(props: { onSuccess?: () => void; onError?: (err: Error) => void } = {}) {
   return useMutation(() => ({
     mutationFn: ({ id }: { id: number }) => deleteUser(id),
     onSuccess: () => {
@@ -144,7 +156,15 @@ export async function getUserIpList(id: number) {
   return await api.get(`${api_root}/user/${id}/ip`).json<Ip[]>();
 }
 
-export function useUserIpList({ id, enabled, onError }: { id: () => number; enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+export function useUserIpList({
+  id,
+  enabled,
+  onError,
+}: {
+  id: () => number;
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+}) {
   const keys = createMemo(() => ["user", id(), "ips"]);
   return useQuery(() => ({
     queryKey: keys(),
@@ -161,7 +181,15 @@ export async function getUserOAuthList(id: number) {
   return await api.get(`${api_root}/user/${id}/oauth`).json<OAuth[]>();
 }
 
-export function useUserOAuthList({ id, enabled, onError }: { id: () => number; enabled?: () => boolean; onError?: (err: Error) => boolean }) {
+export function useUserOAuthList({
+  id,
+  enabled,
+  onError,
+}: {
+  id: () => number;
+  enabled?: () => boolean;
+  onError?: (err: Error) => boolean;
+}) {
   const keys = createMemo(() => ["user", id(), "oauths"]);
   return useQuery(() => ({
     queryKey: keys(),

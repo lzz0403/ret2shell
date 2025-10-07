@@ -1,13 +1,11 @@
 import { handleHttpError } from "@api";
+import { useInstitutes } from "@api/account";
 import { uploadMedia } from "@api/media";
-import { deleteUser, getUserIpList, getUserOAuthList } from "@api/user";
+import { useDeleteUserMutation, useUserIpList, useUserOAuthList } from "@api/user";
 import { mediaPath } from "@lib/utils/media";
-import type { Ip } from "@models/ip";
-import type { OAuth } from "@models/oauth";
 import { Permission, permissionToString, type User } from "@models/user";
 import { createForm, email, getValue, required, setValue, setValues } from "@modular-forms/solid";
 import { A } from "@solidjs/router";
-import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import { addToast } from "@storage/toast";
 import Avatar from "@widgets/avatar";
@@ -45,7 +43,6 @@ export type UserForm = {
 
 export default function (compProps: { onDone?: (result: User) => void; editSource?: User; loading: boolean }) {
   const [deleteConfirmValue, setDeleteConfirmValue] = createSignal("");
-  const [deleteLoading, setDeleteLoading] = createSignal(false);
   const [form, { Form, Field }] = createForm<UserForm>();
   createEffect(() => {
     if (compProps.editSource) {
@@ -71,26 +68,16 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
           permDevOps: compProps.editSource?.permissions.includes(Permission.DevOps) || false,
         });
         setAvatarSet(!!compProps.editSource?.avatar);
-        try {
-          const resp = await getUserIpList(compProps.editSource!.id);
-          setIps(resp);
-        } catch (err) {
-          handleHttpError(err as Error, t("user.errors.fetchIpList.title"));
-        }
-        try {
-          const resp = await getUserOAuthList(compProps.editSource!.id);
-          setOauthes(resp);
-        } catch (err) {
-          handleHttpError(err as Error, t("user.errors.fetchOAuth.title"));
-        }
       });
     }
   });
   const [avatarFile, setAvatarFile] = createSignal(null as File | null);
   const [avatarSet, setAvatarSet] = createSignal(false);
   const [avatarUploading, setAvatarUploading] = createSignal(false);
-  const [ips, setIps] = createSignal<Ip[]>([]);
-  const [oauths, setOauthes] = createSignal([] as OAuth[]);
+  const ips = useUserIpList({ id: () => compProps.editSource!.id, enabled: () => !!compProps.editSource });
+  const oauths = useUserOAuthList({ id: () => compProps.editSource!.id, enabled: () => !!compProps.editSource });
+  const institutes = useInstitutes();
+
   let avatarInput: HTMLInputElement;
   function handleSelectAvatar() {
     avatarInput!.click();
@@ -118,29 +105,28 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
       setAvatarUploading(false);
     }
   }
-  async function handleDeleteUser() {
-    try {
-      setDeleteLoading(true);
-      await deleteUser(compProps.editSource!.id);
-      // compProps.onDone?.(compProps.editSource!);
-      setDeleteConfirmValue("");
-      setDeleteLoading(false);
+  const deleteMutation = useDeleteUserMutation({
+    onSuccess: () => {
       addToast({
         level: "success",
         description: t("general.actions.delete.status.success"),
         duration: 5000,
       });
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.delete.status.fail"));
-    }
+    },
+  });
+  async function handleDeleteUser() {
+    if (!compProps.editSource) return;
+    deleteMutation.mutate({ id: compProps.editSource.id });
   }
 
   const institutesSelect = createMemo(() => {
-    return accountStore.institutes.map((i) => ({
-      value: i.id.toString(),
-      label: i.name,
-      icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
-    }));
+    return (
+      institutes.data?.map((i) => ({
+        value: i.id.toString(),
+        label: i.name,
+        icon: "icon-[fluent--hat-graduation-20-regular] w-5 h-5",
+      })) ?? []
+    );
   });
 
   function onSubmit(result: UserForm) {
@@ -203,8 +189,8 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
                   size="sm"
                   level="warning"
                   class="rounded-l-none"
-                  disabled={deleteConfirmValue() !== compProps.editSource?.account || deleteLoading()}
-                  loading={deleteLoading()}
+                  disabled={deleteConfirmValue() !== compProps.editSource?.account || deleteMutation.isPending}
+                  loading={deleteMutation.isPending}
                   onClick={handleDeleteUser}
                 >
                   <span>{t("general.actions.delete.title")}</span>
@@ -436,7 +422,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
           <span class="shrink-0 icon-[fluent--settings-20-regular] w-5 h-5" />
           <span class="flex-1 text-start">{t("account.form.oauths.label")}</span>
         </h3>
-        <For each={oauths()}>
+        <For each={oauths.data}>
           {(oauth) => (
             <div class="h-12 flex items-center border-b border-b-layer-content/10 font-bold space-x-2 w-full px-2">
               <span class="flex-1 text-start text-info">Adapter: {oauth.provider}</span>
@@ -454,7 +440,7 @@ export default function (compProps: { onDone?: (result: User) => void; editSourc
         <span>{t("account.form.ips.tips")}</span>
       </Card>
       <div class="flex flex-row flex-wrap">
-        <For each={ips()}>
+        <For each={ips.data}>
           {(ip) => (
             <Tag level="info" class="m-1">
               <A href={`/admin/users?filter=${ip.address}`}>{ip.address}</A>
