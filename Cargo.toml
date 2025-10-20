@@ -22,7 +22,7 @@ strip         = true
 aho-corasick       = "1.1"
 anyhow             = "1.0"
 argon2             = "0.5"
-async-nats         = "0.43"
+async-nats         = "0.44"
 async-trait        = "0.1"
 base64             = "0.22"
 bcrypt             = "0.17"
@@ -50,7 +50,7 @@ rand               = "0.9"
 regex              = "1.11"
 ret2script         = { version = "1.8", default-features = false }
 ring               = "0.17"
-roxmltree          = "0.20"
+roxmltree          = "0.21"
 rune               = { version = "0.14", features = ["tokio", "cli"] }
 rune-modules       = { version = "0.14", features = ["full"] }
 rustc_version      = "0.4"
