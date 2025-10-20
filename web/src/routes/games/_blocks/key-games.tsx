@@ -11,7 +11,6 @@ import { type Game, HostType } from "@models/game";
 import { Permission } from "@models/user";
 import { useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
-import { appendGames, gameStore, setGameStore } from "@storage/game";
 import { t, themeStore } from "@storage/theme";
 import Button from "@widgets/button";
 import Card from "@widgets/card";

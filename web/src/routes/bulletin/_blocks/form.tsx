@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { createBulletin, updateBulletin } from "@api/bulletin";
+import { useBulletin, useCreateBulletinMutation, useUpdateBulletinMutation } from "@api/bulletin";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
@@ -8,9 +7,8 @@ import Button from "@widgets/button";
 import Editor from "@widgets/editor";
 import IconCheckbox from "@widgets/icon-checkbox";
 import Input from "@widgets/input";
-import type { HTTPError } from "ky";
 import { DateTime } from "luxon";
-import { createEffect, createSignal, untrack } from "solid-js";
+import { createEffect, untrack } from "solid-js";
 
 type BulletinForm = {
   title: string;
@@ -19,17 +17,28 @@ type BulletinForm = {
   weight: boolean;
 };
 
-export default function (props: { onDone: (calendar: Article) => void; editSource?: Article }) {
+export default function (props: { onDone: (calendar: Article) => void; articleId?: number }) {
   const [form, { Form, Field }] = createForm<BulletinForm>();
-  const [loading, setLoading] = createSignal(false);
+  const article = useBulletin({ id: () => props.articleId!, enabled: () => !!props.articleId });
+  const createBulletinMutation = useCreateBulletinMutation({
+    onSuccess: (data) => {
+      props.onDone(data);
+    },
+  });
+  const updateBulletinMutation = useUpdateBulletinMutation({
+    onSuccess: (data) => {
+      props.onDone(data);
+    },
+  });
+
   createEffect(() => {
-    if (props.editSource) {
+    if (article.data) {
       untrack(() => {
         setValues(form, {
-          title: props.editSource?.title || "",
-          content: props.editSource?.content || "",
-          enable_comment: props.editSource?.enable_comment || false,
-          weight: !!props.editSource?.weight,
+          title: article.data?.title || "",
+          content: article.data?.content || "",
+          enable_comment: article.data?.enable_comment || false,
+          weight: !!article.data?.weight,
         });
       });
     } else {
@@ -44,28 +53,18 @@ export default function (props: { onDone: (calendar: Article) => void; editSourc
     }
   });
   async function onSubmit(result: BulletinForm) {
-    setLoading(true);
-    try {
-      const resp = await (props.editSource ? updateBulletin : createBulletin)({
-        ...result,
-        weight: result.weight ? 1 : 0,
-        id: props.editSource?.id || 0,
-        created_at: props.editSource?.created_at || DateTime.now(),
-        updated_at: props.editSource?.updated_at || DateTime.now(),
-        publisher_id: accountStore.id || 0,
-        access_policy: ArticleAccessPolicy.Bulletin,
-        draft: false,
-        published: true,
-        path: [],
-      });
-      props.onDone(resp);
-    } catch (err) {
-      handleHttpError(
-        err as HTTPError,
-        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")
-      );
-    }
-    setLoading(false);
+    (article.data ? updateBulletinMutation : createBulletinMutation).mutate({
+      ...result,
+      weight: result.weight ? 1 : 0,
+      id: article.data?.id || 0,
+      created_at: article.data?.created_at || DateTime.now(),
+      updated_at: article.data?.updated_at || DateTime.now(),
+      publisher_id: accountStore.id || 0,
+      access_policy: ArticleAccessPolicy.Bulletin,
+      draft: false,
+      published: true,
+      path: [],
+    });
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 w-full max-w-5xl flex-1">
@@ -128,8 +127,14 @@ export default function (props: { onDone: (calendar: Article) => void; editSourc
           />
         )}
       </Field>
-      <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
-        {props.editSource ? t("general.actions.save.title") : t("general.actions.create.title")}
+      <Button
+        type="submit"
+        level="primary"
+        class="!mt-4"
+        loading={createBulletinMutation.isPending || updateBulletinMutation.isPending}
+        disabled={createBulletinMutation.isPending || updateBulletinMutation.isPending}
+      >
+        {props.articleId ? t("general.actions.save.title") : t("general.actions.create.title")}
       </Button>
     </Form>
   );

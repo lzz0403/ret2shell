@@ -4,7 +4,6 @@ import Spin from "@assets/animates/spin";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { mediaPath } from "@lib/utils/media";
 import { HostType } from "@models/game";
-import { appendGames, gameStore, setGameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import Card from "@widgets/card";
 import Pagination from "@widgets/pagination";

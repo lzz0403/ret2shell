@@ -1,56 +1,55 @@
 import LogoAnimate from "@assets/animates/logo-animate";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { mediaPath } from "@lib/utils/media";
-import { useLocation, useNavigate } from "@solidjs/router";
-import { gameStore, setGameStore } from "@storage/game";
+import type { Game } from "@models/game";
+import { useNavigate } from "@solidjs/router";
 import LoadingTips from "@widgets/loading-tips";
 import clsx from "clsx";
 import { type ComponentProps, createEffect, createSignal, Show, untrack } from "solid-js";
+import { createStore } from "solid-js/store";
+
+export const [gameCoverStore, setGameCoverStore] = createStore<{
+  preload: Game | null;
+  goto: number | null;
+  visited: number[];
+}>({
+  preload: null,
+  goto: null,
+  visited: [],
+});
 
 export default function (props: ComponentProps<"div">) {
-  const location = useLocation();
   const navigate = useNavigate();
   const [expanded, setExpanded] = createSignal(false);
   const _preloadImage = new Image();
   _preloadImage.src = bgGameDefault;
   createEffect(() => {
-    if (gameStore.current && (location.pathname === "/games" || location.pathname === "/games/")) {
+    if (gameCoverStore.goto) {
       untrack(() => {
-        if (gameStore.visited.find((v) => v === gameStore.current?.id)) {
-          navigate(`/games/${gameStore.current?.id}`);
+        if (gameCoverStore.visited.find((v) => v === gameCoverStore.preload?.id)) {
+          navigate(`/games/${gameCoverStore.preload?.id}`);
           return;
         }
         setExpanded(true);
-        // gameStore.visited.push(gameStore.current!.id);
-        setGameStore({
-          visited: [...gameStore.visited, gameStore.current!.id],
+        // gameCoverStore.visited.push(gameCoverStore.preload!.id);
+        setGameCoverStore({
+          visited: [...gameCoverStore.visited, gameCoverStore.preload!.id],
         });
       });
     }
   });
-  let cachedId = 0;
   createEffect(() => {
     // when the first navigate happens, we will fetch the game details that same with preload one,
     // this effect will be triggered in second times either, we don't want that. so we cache it.
-    if (gameStore.current && expanded()) {
+    if (gameCoverStore.goto && expanded()) {
       untrack(() => {
-        if (cachedId === gameStore.current!.id) {
-          return;
-        }
-        cachedId = gameStore.current!.id;
         setTimeout(() => {
-          navigate(`/games/${gameStore.current?.id}`);
+          navigate(`/games/${gameCoverStore.goto}`);
+          setGameCoverStore({ goto: null, preload: null });
         }, 2000);
         setTimeout(() => {
           setExpanded(false);
         }, 3000);
-      });
-    }
-  });
-  createEffect(() => {
-    if (!gameStore.current) {
-      untrack(() => {
-        cachedId = 0;
       });
     }
   });
@@ -72,8 +71,7 @@ export default function (props: ComponentProps<"div">) {
           )}
           alt="Cover"
           src={
-            (gameStore.preload?.cover && mediaPath(gameStore.preload.cover)) ||
-            (gameStore.current?.cover && mediaPath(gameStore.current.cover)) ||
+            (gameCoverStore.preload?.cover && mediaPath(gameCoverStore.preload.cover)) ||
             bgGameDefault
           }
         />
@@ -89,11 +87,11 @@ export default function (props: ComponentProps<"div">) {
               expanded() ? "" : "scale-150 blur-xl opacity-0 rotate-90"
             )}
           >
-            <Show when={gameStore.current?.logo} fallback={<LogoAnimate class="w-full h-full object-contain" />}>
+            <Show when={gameCoverStore.preload?.logo} fallback={<LogoAnimate class="w-full h-full object-contain" />}>
               <img
                 class="w-full h-full object-contain"
-                src={mediaPath(gameStore.current!.logo!)}
-                alt={gameStore.current?.name}
+                src={mediaPath(gameCoverStore.preload!.logo!)}
+                alt={gameCoverStore.preload?.name}
               />
             </Show>
           </div>
@@ -103,8 +101,8 @@ export default function (props: ComponentProps<"div">) {
               expanded() ? "h-32" : "h-0"
             )}
           >
-            <h1 class="text-4xl font-bold">{gameStore.current?.name}</h1>
-            <p class="text-base opacity-60">{gameStore.current?.brief}</p>
+            <h1 class="text-4xl font-bold">{gameCoverStore.preload?.name}</h1>
+            <p class="text-base opacity-60">{gameCoverStore.preload?.brief}</p>
           </div>
         </div>
         <Show when={expanded()}>
