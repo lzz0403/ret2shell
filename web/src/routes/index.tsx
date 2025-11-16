@@ -10,7 +10,7 @@ import Popover from "@widgets/popover";
 import { createEffect, onMount, Show } from "solid-js";
 // import Calendar from "./calendar";
 
-export default function () {
+export default function() {
   const [searchParams] = useSearchParams();
   let calendarSection: HTMLElement;
   const navigate = useNavigate();
@@ -81,7 +81,7 @@ export default function () {
             >
               <div class="w-max flex flex-col space-y-2">
                 <Card contentClass="p-2">
-                  <Link ghost href="/magic/about" class="flex flex-row items-center !h-auto space-x-2 pl-2 pr-3 py-1">
+                  <Link ghost href="/magic/about" class="flex flex-row items-center h-auto! space-x-2 pl-2 pr-3 py-1">
                     <LogoAnimate width={56} height={56} />
                     <div class="flex flex-col">
                       <h2 class="text-xl font-bold flex flex-row">
