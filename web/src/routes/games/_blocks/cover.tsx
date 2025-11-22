@@ -66,7 +66,7 @@ export default function (props: ComponentProps<"div">) {
       <div class="w-screen h-screen relative bg-layer">
         <img
           class={clsx(
-            "w-screen h-screen transition-all ease-out duration-[2000ms] object-cover",
+            "w-screen h-screen transition-all ease-out duration-2000 object-cover",
             expanded() && "scale-125 blur-md"
           )}
           alt="Cover"

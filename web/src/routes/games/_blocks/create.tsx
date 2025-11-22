@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { createGame } from "@api/game";
+import { useCreateGameMutation } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { createForm, maxRange, minRange, required, setValue, setValues } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
@@ -10,7 +9,6 @@ import Input from "@widgets/input";
 import TimePicker from "@widgets/timepicker";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import { createSignal } from "solid-js";
 
 type CreateGameForm = {
   name: string;
@@ -28,7 +26,9 @@ type CreateGameForm = {
 
 export default function CreateGame(props: { onDone: (game: Game) => void }) {
   const [form, { Form, Field }] = createForm<CreateGameForm>();
-  const [loading, setLoading] = createSignal(false);
+  const mutation = useCreateGameMutation({
+    onSuccess: (data) => props.onDone(data),
+  });
   setValues(form, {
     weight: 3,
     team_size: 4,
@@ -37,7 +37,6 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
     can_register_after_started: true,
   });
   async function onSubmit(result: CreateGameForm) {
-    setLoading(true);
     const req: Game = {
       ...result,
       start_at: DateTime.fromSeconds(result.start_at),
@@ -62,13 +61,13 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
       traffic: null,
       bucket: null,
       archive_policy: { challenge: { show_answer: false, show_hints: false } },
+      hammer_policy: {
+        enabled: true,
+        outer_label: null,
+        outer_url: null,
+      },
     };
-    try {
-      props.onDone(await createGame(req));
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail"));
-    }
-    setLoading(false);
+    mutation.mutate(req);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col self-center w-full max-w-5xl space-y-2">
@@ -122,7 +121,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
             <Field name="can_register_after_started" type="boolean">
               {(field, props) => (
                 <IconCheckbox
-                  class="!rounded-r-none"
+                  class="rounded-r-none!"
                   title={t("game.form.canRegisterAfterStart.label")}
                   uncheckedIcon="icon-[fluent--accessibility-checkmark-20-regular]"
                   checkedIcon="icon-[fluent--accessibility-checkmark-20-filled]"
@@ -136,7 +135,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
             <Field name="offline" type="boolean">
               {(field, props) => (
                 <IconCheckbox
-                  class="!rounded-none"
+                  class="rounded-none!"
                   title={t("game.form.offline.label")}
                   uncheckedIcon="icon-[fluent--wifi-off-20-regular]"
                   checkedIcon="icon-[fluent--wifi-off-20-filled]"
@@ -150,7 +149,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
             <Field name="enable_audit" type="boolean">
               {(field, props) => (
                 <IconCheckbox
-                  class="!rounded-l-none"
+                  class="rounded-l-none!"
                   title={t("game.form.enableTeamAudit.label")}
                   uncheckedIcon="icon-[fluent--people-audience-20-regular]"
                   checkedIcon="icon-[fluent--people-audience-20-filled]"
@@ -174,7 +173,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                 <Button
                   type="button"
                   square
-                  class={clsx("!rounded-r-none", field.value === 1 && "text-primary")}
+                  class={clsx("rounded-r-none!", field.value === 1 && "text-primary")}
                   onClick={() => {
                     setValue(form, "weight", 1);
                   }}
@@ -184,7 +183,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                 <Button
                   type="button"
                   square
-                  class={clsx("!rounded-none", field.value === 2 && "text-primary")}
+                  class={clsx("rounded-none!", field.value === 2 && "text-primary")}
                   onClick={() => {
                     setValue(form, "weight", 2);
                   }}
@@ -194,7 +193,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
                 <Button
                   type="button"
                   square
-                  class={clsx("!rounded-l-none", field.value === 3 && "text-primary")}
+                  class={clsx("rounded-l-none!", field.value === 3 && "text-primary")}
                   onClick={() => {
                     setValue(form, "weight", 3);
                   }}
@@ -269,7 +268,7 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
           </Field>
         )}
       </Field>
-      <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+      <Button type="submit" level="primary" class="mt-4!" loading={mutation.isPending} disabled={mutation.isPending}>
         {t("general.actions.create.title")}
       </Button>
     </Form>

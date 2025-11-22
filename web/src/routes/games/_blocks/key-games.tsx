@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { getGames } from "@api/game";
+import { useGames } from "@api/game";
 import LogoAnimate from "@assets/animates/logo-animate";
 import Spin from "@assets/animates/spin";
 import blurredBgDark from "@assets/imgs/bg-blur-stars.webp";
@@ -21,59 +20,41 @@ import Popover from "@widgets/popover";
 import Tag from "@widgets/tag";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import { createEffect, createMemo, createSignal, For, Show, untrack } from "solid-js";
+import { createEffect, createMemo, createSignal, For, Show } from "solid-js";
+import { setGameCoverStore } from "./cover";
 import CreateGame from "./create";
 
 export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = createSignal(1);
   const pageSize = 5;
-  const [total, setTotal] = createSignal(0);
-  const totalPages = createMemo(() => Math.ceil(total() / pageSize));
-  const [loading, setLoading] = createSignal(true);
-  const showCreate = () => searchParams.create === "true";
-  const keyGames = createMemo(() => {
-    return gameStore.games
-      .filter((game) => game.weight >= 3 && game.host_type === HostType.Game)
-      .sort((a, b) => b.start_at.toSeconds() - a.start_at.toSeconds())
-      .slice((page() - 1) * pageSize, page() * pageSize);
+  const games = useGames({
+    page: () => page(),
+    page_size: () => pageSize,
+    host_type: () => HostType.Game,
+    weight: () => 3,
+    enabled: () => true,
   });
+  const totalPages = createMemo(() => Math.ceil((games.data?.[1] ?? 0) / pageSize));
+  const showCreate = () => searchParams.create === "true";
 
   const selectedGameId = createMemo(() => {
     const result = searchParams.selected ? Number.parseInt(searchParams.selected as string, 10) : Number.NaN;
     if (Number.isNaN(result)) {
-      return keyGames().at(0)?.id ?? null;
+      return games.data?.[0].at(0)?.id ?? null;
     }
     return result;
   });
 
   const selectedGame = createMemo(() => {
-    return keyGames().find((game) => game.id === selectedGameId()) ?? keyGames().at(0);
+    return games.data?.[0].find((game) => game.id === selectedGameId()) ?? games.data?.[0].at(0);
   });
   createEffect(() => {
-    setGameStore({ preload: selectedGame() || null });
-  });
-
-  async function fetchGames() {
-    setLoading(true);
-    try {
-      const [game, total] = await getGames(page(), pageSize, HostType.Game, 3);
-      appendGames(game);
-      setTotal(total);
-    } catch (err) {
-      handleHttpError(err as Error, t("game.errors.fetchList.title"));
-    }
-    setLoading(false);
-  }
-
-  createEffect(() => {
-    if (page()) {
-      untrack(fetchGames);
-    }
+    setGameCoverStore({ preload: selectedGame() || null });
   });
 
   function onCreated(game: Game) {
-    setGameStore({ preload: game, current: game });
+    setGameCoverStore({ preload: game });
   }
 
   return (
@@ -98,7 +79,7 @@ export default function () {
         </Button>
         <Divider class="w-4/5" />
         <For
-          each={keyGames()}
+          each={games.data?.[0]}
           fallback={
             <Button ghost disabled class="w-4/5" justify="start">
               <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
@@ -182,7 +163,7 @@ export default function () {
         >
           <Card class="w-[80vw]" contentClass="p-2 flex flex-col space-y-2">
             <For
-              each={keyGames()}
+              each={games.data?.[0]}
               fallback={
                 <Button ghost disabled justify="start">
                   <span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />
@@ -234,7 +215,7 @@ export default function () {
       <div class="flex-1 p-3 lg:p-12 flex flex-col items-center lg:justify-center lg:items-start">
         <Show when={!showCreate()} fallback={<CreateGame onDone={onCreated} />}>
           <Card
-            class="aspect-video w-full lg:w-4/5 transform transition-all rounded-b-none lg:rounded-b-lg border-b-0 lg:border-b-[1px] overflow-hidden relative"
+            class="aspect-video w-full lg:w-4/5 transform transition-all rounded-b-none lg:rounded-b-lg border-b-0 lg:border-b overflow-hidden relative"
             contentClass="relative"
           >
             <Show
@@ -281,22 +262,22 @@ export default function () {
               </span>
             </Tag>
             <button
-              class="absolute w-full h-full top-0 left-0 !m-0 cursor-pointer"
+              class="absolute w-full h-full top-0 left-0 m-0! cursor-pointer"
               onClick={() => {
-                if (selectedGame()) setGameStore({ current: selectedGame() || null });
+                if (selectedGame()) setGameCoverStore({ goto: selectedGame()!.id });
                 return false;
               }}
               type="button"
             />
           </Card>
           <Card
-            class="w-full lg:w-3/5 relative transform transition-all lg:-translate-y-[2rem] lg:translate-x-1/2 rounded-t-none lg:rounded-t-lg border-t-0 lg:border-t-[1px] flex"
+            class="w-full lg:w-3/5 relative transform transition-all lg:-translate-y-8 lg:translate-x-1/2 rounded-t-none lg:rounded-t-lg border-t-0 lg:border-t flex"
             contentClass="flex-1 flex flex-col md:flex-row space-y-4 lg:space-y-0 lg:space-x-8 p-6 px-9 items-center"
           >
             <Show
               when={selectedGame()?.logo}
               fallback={
-                <Show when={loading()} fallback={<LogoAnimate class="hidden lg:block" width={64} height={64} />}>
+                <Show when={games.isLoading} fallback={<LogoAnimate class="hidden lg:block" width={64} height={64} />}>
                   <Spin width={64} height={64} />
                 </Show>
               }
@@ -311,7 +292,7 @@ export default function () {
             </Show>
             <div class="flex flex-col space-y-2 flex-1 w-full lg:w-auto">
               <h2 class="text-xl font-bold flex flex-row space-x-4">
-                {loading() ? randomTips() : selectedGame()?.name || t("game.noGameHosted")}
+                {games.isLoading ? randomTips() : selectedGame()?.name || t("game.noGameHosted")}
               </h2>
               <p class="opacity-60">{selectedGame()?.brief || t("game.seeOtherInteresting")}</p>
             </div>
@@ -324,9 +305,9 @@ export default function () {
               </Tag>
             </div>
             <button
-              class="absolute w-full h-full top-0 left-0 !m-0 cursor-pointer"
+              class="absolute w-full h-full top-0 left-0 m-0! cursor-pointer"
               onClick={() => {
-                if (selectedGame()) setGameStore({ current: selectedGame() || null });
+                if (selectedGame()) setGameCoverStore({ goto: selectedGame()!.id });
                 return false;
               }}
               type="button"
