@@ -1,7 +1,8 @@
 import { handleHttpError } from "@api";
+import { useGame, useUpdateGameIntroductionMutation } from "@api/game";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
-import { gameStore } from "@storage/game";
+import { useParams } from "@solidjs/router";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Editor from "@widgets/editor";
@@ -15,6 +16,9 @@ type ArticleForm = {
 export default function IntroForm(props: { onDone: (article: Article) => Promise<void>; editSource?: Article }) {
   const [form, { Form, Field }] = createForm<ArticleForm>();
   const [loading, setLoading] = createSignal(false);
+  const params = useParams();
+  const gameId = Number.parseInt(params.game || 'UNKN0WN', 10);
+  const game = useGame({id: () => gameId});
   createEffect(() => {
     if (props.editSource) {
       untrack(() => {
@@ -30,6 +34,9 @@ export default function IntroForm(props: { onDone: (article: Article) => Promise
       });
     }
   });
+
+  const mutation = useUpdateGameIntroductionMutation();
+
   async function onSubmit(result: ArticleForm) {
     setLoading(true);
     try {
@@ -42,7 +49,7 @@ export default function IntroForm(props: { onDone: (article: Article) => Promise
         access_policy: ArticleAccessPolicy.Game,
         draft: false,
         published: true,
-        title: gameStore.current?.name || "",
+        title: game.data?.name || "",
         path: [],
         enable_comment: false,
         weight: 0,

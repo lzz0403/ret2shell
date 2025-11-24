@@ -2,7 +2,6 @@ import LogoAnimate from "@assets/animates/logo-animate";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { mediaPath } from "@lib/utils/media";
 import { accountStore } from "@storage/account";
-import { gameStore, setGameStore } from "@storage/game";
 import { t } from "@storage/theme";
 import Divider from "@widgets/divider";
 import clsx from "clsx";
@@ -31,7 +30,7 @@ export default function TeamCover(props: ComponentProps<"div">) {
       <div class="w-screen h-screen relative bg-layer">
         <img
           class={clsx(
-            "w-screen h-screen transition-all ease-out duration-[2000ms] object-cover",
+            "w-screen h-screen transition-all ease-out duration-2000 object-cover",
             expanded() && "scale-125 blur-md"
           )}
           alt="Cover"
@@ -50,8 +49,8 @@ export default function TeamCover(props: ComponentProps<"div">) {
           <div class="flex-1 flex flex-col justify-end p-24 space-y-6">
             <h2
               class={clsx(
-                "font-bold text-6xl inline-flex items-center space-x-4 overflow-hidden text-nowrap transition-all duration-[2000ms] ease-out",
-                expanded() ? "opacity-100" : "opacity-0 translate-x-[10rem]"
+                "font-bold text-6xl inline-flex items-center space-x-4 overflow-hidden text-nowrap transition-all duration-2000 ease-out",
+                expanded() ? "opacity-100" : "opacity-0 translate-x-40"
               )}
             >
               <span class="shrink-0 icon-[fluent--flag-20-regular] w-16 h-16 text-error" />
@@ -61,8 +60,8 @@ export default function TeamCover(props: ComponentProps<"div">) {
             <Divider class="w-full" />
             <h2
               class={clsx(
-                "font-bold text-7xl text-end overflow-hidden text-nowrap transition-all duration-[2000ms] ease-out",
-                expanded() ? "opacity-100" : "opacity-0 -translate-x-[10rem]"
+                "font-bold text-7xl text-end overflow-hidden text-nowrap transition-all duration-2000 ease-out",
+                expanded() ? "opacity-100" : "opacity-0 -translate-x-40"
               )}
             >
               {accountStore.nickname}
