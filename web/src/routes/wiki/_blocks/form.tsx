@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { createWiki, updateWiki } from "@api/wiki";
+import { useCreateWikiMutation, useUpdateWikiMutation } from "@api/wiki";
 import { type Article, ArticleAccessPolicy } from "@models/article";
 import { createForm, required, setValues } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
@@ -9,7 +8,7 @@ import Editor from "@widgets/editor";
 import IconCheckbox from "@widgets/icon-checkbox";
 import Input from "@widgets/input";
 import { DateTime } from "luxon";
-import { createEffect, createSignal, untrack } from "solid-js";
+import { createEffect, createMemo, untrack } from "solid-js";
 
 type WikiForm = {
   title: string;
@@ -22,7 +21,11 @@ type WikiForm = {
 
 export default function (props: { onDone: (article: Article) => void; editSource?: Article }) {
   const [form, { Form, Field }] = createForm<WikiForm>();
-  const [loading, setLoading] = createSignal(false);
+
+  const createWikiMutation = useCreateWikiMutation();
+  const updateWikiMutation = useUpdateWikiMutation();
+  const loading = createMemo(() => createWikiMutation.isPending || updateWikiMutation.isPending);
+
   createEffect(() => {
     if (props.editSource) {
       untrack(() => {
@@ -49,7 +52,6 @@ export default function (props: { onDone: (article: Article) => void; editSource
     }
   });
   async function onSubmit(result: WikiForm) {
-    setLoading(true);
     const article: Article = {
       ...result,
       path: result.path.split("/"),
@@ -60,15 +62,10 @@ export default function (props: { onDone: (article: Article) => void; editSource
       access_policy: ArticleAccessPolicy.Wiki,
       weight: 0,
     };
-    try {
-      props.onDone(await (props.editSource ? updateWiki(article) : createWiki(article)));
-    } catch (err) {
-      handleHttpError(
-        err as Error,
-        props.editSource ? t("general.actions.save.status.fail")! : t("general.actions.create.status.fail")
-      );
-    }
-    setLoading(false);
+    const saved = props.editSource
+      ? await updateWikiMutation.mutateAsync(article)
+      : await createWikiMutation.mutateAsync(article);
+    props.onDone(saved);
   }
   return (
     <Form onSubmit={onSubmit} class="flex flex-col space-y-2 self-center w-full max-w-5xl flex-1">
@@ -88,7 +85,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
                   {(field, props) => (
                     <IconCheckbox
                       title={t("wiki.form.enableComment.label")}
-                      class="!rounded-none"
+                      class="rounded-none!"
                       uncheckedIcon="icon-[fluent--chat-20-regular]"
                       checkedIcon="icon-[fluent--chat-20-filled]"
                       inputProps={props}
@@ -102,7 +99,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
                   {(field, props) => (
                     <IconCheckbox
                       title={t("wiki.form.draft.label")}
-                      class="!rounded-none"
+                      class="rounded-none!"
                       uncheckedIcon="icon-[fluent--edit-20-regular]"
                       checkedIcon="icon-[fluent--edit-20-filled]"
                       inputProps={props}
@@ -116,7 +113,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
                   {(field, props) => (
                     <IconCheckbox
                       title={t("wiki.form.published.label")}
-                      class="!rounded-l-none"
+                      class="rounded-l-none!"
                       uncheckedIcon="icon-[fluent--megaphone-loud-20-regular]"
                       checkedIcon="icon-[fluent--megaphone-loud-20-filled]"
                       inputProps={props}
@@ -159,7 +156,7 @@ export default function (props: { onDone: (article: Article) => void; editSource
           />
         )}
       </Field>
-      <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+      <Button type="submit" level="primary" class="mt-4!" loading={loading()} disabled={loading()}>
         {props.editSource ? t("general.actions.save.title") : t("general.actions.create.title")}
       </Button>
     </Form>

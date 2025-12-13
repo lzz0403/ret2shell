@@ -156,7 +156,7 @@ export default function ProviderForm(props: {
                 loading={avatarUploading()}
                 disabled={avatarUploading()}
                 type="button"
-                class="opacity-0 hover:opacity-100 !bg-layer/80 absolute top-0 left-0 w-full h-full"
+                class="opacity-0 hover:opacity-100 bg-layer/80! absolute top-0 left-0 w-full h-full"
                 onClick={() => {
                   if (avatarSet()) {
                     setAvatarSet(false);
@@ -250,7 +250,7 @@ export default function ProviderForm(props: {
           />
         )}
       </Field>
-      <Button type="submit" level="primary" class="!mt-4" loading={props.loading} disabled={props.loading}>
+      <Button type="submit" level="primary" class="mt-4!" loading={props.loading} disabled={props.loading}>
         {props.editSource ? t("general.actions.save.title") : t("general.actions.create.title")}
       </Button>
     </Form>

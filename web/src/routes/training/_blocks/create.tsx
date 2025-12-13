@@ -1,5 +1,4 @@
-import { handleHttpError } from "@api";
-import { createGame } from "@api/game";
+import { useCreateGameMutation } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { createForm, required } from "@modular-forms/solid";
 import { accountStore } from "@storage/account";
@@ -7,7 +6,7 @@ import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
 import { DateTime } from "luxon";
-import { createSignal } from "solid-js";
+import { createMemo } from "solid-js";
 
 type CreatePlaygroundForm = {
   name: string;
@@ -16,9 +15,12 @@ type CreatePlaygroundForm = {
 
 export default function CreatePlayground(props: { onDone: (game: Game) => void }) {
   const [_, { Form, Field }] = createForm<CreatePlaygroundForm>();
-  const [loading, setLoading] = createSignal(false);
-  async function onSubmit(result: CreatePlaygroundForm) {
-    setLoading(true);
+  const createGameMutation = useCreateGameMutation({
+    onSuccess: (game) => props.onDone(game),
+  });
+
+  const loading = createMemo(() => createGameMutation.isPending);
+  function onSubmit(result: CreatePlaygroundForm) {
     const req: Game = {
       ...result,
       start_at: DateTime.fromFormat("2002-05-05", "yyyy-MM-dd"),
@@ -41,6 +43,7 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
       can_register_after_started: true,
       enable_audit: false,
       weight: 1,
+      hammer_policy: null,
       archive_policy: { challenge: { show_answer: false, show_hints: false } },
       timeline_presets: [],
       award_rate: 0,
@@ -49,12 +52,7 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
       traffic: null,
       bucket: null,
     };
-    try {
-      props.onDone(await createGame(req));
-    } catch (err) {
-      handleHttpError(err as Error, t("general.actions.create.status.fail"));
-    }
-    setLoading(false);
+    createGameMutation.mutate(req);
   }
   return (
     <div class="flex-1 self-center w-full max-w-5xl flex flex-col">
@@ -90,7 +88,7 @@ export default function CreatePlayground(props: { onDone: (game: Game) => void }
             />
           )}
         </Field>
-        <Button type="submit" level="primary" class="!mt-4" loading={loading()} disabled={loading()}>
+        <Button type="submit" level="primary" class="mt-4!" loading={loading()} disabled={loading()}>
           {t("general.actions.create.title")}
         </Button>
       </Form>

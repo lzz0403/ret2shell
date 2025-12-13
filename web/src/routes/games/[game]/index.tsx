@@ -379,7 +379,6 @@ export default function () {
                 <A class="absolute top-0 left-0 w-full h-full" href={`/games/${gameId()}/teams/${selfTeam.data?.id}`} />
               </p>
             </Card>
-            {/* <Clipboard value={gameStore.team?.token || ""} /> */}
           </Show>
           <div class="flex flex-row space-x-2 print:hidden">
             <Show when={isAdmin()}>

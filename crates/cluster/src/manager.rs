@@ -580,7 +580,6 @@ impl Cluster {
         selector: Some(
           [("ret.sh.cn/traffic".to_owned(), traffic.clone())]
             .iter()
-            .cloned()
             .map(|(k, v)| (k.to_owned(), v.to_owned()))
             .collect(),
         ),

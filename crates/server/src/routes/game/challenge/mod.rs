@@ -1253,8 +1253,7 @@ async fn start_challenge_instance(
           ("ret.sh.cn/internet", env_config.internet.to_string()),
         ]
         .iter()
-        .cloned()
-        .map(|(k, v)| (k.to_owned(), v.to_owned()))
+        .map(|(k, v)| (k.to_owned().to_owned(), v.to_owned()))
         .collect(),
         [
           ("ret.sh.cn/challenge", challenge.name.to_string()),
@@ -1270,8 +1269,7 @@ async fn start_challenge_instance(
           ("ret.sh.cn/ports", ports),
         ]
         .iter()
-        .cloned()
-        .map(|(k, v)| (k.to_owned(), v.to_owned()))
+        .map(|(k, v)| (k.to_owned().to_owned(), v.to_owned()))
         .collect(),
         env_map,
         env_config,
