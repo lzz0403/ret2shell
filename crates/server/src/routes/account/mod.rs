@@ -14,6 +14,7 @@ use r2s_database::{
   config, game, institute as institute_db, team,
   user::{self, Permission, Permissions},
 };
+use r2s_email::EmailType;
 use r2s_email::{EmailCtx, EmailRequest};
 use r2s_migrator::Database;
 use r2s_queue::Queue;
@@ -369,10 +370,6 @@ async fn login(
   }
 }
 
-enum EmailType {
-  Verify,
-  Reset,
-}
 
 async fn send_email(
   cache: &Cache, queue: &Queue, config: &config::Model, account: &str, email: &str,
@@ -438,6 +435,8 @@ async fn send_email(
     },
     // unwrap is safe here because we have checked the config in the previous if statement
     config: config.email.as_ref().unwrap().to_owned(),
+    created_at: Utc::now(),
+    email_type,
   };
   queue.publish("email", email_req, trace).await?;
   Ok(())
