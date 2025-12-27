@@ -65,7 +65,7 @@ export const inflyClient = new QueryClient({
   defaultOptions: {
     queries: {
       retry: false,
-      staleTime: 1000 * 60 * 5, // 5 minutes
+      staleTime: 1000 * 5, // 5 seconds
     },
   },
 });

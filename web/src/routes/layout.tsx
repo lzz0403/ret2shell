@@ -44,8 +44,6 @@ export default function (props: { children?: JSX.Element }) {
   const [hideAnimation, setHideAnimation] = createSignal(false);
   let showAnimation = useLocation().pathname === "/" && useSearchParams()[0].event === undefined;
   const navigate = useNavigate();
-  const location = useLocation();
-  const inDocs = () => location.pathname.startsWith("/docs");
   function checkEmailVerification() {
     if (accountStore.token && !accountStore.permissions.includes(Permission.Verified)) {
       addToast({
@@ -66,14 +64,13 @@ export default function (props: { children?: JSX.Element }) {
       console.log(err);
       if (err instanceof HTTPError && err.response?.status === 503) {
         setPlatformStore({ under_maintenance: true });
-        if (!inDocs()) navigate("/");
-      } else if (err instanceof HTTPError && err.response?.status === 502 && !inDocs()) {
+      } else if (err instanceof HTTPError && err.response?.status === 502) {
         addToast({
           level: "error",
           description: `${t("platform.errors.offline.title")}: ${t("platform.errors.offline.message")}`,
         });
         navigate(`/sigtrap/${err.response?.status || 502}`);
-      } else if (err instanceof HTTPError && !inDocs()) {
+      } else if (err instanceof HTTPError) {
         addToast({
           level: "error",
           description: `${t("platform.errors.internal.title")}: ${err.response?.statusText || err.message}`,
@@ -146,7 +143,7 @@ export default function (props: { children?: JSX.Element }) {
       setPlatformStore({ version: `${frontendCompatVersion}-UNKNOWN-0.0.0` });
       if (err instanceof HTTPError && err.response?.status === 503) {
         setPlatformStore({ under_maintenance: true, backend_online: false });
-        if (!inDocs()) navigate("/");
+        navigate("/");
       }
       throw err;
     }

@@ -42,7 +42,7 @@ export default function () {
               <span>{t("game.events.howto")}</span>
               <span>&nbsp;</span>
               <a
-                href="/docs/events"
+                href="https://docs.ret.sh.cn/"
                 class="inline-flex flex-row space-x-2 items-center hover:underline"
                 target="_blank"
                 rel="noreferrer"

@@ -3,17 +3,25 @@ import Spin from "@assets/animates/spin";
 import bgGameDefault from "@assets/imgs/bg-game-default.webp";
 import { mediaPath } from "@lib/utils/media";
 import { HostType } from "@models/game";
+import { useSearchParams } from "@solidjs/router";
 import { t } from "@storage/theme";
 import Card from "@widgets/card";
 import Pagination from "@widgets/pagination";
 import Picture from "@widgets/picture";
 import Tag from "@widgets/tag";
 import { DateTime } from "luxon";
-import { createSignal, For, Show } from "solid-js";
+import { createMemo, createSignal, For, Show } from "solid-js";
 import { setGameCoverStore } from "./cover";
 
 export default function () {
-  const [page, setPage] = createSignal(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = createMemo(() => {
+    const result = searchParams["other-page"] ? Number.parseInt(searchParams["other-page"] as string, 10) : 1;
+    if (Number.isNaN(result) || result < 1) {
+      return 1;
+    }
+    return result;
+  });
   const pageSize = 20;
   const [loadingGame, setLoadingGame] = createSignal(null as number | null);
 
@@ -86,7 +94,9 @@ export default function () {
         count={games.data?.[1] ?? 0}
         pageSize={pageSize}
         page={page()}
-        onPageChange={(p) => setPage(p.page)}
+        onPageChange={(p) => {
+          setSearchParams({ "other-page": p.toString() });
+        }}
       />
     </section>
   );

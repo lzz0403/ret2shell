@@ -3,7 +3,8 @@ import { HostType } from "@models/game";
 import { useNavigate, useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { HTTPError } from "ky";
-import { createEffect, type JSX } from "solid-js";
+import { createEffect, type JSX, onCleanup } from "solid-js";
+import { setGameCoverStore } from "../_blocks/cover";
 import TeamCover from "./_blocks/team-cover";
 
 export default function (props: { children?: JSX.Element }) {
@@ -27,6 +28,10 @@ export default function (props: { children?: JSX.Element }) {
     if (game.data && game.data.host_type !== HostType.Game) {
       navigate(`/training/${game.data.id}`);
     }
+  });
+
+  onCleanup(() => {
+    setGameCoverStore({ goto: null });
   });
 
   return (

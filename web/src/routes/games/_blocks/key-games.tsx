@@ -20,13 +20,19 @@ import Popover from "@widgets/popover";
 import Tag from "@widgets/tag";
 import clsx from "clsx";
 import { DateTime } from "luxon";
-import { createEffect, createMemo, createSignal, For, Show } from "solid-js";
+import { createEffect, createMemo, For, Show } from "solid-js";
 import { setGameCoverStore } from "./cover";
 import CreateGame from "./create";
 
 export default function () {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [page, setPage] = createSignal(1);
+  const page = createMemo(() => {
+    const result = searchParams["key-page"] ? Number.parseInt(searchParams["key-page"] as string, 10) : 1;
+    if (Number.isNaN(result) || result < 1) {
+      return 1;
+    }
+    return result;
+  });
   const pageSize = 5;
   const games = useGames({
     page: () => page(),
@@ -74,7 +80,14 @@ export default function () {
           </Link>
         </Show>
         <Divider class="w-4/5" />
-        <Button ghost class="w-4/5" disabled={page() <= 1} onClick={() => setPage(page() - 1)}>
+        <Button
+          ghost
+          class="w-4/5"
+          disabled={page() <= 1}
+          onClick={() => {
+            setSearchParams({ "key-page": (page() - 1).toString() });
+          }}
+        >
           <span class="shrink-0 icon-[fluent--chevron-double-up-20-regular] w-5 h-5 opacity-60" />
         </Button>
         <Divider class="w-4/5" />
@@ -131,7 +144,12 @@ export default function () {
           )}
         </For>
         <Divider class="w-4/5" />
-        <Button ghost class="w-4/5" disabled={page() >= totalPages()} onClick={() => setPage(page() + 1)}>
+        <Button
+          ghost
+          class="w-4/5"
+          disabled={page() >= totalPages()}
+          onClick={() => setSearchParams({ "key-page": (page() + 1).toString() })}
+        >
           <span class="shrink-0 icon-[fluent--chevron-double-down-20-regular] w-5 h-5 opacity-60" />
         </Button>
         <Divider class="w-4/5" />

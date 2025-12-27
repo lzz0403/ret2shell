@@ -1,4 +1,4 @@
-import { usePlatformConfig, useUpdatePlatformConfigMutation } from "@api/platform";
+import { usePlatformConfig, usePlatformInfo, useUpdatePlatformConfigMutation } from "@api/platform";
 import LogoAnimate from "@assets/animates/logo-animate";
 import type { Config } from "@models/config";
 import { createForm, custom, setValues } from "@modular-forms/solid";
@@ -24,6 +24,7 @@ type PlatformConfigForm = {
 
 export default function () {
   const config = usePlatformConfig();
+  const info = usePlatformInfo();
   const [form, { Form, Field }] = createForm<PlatformConfigForm>({
     initialValues: {
       ...JSON.parse(JSON.stringify(config.data?.server || {})),
@@ -32,6 +33,7 @@ export default function () {
   const mutation = useUpdatePlatformConfigMutation({
     onSuccess: () => {
       config.refetch();
+      info.refetch();
     },
   });
   async function onSubmit(result: PlatformConfigForm) {

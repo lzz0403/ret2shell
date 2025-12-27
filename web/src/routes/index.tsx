@@ -72,74 +72,73 @@ export default function () {
               </Show>
             </Button>
             <Show when={!platformInfo.data?.hide_maker}>
-              <div />
+              <Popover
+                aria-label="about"
+                ghost
+                popContentClass="p-2"
+                square
+                btnContent={<span class="shrink-0 icon-[fluent--info-20-regular] w-5 h-5" />}
+              >
+                <div class="w-max flex flex-col space-y-2">
+                  <Card contentClass="p-2">
+                    <Link ghost href="/magic/about" class="flex flex-row items-center h-auto! space-x-2 pl-2 pr-3 py-1">
+                      <LogoAnimate width={56} height={56} />
+                      <div class="flex flex-col">
+                        <h2 class="text-xl font-bold flex flex-row">
+                          <span class="text-primary">R</span>
+                          <span class="opacity-80">et</span>
+                          <span class="opacity-60">&nbsp;2&nbsp;</span>
+                          <span class="text-error">S</span>
+                          <span class="opacity-80">hell</span>
+                          <span class="opacity-60">&nbsp;v{platformStore.version?.[0] || "3"}</span>
+                        </h2>
+                        <p class="opacity-60 space-x-2 flex">
+                          <Show
+                            when={(platformStore.version || "UNKNOWN").includes("*")}
+                            fallback={<span class="text-primary">REL</span>}
+                          >
+                            <span class="text-warning">DEV</span>
+                          </Show>
+                          <span class="flex-1 truncate">{(platformStore.version || "UNKNOWN").replace("*", "")}</span>
+                        </p>
+                      </div>
+                    </Link>
+                  </Card>
+                  <Card contentClass="flex flex-row p-2 space-x-2">
+                    <a
+                      href="mailto:support@ret.sh.cn"
+                      class="flex-1 btn btn-sm btn-ghost justify-start"
+                      title={t("about.contact")}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <span class="shrink-0 icon-[fluent--mail-20-regular] w-5 h-5" />
+                      <span class="font-normal opacity-60">support@ret.sh.cn</span>
+                    </a>
+                    <Link
+                      href="https://github.com/Reverier-Xu"
+                      ghost
+                      size="sm"
+                      square
+                      title={t("about.donate")}
+                      target="_blank"
+                    >
+                      <span class="shrink-0 icon-[fluent--flash-sparkle-20-regular] w-5 h-5" />
+                    </Link>
+                    <Link
+                      href="https://ret.sh.cn/"
+                      ghost
+                      size="sm"
+                      square
+                      title={t("about.source")}
+                      target="_blank"
+                    >
+                      <span class="shrink-0 icon-[fluent--open-20-regular] w-5 h-5" />
+                    </Link>
+                  </Card>
+                </div>
+              </Popover>
             </Show>
-            <Popover
-              aria-label="about"
-              ghost
-              popContentClass="p-2"
-              square
-              btnContent={<span class="shrink-0 icon-[fluent--info-20-regular] w-5 h-5" />}
-            >
-              <div class="w-max flex flex-col space-y-2">
-                <Card contentClass="p-2">
-                  <Link ghost href="/magic/about" class="flex flex-row items-center h-auto! space-x-2 pl-2 pr-3 py-1">
-                    <LogoAnimate width={56} height={56} />
-                    <div class="flex flex-col">
-                      <h2 class="text-xl font-bold flex flex-row">
-                        <span class="text-primary">R</span>
-                        <span class="opacity-80">et</span>
-                        <span class="opacity-60">&nbsp;2&nbsp;</span>
-                        <span class="text-error">S</span>
-                        <span class="opacity-80">hell</span>
-                        <span class="opacity-60">&nbsp;v{platformStore.version?.[0] || "3"}</span>
-                      </h2>
-                      <p class="opacity-60 space-x-2 flex">
-                        <Show
-                          when={(platformStore.version || "UNKNOWN").includes("*")}
-                          fallback={<span class="text-primary">REL</span>}
-                        >
-                          <span class="text-warning">DEV</span>
-                        </Show>
-                        <span class="flex-1 truncate">{(platformStore.version || "UNKNOWN").replace("*", "")}</span>
-                      </p>
-                    </div>
-                  </Link>
-                </Card>
-                <Card contentClass="flex flex-row p-2 space-x-2">
-                  <a
-                    href="mailto:support@ret.sh.cn"
-                    class="flex-1 btn btn-sm btn-ghost justify-start"
-                    title={t("about.contact")}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <span class="shrink-0 icon-[fluent--mail-20-regular] w-5 h-5" />
-                    <span class="font-normal opacity-60">support@ret.sh.cn</span>
-                  </a>
-                  <Link
-                    href="https://github.com/ret2shell"
-                    ghost
-                    size="sm"
-                    square
-                    title={t("about.donate")}
-                    target="_blank"
-                  >
-                    <span class="shrink-0 icon-[fluent--flash-sparkle-20-regular] w-5 h-5" />
-                  </Link>
-                  <Link
-                    href="https://github.com/ret2shell"
-                    ghost
-                    size="sm"
-                    square
-                    title={t("about.source")}
-                    target="_blank"
-                  >
-                    <span class="shrink-0 icon-[fluent--open-20-regular] w-5 h-5" />
-                  </Link>
-                </Card>
-              </div>
-            </Popover>
           </div>
         </section>
       </div>

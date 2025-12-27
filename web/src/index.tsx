@@ -90,7 +90,7 @@ render(() => {
             <span class="shrink-0 icon-[fluent-emoji-flat--man-bowing] w-8 h-8" />
             <span class="shrink-0 icon-[fluent-emoji-flat--backhand-index-pointing-right] w-8 h-8" />
             <button
-              class="icon-[fluent-emoji-flat--repeat-button] w-16 h-16 transition-all hover:bg-layer-content/15 cursor-pointer"
+              class="icon-[fluent-emoji-flat--repeat-button] w-8 h-8 transition-all hover:bg-layer-content/15 cursor-pointer"
               type="button"
               onClick={() => {
                 reset();
@@ -99,7 +99,7 @@ render(() => {
             />
             <span class="shrink-0 icon-[fluent-emoji-flat--backhand-index-pointing-left] w-8 h-8" />
           </h2>
-          <p class="opacity-60 max-w-5xl w-full text-wrap p-8 rounded-md bg-layer-content/5">{error.message}</p>
+          <p class="opacity-60 max-w-5xl w-full text-wrap p-8 rounded-md bg-layer-content/5">{error.toString()}</p>
         </div>
       )}
     >

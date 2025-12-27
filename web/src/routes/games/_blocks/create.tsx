@@ -1,6 +1,7 @@
-import { useCreateGameMutation } from "@api/game";
+import { useCreateGameMutation, useGames } from "@api/game";
 import { type Game, HostType } from "@models/game";
 import { createForm, maxRange, minRange, required, setValue } from "@modular-forms/solid";
+import { useSearchParams } from "@solidjs/router";
 import { accountStore } from "@storage/account";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
@@ -9,6 +10,7 @@ import Input from "@widgets/input";
 import TimePicker from "@widgets/timepicker";
 import clsx from "clsx";
 import { DateTime } from "luxon";
+import { createMemo } from "solid-js";
 
 type CreateGameForm = {
   name: string;
@@ -25,6 +27,35 @@ type CreateGameForm = {
 };
 
 export default function CreateGame(props: { onDone: (game: Game) => void }) {
+  const [searchParams] = useSearchParams();
+  const keyPage = createMemo(() => {
+    const result = searchParams["key-page"] ? Number.parseInt(searchParams["key-page"] as string, 10) : 1;
+    if (Number.isNaN(result) || result < 1) {
+      return 1;
+    }
+    return result;
+  });
+  const keyGames = useGames({
+    page: () => keyPage(),
+    page_size: () => 5,
+    host_type: () => HostType.Game,
+    weight: () => 3,
+    enabled: () => true,
+  });
+  const othersPage = createMemo(() => {
+    const result = searchParams["other-page"] ? Number.parseInt(searchParams["other-page"] as string, 10) : 1;
+    if (Number.isNaN(result) || result < 1) {
+      return 1;
+    }
+    return result;
+  });
+  const otherGames = useGames({
+    page: () => othersPage(),
+    page_size: () => 20,
+    host_type: () => HostType.Game,
+    weight: () => 1,
+    enabled: () => true,
+  });
   const [form, { Form, Field }] = createForm<CreateGameForm>({
     initialValues: {
       weight: 3,
@@ -35,7 +66,11 @@ export default function CreateGame(props: { onDone: (game: Game) => void }) {
     },
   });
   const mutation = useCreateGameMutation({
-    onSuccess: (data) => props.onDone(data),
+    onSuccess: (data) => {
+      keyGames.refetch();
+      otherGames.refetch();
+      props.onDone(data);
+    },
   });
   async function onSubmit(result: CreateGameForm) {
     const req: Game = {

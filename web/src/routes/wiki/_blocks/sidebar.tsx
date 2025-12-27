@@ -74,7 +74,7 @@ export default function SideBar(props: { toc: Article[]; highlightPaths?: string
       </div>
       <a
         class="sticky bottom-0 h-16 border-t border-t-layer-content/10 flex flex-row items-center justify-center px-4 space-x-2"
-        href="/docs"
+        href="https://docs.ret.sh.cn/"
         target="_blank"
         rel="noopener noreferrer"
       >
