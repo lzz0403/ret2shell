@@ -123,8 +123,8 @@ features = [
 version = "0.12"
 
 [workspace.dependencies.reqwest]
-features         = ["json", "http2", "charset"]
-version          = "0.13"
+features = ["json", "http2", "charset"]
+version  = "0.13"
 
 [workspace.dependencies.lettre]
 default-features = false
