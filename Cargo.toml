@@ -25,7 +25,7 @@ argon2             = "0.5"
 async-nats         = "0.45"
 async-trait        = "0.1"
 base64             = "0.22"
-bcrypt             = "0.17"
+bcrypt             = "0.18"
 biosvg             = "0.1"
 build-target       = "0.8"
 chrono             = { version = "0.4", features = ["serde"] }
@@ -39,7 +39,7 @@ hex                = "0.4"
 hyper-util         = "0.1"
 image              = "0.25"
 infer              = "0.19"
-k8s-openapi        = { version = "0.26", features = ["latest"] }
+k8s-openapi        = { version = "0.27", features = ["latest"] }
 mime               = "0.3"
 nanoid             = "0.4"
 num-derive         = "0.4"
@@ -155,7 +155,7 @@ version = "10.1"
 
 [workspace.dependencies.kube]
 features = ["config", "client", "rustls-tls", "runtime", "derive", "ws"]
-version  = "2.0"
+version  = "3.0"
 
 [workspace.dependencies.wsrx]
 default-features = false
