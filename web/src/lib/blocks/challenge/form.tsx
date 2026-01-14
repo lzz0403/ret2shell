@@ -50,9 +50,8 @@ export function FormBare(
   async function onSubmit(result: ChallengeForm) {
     await props.onDone(result);
     inflyClient.invalidateQueries({
-      queryKey: ["game", props.gameId, "challenge", props.challengeId, "commitHistory"],
+      queryKey: ["game", props.gameId, "challenge"],
     });
-    challenge.refetch();
   }
 
   createEffect(() => {

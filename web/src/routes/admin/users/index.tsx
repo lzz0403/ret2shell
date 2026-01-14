@@ -169,10 +169,23 @@ export default function () {
   const [searchParams] = useSearchParams();
   const inEdit = createMemo(() => (searchParams.user && Number.parseInt(searchParams.user as string, 10)) || null);
   const user = useUser({ id: () => inEdit()!, enabled: () => Boolean(inEdit()) });
-
+  const page = createMemo(() => (searchParams.page && Number.parseInt(searchParams.page as string, 10)) || 1);
+  const pageSize = 15;
+  const filter = createMemo(() => (searchParams.filter as string) || null);
+  const instituteId = createMemo(
+    () => (searchParams.institute && Number.parseInt(searchParams.institute as string, 10)) || null
+  );
+  const users = useUsers({
+    page: () => page(),
+    page_size: () => pageSize,
+    order: () => (searchParams.order as OrderType) || "id",
+    filter,
+    institute_id: instituteId,
+  });
   const mutation = useUpdateUserMutation({
     onSuccess: () => {
       user.refetch();
+      users.refetch();
     },
   });
   return (

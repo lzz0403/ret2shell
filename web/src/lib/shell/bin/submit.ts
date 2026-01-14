@@ -43,10 +43,7 @@ export class Submit implements Command {
           io.println("");
           if (st.solved) {
             inflyClient.invalidateQueries({
-              queryKey: ["game", game!.id, "challenge", challenge!.id],
-            });
-            inflyClient.invalidateQueries({
-              queryKey: ["game", game!.id, "challenge", challenge!.id, "solveStatus"],
+              queryKey: ["game", game!.id, "challenge"],
             });
             inflyClient.invalidateQueries({
               queryKey: ["game", game!.id, "selfSolves"],

@@ -313,14 +313,21 @@ export default function () {
                 {games.isLoading ? randomTips() : selectedGame()?.name || t("game.noGameHosted")}
               </h2>
               <p class="opacity-60">{selectedGame()?.brief || t("game.seeOtherInteresting")}</p>
-            </div>
-            <div class="flex flex-col space-y-2">
-              <Tag level="success">
-                <span>{selectedGame()?.start_at.toFormat("yyyy-MM-dd HH:mm:ss") || "None"}</span>
-              </Tag>
-              <Tag level="warning">
-                <span>{selectedGame()?.end_at.toFormat("yyyy-MM-dd HH:mm:ss") || "None"}</span>
-              </Tag>
+              <p
+                class={
+                  selectedGame()
+                    ? DateTime.now() < (selectedGame()?.start_at || DateTime.now())
+                      ? "text-info"
+                      : DateTime.now() > (selectedGame()?.end_at || DateTime.now())
+                        ? "text-warning"
+                        : "text-success"
+                    : "text-error"
+                }
+              >
+                <span>{selectedGame()?.start_at.toFormat("yyyy-MM-dd HH:mm:ss")}</span>
+                <span>&nbsp;-&nbsp;</span>
+                <span>{selectedGame()?.end_at.toFormat("yyyy-MM-dd HH:mm:ss")}</span>
+              </p>
             </div>
             <button
               class="absolute w-full h-full top-0 left-0 m-0! cursor-pointer"

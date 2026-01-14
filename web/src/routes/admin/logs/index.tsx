@@ -283,23 +283,23 @@ export default function () {
             {(log) => (
               <div
                 class={clsx(
-                  "group min-h-8 flex flex-col h-auto",
-                  "px-2 py-1 items-center border-b border-b-layer-content/10 overflow-hidden min-w-0"
+                  "group flex flex-col h-auto",
+                  "items-center border-t border-t-layer-content/20 overflow-hidden min-w-0 pb-2 space-y-1"
                 )}
               >
-                <span class="w-full grid grid-cols-[repeat(3,auto)_1fr]">
+                <div class="px-2 py-1 w-full grid grid-cols-[repeat(3,auto)_1fr] bg-layer-content/5">
                   <span class={clsx("w-16 mr-2 inline-block", getColor(log.level))}>{log.level}</span>
                   <span class="mr-2 text-success font-bold" title={log.target}>
                     {log.target}
                   </span>
-                  <span class={clsx("truncate", getColor(log.level))}>
+                  <span class={clsx("truncate", "text-primary")}>
                     {(log["span.method"] as string) && <span>{log["span.method"] as string}&nbsp;</span>}
                     {(log["span.uri"] as string) && <span>{log["span.uri"] as string}&nbsp;</span>}
                   </span>
                   <span class="text-right font-bold ml-2 whitespace-nowrap">
                     {(log["span.user-account"] as string) && (
                       <span class="font-bold mr-2">
-                        <span class="icon-[fluent--person-16-filled] text-primary align-middle w-4 h-4 mr-1" />
+                        <span class="opacity-60 italic">user=</span>
                         <A href={`/admin/logs?account=${log["span.user-account"]}`} class="hover:underline mr-2">
                           {log["span.user-account"] as string}
                         </A>
@@ -310,7 +310,7 @@ export default function () {
                     )}
                     {(log["span.from"] as string) && (
                       <>
-                        <span class="icon-[fluent--location-16-filled] text-primary align-middle w-4 h-4 mr-1" />
+                        <span class="opacity-60 italic">&nbsp;from=</span>
                         <A href={`/admin/logs?from=${log["span.from"] as string}`} class="hover:underline mr-2">
                           {log["span.from"] as string}
                         </A>
@@ -321,26 +321,33 @@ export default function () {
                     )}
                     {(log["span.trace"] as string) && (
                       <>
-                        <span class="icon-[fluent--fire-16-filled] text-primary align-middle w-4 h-4 mr-1" />
-                        <A href={`/admin/logs?trace=${log["span.trace"] as string}`} class="hover:underline mr-2">
-                          TRACE
+                        <span class="opacity-60 italic">&nbsp;trace=</span>
+                        <A
+                          href={`/admin/logs?trace=${log["span.trace"] as string}`}
+                          class="hover:underline mr-2 opacity-60"
+                        >
+                          {log["span.trace"] as string}
                         </A>
                       </>
                     )}
-                    <span class="icon-[fluent--clock-16-filled] text-primary align-middle w-4 h-4 mr-1" />
+                    <span class="opacity-60 italic">&nbsp;at=</span>
                     <Switch fallback={time(log._time, "HH:mm:ss")}>
                       <Match when={matches.xl}>{time(log._time, "yyyy-MM-dd HH:mm:ss")}</Match>
                       <Match when={matches.lg}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
-                      <Match when={matches.md}>{time(log._time, "yyyy-MM-dd HH:mm:ss")}</Match>
+                      <Match when={matches.md}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
                       <Match when={matches.sm}>{time(log._time, "MM-dd HH:mm:ss")}</Match>
                     </Switch>
                   </span>
-                </span>
-                <div class="grid grid-cols-[1fr] group-hover:block w-full">
+                </div>
+                <div class="grid grid-cols-[1fr] group-hover:block w-full px-2">
                   <span class={clsx("truncate break-words group-hover:whitespace-normal")}>
-                    <span>{log._msg}&nbsp;&nbsp;</span>
                     {LogField(log)}
                     {DataSpanField(log)}
+                  </span>
+                </div>
+                <div class="block w-full px-2">
+                  <span class={clsx("break-words whitespace-normal")}>
+                    <span>{log._msg}</span>
                   </span>
                 </div>
               </div>

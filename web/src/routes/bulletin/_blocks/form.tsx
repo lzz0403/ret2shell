@@ -51,8 +51,8 @@ export default function (props: { onDone: (calendar: Article) => void; articleId
     } else {
       untrack(() => {
         setValues(form, {
-          title: undefined,
-          content: undefined,
+          title: "",
+          content: "",
           enable_comment: true,
           weight: false,
         });

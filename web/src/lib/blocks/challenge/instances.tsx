@@ -595,9 +595,6 @@ export default function (props: ChallengeWidgetProps) {
       inflyClient.invalidateQueries({
         queryKey: ["game", props.gameId, "challenge", props.challengeId],
       });
-      inflyClient.invalidateQueries({
-        queryKey: ["game", props.gameId, "challenge", props.challengeId, "commitHistory"],
-      });
     },
   });
 
