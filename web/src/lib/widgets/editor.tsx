@@ -13,6 +13,7 @@ import clsx from "clsx";
 const aceConfig = ace.config as typeof ace.config & {
   setModuleLoader?: (moduleName: string, loader: () => Promise<unknown>) => void;
 };
+const aceModule = ace as typeof ace & { require?: (name: string) => { Mode?: new () => unknown } };
 aceConfig.setModuleLoader?.("ace/mode/rune", () => import("./ace/rune"));
 
 export type DiagnosticMarker = {
@@ -81,7 +82,8 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
   let editorElement: HTMLPreElement;
   let editor: ace.Ace.Editor | null = null;
   async function initEditor() {
-    if (editorProps.lang === "rune") {
+    const isRune = editorProps.lang === "rune";
+    if (isRune) {
       await import("./ace/rune");
     }
     editor = ace.edit(editorElement!, {
@@ -108,8 +110,7 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
       useWorker: false,
     });
     editor.container.style.lineHeight = "1.6";
-    if (editorProps.lang === "rune") {
-      const aceModule = ace as typeof ace & { require?: (name: string) => { Mode?: new () => unknown } };
+    if (isRune) {
       const runeModule = aceModule.require?.("ace/mode/rune");
       if (runeModule?.Mode) editor.session.setMode(new runeModule.Mode());
     }
