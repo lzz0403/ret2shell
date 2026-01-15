@@ -10,6 +10,8 @@ import { type FormStore, setValue } from "@modular-forms/solid";
 import { t, themeStore } from "@storage/theme";
 import clsx from "clsx";
 
+let runeModePromise: Promise<unknown> | null = null;
+
 export type DiagnosticMarker = {
   kind: "error" | "warning" | "info";
   message: string;
@@ -75,9 +77,14 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
   }
   let editorElement: HTMLPreElement;
   let editor: ace.Ace.Editor | null = null;
-  function initEditor() {
+  async function initEditor() {
+    const isRune = editorProps.lang === "rune";
+    if (isRune) {
+      runeModePromise ??= import("./ace/rune");
+      await runeModePromise;
+    }
     editor = ace.edit(editorElement!, {
-      mode: `ace/mode/${editorProps.lang || "text"}`,
+      mode: isRune ? "ace/mode/rune" : `ace/mode/${editorProps.lang || "text"}`,
       theme: `ace/theme/${themeStore.colorScheme === "light" ? "kuroir" : "github_dark"}`,
       readOnly: editorProps.readonly,
       showPrintMargin: false,
@@ -100,7 +107,6 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
       useWorker: false,
     });
     editor.container.style.lineHeight = "1.6";
-
     editor.on("change", () => {
       const content = editor?.getValue();
       editorProps.onValueChanged?.(content || "");
