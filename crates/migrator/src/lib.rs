@@ -59,6 +59,7 @@ async fn get_conn(config: &Option<database::Config>) -> Result<DatabaseConnectio
     .ok_or(DbErr::Custom("database config not found".to_string()))?;
   let mut connect_options = ConnectOptions::new(config.dsn());
   connect_options
+    .acquire_timeout(std::time::Duration::from_secs(15))
     .sqlx_logging(true)
     .sqlx_logging_level(LevelFilter::Debug);
   sea_orm::Database::connect(connect_options).await
