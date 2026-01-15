@@ -10,7 +10,7 @@ import { type FormStore, setValue } from "@modular-forms/solid";
 import { t, themeStore } from "@storage/theme";
 import clsx from "clsx";
 
-const aceModule = ace as typeof ace & { require?: (name: string) => unknown };
+let runeModePromise: Promise<unknown> | null = null;
 
 export type DiagnosticMarker = {
   kind: "error" | "warning" | "info";
@@ -80,10 +80,11 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
   async function initEditor() {
     const isRune = editorProps.lang === "rune";
     if (isRune) {
-      await import("./ace/rune");
+      runeModePromise ??= import("./ace/rune");
+      await runeModePromise;
     }
     editor = ace.edit(editorElement!, {
-      mode: isRune ? "ace/mode/text" : `ace/mode/${editorProps.lang || "text"}`,
+      mode: isRune ? "ace/mode/rune" : `ace/mode/${editorProps.lang || "text"}`,
       theme: `ace/theme/${themeStore.colorScheme === "light" ? "kuroir" : "github_dark"}`,
       readOnly: editorProps.readonly,
       showPrintMargin: false,
@@ -106,15 +107,6 @@ export function EditorBare(props: EditorProps & ComponentProps<"div">) {
       useWorker: false,
     });
     editor.container.style.lineHeight = "1.6";
-    if (isRune) {
-      const runeModule = typeof aceModule.require === "function" ? aceModule.require("ace/mode/rune") : undefined;
-      const RuneMode =
-        runeModule && typeof runeModule === "object" && "Mode" in runeModule
-          ? (runeModule as { Mode?: new () => unknown }).Mode
-          : undefined;
-      if (typeof RuneMode === "function") editor.session.setMode(new RuneMode());
-    }
-
     editor.on("change", () => {
       const content = editor?.getValue();
       editorProps.onValueChanged?.(content || "");
