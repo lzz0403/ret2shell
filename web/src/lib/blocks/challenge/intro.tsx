@@ -72,8 +72,8 @@ export default function (props: ChallengeWidgetProps) {
   let instanceStateIter = 0;
   async function maintainInstances() {
     await instances.refetch();
-    await wsrx.deleteOutdatedLocal();
-    await wsrx.openAllTraffic();
+    await wsrx.deleteOutdatedLocal(instances.data);
+    await wsrx.openAllTraffic(instances.data);
   }
   function maintainInstancesWorker() {
     if (instance()?.state === "Pending" || instanceStateIter === 0) {

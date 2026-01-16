@@ -224,7 +224,7 @@ export function InstanceBoxContent() {
               onClick={() => {
                 setDeletingOutdatedTraffic(true);
                 wsrx
-                  .deleteOutdatedLocal()
+                  .deleteOutdatedLocal(instances.data)
                   .then(() => wsrx.syncLocal())
                   .finally(() => setDeletingOutdatedTraffic(false));
               }}
