@@ -54,14 +54,14 @@ importers:
         specifier: ^0.15.4
         version: 0.15.4(solid-js@1.9.10)
       '@tanstack/query-persist-client-core':
-        specifier: ^5.91.17
-        version: 5.91.17
+        specifier: ^5.91.18
+        version: 5.91.18
       '@tanstack/solid-query':
-        specifier: ^5.90.21
-        version: 5.90.21(solid-js@1.9.10)
+        specifier: ^5.90.22
+        version: 5.90.22(solid-js@1.9.10)
       '@tanstack/solid-query-persist-client':
-        specifier: ^5.90.21
-        version: 5.90.21(@tanstack/solid-query@5.90.21(solid-js@1.9.10))(solid-js@1.9.10)
+        specifier: ^5.90.22
+        version: 5.90.22(@tanstack/solid-query@5.90.22(solid-js@1.9.10))(solid-js@1.9.10)
       '@xdsec/wsrx':
         specifier: ^0.5.5
         version: 0.5.5
@@ -951,20 +951,20 @@ packages:
     peerDependencies:
       vite: ^5.2.0 || ^6 || ^7
 
-  '@tanstack/query-core@5.90.18':
-    resolution: {integrity: sha512-rbGx6bHgPNVzutP7BEr+53UPKohpckqlMAad+To9UxTbeaQ+kC/1SDRj+QzkwbQ7qhLT/1IKp34yS6thda6fzA==}
+  '@tanstack/query-core@5.90.19':
+    resolution: {integrity: sha512-GLW5sjPVIvH491VV1ufddnfldyVB+teCnpPIvweEfkpRx7CfUmUGhoh9cdcUKBh/KwVxk22aNEDxeTsvmyB/WA==}
 
-  '@tanstack/query-persist-client-core@5.91.17':
-    resolution: {integrity: sha512-NfXUCUzar8Y3fw0F6lPlrnJWfg148IXvWBIr/0x2LbYAoGdAnJDU3PzVaLTafI2vKQqIphe3uAq1068+nhn+nQ==}
+  '@tanstack/query-persist-client-core@5.91.18':
+    resolution: {integrity: sha512-1FNvccVTFZph07dtA/4p5PRAVKfqVLPPxA8BXUoYjPOZP6T4qY1asItVkUFtUr6kBu48i0DBnEEZQLmK82BIFw==}
 
-  '@tanstack/solid-query-persist-client@5.90.21':
-    resolution: {integrity: sha512-AZt2qHJhaKBMfusKtoXkbKDM9EDUI/EnhAJsKCLYxFaENyTB0GD8Myi7piQiImncWrnkcy5FCeonJAAlEUhtIQ==}
+  '@tanstack/solid-query-persist-client@5.90.22':
+    resolution: {integrity: sha512-xcYgrL4/23vlMnWsE8QNjn53R2mzIh4biCg9OEoQOj21FxueUoZZmfV0pKIkG/gLoCgW2DPJmDsNEkBJh0pS+Q==}
     peerDependencies:
-      '@tanstack/solid-query': ^5.90.21
+      '@tanstack/solid-query': ^5.90.22
       solid-js: ^1.6.0
 
-  '@tanstack/solid-query@5.90.21':
-    resolution: {integrity: sha512-8sKg92ydve5t8zDqPnh4jF60SdytV/aTAGCOMFbPeUdmQnQvyHW/RhydXOuJxwSOkLIZZ5DGhEbwrmX9WvQnSg==}
+  '@tanstack/solid-query@5.90.22':
+    resolution: {integrity: sha512-gu+KfBSBCth3N2IsVWcpJWinFsokOElm3D2IpyaezDq/N6OZVSBn0qSo35HlTxD3gbAscKzIFLJNRinMXOCSYA==}
     peerDependencies:
       solid-js: ^1.6.0
 
@@ -1354,8 +1354,8 @@ packages:
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
     hasBin: true
 
-  caniuse-lite@1.0.30001764:
-    resolution: {integrity: sha512-9JGuzl2M+vPL+pz70gtMF9sHdMFbY9FJaQBi186cHKH3pSzDvzoUJUPV6fqiKIMyXbud9ZLg4F3Yza1vJ1+93g==}
+  caniuse-lite@1.0.30001765:
+    resolution: {integrity: sha512-LWcNtSyZrakjECqmpP4qdg0MMGdN368D7X8XvvAqOcqMv0RxnlqVKZl2V6/mBR68oYMxOZPLw/gO7DuisMHUvQ==}
 
   ccount@2.0.1:
     resolution: {integrity: sha512-eyrF0jiFpY+3drT6383f1qhkbGsLSifNAjA61IUjZjmLCWjItY6LB9ft9YhoDgwfmclB2zhu51Lc7+95b8NRAg==}
@@ -2965,21 +2965,21 @@ snapshots:
       tailwindcss: 4.1.18
       vite: 7.3.1(@types/node@25.0.9)(jiti@2.6.1)(lightningcss@1.30.2)
 
-  '@tanstack/query-core@5.90.18': {}
+  '@tanstack/query-core@5.90.19': {}
 
-  '@tanstack/query-persist-client-core@5.91.17':
+  '@tanstack/query-persist-client-core@5.91.18':
     dependencies:
-      '@tanstack/query-core': 5.90.18
+      '@tanstack/query-core': 5.90.19
 
-  '@tanstack/solid-query-persist-client@5.90.21(@tanstack/solid-query@5.90.21(solid-js@1.9.10))(solid-js@1.9.10)':
+  '@tanstack/solid-query-persist-client@5.90.22(@tanstack/solid-query@5.90.22(solid-js@1.9.10))(solid-js@1.9.10)':
     dependencies:
-      '@tanstack/query-persist-client-core': 5.91.17
-      '@tanstack/solid-query': 5.90.21(solid-js@1.9.10)
+      '@tanstack/query-persist-client-core': 5.91.18
+      '@tanstack/solid-query': 5.90.22(solid-js@1.9.10)
       solid-js: 1.9.10
 
-  '@tanstack/solid-query@5.90.21(solid-js@1.9.10)':
+  '@tanstack/solid-query@5.90.22(solid-js@1.9.10)':
     dependencies:
-      '@tanstack/query-core': 5.90.18
+      '@tanstack/query-core': 5.90.19
       solid-js: 1.9.10
 
   '@types/babel__core@7.20.5':
@@ -3681,12 +3681,12 @@ snapshots:
   browserslist@4.28.1:
     dependencies:
       baseline-browser-mapping: 2.9.15
-      caniuse-lite: 1.0.30001764
+      caniuse-lite: 1.0.30001765
       electron-to-chromium: 1.5.267
       node-releases: 2.0.27
       update-browserslist-db: 1.2.3(browserslist@4.28.1)
 
-  caniuse-lite@1.0.30001764: {}
+  caniuse-lite@1.0.30001765: {}
 
   ccount@2.0.1: {}
 
