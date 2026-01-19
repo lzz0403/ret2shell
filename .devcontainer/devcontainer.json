@@ -17,8 +17,6 @@
 		"ghcr.io/devcontainers/features/common-utils:2": {
 			"configureZshAsDefaultShell": "true",
 			"username": "vscode",
-			"userUid": "1000",
-			"userGid": "1000",
 			"upgradePackages": "true"
 		},
 		"ghcr.io/devcontainers/features/git:1": {
@@ -57,14 +55,13 @@
 				"tamasfe.even-better-toml",
 				"fill-labs.dependi",
 				"biomejs.biome",
-				"Lokalise.i18n-ally"
+				"Lokalise.i18n-ally",
+				"GitHub.vscode-github-actions",
+				"ms-azuretools.vscode-containers",
+				"GitHub.copilot-chat"
 			]
-		}
+		},
+		"postStartCommand": "./.devcontainer/post-start.sh"
 	},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "rustc --version",
-	// Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
 	"remoteUser": "vscode"
 }
