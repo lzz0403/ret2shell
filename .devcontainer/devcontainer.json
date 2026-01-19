@@ -60,8 +60,8 @@
 				"ms-azuretools.vscode-containers",
 				"GitHub.copilot-chat"
 			]
-		},
-		"postStartCommand": "./.devcontainer/post-start.sh"
+		}
 	},
+	"postStartCommand": "./.devcontainer/post-start.sh",
 	"remoteUser": "vscode"
 }
