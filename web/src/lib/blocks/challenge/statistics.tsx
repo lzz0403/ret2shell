@@ -1,4 +1,5 @@
 import { useChallenge, useChallengeCommitHistory, useChallengeSubmissions } from "@api/challenge";
+import { transformGitmoji } from "@lib/utils/gitmoji";
 import { createBreakpoints } from "@solid-primitives/media";
 import { breakpoints, t } from "@storage/theme";
 import Button from "@widgets/button";
@@ -6,10 +7,9 @@ import Divider from "@widgets/divider";
 import LoadingTips from "@widgets/loading-tips";
 import Pagination from "@widgets/pagination";
 import Tag from "@widgets/tag";
+import clsx from "clsx";
 import { DateTime } from "luxon";
 import { createSignal, For, Match, Show, Switch } from "solid-js";
-import clsx from "clsx";
-import { transformGitmoji } from "@utils/gitmoji";
 import type { ChallengeWidgetProps } from ".";
 
 function StatisticsPanel(props: ChallengeWidgetProps) {
