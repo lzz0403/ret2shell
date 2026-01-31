@@ -178,7 +178,7 @@ export function FormBare(
           </Field>
         </div>
       </Show>
-      <Show when={!props.training && (game.data?.timeline_presets?.length ?? 0) > 0}>
+      <Show when={!props.training && (game.data?.timeline_presets?.length ?? 0) > 0 && challenge.data}>
         <Field name="release_at" type="number">
           {() => (
             <Field name="archive_at" type="number">
@@ -200,8 +200,10 @@ export function FormBare(
                       [
                         game.data?.timeline_presets?.find(
                           (i) =>
-                            i.start_at.toSeconds() === getValue(form, "release_at") &&
-                            i.end_at.toSeconds() === getValue(form, "archive_at")
+                            i.start_at.toSeconds() ===
+                              (getValue(form, "release_at") || challenge.data?.release_at?.toSeconds()) &&
+                            i.end_at.toSeconds() ===
+                              (getValue(form, "archive_at") || challenge.data?.archive_at?.toSeconds())
                         )?.label ?? "",
                       ].filter((s) => s) ?? []
                     }
