@@ -1,3 +1,4 @@
+import { sleep } from "@lib/utils/timeout";
 import type { Challenge, ChallengeEnv } from "@models/challenge";
 import type { Submission } from "@models/submission";
 import { t } from "@storage/theme";
@@ -10,7 +11,6 @@ import type { Extra } from "../models/extra";
 import type { CommitHistory } from "../models/git";
 import type { Hint } from "../models/hint";
 import api, { api_root, handleHttpError, inflyClient, toastSuccess } from ".";
-import { sleep } from "@lib/utils/timeout";
 
 export async function getChallengeList(game_id: number, page?: number, page_size?: number) {
   return (

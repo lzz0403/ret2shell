@@ -1,3 +1,4 @@
+import { sleep } from "@lib/utils/timeout";
 import type { Captcha } from "@models/captcha";
 import type { Institute } from "@models/institute";
 import type { OAuth } from "@models/oauth";
@@ -12,7 +13,6 @@ import { HTTPError } from "ky";
 import type { DateTime } from "luxon";
 import { createMemo } from "solid-js";
 import api, { api_root, handleHttpError, inflyClient } from ".";
-import { sleep } from "@lib/utils/timeout";
 
 export async function getCaptcha() {
   return await api.get(`${api_root}/account/captcha`).json<Captcha>();
