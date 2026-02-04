@@ -14,8 +14,8 @@ Follow these instructions when contributing to this repository. Keep changes min
 - Use SolidJS idioms with functional components.
 - Prefer existing helpers in `web/src/lib` and keep imports organized.
 - Formatting and linting are handled by Biome:
-  - `pnpm --C web format`
-  - `pnpm --C web lint`
+  - `pnpm -C web format`
+  - `pnpm -C web lint`
 - Follow the existing file structure: routes in `web/src/routes`, reusable widgets in `web/src/lib/widgets`, and API modules in `web/src/lib/api`.
 - Prefer `async/await` grammar than old Promise (then, catch, finally, etc.) one.
 - Keep translation file sync, the translations is presented in `web/src/lib/i18n`, take a look at `index.ts`.
@@ -53,5 +53,5 @@ Follow these instructions when contributing to this repository. Keep changes min
 ## Testing
 
 - Only run tests relevant to your changes.
-- Frontend: `pnpm --prefix web lint` (and `format` if needed).
+- Frontend: `pnpm -C web lint` (and `format` if needed).
 - Backend: `cargo +nightly fmt` and targeted test commands if applicable.
