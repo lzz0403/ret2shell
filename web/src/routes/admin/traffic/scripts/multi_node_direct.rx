@@ -24,7 +24,7 @@ const PUBLIC_ENTRIES = #{
 //   * name:string : the service name on this port
 //   * address:string : the actual address for this service
 //
-// NOTE: This function will be called when user first requesting the challenge environment.
+// NOTE: This function will be called when user requesting the challenge environment.
 //
 // Ret 2 Shell will automatically cache the result of this function, but it is still possible
 // to call this function twice on the same traffic.
