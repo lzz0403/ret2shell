@@ -13,7 +13,7 @@ The devcontainer has the following applications pre-installed:
 - Git
 - Docker
 - LLDB
-- K3s
+- Kubectl, Helm, Minikube (for Kubernetes development)
 
 Some devtools are also pre-installed into `/usr/local/bin`, see [devtools](./devtools) for details.
 

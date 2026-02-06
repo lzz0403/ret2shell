@@ -36,11 +36,7 @@
 		},
 		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
 		// Deployment, Testing challenge clusters with k3s on host
-		"ghcr.io/microsoft/devcontainers/features/k3s-on-host:latest": {
-			"k3sVersion": "latest",
-			"criDockerd": "true",
-			"cluster_enabled": "true"
-		}
+		"ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {}
 	},
 	// Configure tool-specific properties.
 	"customizations": {
