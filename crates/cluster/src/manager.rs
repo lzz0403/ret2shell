@@ -603,7 +603,10 @@ impl Cluster {
               image
                 .port
                 .map(|port| k8s_openapi::api::core::v1::ServicePort {
-                  app_protocol: Some(format!("ret.sh.cn/traffic/{}", self.map_app_protocol(&image.service_type))),
+                  app_protocol: Some(format!(
+                    "ret.sh.cn/traffic/{}",
+                    self.map_app_protocol(&image.service_type)
+                  )),
                   name: Some(image.name.clone()),
                   port: port as i32,
                   protocol: Some(self.map_protocol(&image.service_type)),

@@ -62,7 +62,11 @@ impl RuneServiceInfo {
       let port_info = RunePortInfo {
         name: port.name.clone().unwrap_or("default".to_owned()),
         node_port: port.node_port.unwrap_or(0) as u16,
-        app_protocol: port.app_protocol.clone().unwrap_or("tcp".to_owned()).replace("ret.sh.cn/traffic/", ""),
+        app_protocol: port
+          .app_protocol
+          .clone()
+          .unwrap_or("tcp".to_owned())
+          .replace("ret.sh.cn/traffic/", ""),
       };
       ports_info.push(port_info);
     }
