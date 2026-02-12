@@ -15,7 +15,8 @@ Ret2Shell is single binary with requirements of `redis/valkey 8+`, `postgres 18+
 
 All the components could be deploy anywhere, so you can deploy ret2shell as you like.
 
-> [!WARNING] The new helm charts is work-in-progress.
+> [!WARNING]
+> The new helm charts is work-in-progress.
 
 For a general usage, you could see [k8s single-node deployment](./deploy/k8s-deprecated/README.md) for details.
 
