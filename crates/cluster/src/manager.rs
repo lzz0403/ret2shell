@@ -542,7 +542,7 @@ impl Cluster {
             ports: image.port.map(|port| {
               vec![ContainerPort {
                 container_port: port as i32,
-                protocol: Some(self.map_protocol(&image)),
+                protocol: Some(self.map_protocol(image)),
                 ..Default::default()
               }]
             }),
@@ -616,11 +616,11 @@ impl Cluster {
                 .map(|port| k8s_openapi::api::core::v1::ServicePort {
                   app_protocol: Some(format!(
                     "ret.sh.cn/traffic-{}",
-                    self.map_app_protocol(&image)
+                    self.map_app_protocol(image)
                   )),
                   name: Some(image.name.clone()),
                   port: port as i32,
-                  protocol: Some(self.map_protocol(&image)),
+                  protocol: Some(self.map_protocol(image)),
                   target_port: Some(
                     k8s_openapi::apimachinery::pkg::util::intstr::IntOrString::Int(port as i32),
                   ),

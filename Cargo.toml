@@ -1,6 +1,6 @@
 [workspace]
 members  = ['crates/*']
-resolver = "2"
+resolver = "3"
 
 [workspace.package]
 authors      = ["Reverier-Xu <reverier.xu@woooo.tech>"]
@@ -8,7 +8,7 @@ edition      = "2024"
 homepage     = "https://ret.sh.cn/"
 publish      = false
 repository   = "https://github.com/ret2shell/ret2shell"
-rust-version = "1.90.0"
+rust-version = "1.93.0"
 version      = "3.10.3"
 
 [profile.release]
