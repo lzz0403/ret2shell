@@ -2,6 +2,7 @@ import { luxonReplacer, luxonReviver } from "@models/utils";
 import { base64 } from "@scure/base";
 import { accountStore, resetUser, storeToken } from "@storage/account";
 import { platformStore } from "@storage/platform";
+import { themeStore } from "@storage/theme";
 import { experimental_createQueryPersister } from "@tanstack/query-persist-client-core";
 import { QueryClient } from "@tanstack/solid-query";
 import ky from "ky";
@@ -36,6 +37,8 @@ const api = ky.extend({
         if (token) {
           request.headers.set("Authorization", `Bearer ${token}`);
         }
+
+        request.headers.set("Accept-Language", themeStore.locale.replace("_", "-"));
 
         if (platformStore.enable_ret2codec && request.headers.get("Content-Type") === "application/json") {
           request.headers.set("X-Original-Content-Type", request.headers.get("Content-Type") || "application/json");

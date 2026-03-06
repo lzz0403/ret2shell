@@ -1,4 +1,3 @@
-import type { Article } from "@models/article";
 import type { Audit } from "@models/audit";
 import type { Chat, ChatSession } from "@models/chat";
 import type { RegistryConfig } from "@models/config";
@@ -8,7 +7,7 @@ import type { Instance } from "@models/instance";
 import type { Submission } from "@models/submission";
 import { type Team, TeamState } from "@models/team";
 import type { User } from "@models/user";
-import { t } from "@storage/theme";
+import { t, themeStore } from "@storage/theme";
 import { useMutation, useQuery } from "@tanstack/solid-query";
 import type { DiagnosticMarker } from "@widgets/editor";
 import { HTTPError, type SearchParamsOption } from "ky";
@@ -147,28 +146,31 @@ export function useDeleteGameMutation(props: { onSuccess?: () => void; onError?:
   }));
 }
 
-export async function getGameIntroduction(id: number) {
-  return await api.get(`${api_root}/game/${id}/introduction`).json<Article>();
+export type GameDocType = "readme" | "training" | "rules";
+
+export async function getGameDoc(id: number, type: GameDocType) {
+  return await api.get(`${api_root}/game/${id}/doc/${type}`).json<string>();
 }
 
-export function useGameIntroduction({
+export function useGameDoc({
   id,
+  type,
   enabled,
   onError,
 }: {
   id: () => number;
+  type: () => GameDocType;
   enabled?: () => boolean;
   onError?: (err: Error) => boolean;
 }) {
-  const keys = createMemo(() => ["game", id(), "introduction"]);
+  const keys = createMemo(() => ["game", id(), "doc", type(), themeStore.locale]);
   return useQuery(
     () => ({
       queryKey: keys(),
-      queryFn: async () => await getGameIntroduction(id()),
+      queryFn: async () => await getGameDoc(id(), type()),
       enabled: enabled?.(),
       throwOnError: (err: Error) => {
-        if (err instanceof HTTPError && err.response.status === 404) return onError?.(err) ?? false;
-        handleHttpError(err, t("game.errors.fetchIntroduction.title"));
+        handleHttpError(err, t("game.errors.fetchDoc.title"));
         return onError?.(err) ?? false;
       },
     }),
@@ -176,17 +178,22 @@ export function useGameIntroduction({
   );
 }
 
-export async function updateGameIntroduction(id: number, article: Article) {
-  return await api.patch(`${api_root}/game/${id}/introduction`, { json: article }).json<Article>();
+export async function updateGameDoc(id: number, type: GameDocType, content: string) {
+  return await api.patch(`${api_root}/game/${id}/doc/${type}`, { json: content }).json<string>();
 }
 
-export function useUpdateGameIntroductionMutation(
-  props: { onSuccess?: (article: Article) => void; onError?: (err: Error) => void } = {}
+export function useUpdateGameDocMutation(
+  props: {
+    onSuccess?: (content: string, params: { id: number; type: GameDocType; content: string }) => void;
+    onError?: (err: Error) => void;
+  } = {}
 ) {
   return useMutation(() => ({
-    mutationFn: (params: { id: number; article: Article }) => updateGameIntroduction(params.id, params.article),
-    onSuccess: (data: Article) => {
-      props.onSuccess?.(data);
+    mutationFn: (params: { id: number; type: GameDocType; content: string }) =>
+      updateGameDoc(params.id, params.type, params.content),
+    onSuccess: (data: string, params) => {
+      toastSuccess(t("general.actions.save.status.success"));
+      props.onSuccess?.(data, params);
     },
     onError: (err: Error) => {
       handleHttpError(err, t("general.actions.save.status.fail"));

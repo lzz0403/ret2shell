@@ -83,7 +83,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         )
         .route("/device", get(admin::get_connected_devices))
         .route("/token", post(admin::regenerate_game_token))
-        .route("/introduction", patch(core::update_game_intro))
+        .route("/doc/{doc}", patch(core::update_game_doc))
+        .route("/introduction", patch(core::update_game_intro_compat))
         .route("/submission", get(admin::get_submissions))
         .nest(
           "/audit",
@@ -109,7 +110,8 @@ pub fn router(state: &GlobalState) -> Router<GlobalState> {
         .nest("/team", team::router(state))
         .nest("/notification", notification::router(state))
         .nest("/chat", chat::router(state))
-        .route("/introduction", get(core::get_game_intro))
+        .route("/doc/{doc}", get(core::get_game_doc))
+        .route("/introduction", get(core::redirect_game_intro_to_readme))
         .route("/", get(core::get_game))
         .route_layer(middleware::from_fn_with_state(
           state.clone(),

@@ -14,8 +14,8 @@ Violating these guidelines may result in disqualification or account suspension.
 
 In addition to the above guidelines, we encourage you to:
 
-1. When asking questions, refer to [“How To Ask Questions The Smart Way”](http://www.catb.org/~esr/faqs/smart-questions.html) to help us assist you better. Also, remember to protect your personal privacy when posting questions.
-2. In beginner-oriented games, refrain from making verbal attacks or trolling based on skill level. Let’s maintain a friendly environment.
+1. When asking questions, refer to ["How To Ask Questions The Smart Way"](http://www.catb.org/~esr/faqs/smart-questions.html) to help us assist you better. Also, remember to protect your personal privacy when posting questions.
+2. In beginner-oriented games, refrain from making verbal attacks or trolling based on skill level. Let's maintain a friendly environment.
 3. In more serious formal games, avoid unnecessary interactions with other players.
 
 ## Best of luck!

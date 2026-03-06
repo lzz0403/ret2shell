@@ -133,6 +133,10 @@ export const routes = {
                   component: lazy(() => import("./games/[game]/admin/edit/index")),
                 },
                 {
+                  path: "/rules",
+                  component: lazy(() => import("./games/[game]/admin/rules/index")),
+                },
+                {
                   path: "/policies",
                   component: lazy(() => import("./games/[game]/admin/policies/index")),
                 },

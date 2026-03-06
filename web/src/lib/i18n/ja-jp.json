@@ -564,6 +564,9 @@
         }
       }
     },
+    "rules": {
+      "title": "大会ルール"
+    },
     "scoreboard": {
       "title": "ポイントボード",
       "empty": "参加チームなし",
@@ -867,6 +870,9 @@
       },
       "regenerateToken": {
         "title": "管理キーの生成に失敗しました"
+      },
+      "fetchDoc": {
+        "title": "大会ドキュメントの取得に失敗しました"
       },
       "fetchIntroduction": {
         "title": "試合の紹介を取得できませんでした"

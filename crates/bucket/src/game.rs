@@ -1,4 +1,7 @@
-use std::path::{Path, PathBuf};
+use std::{
+  io::ErrorKind,
+  path::{Path, PathBuf},
+};
 
 use chrono::{DateTime, Utc, serde::ts_seconds};
 use deunicode::deunicode_with_tofu;
@@ -28,6 +31,23 @@ pub struct GameBucket {
 pub enum HostType {
   CTFTraining = 0,
   CTFGame     = 1,
+}
+
+#[derive(Clone, Copy, Debug)]
+pub enum GameDocument {
+  Readme,
+  Training,
+  Rules,
+}
+
+impl GameDocument {
+  pub const fn file_name(self) -> &'static str {
+    match self {
+      Self::Readme => "README.md",
+      Self::Training => "TRAINING.md",
+      Self::Rules => "RULES.md",
+    }
+  }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -161,11 +181,21 @@ impl GameBucket {
     Ok(())
   }
 
-  pub async fn set_introduction(&self, introduction: &str) -> Result<(), BucketError> {
+  pub async fn read_document(&self, document: GameDocument) -> Result<Option<String>, BucketError> {
+    match read_to_string(self.path.join(document.file_name())).await {
+      Ok(content) => Ok(Some(content)),
+      Err(err) if err.kind() == ErrorKind::NotFound => Ok(None),
+      Err(err) => Err(err.into()),
+    }
+  }
+
+  pub async fn write_document(
+    &self, document: GameDocument, content: &str,
+  ) -> Result<(), BucketError> {
     if !self.locked {
       return Err(BucketError::NeedLocking);
     }
-    write(self.path.join("README.md"), introduction.to_string()).await?;
+    write(self.path.join(document.file_name()), content).await?;
     Ok(())
   }
 

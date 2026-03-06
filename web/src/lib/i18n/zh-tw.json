@@ -564,6 +564,9 @@
         }
       }
     },
+    "rules": {
+      "title": "比賽規則"
+    },
     "scoreboard": {
       "title": "積分板",
       "empty": "暫無參賽隊伍",
@@ -867,6 +870,9 @@
       },
       "regenerateToken": {
         "title": "生成管理密鑰失敗"
+      },
+      "fetchDoc": {
+        "title": "獲取賽事文檔失敗"
       },
       "fetchIntroduction": {
         "title": "獲取比賽介紹失敗"

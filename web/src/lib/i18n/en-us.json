@@ -564,6 +564,9 @@
         }
       }
     },
+    "rules": {
+      "title": "Game rules"
+    },
     "scoreboard": {
       "title": "Scoreboard",
       "empty": "No participating teams yet",
@@ -867,6 +870,9 @@
       },
       "regenerateToken": {
         "title": "Failed to generate game token"
+      },
+      "fetchDoc": {
+        "title": "Failed to fetch game document"
       },
       "fetchIntroduction": {
         "title": "Failed to fetch game introduction"

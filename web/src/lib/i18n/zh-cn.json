@@ -564,6 +564,9 @@
         }
       }
     },
+    "rules": {
+      "title": "比赛规则"
+    },
     "scoreboard": {
       "title": "积分板",
       "empty": "暂无参赛队伍",
@@ -867,6 +870,9 @@
       },
       "regenerateToken": {
         "title": "生成管理密钥失败"
+      },
+      "fetchDoc": {
+        "title": "获取赛事文档失败"
       },
       "fetchIntroduction": {
         "title": "获取比赛介绍失败"
