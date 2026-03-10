@@ -63,38 +63,48 @@ struct ObjectCommitInfo {
   date: i64,
 }
 
-fn next_non_empty_token<'a, I>(tokens: &mut I) -> Option<&'a [u8]>
-where
-  I: Iterator<Item = &'a [u8]>, {
-  tokens.find(|token| !token.is_empty())
+fn parse_ls_tree_record(record: &[u8]) -> Result<ObjectInfo, BucketError> {
+  let header_end = record
+    .iter()
+    .position(|byte| *byte == b'\t')
+    .ok_or_else(|| {
+      BucketError::GitCommandFailed("failed to parse ls-tree object path".to_string())
+    })?;
+  let header = &record[..header_end];
+  let object_path = &record[header_end + 1..];
+  if object_path.is_empty() {
+    return Err(BucketError::GitCommandFailed(
+      "failed to parse ls-tree object path".to_string(),
+    ));
+  }
+
+  let mut header_fields = header.split(|byte| *byte == b' ');
+  header_fields.next().ok_or_else(|| {
+    BucketError::GitCommandFailed("failed to parse ls-tree object mode".to_string())
+  })?;
+  let object_type = header_fields.next().ok_or_else(|| {
+    BucketError::GitCommandFailed("failed to parse ls-tree object type".to_string())
+  })?;
+  let object_id = header_fields.next().ok_or_else(|| {
+    BucketError::GitCommandFailed("failed to parse ls-tree object id".to_string())
+  })?;
+
+  Ok(ObjectInfo {
+    path: String::from_utf8(object_path.to_vec())?,
+    commit: String::from_utf8(object_id.to_vec())?,
+    r#type: String::from_utf8(object_type.to_vec())?,
+    last_modified: None,
+    subject: None,
+    author: None,
+  })
 }
 
 fn parse_ls_tree_objects(output: &[u8]) -> Result<Vec<ObjectInfo>, BucketError> {
-  let mut tokens = output.split(|byte| *byte == 0);
-  let mut objects = Vec::new();
-
-  loop {
-    let Some(object_type) = next_non_empty_token(&mut tokens) else {
-      break;
-    };
-    let object_id = next_non_empty_token(&mut tokens).ok_or_else(|| {
-      BucketError::GitCommandFailed("failed to parse ls-tree object id".to_string())
-    })?;
-    let object_path = next_non_empty_token(&mut tokens).ok_or_else(|| {
-      BucketError::GitCommandFailed("failed to parse ls-tree object path".to_string())
-    })?;
-
-    objects.push(ObjectInfo {
-      path: String::from_utf8(object_path.to_vec())?,
-      commit: String::from_utf8(object_id.to_vec())?,
-      r#type: String::from_utf8(object_type.to_vec())?,
-      last_modified: None,
-      subject: None,
-      author: None,
-    });
-  }
-
-  Ok(objects)
+  output
+    .split(|byte| *byte == 0)
+    .filter(|record| !record.is_empty())
+    .map(parse_ls_tree_record)
+    .collect()
 }
 
 fn parse_git_path(path: &Path) -> String {
@@ -517,7 +527,6 @@ impl Git {
       .current_dir(&self.path)
       .arg("ls-tree")
       .arg("-z")
-      .arg("--format=%(objecttype)%x00%(objectname)%x00%(path)%x00")
       .arg("HEAD");
     if !relative_path.is_empty() {
       ls_tree.arg("--").arg(format!(":(literal){relative_path}/"));
@@ -855,9 +864,11 @@ mod tests {
 
   #[test]
   fn parse_ls_tree_objects_handles_nul_records() {
-    let objects =
-      parse_ls_tree_objects(b"blob\0abc123\0dir/file.txt\0\0tree\0def456\0dir/subdir\0\0")
-        .expect("parse ls-tree objects");
+    let objects = parse_ls_tree_objects(
+      b"100644 blob abc123\tdir/file.txt\0\
+        040000 tree def456\tdir/subdir\0",
+    )
+    .expect("parse ls-tree objects");
     assert_eq!(objects.len(), 2);
     assert_eq!(objects[0].path, "dir/file.txt");
     assert_eq!(objects[0].commit, "abc123");
