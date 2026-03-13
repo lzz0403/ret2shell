@@ -31,10 +31,24 @@ jobs:
 
       - name: Read workspace version
         id: cargo-version
-        uses: SebRollen/toml-action@v1
-        with:
-          file: Cargo.toml
-          field: workspace.package.version
+        run: |
+          cargo_version="$(awk '
+            /^\[workspace\.package\]$/ { in_section = 1; next }
+            /^\[/ { in_section = 0 }
+            in_section && /^[[:space:]]*version[[:space:]]*=/ {
+              sub(/^[[:space:]]*version[[:space:]]*=[[:space:]]*"/, "")
+              sub(/".*$/, "")
+              print
+              exit
+            }
+          ' Cargo.toml)"
+
+          if [ -z "$cargo_version" ]; then
+            echo "failed to read workspace.package.version from Cargo.toml" >&2
+            exit 1
+          fi
+
+          echo "value=$cargo_version" >> "$GITHUB_OUTPUT"
 
       - name: Read chart version
         id: chart-version
