@@ -294,10 +294,10 @@ async fn get_license(
   State(_state): State<GlobalState>,
 ) -> Result<impl IntoResponse, ResponseError> {
   Ok(Json(PlatformLicenseInfo {
-    spdx_id: "LicenseRef-Ret2Shell-Public-1.0",
-    name: "Ret2Shell Public License v1.0",
+    spdx_id: "LicenseRef-Ret2Shell-Public-2.0",
+    name: "Ret2Shell Public License 2.0",
     url: "/license",
-    notice: "Ret2Shell is released under the Ret2Shell Public License v1.0. Commercial use is allowed, but the license restricts User-Facing Charges for educational access.",
+    notice: "Ret2Shell is released under the Ret2Shell Public License 2.0, a GPL-3.0-derived copyleft license with limited user-facing monetization restrictions.",
     content: R2S_PUBLIC_LICENSE_TEXT,
   }))
 }

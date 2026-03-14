@@ -1,10 +1,14 @@
 # Commercial and User Access Policy
 
-This document explains, in plain language, the commercial and user-access rules already required by `LICENSE`. It is not a second license and does not grant rights separate from `LICENSE`. If there is any conflict, `LICENSE` controls.
+This document explains, in plain language, the Ret2Shell-specific commercial and user-access restrictions in Sections 1 and 2 of `LICENSE`. It is not a second license and does not grant rights separate from `LICENSE`. The GPL-3.0-derived copyleft baseline incorporated through Appendix A remains governed only by `LICENSE`. If there is any conflict, `LICENSE` controls.
 
 ## Purpose
 
-Ret2Shell may be used commercially, but it may not be used to charge Users for ordinary access to challenges, educational resources, verification, or organization participation. The project is intended to keep learning and training resources shareable while still allowing commercial work around operations, deployment, support, challenge production, and event services.
+Ret2Shell keeps a GPL-3.0-derived copyleft baseline and adds limited restrictions on certain user-facing monetization. The project may still be used for commercial work around operations, deployment, support, challenge production, and event services, but it may not be used to sell ordinary user access to challenges, educational resources, verification, or organization participation.
+
+## GPL-3.0-Derived Base Terms
+
+`LICENSE` also carries forward the GPL-3.0 baseline through Appendix A. In plain language, that means the usual GPL-style rules still apply, including copyleft for conveyed modified works, access to Corresponding Source for conveyed non-source forms, patent grants and patent-related restrictions, anti-circumvention protection, Installation Information for User Products when required, automatic downstream licensing, and the warranty and liability disclaimers.
 
 ## Defined Terms
 
@@ -41,9 +45,9 @@ The license forbids using the Project or a Platform to impose User-Facing Charge
 4. charge Users as a condition of joining an Organization or accessing Organization Resources; or
 5. use the Project or a Platform as part of a business that sells courses, training, tutoring, bootcamps, paid memberships, or similar user-facing educational products or services where payment is tied to Platform access, Platform status, Organization participation, or Platform resources.
 
-## Access Parity Rule
+## Anti-Evasion Rule for Verified Access
 
-On a Platform that allows public self-registration, once a user completes the Verification Process and obtains Verified Status, that user must receive ordinary non-staff challenge access rights no less favorable than those granted to any other user with Verified Status on the same Platform. Administrative, moderation, authoring, judging, and anti-abuse privileges are outside this rule. Non-monetized distinctions based solely on Bona Fide Educational Restrictions remain permitted.
+On a Platform that allows public self-registration, an Operator may not use the Verification Process, Verified Status, or differences in ordinary non-staff challenge access among verified users to implement, disguise, or enforce a prohibited User-Facing Charge. In particular, ordinary non-staff challenge access that is granted to some verified users may not be withheld from other verified users because they did not pay a User-Facing Charge. Administrative, moderation, authoring, judging, and anti-abuse privileges remain outside this rule. Non-monetized distinctions based solely on Bona Fide Educational Restrictions remain permitted.
 
 ## Interpretation Notes
 

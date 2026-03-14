@@ -42,9 +42,9 @@ pub use routes::run_post_receive;
 pub async fn up(config: GlobalConfig) -> anyhow::Result<()> {
   let guards = logger::initialize(&config.logging).await?;
   info!(">> server initialization started <<");
-  info!("Ret2Shell is distributed under the Ret2Shell Public License v1.0.");
+  info!("Ret2Shell is distributed under the Ret2Shell Public License 2.0.");
   info!(
-    "Commercial use is allowed, but the license restricts User-Facing Charges for educational access."
+    "It is a GPL-3.0-derived copyleft license with limited user-facing monetization restrictions."
   );
   info!("See LICENSE and COMMERCIAL_POLICY.md for details.");
 

@@ -172,7 +172,7 @@ export default function SideBar() {
         </Link>
       </li>
       <li class="w-full">
-        <Link activeMatch="exact" class="w-full" ghost href="/admin/license" justify="start">
+        <Link activeMatch="exact" class="w-full" ghost href="/license" justify="start">
           <span class="shrink-0 icon-[fluent--book-20-regular] w-5 h-5" />
           <span>{t("license.title")}</span>
         </Link>

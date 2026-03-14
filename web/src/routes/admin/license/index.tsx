@@ -51,6 +51,11 @@ function formatLicenseMarkdown(content: string) {
       continue;
     }
 
+    if (firstLine === "APPENDIX A") {
+      blocks.push("## Appendix A");
+      continue;
+    }
+
     if (firstLine === "TERMS AND CONDITIONS") {
       blocks.push("## Terms and Conditions");
       continue;
@@ -105,7 +110,7 @@ export default function License() {
 
   return (
     <>
-      <Title page={licenseData()?.name || t("license.title")} route="/admin/license" />
+      <Title page={licenseData()?.name || t("license.title")} route="/license" />
       <div class="flex-1 flex flex-col items-center px-3 lg:px-6">
         <h1 class="text-3xl flex flex-row space-x-4 items-center w-full max-w-5xl justify-start print:justify-center font-bold mt-8 print:mt-16">
           <Show
@@ -128,7 +133,7 @@ export default function License() {
             target="_blank"
           >
             <span class="shrink-0 icon-[fluent--open-20-regular] w-5 h-5" />
-            <span>{licenseData()?.spdx_id || "LicenseRef-Ret2Shell-Public-1.0"}</span>
+            <span>{licenseData()?.spdx_id || "LicenseRef-Ret2Shell-Public-2.0"}</span>
           </a>
           <button
             class="cursor-pointer font-bold hover:underline flex flex-row space-x-2 items-center print:hidden"

@@ -298,11 +298,11 @@ export const routes = {
           path: "/lifecycle",
           component: lazy(() => import("./admin/lifecycle/index")),
         },
-        {
-          path: "/license",
-          component: lazy(() => import("./admin/license/index")),
-        },
       ],
+    },
+    {
+      path: "/license",
+      component: lazy(() => import("./admin/license/index")),
     },
     {
       path: "/users",

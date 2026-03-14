@@ -49,7 +49,7 @@ corepack enable pnpm
 
 #### License notice
 
-Ret2Shell is distributed under the opensource license, a GPL-inspired custom copyleft license with user-facing monetization restrictions. See [LICENSE](LICENSE) for the binding license text and [COMMERCIAL_POLICY.md](COMMERCIAL_POLICY.md) for plain-language guidance.
+Ret2Shell is distributed under a GPL-3.0-derived custom copyleft license that incorporates GPL-3.0 in Appendix A and adds user-facing monetization restrictions. See [LICENSE](LICENSE) for the binding license text and [COMMERCIAL_POLICY.md](COMMERCIAL_POLICY.md) for plain-language guidance.
 
 #### Setup frontend
 
