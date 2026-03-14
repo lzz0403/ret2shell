@@ -288,16 +288,16 @@ struct PlatformLicenseInfo {
   content: &'static str,
 }
 
-const GPL3_LICENSE_TEXT: &str = include_str!("../../../../../LICENSE");
+const R2S_PUBLIC_LICENSE_TEXT: &str = include_str!("../../../../../LICENSE");
 
 async fn get_license(
   State(_state): State<GlobalState>,
 ) -> Result<impl IntoResponse, ResponseError> {
   Ok(Json(PlatformLicenseInfo {
-    spdx_id: "GPL-3.0",
-    name: "GNU General Public License v3.0",
-    url: "https://www.gnu.org/licenses/gpl-3.0.html",
-    notice: "Ret2Shell is free software released under GPL-3.0. You can redistribute it and/or modify it under the terms of the GNU General Public License version 3.",
-    content: GPL3_LICENSE_TEXT,
+    spdx_id: "LicenseRef-Ret2Shell-Public-1.0",
+    name: "Ret2Shell Public License v1.0",
+    url: "/license",
+    notice: "Ret2Shell is released under the Ret2Shell Public License v1.0. Commercial use is allowed, but the license restricts User-Facing Charges for educational access.",
+    content: R2S_PUBLIC_LICENSE_TEXT,
   }))
 }

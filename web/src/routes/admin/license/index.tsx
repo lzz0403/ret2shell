@@ -40,6 +40,12 @@ function formatLicenseMarkdown(content: string) {
       continue;
     }
 
+    if (firstLine === "RET2SHELL PUBLIC LICENSE") {
+      blocks.push("# Ret2Shell Public License");
+      if (trimmedLines[1]) blocks.push(`_${escapeInlineMarkdown(trimmedLines[1])}_`);
+      continue;
+    }
+
     if (firstLine === "Preamble") {
       blocks.push("## Preamble");
       continue;
@@ -117,12 +123,12 @@ export default function License() {
         <div class="flex flex-row items-center w-full max-w-5xl justify-start print:justify-center space-x-6 print:space-x-2 opacity-60 flex-wrap py-3">
           <a
             class="hover:underline font-bold flex flex-row space-x-2 items-center print:hidden"
-            href={licenseData()?.url || "https://www.gnu.org/licenses/gpl-3.0.html"}
+            href={licenseData()?.url || "/license"}
             rel="noreferrer"
             target="_blank"
           >
             <span class="shrink-0 icon-[fluent--open-20-regular] w-5 h-5" />
-            <span>{licenseData()?.spdx_id || "GPL-3.0"}</span>
+            <span>{licenseData()?.spdx_id || "LicenseRef-Ret2Shell-Public-1.0"}</span>
           </a>
           <button
             class="cursor-pointer font-bold hover:underline flex flex-row space-x-2 items-center print:hidden"

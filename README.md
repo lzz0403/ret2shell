@@ -15,11 +15,6 @@ Ret2Shell is single binary with requirements of `redis/valkey 8+`, `postgres 18+
 
 All the components could be deploy anywhere, so you can deploy ret2shell as you like.
 
-> [!WARNING]
-> The new helm charts is work-in-progress.
-
-For a general usage, you could see [k8s deployment](./deploy/k8s/README.md) for details.
-
 ## Development
 
 ### 1. Install Toolchains
@@ -54,7 +49,7 @@ corepack enable pnpm
 
 #### License notice
 
-Ret2Shell is distributed under GPL-3.0. You can redistribute it and/or modify it under the terms of the GNU General Public License version 3.
+Ret2Shell is distributed under the opensource license, a GPL-inspired custom copyleft license with user-facing monetization restrictions. See [LICENSE](LICENSE) for the binding license text and [COMMERCIAL_POLICY.md](COMMERCIAL_POLICY.md) for plain-language guidance.
 
 #### Setup frontend
 
@@ -141,4 +136,8 @@ You can also build the docker image:
 
 ## License
 
-Ret2Shell is licensed under GPL-3.0. Please refer to [LICENSE](LICENSE) for the full license text.
+Ret2Shell is licensed under:
+
+- [LICENSE](LICENSE): the binding license text.
+- [COMMERCIAL_POLICY.md](COMMERCIAL_POLICY.md): English guidance and interpretation notes.
+- [COMMERCIAL_POLICY.zh-cn.md](COMMERCIAL_POLICY.zh-cn.md): Simplified Chinese translation of the policy guide.

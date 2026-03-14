@@ -122,7 +122,7 @@ export default function (props: { children?: JSX.Element }) {
         });
       }
       console.log(
-        `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - ${new Date().getFullYear()} %cRet 2 Shell%c, licensed under GPL-3.0.\n\n%cHaving issue? You can open a ticket on https://github.com/ret2shell, any bug reports or feature requests are welcome.\n\n%cSee https://www.gnu.org/licenses/gpl-3.0.html for details.\n`,
+        `\n%cR%cet %c2 %cS%chell %cv%c${version}\n\n%cCopyright (c) 2022 - ${new Date().getFullYear()} %cRet 2 Shell%c, licensed under the Ret2Shell Public License v1.0.\n\n%cHaving issue? You can open a ticket on https://github.com/ret2shell, any bug reports or feature requests are welcome.\n\n%cSee /license for details.\n`,
         "color: #0078D6; font-weight: bold; font-size: 1.5rem;",
         "color: currentColor; font-weight: bold; font-size: 1.5rem;",
         "color: #808080; font-weight: bold; font-size: 1.5rem;",
