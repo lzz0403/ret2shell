@@ -1,6 +1,6 @@
 import { useOAuthProviders } from "@api/account";
 import type { Institute } from "@models/institute";
-import { createForm, required, setValues } from "@modular-forms/solid";
+import { createForm, required, setValues, setValue } from "@modular-forms/solid";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
 import Input from "@widgets/input";
@@ -19,6 +19,7 @@ export default function InstituteForm(props: {
   loading?: boolean;
 }) {
   const oauthProviders = useOAuthProviders();
+
   const [form, { Form, Field }] = createForm<FormType>({
     initialValues: {
       name: props.editSource?.name,
@@ -26,6 +27,7 @@ export default function InstituteForm(props: {
       token: props.editSource?.token || undefined,
     },
   });
+
   createEffect(() => {
     if (props.editSource) {
       untrack(() => {
@@ -37,6 +39,7 @@ export default function InstituteForm(props: {
       });
     }
   });
+
   function onSubmit(result: FormType) {
     props.onDone?.({
       id: props.editSource?.id || 0,
@@ -47,58 +50,63 @@ export default function InstituteForm(props: {
       token: result.token || null,
     });
   }
+
   return (
-    <Form onSubmit={onSubmit} class="flex flex-col w-96 space-y-2 relative">
-      <Field name="name" validate={[required(t("institute.form.name.required"))]}>
-        {(field, props) => (
-          <Input
-            icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
-            title={t("institute.form.name.label")}
-            placeholder={t("institute.form.name.placeholder")}
-            {...props}
-            value={field.value}
-            error={field.error}
-            required
-          />
-        )}
-      </Field>
-      <Field name="provider">
-        {(field, fieldProps) => (
-          <Select
-            name={field.name}
-            label={t("institute.form.provider.label")}
-            class="flex-1"
-            error={field.error}
-            placeholder={t("institute.form.provider.placeholder")}
-            items={
-              oauthProviders.data?.map((service) => {
-                return {
-                  value: service.provider,
-                  label: service.name,
-                  icon: "icon-[fluent--hat-graduation-20-regular]",
-                };
-              }) || []
-            }
-            value={field.value ? [field.value as string] : undefined}
-            inputProps={fieldProps}
-          />
-        )}
-      </Field>
-      <Field name="token">
-        {(field, props) => (
-          <Input
-            icon={<span class="shrink-0 icon-[fluent--key-20-regular] w-5 h-5" />}
-            title={t("institute.form.token.label")}
-            placeholder={t("institute.form.token.placeholder")}
-            {...props}
-            value={field.value}
-            error={field.error}
-          />
-        )}
-      </Field>
-      <Button type="submit" level="primary" class="mt-4!" loading={props.loading} disabled={props.loading}>
-        {props.editSource ? t("general.actions.save.title") : t("general.actions.create.title")}
-      </Button>
-    </Form>
+      <Form onSubmit={onSubmit} class="flex flex-col w-96 space-y-2 relative">
+        <Field name="name" validate={[required(t("institute.form.name.required"))]}>
+          {(field, fieldProps) => (
+              <Input
+                  icon={<span class="shrink-0 icon-[fluent--flag-20-regular] w-5 h-5" />}
+                  title={t("institute.form.name.label")}
+                  placeholder={t("institute.form.name.placeholder")}
+                  {...fieldProps}
+                  value={field.value}
+                  error={field.error}
+                  required
+              />
+          )}
+        </Field>
+
+        <Field name="provider">
+          {(field, fieldProps) => (
+              <Select
+                  inputProps={fieldProps}
+                  label={t("institute.form.provider.label")}
+                  class="flex-1"
+                  error={field.error}
+                  placeholder={t("institute.form.provider.placeholder")}
+                  items={
+                      oauthProviders.data?.map((service) => ({
+                        value: service.provider,
+                        label: service.name,
+                        icon: "icon-[fluent--hat-graduation-20-regular]",
+                      })) || []
+                  }
+                  value={field.value ? [field.value] : []}
+                  onValueChange={(details) => {
+                    const selectedValue = details.value[0] || undefined;
+                    setValue(form, "provider", selectedValue);
+                  }}
+              />
+          )}
+        </Field>
+
+        <Field name="token">
+          {(field, fieldProps) => (
+              <Input
+                  icon={<span class="shrink-0 icon-[fluent--key-20-regular] w-5 h-5" />}
+                  title={t("institute.form.token.label")}
+                  placeholder={t("institute.form.token.placeholder")}
+                  {...fieldProps}
+                  value={field.value}
+                  error={field.error}
+              />
+          )}
+        </Field>
+
+        <Button type="submit" level="primary" class="mt-4!" loading={props.loading} disabled={props.loading}>
+          {props.editSource ? t("general.actions.save.title") : t("general.actions.create.title")}
+        </Button>
+      </Form>
   );
 }
