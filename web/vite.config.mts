@@ -31,6 +31,18 @@ export default defineConfig(({ mode }) => {
           }
         },
       },
+      {
+        name: "ace-esm-resolver-compat",
+        enforce: "pre",
+        transform(code, id) {
+          if (!id.includes("/ace-builds/esm-resolver.js") && !id.includes("\\ace-builds\\esm-resolver.js")) {
+            return;
+          }
+          // Ace documents `esm-resolver` for Vite/Rollup, but the published file
+          // still references a bare global `ace` instead of `globalThis.ace`.
+          return code.replace(/\bace\./g, "globalThis.ace.");
+        },
+      },
     ],
     server: {
       port: 5173,
