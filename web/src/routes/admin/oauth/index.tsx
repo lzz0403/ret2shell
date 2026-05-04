@@ -1,4 +1,5 @@
 import {
+  hasDiagnosticErrors,
   useCreateInstituteMutation,
   useCreateOAuthProviderMutation,
   useDeleteInstituteMutation,
@@ -62,8 +63,11 @@ export default function () {
             >
               <ProviderForm
                 onDone={async (v) => {
-                  await createOAuthProviderMutation.mutateAsync(v);
-                  setProviderCreationFormOpen(false);
+                  const resp = await createOAuthProviderMutation.mutateAsync(v);
+                  if (!hasDiagnosticErrors(resp.lint)) {
+                    setProviderCreationFormOpen(false);
+                  }
+                  return resp;
                 }}
                 loading={createOAuthProviderMutation.isPending}
               />
@@ -91,8 +95,14 @@ export default function () {
                     <ProviderForm
                       provider={service.provider}
                       onDone={async (v) => {
-                        await updateOAuthProviderMutation.mutateAsync({ service: service.provider, req: v });
-                        setProviderFormOpen(false);
+                        const resp = await updateOAuthProviderMutation.mutateAsync({
+                          service: service.provider,
+                          req: v,
+                        });
+                        if (!hasDiagnosticErrors(resp.lint)) {
+                          setProviderFormOpen(false);
+                        }
+                        return resp;
                       }}
                       loading={updateOAuthProviderMutation.isPending}
                     />
