@@ -85,7 +85,6 @@ async fn extract_bearer_token(
   } else {
     Token::default()
   };
-  debug!(?token, decoded=?token_obj, "user requested with token");
 
   let last_time = token_obj.exp - Utc::now().timestamp();
 
