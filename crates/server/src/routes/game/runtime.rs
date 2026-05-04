@@ -7,7 +7,7 @@ use r2s_migrator::Database;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
-use crate::{traits::ResponseError, utility::script::has_diagnostic_error};
+use crate::traits::ResponseError;
 
 #[derive(Deserialize)]
 pub(super) struct GameTraffic {
@@ -29,9 +29,6 @@ pub(super) async fn update_game_traffic(
     .clone()
     .ok_or(ResponseError::NotFound("traffic".to_string()))?;
   let lint = traffic_mapper.lint(&req.traffic).await?;
-  if has_diagnostic_error(&lint) {
-    return Ok(Json(GameScriptResponse { lint }));
-  }
 
   game::update(
     &db.conn,
@@ -104,9 +101,6 @@ pub(super) async fn update_game_lifecycle(
     .clone()
     .ok_or(ResponseError::NotFound("lifecycle".to_string()))?;
   let lint = lifecycle_mapper.lint(&req.lifecycle).await?;
-  if has_diagnostic_error(&lint) {
-    return Ok(Json(GameScriptResponse { lint }));
-  }
 
   game::update(
     &db.conn,

@@ -10,8 +10,7 @@ import { createMemo } from "solid-js";
 import type { Extra } from "../models/extra";
 import type { CommitHistory } from "../models/git";
 import type { Hint } from "../models/hint";
-import { hasDiagnosticErrors } from "../utils/diagnostics";
-import api, { api_root, handleHttpError, inflyClient, safeJson, toastError, toastSuccess } from ".";
+import api, { api_root, handleHttpError, inflyClient, safeJson, toastSuccess } from ".";
 
 export type ChallengeCheckerScriptResponse = {
   script: string;
@@ -612,11 +611,7 @@ export function useUpdateChallengeCheckerScriptMutation(props: {
     mutationFn: (req: { game_id: number; challenge_id: number; content: string }) =>
       updateChallengeCheckerScript(req.game_id, req.challenge_id, req.content),
     onSuccess: (resp) => {
-      if (hasDiagnosticErrors(resp.lint)) {
-        toastError(t("general.actions.save.status.fail"));
-      } else {
-        toastSuccess(t("general.actions.save.status.success"));
-      }
+      toastSuccess(t("general.actions.save.status.success"));
       props.onSuccess?.(resp);
     },
     onError: (err: Error) => {

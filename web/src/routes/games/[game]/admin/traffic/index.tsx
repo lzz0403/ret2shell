@@ -5,7 +5,6 @@ import {
   useUpdateGameNodeSelectorMutation,
   useUpdateGameTrafficMutation,
 } from "@api/game";
-import { hasDiagnosticErrors } from "@lib/utils/diagnostics";
 import { useParams } from "@solidjs/router";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
@@ -44,9 +43,7 @@ export default function Traffic() {
   const updateTrafficMutation = useUpdateGameTrafficMutation({
     onSuccess: (resp) => {
       setLint(resp.lint);
-      if (!hasDiagnosticErrors(resp.lint)) {
-        game.refetch();
-      }
+      game.refetch();
     },
   });
   const deleteTrafficMutation = useDeleteGameTrafficMutation({

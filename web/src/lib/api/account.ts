@@ -1,4 +1,3 @@
-import { hasDiagnosticErrors } from "@lib/utils/diagnostics";
 import { sleep } from "@lib/utils/timeout";
 import type { Captcha } from "@models/captcha";
 import type { Institute } from "@models/institute";
@@ -19,8 +18,6 @@ export type OAuthProviderResponse = {
   item: OAuthProvider;
   lint: DiagnosticMarker[];
 };
-
-export { hasDiagnosticErrors };
 
 export async function getCaptcha() {
   return await api.get(`${api_root}/account/captcha`).json<Captcha>();
@@ -443,14 +440,6 @@ export function useUpdateOAuthProviderMutation(
   return useMutation(() => ({
     mutationFn: ({ service, req }: { service: string; req: OAuthProvider }) => updateOAuthProvider(service, req),
     onSuccess: (resp) => {
-      if (hasDiagnosticErrors(resp.lint)) {
-        addToast({
-          level: "error",
-          description: t("general.actions.save.status.fail"),
-          duration: 5000,
-        });
-        return;
-      }
       addToast({
         level: "success",
         description: t("general.actions.save.status.success"),
@@ -497,14 +486,6 @@ export function useCreateOAuthProviderMutation(
   return useMutation(() => ({
     mutationFn: createOAuthProvider,
     onSuccess: (resp) => {
-      if (hasDiagnosticErrors(resp.lint)) {
-        addToast({
-          level: "error",
-          description: t("general.actions.create.status.fail"),
-          duration: 5000,
-        });
-        return;
-      }
       addToast({
         level: "success",
         description: t("general.actions.create.status.success"),

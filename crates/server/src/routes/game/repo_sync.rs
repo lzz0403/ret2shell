@@ -33,10 +33,7 @@ use super::{
 };
 use crate::{
   traits::{GlobalState, ResponseError},
-  utility::{
-    game_repo::schedule_game_repo_index_refresh,
-    script::{diagnostic_error_count, has_diagnostic_error},
-  },
+  utility::game_repo::schedule_game_repo_index_refresh,
 };
 
 const ZERO_OID: &str = "0000000000000000000000000000000000000000";
@@ -677,18 +674,6 @@ async fn lint_checker(
         logger.name(&challenge_bucket.name)
       ))
       .await;
-  } else if has_diagnostic_error(&diagnostics) {
-    logger
-      .error(format!(
-        "Checker validation failed with {} diagnostic error(s) for challenge `{}`.",
-        logger.count(diagnostic_error_count(&diagnostics)),
-        logger.name(&challenge_bucket.name)
-      ))
-      .await;
-    bail!(
-      "checker validation failed for challenge `{}`",
-      challenge_bucket.name
-    );
   } else {
     logger
       .warn(format!(

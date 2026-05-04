@@ -25,7 +25,6 @@ use crate::{
   middleware::auth::{self, Token},
   routes::game::lifecycle,
   traits::{GlobalState, ResponseError},
-  utility::script::has_diagnostic_error,
 };
 
 pub fn router(state: &GlobalState) -> Router<GlobalState> {
@@ -207,9 +206,6 @@ async fn update_traffic_script(
     .clone()
     .ok_or(ResponseError::NotFound("traffic".to_string()))?;
   let lint = traffic_mapper.lint(&req.traffic).await?;
-  if has_diagnostic_error(&lint) {
-    return Ok(Json(ScriptResponse { lint }));
-  }
 
   config::update(
     &db.conn,
@@ -265,9 +261,6 @@ async fn update_lifecycle_script(
     .clone()
     .ok_or(ResponseError::NotFound("lifecycle".to_string()))?;
   let lint = lifecycle_mapper.lint(&req.lifecycle).await?;
-  if has_diagnostic_error(&lint) {
-    return Ok(Json(ScriptResponse { lint }));
-  }
 
   config::update(
     &db.conn,

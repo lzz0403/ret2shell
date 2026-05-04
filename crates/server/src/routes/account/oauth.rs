@@ -33,7 +33,6 @@ use crate::{
   traits::{GlobalState, ResponseError},
   utility::{
     password::hash_password,
-    script::has_diagnostic_error,
     validation::{validate_oauth_provider_model, validate_register_request},
   },
 };
@@ -109,12 +108,6 @@ async fn create_oauth_provider(
 ) -> Result<impl IntoResponse, ResponseError> {
   validate_oauth_provider_model(&provider)?;
   let lint = oauth.lint(&provider.script).await?;
-  if has_diagnostic_error(&lint) {
-    return Ok(Json(OAuthProviderResponse {
-      item: provider,
-      lint,
-    }));
-  }
   let provider = r2s_database::oauth_provider::create(&db.conn, provider).await?;
   Ok(Json(OAuthProviderResponse {
     item: provider,
@@ -135,12 +128,6 @@ async fn update_oauth_provider(
     id: original_provider.id,
     ..provider
   };
-  if has_diagnostic_error(&lint) {
-    return Ok(Json(OAuthProviderResponse {
-      item: provider,
-      lint,
-    }));
-  }
   let txn = db.conn.begin().await?;
   let provider = r2s_database::oauth_provider::update(&txn, original_provider.id, provider).await?;
   oauth.expire(&engine, provider.provider.as_str()).await;

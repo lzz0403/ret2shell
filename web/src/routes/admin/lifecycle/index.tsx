@@ -1,7 +1,6 @@
 import { useDeleteGlobalLifecycleScriptMutation, useUpdateGlobalLifecycleScriptMutation } from "@api/cluster";
 import { usePlatformConfig } from "@api/platform";
 import { type LifecyclePreset, lifecyclePresetEntries, lifecyclePresetMap } from "@lib/lifecycle/presets";
-import { hasDiagnosticErrors } from "@lib/utils/diagnostics";
 import { Title } from "@storage/header";
 import { t } from "@storage/theme";
 import Button from "@widgets/button";
@@ -47,9 +46,7 @@ export default function Lifecycle() {
   const updateLifecycleMutation = useUpdateGlobalLifecycleScriptMutation({
     onSuccess: (v) => {
       setLint(v.lint ?? []);
-      if (!hasDiagnosticErrors(v.lint)) {
-        onSuccess();
-      }
+      onSuccess();
     },
   });
   const deleteLifecycleMutation = useDeleteGlobalLifecycleScriptMutation({
