@@ -12,7 +12,7 @@ jobs:
   # Build and export the docker image
   build:
     name: Build
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
     env:
       # These environment variables will be set by `setup-env.sh`
       app_v: unknown

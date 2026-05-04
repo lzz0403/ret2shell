@@ -16,7 +16,7 @@ concurrency:
 jobs:
   release:
     name: Publish Release
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
       CHART_DIR: deploy/helm/ret2shell

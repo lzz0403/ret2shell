@@ -24,7 +24,7 @@ concurrency:
 jobs:
   chart:
     name: Lint and Package
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:
       run:

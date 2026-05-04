@@ -31,7 +31,7 @@ jobs:
   fmt-check:
     name: Format
     if: ${{ github.event_name != 'workflow_dispatch' }}
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
     timeout-minutes: 20
 
     steps:
@@ -48,7 +48,7 @@ jobs:
   check:
     name: Test and Clippy
     if: ${{ github.event_name != 'workflow_dispatch' }}
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
@@ -97,7 +97,7 @@ jobs:
   binary:
     name: Build
     if: ${{ github.event_name != 'pull_request' }}
-    runs-on: [self-hosted, linux, x64]
+    runs-on: ubuntu-latest
     timeout-minutes: 90
     strategy:
       matrix:
